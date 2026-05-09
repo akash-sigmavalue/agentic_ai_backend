@@ -1,0 +1,67 @@
+[
+  {
+    "project_name": "Vertical Oriana",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Completed",
+    "source_url": "https://www.housingman.com/projects/vertical-oriana",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK apartments ranging from 1084 to 1509 sq. ft., completed and ready for possession.",
+    "map_search_lat": 18.5354211,
+    "map_search_lng": 73.9448949,
+    "distance_from_subject_km": 0.58
+  },
+  {
+    "project_name": "Mantra Mesmer",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.mantraproperties.in/properties/residential/mantra-mesmer",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK apartments ranging from 750 to 1170 sq. ft., with possession expected by December 2026.",
+    "map_search_lat": 18.5381896,
+    "map_search_lng": 73.9488135,
+    "distance_from_subject_km": 0.33
+  },
+  {
+    "project_name": "Unique Legacy Majestic",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Completed",
+    "source_url": "https://www.commonfloor.com/pune-property/in-keshav-nagar-a5443/projects/apartment-ht",
+    "reason": "Located in Keshav Nagar, offering 2 BHK apartments, completed and ready for possession.",
+    "map_search_lat": 18.5315284,
+    "map_search_lng": 73.9456678,
+    "distance_from_subject_km": 0.98
+  },
+  {
+    "project_name": "ARV Richvue",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK apartments ranging from 719 to 1029 sq. ft., with possession starting from December 2029.",
+    "map_search_lat": 18.5322658,
+    "map_search_lng": 73.9383844,
+    "distance_from_subject_km": 1.25
+  },
+  {
+    "project_name": "Choice QUE 914",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.squareyards.com/pune-residential-property/choice-que-914/176762/project",
+    "reason": "Situated in Keshav Nagar, offering 2, 3, and 4 BHK apartments ranging from 802 to 1197 sq. ft., with possession starting from December 2026.",
+    "map_search_lat": 18.5322658,
+    "map_search_lng": 73.9383844,
+    "distance_from_subject_km": 1.25
+  }
+]

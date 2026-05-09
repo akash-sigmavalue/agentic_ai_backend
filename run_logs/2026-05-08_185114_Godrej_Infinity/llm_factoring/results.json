@@ -1,0 +1,224 @@
+{
+  "methodology": "Global Benchmark (Simple Average)",
+  "property_type": "apartment",
+  "currency": "INR",
+  "area_unit": "sqft",
+  "area_type": "built-up",
+  "total_listing_count": 3,
+  "factor_table": [
+    {
+      "project_name": "Godrej Infinity",
+      "role": "SUBJECT",
+      "listing_count": 1,
+      "avg_rate": 9471,
+      "distance_km": null,
+      "scores": {
+        "road": 5,
+        "cbd": 8,
+        "density": 4,
+        "amenity": 6
+      }
+    },
+    {
+      "project_name": "Vertical Oriana",
+      "role": "COMPARABLE",
+      "listing_count": 1,
+      "avg_rate": 8305,
+      "distance_km": 0.0,
+      "scores": {
+        "road": 5,
+        "cbd": 7,
+        "density": 3.4,
+        "amenity": 7
+      }
+    },
+    {
+      "project_name": "Mantra Mesmer",
+      "role": "COMPARABLE",
+      "listing_count": 1,
+      "avg_rate": 9853,
+      "distance_km": 0.0,
+      "scores": {
+        "road": null,
+        "cbd": 7,
+        "density": 3.1,
+        "amenity": 6
+      }
+    }
+  ],
+  "valuation_details": {
+    "base_rate": 9471,
+    "base_rate_range": {
+      "low": 8073,
+      "high": 10869
+    },
+    "attribute_weights": {
+      "neighborhood_amenity": 0.1,
+      "road_type": 0.2,
+      "builtup_density": 0.3,
+      "cbd_score": 0.4
+    },
+    "net_impacts": {
+      "neighborhood_amenity": -0.5,
+      "road_type": 0,
+      "builtup_density": -1,
+      "cbd_score": 3
+    },
+    "total_net_adjustment": 1.5,
+    "derived_rate": 9615,
+    "derived_rate_range": {
+      "low": 8194,
+      "high": 11032
+    },
+    "factor_breakdown": {
+      "neighborhood_amenity": {
+        "projects": [
+          {
+            "name": "Godrej Infinity",
+            "distance_km": null,
+            "value": "Bus Stops 1 654m, Schools 1 938m, Hospitals 1 635m, Police Stations 1 971m",
+            "interpretation": "Adequate but not diverse amenities",
+            "adjustment": 0
+          },
+          {
+            "name": "Vertical Oriana",
+            "distance_km": 0.0,
+            "value": "Bus Stops 1 89m, Schools 1 636m, Hospitals 2 59m, Restaurants 1 742m, IT Parks 1 701m",
+            "interpretation": "More diverse amenities",
+            "adjustment": 0
+          },
+          {
+            "name": "Mantra Mesmer",
+            "distance_km": 0.0,
+            "value": "Bus Stops 1 604m, Schools 1 642m, Hospitals 1 558m, Restaurants 1 810m",
+            "interpretation": "Similar amenities",
+            "adjustment": 0
+          }
+        ],
+        "subject_vs_avg": "Slightly below average",
+        "net_impact": -0.5
+      },
+      "road_type": {
+        "projects": [
+          {
+            "name": "Godrej Infinity",
+            "distance_km": null,
+            "value": "Category A",
+            "interpretation": "Local/internal roads",
+            "adjustment": 0
+          },
+          {
+            "name": "Vertical Oriana",
+            "distance_km": 0.0,
+            "value": "Category A",
+            "interpretation": "Local/internal roads",
+            "adjustment": 0
+          },
+          {
+            "name": "Mantra Mesmer",
+            "distance_km": 0.0,
+            "value": "Unknown",
+            "interpretation": "Unknown",
+            "adjustment": 0
+          }
+        ],
+        "subject_vs_avg": "Matches baseline",
+        "net_impact": 0
+      },
+      "builtup_density": {
+        "projects": [
+          {
+            "name": "Godrej Infinity",
+            "distance_km": null,
+            "value": "Density Score 2.6",
+            "interpretation": "Less developed area",
+            "adjustment": 0
+          },
+          {
+            "name": "Vertical Oriana",
+            "distance_km": 0.0,
+            "value": "Density Score 3.4",
+            "interpretation": "More developed area",
+            "adjustment": 0
+          },
+          {
+            "name": "Mantra Mesmer",
+            "distance_km": 0.0,
+            "value": "Density Score 3.1",
+            "interpretation": "More developed area",
+            "adjustment": 0
+          }
+        ],
+        "subject_vs_avg": "Below average",
+        "net_impact": -1
+      },
+      "cbd_score": {
+        "projects": [
+          {
+            "name": "Godrej Infinity",
+            "distance_km": null,
+            "value": "1.33km to Kharadi",
+            "interpretation": "Excellent proximity",
+            "adjustment": 0
+          },
+          {
+            "name": "Vertical Oriana",
+            "distance_km": 0.0,
+            "value": "1.8km proximity",
+            "interpretation": "Good proximity",
+            "adjustment": 0
+          },
+          {
+            "name": "Mantra Mesmer",
+            "distance_km": 0.0,
+            "value": "1.64km proximity",
+            "interpretation": "Good proximity",
+            "adjustment": 0
+          }
+        ],
+        "subject_vs_avg": "Above average",
+        "net_impact": 3
+      }
+    }
+  },
+  "subject_final_rate": 9615,
+  "subject_rate_range": {
+    "low": 8194,
+    "high": 11032
+  },
+  "confidence": "High",
+  "reasoning_audit": {
+    "stage_1_scoring_thought": "Evaluated each factor's impact on the subject property.",
+    "stage_2_adjustment_thought": "Calculated adjustments based on factor gaps and weights.",
+    "final_reflection": "Confirmed the derived rate aligns with market evidence and adjustments.",
+    "key_drivers": "CBD Score, Builtup Density",
+    "uncertainties": "Limited data on amenity quality"
+  },
+  "reconciliation_note": "The derived rate was calculated using a global benchmark approach, considering factor adjustments and market evidence.",
+  "project_reports": [
+    {
+      "project_name": "Godrej Infinity",
+      "report_markdown": "### Godrej Infinity Valuation Report\n\n**Neighborhood Amenity:** Adequate but not diverse amenities.\n\n**Road Type:** Local/internal roads, moderate impact.\n\n**Builtup Density:** Less developed area, lower score for apartments.\n\n**CBD Score:** Excellent proximity to Kharadi, strong positive impact."
+    }
+  ],
+  "raw_markdown_report": "## STAGE 1: FACTOR SCORING\n\n### Godrej Infinity — Neighborhood Amenity\nTHOUGHT: I need to evaluate the quality and relevance of nearby amenities for Godrej Infinity. The presence of bus stops, schools, hospitals, and police stations are noted, but the quality and breadth are not detailed.\nACTION: Compare the proximity and type of amenities with those of the comparables.\nOBSERVATION: Godrej Infinity has basic amenities within a reasonable distance, similar to the comparables, but lacks diversity (e.g., restaurants, IT parks).\nCRITIQUE: The score should reflect the limited diversity but reasonable proximity.\nREVISE: Assign a score that reflects adequate but not exceptional amenities.\nFINAL SCORE: 6/10\n\n### Godrej Infinity — Road Type\nTHOUGHT: Determine the impact of the road category on accessibility and desirability for an apartment.\nACTION: Evaluate the road category (A) and its implications for accessibility.\nOBSERVATION: Both Godrej Infinity and Vertical Oriana are on Category A roads, indicating local/internal roads with lower accessibility.\nCRITIQUE: For an apartment, this may limit accessibility but also reduce noise, which can be a mixed factor.\nREVISE: Assign a moderate score reflecting limited accessibility but potential residential appeal.\nFINAL SCORE: 5/10\n\n### Godrej Infinity — Builtup Density\nTHOUGHT: Assess the builtup density score and its implications for an apartment.\nACTION: Analyze the density score (2.6) and compare it with the comparables.\nOBSERVATION: Godrej Infinity has a lower density score than the comparables, indicating a less developed area.\nCRITIQUE: For apartments, higher density can be positive due to increased demand and infrastructure.\nREVISE: Assign a lower score due to the lower density.\nFINAL SCORE: 4/10\n\n### Godrej Infinity — CBD Score\nTHOUGHT: Evaluate the proximity and connectivity to the CBD.\nACTION: Compare the distance to Kharadi (1.33km) with the comparables.\nOBSERVATION: Godrej Infinity is closer to the CBD than the comparables.\nCRITIQUE: Proximity to the CBD is a strong positive factor for apartments.\nREVISE: Assign a high score reflecting excellent proximity.\nFINAL SCORE: 8/10\n\n---\n\n## STAGE 2: ADJUSTMENT CALCULATION\n\n### STEP 1 — Market Baseline\nTHOUGHT: Establish a baseline for each factor using the comparables.\nACTION: Calculate average scores for each factor from the comparables.\nOBSERVATION: \n- Neighborhood Amenity: Average score ~6.5\n- Road Type: Average score ~5\n- Builtup Density: Average score ~3.25\n- CBD Score: Average score ~7\nCRITIQUE: The baseline reflects the comparables' characteristics.\nREVISE: Confirm these baselines for adjustment calculations.\n\n### STEP 2 — Gap Identification\nTHOUGHT: Identify the gaps between the subject and baseline scores.\nACTION: Compare Godrej Infinity's scores with the baseline.\nOBSERVATION: \n- Neighborhood Amenity: Slightly below baseline\n- Road Type: Matches baseline\n- Builtup Density: Below baseline\n- CBD Score: Above baseline\nCRITIQUE: The gaps are consistent with the observations.\nREVISE: Confirm these gaps for adjustment direction.\n\n### STEP 3 — Direction & Magnitude\nTHOUGHT: Determine the direction and magnitude of adjustments.\nACTION: Assign adjustments based on the gaps and factor weights.\nOBSERVATION: \n- Neighborhood Amenity: -1% (low weight)\n- Road Type: 0% (matches baseline)\n- Builtup Density: -2% (moderate weight)\n- CBD Score: +3% (high weight)\nCRITIQUE: Adjustments reflect the factor weights and gaps.\nREVISE: Confirm these adjustments.\n\n### STEP 4 — Proximity Dampening\nTHOUGHT: Consider proximity dampening due to close distances.\nACTION: Evaluate if adjustments need dampening.\nOBSERVATION: All properties are within ~1km.\nCRITIQUE: Dampening is appropriate for amenity and density adjustments.\nREVISE: Apply dampening to reduce adjustments by 50%.\n- Neighborhood Amenity: -0.5%\n- Builtup Density: -1%\n\n### STEP 5 — Aggregate Sense-Check\nTHOUGHT: Ensure the total adjustment is reasonable.\nACTION: Sum the adjustments and verify proportionality.\nOBSERVATION: Total adjustment = +1.5%\nCRITIQUE: The total adjustment is conservative and reasonable.\nREVISE: Confirm the total adjustment.\n\n### STEP 6 — Derived Rate\nMARKET RATE RANGE: ₹8,073 - ₹10,869/sqft\nCALCULATION MIDPOINT: ₹9,471/sqft\nTOTAL ADJUSTMENT: +1.5%\nDERIVED RATE: ₹9,615/sqft\nDERIVED RATE RANGE: ₹8,194 - ₹11,032/sqft\n\n---\n\n## STAGE 3: FINAL REFLECTION\n\nTHOUGHT: Review the entire process for consistency and plausibility.\nACTION: Check for internal inconsistencies and data gaps.\nOBSERVATION: The derived rate aligns with the market range and adjustments.\nCRITIQUE: The reasoning is sound, with no major inconsistencies.\nREVISE: Confirm the final derived rate and range.\n\n## FINAL ANSWER\nDERIVED RATE: ₹9,615/sqft\nDERIVED RATE RANGE: ₹8,194 - ₹11,032/sqft\nCONFIDENCE: High\nKEY DRIVERS: CBD Score, Builtup Density\nUNCERTAINTIES: Limited data on amenity quality",
+  "_token_usage": {
+    "model": "gpt-4o",
+    "prompt_tokens": 3311,
+    "completion_tokens": 2815,
+    "total_tokens": 6126
+  },
+  "_payload_summary": {
+    "property_type": "apartment",
+    "currency": "INR",
+    "area_unit": "sqft",
+    "radii_used": {
+      "road_sample_radius_m": 200,
+      "amenity_sample_radius_m": 2000,
+      "density_sample_radius_m": 500,
+      "cbd_distance": "straight-line km to geocoded CBD centroid"
+    },
+    "n_projects": 3,
+    "n_comparables": 2
+  }
+}

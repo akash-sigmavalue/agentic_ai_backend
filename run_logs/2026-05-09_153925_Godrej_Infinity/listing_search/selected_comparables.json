@@ -1,0 +1,41 @@
+[
+  {
+    "project_name": "Godrej Keshav Nagar",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 2,
+    "possession_status": "Under Construction",
+    "source_url": "https://keystonerealestateadvisory.com/buy/new/godrej-keshav-nagar-project-keshav-nagar-pune/2757",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK apartments, making it highly comparable.",
+    "map_search_lat": 18.540328,
+    "map_search_lng": 73.9466658,
+    "distance_from_subject_km": 0
+  },
+  {
+    "project_name": "Mantra Mesmer",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://houssed.com/Pune/mantra-properties/mantra-mesmer-11104",
+    "reason": "Situated in Keshav Nagar, offering 2 and 3 BHK apartments with a focus on family-friendly amenities.",
+    "map_search_lat": 18.5381896,
+    "map_search_lng": 73.9488135,
+    "distance_from_subject_km": 0.33
+  },
+  {
+    "project_name": "Unique Legacy Majestic",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Completed",
+    "source_url": "https://www.commonfloor.com/pune-property/in-keshav-nagar-a5443/projects/apartment-ht",
+    "reason": "Located in Keshav Nagar, offering 2 BHK apartments with modern amenities.",
+    "map_search_lat": 18.5315284,
+    "map_search_lng": 73.9456678,
+    "distance_from_subject_km": 0.98
+  }
+]

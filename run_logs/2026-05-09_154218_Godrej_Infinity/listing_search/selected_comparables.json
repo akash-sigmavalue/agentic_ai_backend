@@ -1,0 +1,41 @@
+[
+  {
+    "project_name": "Mantra Mesmer",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://houssed.com/Pune/mantra-properties/mantra-mesmer-11104",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK premium homes with carpet areas ranging from 750 to 1170 sq. ft.",
+    "map_search_lat": 18.5381896,
+    "map_search_lng": 73.9488135,
+    "distance_from_subject_km": 0.33
+  },
+  {
+    "project_name": "Godrej Keshav Nagar",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://keystonerealestateadvisory.com/buy/new/godrej-keshav-nagar-project-keshav-nagar-pune/2757",
+    "reason": "Developed by Godrej Properties in Keshav Nagar, offering 2 and 3 BHK apartments with carpet areas between 727 and 975 sq. ft.",
+    "map_search_lat": 18.540328,
+    "map_search_lng": 73.9466658,
+    "distance_from_subject_km": 0
+  },
+  {
+    "project_name": "Vertical Oriana",
+    "location": "Keshav Nagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "age_years": 0,
+    "possession_status": "Completed",
+    "source_url": "https://www.housingman.com/projects/vertical-oriana",
+    "reason": "Located in Keshav Nagar, offering 2 and 3 BHK apartments with sizes between 1084 and 1509 sq. ft.",
+    "map_search_lat": 18.5354211,
+    "map_search_lng": 73.9448949,
+    "distance_from_subject_km": 0.58
+  }
+]

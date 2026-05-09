@@ -1,0 +1,282 @@
+{
+  "project_id": {
+    "meaning": "Unique project identifier",
+    "data_type": "INTEGER"
+  },
+  "internal_index_id": {
+    "meaning": "Internal system project ID",
+    "data_type": "VARCHAR"
+  },
+  "project_name": {
+    "meaning": "Name of project",
+    "data_type": "VARCHAR"
+  },
+  "village_name_marathi": {
+    "meaning": "Village name (Marathi)",
+    "data_type": "VARCHAR"
+  },
+  "location_id": {
+    "meaning": "Location identifier",
+    "data_type": "INTEGER"
+  },
+  "location_name": {
+    "meaning": "Location name",
+    "data_type": "VARCHAR"
+  },
+  "village_name": {
+    "meaning": "Village name (English)",
+    "data_type": "VARCHAR"
+  },
+  "year": {
+    "meaning": "Transaction year",
+    "data_type": "INTEGER"
+  },
+  "quarter": {
+    "meaning": "Transaction quarter",
+    "data_type": "VARCHAR"
+  },
+  "city_id": {
+    "meaning": "City identifier",
+    "data_type": "INTEGER"
+  },
+  "city_name": {
+    "meaning": "City name",
+    "data_type": "VARCHAR"
+  },
+  "transaction_category_id": {
+    "meaning": "Transaction category ID",
+    "data_type": "INTEGER"
+  },
+  "sub_registrar_office_code": {
+    "meaning": "SRO office code",
+    "data_type": "INTEGER"
+  },
+  "sub_registrar_office_name": {
+    "meaning": "SRO office name",
+    "data_type": "VARCHAR"
+  },
+  "document_number": {
+    "meaning": "Registration document number",
+    "data_type": "VARCHAR"
+  },
+  "transaction_type": {
+    "meaning": "Type of transaction",
+    "data_type": "VARCHAR"
+  },
+  "agreement_price": {
+    "meaning": "Deal/agreement value",
+    "data_type": "DECIMAL"
+  },
+  "guideline_value": {
+    "meaning": "Government determined value",
+    "data_type": "DECIMAL"
+  },
+  "property_description": {
+    "meaning": "Property details text",
+    "data_type": "TEXT"
+  },
+  "transaction_date": {
+    "meaning": "Date of transaction",
+    "data_type": "DATE"
+  },
+  "floor_number": {
+    "meaning": "Floor of unit",
+    "data_type": "VARCHAR"
+  },
+  "unit_number": {
+    "meaning": "Identifier for a specific apartment, flat, or suite within a building.",
+    "data_type": "VARCHAR"
+  },
+  "property_type_raw": {
+    "meaning": "Raw property type text",
+    "data_type": "VARCHAR"
+  },
+  "net_carpet_area_sq_m": {
+    "meaning": "Net carpet area (sq.m.)",
+    "data_type": "DECIMAL"
+  },
+  "balcony_sq_m": {
+    "meaning": "Balcony area (sq.m.)",
+    "data_type": "DECIMAL"
+  },
+  "terrace_sq_m": {
+    "meaning": "Terrace area (sq.m.)",
+    "data_type": "DECIMAL"
+  },
+  "seller_name": {
+    "meaning": "Seller name",
+    "data_type": "TEXT"
+  },
+  "buyer_name": {
+    "meaning": "Buyer name",
+    "data_type": "TEXT"
+  },
+  "transaction_category": {
+    "meaning": "Category of transaction - Sale, lease, Others etc",
+    "data_type": "VARCHAR"
+  },
+  "internal_document_number": {
+    "meaning": "Internal doc reference",
+    "data_type": "VARCHAR"
+  },
+  "micr_number": {
+    "meaning": "Bank MICR number",
+    "data_type": "INTEGER"
+  },
+  "bank_type": {
+    "meaning": "Bank type/category",
+    "data_type": "VARCHAR"
+  },
+  "party_code": {
+    "meaning": "Party classification code",
+    "data_type": "DECIMAL"
+  },
+  "date_of_agreement_execution": {
+    "meaning": "Agreement execution date",
+    "data_type": "DATE"
+  },
+  "stamp_duty_paid": {
+    "meaning": "Stamp duty amount",
+    "data_type": "DECIMAL"
+  },
+  "registration_fee": {
+    "meaning": "Registration fee paid",
+    "data_type": "DECIMAL"
+  },
+  "project_latitude": {
+    "meaning": "Project latitude",
+    "data_type": "DECIMAL"
+  },
+  "project_longitude": {
+    "meaning": "Project longitude",
+    "data_type": "DECIMAL"
+  },
+  "location_latitude": {
+    "meaning": "Location latitude",
+    "data_type": "DECIMAL"
+  },
+  "location_longitude": {
+    "meaning": "Location longitude",
+    "data_type": "DECIMAL"
+  },
+  "property_type": {
+    "meaning": "Standardized property type",
+    "data_type": "VARCHAR"
+  },
+  "unit_configuration": {
+    "meaning": "BHK configuration",
+    "data_type": "VARCHAR"
+  },
+  "buyer_pincode": {
+    "meaning": "Buyer postal code",
+    "data_type": "INTEGER"
+  },
+  "buyer_locality": {
+    "meaning": "Buyer locality",
+    "data_type": "TEXT"
+  },
+  "buyer_district": {
+    "meaning": "Buyer district",
+    "data_type": "TEXT"
+  },
+  "buyer_state": {
+    "meaning": "Buyer state",
+    "data_type": "TEXT"
+  },
+  "is_llm_processed": {
+    "meaning": "Processed by AI flag",
+    "data_type": "TEXT"
+  },
+  "is_manual_processed": {
+    "meaning": "Processed manually flag",
+    "data_type": "TEXT"
+  },
+  "tower_name": {
+    "meaning": "Building/tower name",
+    "data_type": "TEXT"
+  },
+  "gross_carpet_area_sq_ft": {
+    "meaning": "Gross carpet area (sq.ft.)",
+    "data_type": "DECIMAL"
+  },
+  "price_per_sq_ft_gross_carpet": {
+    "meaning": "Price per sq.ft on Gross carpet area",
+    "data_type": "DECIMAL"
+  },
+  "is_duplicate": {
+    "meaning": "Duplicate record flag",
+    "data_type": "TEXT"
+  },
+  "sale_type": {
+    "meaning": "Primary/secondary sale",
+    "data_type": "TEXT"
+  },
+  "project_type": {
+    "meaning": "Residential/commercial type",
+    "data_type": "TEXT"
+  },
+  "country_name": {
+    "meaning": "Country name",
+    "data_type": "TEXT"
+  },
+  "state_name": {
+    "meaning": "State name",
+    "data_type": "TEXT"
+  },
+  "micro_market": {
+    "meaning": "Micro market area",
+    "data_type": "TEXT"
+  },
+  "sub_locality": {
+    "meaning": "Sub-local area",
+    "data_type": "TEXT"
+  },
+  "pincode": {
+    "meaning": "Property postal code",
+    "data_type": "INTEGER"
+  },
+  "parking_count": {
+    "meaning": "Number of parking slots",
+    "data_type": "INTEGER"
+  },
+  "facing_direction": {
+    "meaning": "Property facing direction",
+    "data_type": "TEXT"
+  },
+  "view_type": {
+    "meaning": "View from property",
+    "data_type": "TEXT"
+  },
+  "furnishing_status": {
+    "meaning": "Furnishing level",
+    "data_type": "TEXT"
+  },
+  "condition_status": {
+    "meaning": "Property condition",
+    "data_type": "TEXT"
+  },
+  "source_accessibility": {
+    "meaning": "Data access status (easy/medium/hard)",
+    "data_type": "TEXT"
+  },
+  "source_accessibility_way": {
+    "meaning": "Access method like api/download",
+    "data_type": "TEXT"
+  },
+  "sourcing_cost": {
+    "meaning": "Processing/source cost",
+    "data_type": "INTEGER"
+  },
+  "sourcing_time": {
+    "meaning": "Processing time",
+    "data_type": "INTEGER"
+  },
+  "data_type": {
+    "meaning": "registered document",
+    "data_type": "TEXT"
+  },
+  "data_source": {
+    "meaning": "Source of data (IGR/DLD)",
+    "data_type": "TEXT"
+  }
+}

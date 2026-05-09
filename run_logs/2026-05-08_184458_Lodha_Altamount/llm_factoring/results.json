@@ -1,0 +1,183 @@
+{
+  "methodology": "Global Benchmark (Simple Average)",
+  "property_type": "residential",
+  "currency": "INR",
+  "area_unit": "sqft",
+  "area_type": "built-up",
+  "total_listing_count": 2,
+  "factor_table": [
+    {
+      "project_name": "Lodha Altamount",
+      "role": "SUBJECT",
+      "listing_count": 1,
+      "avg_rate": null,
+      "distance_km": null,
+      "scores": {
+        "road": 7,
+        "cbd": 8,
+        "density": 7,
+        "amenity": 8
+      }
+    },
+    {
+      "project_name": "Rustomjee Crown",
+      "role": "COMPARABLE",
+      "listing_count": 1,
+      "avg_rate": 10188,
+      "distance_km": 0.0,
+      "scores": {
+        "road": 5,
+        "cbd": 8,
+        "density": 5,
+        "amenity": 7
+      }
+    }
+  ],
+  "valuation_details": {
+    "base_rate": 12738,
+    "base_rate_range": {
+      "low": 12187,
+      "high": 13289
+    },
+    "attribute_weights": {
+      "neighborhood_amenity": 0.1,
+      "road_type": 0.3,
+      "builtup_density": 0.2,
+      "cbd_score": 0.4
+    },
+    "net_impacts": {
+      "neighborhood_amenity": 1.0,
+      "road_type": 2.0,
+      "builtup_density": 0.5,
+      "cbd_score": 0.0
+    },
+    "total_net_adjustment": 3.5,
+    "derived_rate": 13184,
+    "derived_rate_range": {
+      "low": 12618,
+      "high": 13750
+    },
+    "factor_breakdown": {
+      "neighborhood_amenity": {
+        "projects": [
+          {
+            "name": "Lodha Altamount",
+            "distance_km": null,
+            "value": "Bus Stops 1 109m, Schools 10 125m, Hospitals 10 272m, Parks 3 573m, Shopping Malls 2 361m, Restaurants 19 299m, Police Stations 1 667m",
+            "interpretation": "Good mix of amenities",
+            "adjustment": 0
+          },
+          {
+            "name": "Rustomjee Crown",
+            "distance_km": 0.0,
+            "value": "Bus Stops 20 420m, Metro Stations 1 474m, Schools 12 419m, Hospitals 11 297m, Parks 1 911m, Shopping Malls 1 622m, Restaurants 14 245m, Police Stations 1 948m, Fire Stations 1 645m",
+            "interpretation": "Slightly lower amenity access",
+            "adjustment": -1.0
+          }
+        ],
+        "subject_vs_avg": "Higher",
+        "net_impact": 1.0
+      },
+      "road_type": {
+        "projects": [
+          {
+            "name": "Lodha Altamount",
+            "distance_km": null,
+            "value": "C",
+            "interpretation": "Good accessibility",
+            "adjustment": 0
+          },
+          {
+            "name": "Rustomjee Crown",
+            "distance_km": 0.0,
+            "value": "A",
+            "interpretation": "Lower accessibility",
+            "adjustment": -2.0
+          }
+        ],
+        "subject_vs_avg": "Higher",
+        "net_impact": 2.0
+      },
+      "builtup_density": {
+        "projects": [
+          {
+            "name": "Lodha Altamount",
+            "distance_km": null,
+            "value": "Density Score 6.4 | BCR 21.6% | Open Space 62.9%",
+            "interpretation": "Balanced suburban area",
+            "adjustment": 0
+          },
+          {
+            "name": "Rustomjee Crown",
+            "distance_km": 0.0,
+            "value": "Density Score 4.2 | BCR 14.2% | Open Space 73.9%",
+            "interpretation": "Emerging suburban zone",
+            "adjustment": -0.5
+          }
+        ],
+        "subject_vs_avg": "Higher",
+        "net_impact": 0.5
+      },
+      "cbd_score": {
+        "projects": [
+          {
+            "name": "Lodha Altamount",
+            "distance_km": null,
+            "value": "3.22km to Lower Parel, Mumbai",
+            "interpretation": "Good proximity",
+            "adjustment": 0
+          },
+          {
+            "name": "Rustomjee Crown",
+            "distance_km": 0.0,
+            "value": "2.51km proximity",
+            "interpretation": "Slightly closer",
+            "adjustment": 0
+          }
+        ],
+        "subject_vs_avg": "Similar",
+        "net_impact": 0.0
+      }
+    }
+  },
+  "subject_final_rate": 13184,
+  "subject_rate_range": {
+    "low": 12618,
+    "high": 13750
+  },
+  "confidence": "High",
+  "reasoning_audit": {
+    "stage_1_scoring_thought": "Evaluated each factor's impact on Lodha Altamount's value.",
+    "stage_2_adjustment_thought": "Calculated adjustments based on factor differences.",
+    "final_reflection": "Confirmed the derived rate aligns with the subject property's advantages.",
+    "key_drivers": "Neighborhood Amenity, Road Type",
+    "uncertainties": "Limited data on other comparables"
+  },
+  "reconciliation_note": "The derived rate reflects Lodha Altamount's superior amenities and road access compared to the comparable property.",
+  "project_reports": [
+    {
+      "project_name": "Lodha Altamount",
+      "report_markdown": "Lodha Altamount benefits from excellent neighborhood amenities and good road access, contributing to its higher valuation."
+    }
+  ],
+  "raw_markdown_report": "## STAGE 1: FACTOR SCORING\n\n### Lodha Altamount — Neighborhood Amenity\nTHOUGHT: I need to evaluate the quality and relevance of amenities near Lodha Altamount. The presence of schools, hospitals, parks, and shopping malls is crucial for residential properties.\nACTION: Assess the proximity and variety of amenities listed for Lodha Altamount.\nOBSERVATION: Lodha Altamount has a good mix of amenities: schools (10 within 125m), hospitals (10 within 272m), and shopping malls (2 within 361m). This indicates a well-serviced area.\nCRITIQUE: The amenities are diverse and close, which is positive for residential appeal. However, the number of parks is limited, which might slightly affect the score.\nREVISE: Consider the overall balance and proximity of amenities.\nFINAL SCORE: 8/10\n\n### Lodha Altamount — Road Type\nTHOUGHT: Determine the impact of road accessibility on Lodha Altamount's value. Road Category C suggests good accessibility.\nACTION: Evaluate how Road Category C affects residential properties.\nOBSERVATION: Road Category C (State highway/arterial) provides good accessibility, beneficial for residential properties.\nCRITIQUE: This level of road access is generally positive for residential properties, offering convenience without the noise of a highway.\nREVISE: Confirm the positive impact of this road type.\nFINAL SCORE: 7/10\n\n### Lodha Altamount — Builtup Density\nTHOUGHT: Assess the builtup density score's impact on Lodha Altamount. A density score of 6.4 suggests a balanced suburban area.\nACTION: Analyze the density score and supporting signals like BCR and open space.\nOBSERVATION: Density score of 6.4 with a BCR of 21.6% and open space of 62.9% indicates a well-developed area with reasonable open space.\nCRITIQUE: The density is suitable for residential properties, offering a balance between development and open space.\nREVISE: Confirm the positive impact of this density level.\nFINAL SCORE: 7/10\n\n### Lodha Altamount — CBD Score\nTHOUGHT: Evaluate Lodha Altamount's proximity and connectivity to the CBD. It's 3.22km from Lower Parel, Mumbai.\nACTION: Determine how this distance affects the property's value.\nOBSERVATION: 3.22km is relatively close, providing good access to employment hubs.\nCRITIQUE: The proximity is advantageous for residential properties, enhancing value due to accessibility to jobs and services.\nREVISE: Confirm the positive impact of this proximity.\nFINAL SCORE: 8/10\n\n---\n\n## STAGE 2: ADJUSTMENT CALCULATION\n\n### STEP 1 — Market Baseline\nTHOUGHT: Establish a baseline for comparison using the scores of comparable properties.\nACTION: Calculate average scores for each factor from comparables.\nOBSERVATION: Rustomjee Crown scores: Amenity 7, Road 5, Density 5, CBD 8.\nCRITIQUE: The baseline reflects a slightly lower amenity and road score but similar CBD proximity.\nREVISE: Use these baselines for adjustment calculations.\n\n### STEP 2 — Gap Identification\nTHOUGHT: Identify differences between Lodha Altamount and the baseline.\nACTION: Compare Lodha Altamount's scores to the baseline.\nOBSERVATION: Lodha Altamount scores higher in amenities and road type, similar in CBD, and slightly higher in density.\nCRITIQUE: The differences are moderate, with notable advantages in amenities and road type.\nREVISE: Prepare for adjustments based on these gaps.\n\n### STEP 3 — Direction & Magnitude\nTHOUGHT: Determine the adjustment direction and magnitude for each factor.\nACTION: Assign adjustments: Amenity +2%, Road +2%, Density +1%, CBD 0%.\nOBSERVATION: Adjustments reflect Lodha Altamount's advantages in amenities and road type.\nCRITIQUE: Adjustments are reasonable given the scoring differences.\nREVISE: Confirm adjustments align with observed gaps.\n\n### STEP 4 — Proximity Dampening\nTHOUGHT: Consider proximity dampening due to close distances.\nACTION: Evaluate if adjustments need dampening.\nOBSERVATION: Both properties are within a close radius, suggesting potential dampening.\nCRITIQUE: Dampening is appropriate for amenity and density adjustments.\nREVISE: Apply dampening: Amenity +1%, Density +0.5%.\n\n### STEP 5 — Aggregate Sense-Check\nTHOUGHT: Ensure total adjustments are proportional and reasonable.\nACTION: Sum adjustments: Amenity +1%, Road +2%, Density +0.5%, CBD 0%.\nOBSERVATION: Total adjustment is +3.5%.\nCRITIQUE: The total adjustment is conservative and justified.\nREVISE: Confirm the total adjustment is appropriate.\n\n### STEP 6 — Derived Rate\nMARKET RATE RANGE: ₹12,187 - ₹13,289/sqft\nCALCULATION MIDPOINT: ₹12,738/sqft\nTOTAL ADJUSTMENT: +3.5%\nDERIVED RATE: ₹13,184/sqft\nDERIVED RATE RANGE: ₹12,618 - ₹13,750/sqft\n\n---\n\n## STAGE 3: FINAL REFLECTION\n\nTHOUGHT: Review the entire process for consistency and accuracy.\nACTION: Cross-check all stages and calculations.\nOBSERVATION: The derived rate aligns with the subject property's advantages.\nCRITIQUE: The reasoning and adjustments are consistent with the data.\nREVISE: Confirm the final derived rate and range.\n\n## FINAL ANSWER\nDERIVED RATE: ₹13,184/sqft\nDERIVED RATE RANGE: ₹12,618 - ₹13,750/sqft\nCONFIDENCE: High\nKEY DRIVERS: Neighborhood Amenity, Road Type\nUNCERTAINTIES: Limited data on other comparables",
+  "_token_usage": {
+    "model": "gpt-4o",
+    "prompt_tokens": 3204,
+    "completion_tokens": 2596,
+    "total_tokens": 5800
+  },
+  "_payload_summary": {
+    "property_type": "residential",
+    "currency": "INR",
+    "area_unit": "sqft",
+    "radii_used": {
+      "road_sample_radius_m": 200,
+      "amenity_sample_radius_m": 2000,
+      "density_sample_radius_m": 500,
+      "cbd_distance": "straight-line km to geocoded CBD centroid"
+    },
+    "n_projects": 2,
+    "n_comparables": 1
+  }
+}

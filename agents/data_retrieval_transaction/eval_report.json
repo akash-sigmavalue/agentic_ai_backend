@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-04-29T16:57:31",
+  "mode": "intent",
+  "total_cases": 0,
+  "intent_pass_rate": 0.0,
+  "avg_entity_recall": 0.0,
+  "avg_metric_recall": 0.0,
+  "avg_f1_entity": 0.0,
+  "sql_pass_rate": 0.0,
+  "avg_pattern_score": 0.0,
+  "ilike_compliance": 0.0,
+  "e2e_pass_rate": 0.0,
+  "avg_iterations": 0.0,
+  "avg_relevance": 0.0,
+  "avg_overall_score": 0.0,
+  "intent_results": [],
+  "sql_results": [],
+  "e2e_results": []
+}

@@ -1,0 +1,519 @@
+"""
+Comparable Selection Agent — LLM-first, globally scalable
+"""
+
+import json
+import re
+import math
+import os
+import time
+import logging
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
+
+# ── Logging setup ─────────────────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    handlers=[
+        logging.FileHandler("comparable_agent.log", encoding="utf-8"),
+        logging.StreamHandler(),
+    ]
+)
+logger = logging.getLogger("comparable_agent")
+
+_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
+
+# ── Property types ─────────────────────────────────────────────────────────
+PROPERTY_TYPE_ALIASES = {
+    "apartment":         {"apartment", "flat", "condo", "condominium", "penthouse"},
+    "villa":             {"villa", "bungalow", "row house", "townhouse"},
+    "plot":              {"plot", "land", "site"},
+    "retail":            {"shop", "retail", "showroom"},
+    "commercial_office": {"office", "workspace", "coworking"},
+}
+
+PROPERTY_TYPE_DISPLAY = {
+    "apartment":         "apartment (flat / condo / penthouse)",
+    "villa":             "villa (bungalow / row house / townhouse)",
+    "plot":              "plot (land / site)",
+    "retail":            "shop (retail space / showroom)",
+    "commercial_office": "office space (workspace / coworking)",
+}
+
+PROPERTY_TYPE_SEARCH_TERM = {
+    "apartment":         "apartment",
+    "villa":             "villa",
+    "plot":              "plot",
+    "retail":            "shop",
+    "commercial_office": "office space",
+}
+
+PROPERTY_TYPE_EXCLUSIONS = {
+    "apartment": [
+        "villa", "bungalow", "plot", "land", "shop",
+        "office", "retail", "showroom", "row house", "townhouse"
+    ],
+    "villa": [
+        "apartment", "flat", "condo", "plot", "land",
+        "shop", "office", "retail", "showroom"
+    ],
+    "plot": [
+        "apartment", "flat", "villa", "bungalow",
+        "shop", "office", "built-up", "constructed"
+    ],
+    "retail": [
+        "apartment", "flat", "villa", "bungalow", "plot",
+        "land", "office", "residential", "condo"
+    ],
+    "commercial_office": [
+        "apartment", "flat", "villa", "bungalow", "plot",
+        "land", "shop", "retail", "showroom", "residential"
+    ],
+}
+
+VALID_PROPERTY_TYPES = set(PROPERTY_TYPE_ALIASES.keys())
+
+
+# ── Drop logger ───────────────────────────────────────────────────────────
+def log_drop(stage: str, project_name: str, reason: str, extra: dict = None):
+    """
+    Centralized drop logger.
+    Every time a comparable is dropped, call this.
+    Logs to file + console so you can track patterns over time.
+    """
+    msg = f"[DROP] stage={stage} | project='{project_name}' | reason={reason}"
+    if extra:
+        msg += f" | detail={json.dumps(extra)}"
+    logger.warning(msg)
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────
+def normalize_property_type(raw: str) -> str | None:
+    if not raw:
+        return None
+    raw = raw.lower().strip()
+    for k, v in PROPERTY_TYPE_ALIASES.items():
+        if raw == k or raw in v:
+            return k
+    return None
+
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    R = 6371
+    lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(dlon / 2) ** 2
+    )
+    return round(R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)), 2)
+
+
+# ── Prompt ────────────────────────────────────────────────────────────────
+def build_prompt(subject: dict) -> tuple[str, str]:
+    ptype        = subject["property_type"]
+    pname        = subject.get("project_name", "subject property")
+    country      = subject.get("country", "")
+    location     = subject.get("location_name", "")
+    display_name = PROPERTY_TYPE_DISPLAY[ptype]
+    search_term  = PROPERTY_TYPE_SEARCH_TERM[ptype]
+    exclusions   = PROPERTY_TYPE_EXCLUSIONS.get(ptype, [])
+    exclusion_str = ", ".join(exclusions)
+
+    system_prompt = f"""
+You are an expert real estate valuation analyst.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROPERTY TYPE CONSTRAINT — READ THIS FIRST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You are looking for: {display_name} ONLY.
+Primary search term : "{search_term}"
+Valid terms         : {', '.join(PROPERTY_TYPE_ALIASES[ptype])}
+
+DO NOT include anything that is: {exclusion_str}
+
+IMPORTANT RULES:
+- A mixed-use building with residential + retail -> EXCLUDE (not purely {search_term})
+- A project primarily {search_term} but with small other components -> EXCLUDE if unsure
+- When in doubt about a project type -> EXCLUDE IT
+- Do NOT label a wrong property as "{search_term}" just to fill the list
+- It is BETTER to return 5 correct results than 15 mixed results
+- MANDATORY: Use the `web_search_preview` tool to find current real-world projects and coordinates. Do NOT rely solely on internal knowledge.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VALUATION LOGIC:
+- The BEST comparables are those a buyer would realistically consider as alternatives
+- Geographic proximity is the strongest signal:
+  -> Properties within 1–3 km are most relevant
+  -> Properties beyond 5–8 km ONLY if highly comparable
+- Same micro-market is critical
+
+COORDINATE AWARENESS:
+- Subject coordinates: Lat {subject['lat']}, Lng {subject['lng']}
+- Use these as PRIMARY reference for proximity
+
+OUTPUT FORMAT:
+YOU MUST RETURN A STRICT JSON ARRAY OF OBJECTS ONLY.
+DO NOT WRITE ANY CONVERSATIONAL TEXT. DO NOT WRITE "Here are the comparables".
+START YOUR RESPONSE EXACTLY WITH `[` AND END EXACTLY WITH `]`.
+
+JSON Keys for each object:
+- "project_name"      (String)
+- "location"          (String)
+- "country"           (String, e.g. "{country}")
+- "property_type"     (String, MUST be exactly "{ptype}")
+- "age_years"         (String or Number)
+- "possession_status" (String: "Ready" or "Under Construction")
+- "source_url"        (String, direct listing URL)
+- "reason"            (String, short explanation of why it is comparable)
+"""
+
+    user_prompt = f"""
+Find 15-25 highly relevant comparable {display_name} projects for:
+
+Project    : {pname}
+Location   : {location}, {country}
+Coordinates: {subject['lat']}, {subject['lng']}
+
+Remember:
+- ONLY {display_name} projects
+- Do NOT include: {exclusion_str}
+- Geographic proximity is key
+- Return only genuinely similar {search_term} projects
+"""
+    return system_prompt, user_prompt
+
+
+# ── LLM Call ──────────────────────────────────────────────────────────────
+def fetch_comparables(subject: dict) -> tuple[list, dict]:
+    system_prompt, user_prompt = build_prompt(subject)
+    model_name = "gpt-4o-mini"
+    try:
+        response = _client.responses.create(
+            model=model_name,
+            instructions=system_prompt,
+            input=user_prompt,
+            tools=[{"type": "web_search_preview"}],
+        )
+        raw   = response.output_text.strip()
+        comps = parse_json_safely(raw)
+
+        usage = {
+            "prompt_tokens":     getattr(response.usage, "input_tokens", 0),
+            "completion_tokens": getattr(response.usage, "output_tokens", 0),
+            "total_tokens":      getattr(response.usage, "total_tokens", 0),
+            "model":             model_name,
+            "tool_calls":        1 # web_search_preview
+        }
+        logger.info(f"[LLM Fetch] Received {len(comps)} raw comparables | tokens={usage['total_tokens']}")
+        
+        if not comps and raw:
+            logger.warning(f"[LLM Fetch] Zero results! Raw snippet: {raw[:300]}...")
+
+        return comps, usage
+
+    except Exception as e:
+        logger.error(f"[LLM Fetch] Failed: {e}")
+        return [], {"model": model_name, "tool_calls": 0}
+
+
+
+def parse_json_safely(raw: str) -> list:
+    """
+    Robust JSON array extraction.
+    1. Tries to find text inside ```json ... ``` blocks first.
+    2. Cleans common LLM errors like trailing commas before parsing.
+    3. Falls back to finding the first '[' followed by '{'.
+    4. Uses a secondary fallback to extract individual {objects} if array parse fails.
+    """
+    if not raw:
+        return []
+
+    def clean_json_str(s: str) -> str:
+        s = s.strip()
+        # Remove trailing commas in arrays/objects: [1, 2,] -> [1, 2]
+        s = re.sub(r',\s*([\]\}])', r'\1', s)
+        return s
+
+    # 1. Try to extract from markdown blocks
+    matches = re.findall(r"```json\s*(.*?)\s*```", raw, re.DOTALL)
+    for block in matches:
+        try:
+            cleaned = clean_json_str(block)
+            data = json.loads(cleaned)
+            if isinstance(data, list):
+                return data
+            if isinstance(data, dict):
+                return [data]
+        except:
+            continue
+
+    # 2. Try to find the first '[' followed by '{'
+    start_match = re.search(r"\[\s*\{", raw)
+    if start_match:
+        start = start_match.start()
+        depth = 0
+        for i in range(start, len(raw)):
+            if raw[i] == "[":
+                depth += 1
+            elif raw[i] == "]":
+                depth -= 1
+                if depth == 0:
+                    potential_json = raw[start : i + 1]
+                    try:
+                        data = json.loads(clean_json_str(potential_json))
+                        return data if isinstance(data, list) else []
+                    except Exception:
+                        pass # try fallback
+
+    # 3. Last Resort Fallback: Extract individual objects
+    # This is useful if the LLM produced a malformed array but valid objects
+    try:
+        objects = []
+        # Find everything between { and }
+        potential_objs = re.findall(r"\{[^{}]*\}", raw, re.DOTALL)
+        for obj_str in potential_objs:
+            try:
+                obj_data = json.loads(clean_json_str(obj_str))
+                if "project_name" in obj_data:
+                    objects.append(obj_data)
+            except:
+                continue
+        if objects:
+            logger.info(f"[JSON Parse] Fallback extracted {len(objects)} individual objects")
+            return objects
+    except Exception as e:
+        logger.error(f"[JSON Parse] Fallback failed: {e}")
+
+    return []
+
+
+# ── Hard Filter ───────────────────────────────────────────────────────────
+def hard_filter_by_type(comps: list, required_type: str) -> list:
+    """
+    Layer 1 defense — programmatic type check.
+    Never trust AI label alone.
+    """
+    valid   = []
+    for c in comps:
+        raw_type   = c.get("property_type", "")
+        normalized = normalize_property_type(raw_type)
+        if normalized == required_type:
+            c["property_type"] = normalized
+            valid.append(c)
+        else:
+            log_drop(
+                stage="hard_filter",
+                project_name=c.get("project_name", "unknown"),
+                reason="property_type_mismatch",
+                extra={
+                    "got":      raw_type,
+                    "expected": required_type,
+                    "location": c.get("location", ""),
+                }
+            )
+    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check")
+    return valid
+
+
+# ── LLM Verification ──────────────────────────────────────────────────────
+# comparable_selection_agent.py
+
+
+
+
+# ── Scoring ───────────────────────────────────────────────────────────────
+def score_comp(comp: dict, subject: dict) -> float:
+    score = 0.0
+    d = comp.get("distance_from_subject_km")
+    if isinstance(d, (int, float)):
+        score += max(0, 10 - d)
+    if subject["location_name"].lower() in comp.get("location", "").lower():
+        score += 5
+    url = comp.get("source_url", "")
+    if url and "page=" not in url:
+        score += 2
+    return score
+
+
+# ── Main Agent ────────────────────────────────────────────────────────────
+def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None, metrics=None) -> dict:
+
+    from tools.valuation.map_search import search_coordinates
+
+    ptype       = subject["property_type"]
+    all_comps   = []
+    total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+
+    logger.info(
+        f"[Agent Start] project='{subject.get('project_name')}' "
+        f"type='{ptype}' search_term='{PROPERTY_TYPE_SEARCH_TERM[ptype]}' "
+        f"location='{subject.get('location_name')}'"
+    )
+
+    if run_logger:
+        run_logger.save_step("comparable_agent", "input_subject", subject)
+
+    # ── Step 1: Multi-pass LLM fetch ──────────────────────────────────────
+    for i in range(1):
+        logger.info(f"[LLM Fetch] Pass {i + 1}/1")
+        comps, usage = fetch_comparables(subject)
+        all_comps.extend(comps)
+        for k in ["prompt_tokens", "completion_tokens", "total_tokens"]:
+            total_usage[k] += usage.get(k, 0)
+        
+        # Track in metrics if provided
+        if metrics:
+            metrics.add_tokens(usage, model_name=usage.get("model", "gpt-4o-mini"))
+            if usage.get("tool_calls"):
+                metrics.add_tool_call("web_search_preview", cost=0.017)
+
+        if on_progress:
+            on_progress(i + 1, 0, len(all_comps), len(comps))
+
+        if run_logger:
+            run_logger.save_step("comparable_agent", f"pass_{i+1}_raw", comps)
+
+
+    logger.info(f"[Multi-pass] Total raw comparables: {len(all_comps)}")
+
+    # ── Step 2: Deduplicate ───────────────────────────────────────────────
+    seen, deduped = set(), []
+    for c in all_comps:
+        name = c.get("project_name", "").lower().strip()
+        if not name:
+            log_drop(
+                stage="dedup",
+                project_name="(empty)",
+                reason="missing_project_name",
+            )
+            continue
+        if name in seen:
+            log_drop(
+                stage="dedup",
+                project_name=c.get("project_name", ""),
+                reason="duplicate",
+            )
+            continue
+        seen.add(name)
+        deduped.append(c)
+
+    logger.info(f"[Dedup] {len(deduped)}/{len(all_comps)} unique comparables")
+
+    if run_logger:
+        run_logger.save_step("comparable_agent", "deduplicated", deduped)
+
+    # ── Step 3: Hard filter (Layer 1) ─────────────────────────────────────
+    type_filtered = hard_filter_by_type(deduped, ptype)
+
+    # ── Step 5: Geocode ───────────────────────────────────────────────────
+    logger.info(f"[Geocode] Starting for {len(type_filtered)} comparables")
+    for c in type_filtered:
+        try:
+            res = search_coordinates(
+                location_name=c.get("location"),
+                country=c.get("country"),
+                project_name=c.get("project_name"),
+            )
+            c["map_search_lat"] = res.get("lat")
+            c["map_search_lng"] = res.get("lng")
+
+            if not c["map_search_lat"] or not c["map_search_lng"]:
+                log_drop(
+                    stage="geocode",
+                    project_name=c.get("project_name", ""),
+                    reason="geocode_returned_empty",
+                    extra={
+                        "location": c.get("location", ""),
+                        "country":  c.get("country", ""),
+                    }
+                )
+            else:
+                logger.info(
+                    f"[Geocode] OK '{c['project_name']}' -> "
+                    f"({c['map_search_lat']}, {c['map_search_lng']})"
+                )
+
+        except Exception as e:
+            c["map_search_lat"] = None
+            c["map_search_lng"] = None
+            log_drop(
+                stage="geocode",
+                project_name=c.get("project_name", ""),
+                reason=f"geocode_exception: {str(e)}",
+                extra={"location": c.get("location", "")},
+            )
+        time.sleep(0.2)
+
+    # ── Step 6: Distance calculation ──────────────────────────────────────
+    clean = []
+    for c in type_filtered:
+        lat = c.get("map_search_lat")
+        lng = c.get("map_search_lng")
+
+        if not lat or not lng:
+            log_drop(
+                stage="distance_calc",
+                project_name=c.get("project_name", ""),
+                reason="no_valid_coordinates",
+            )
+            continue
+
+        c["distance_from_subject_km"] = calculate_distance(
+            subject["lat"], subject["lng"], lat, lng
+        )
+        clean.append(c)
+
+    logger.info(f"[Distance] {len(clean)} comparables with valid coordinates")
+
+    # ── Step 7: Remove bad URLs ───────────────────────────────────────────
+    url_clean = []
+    for c in clean:
+        url = c.get("source_url", "")
+        if "page=" in url:
+            log_drop(
+                stage="url_filter",
+                project_name=c.get("project_name", ""),
+                reason="pagination_url_not_direct_listing",
+                extra={"url": url},
+            )
+            continue
+        url_clean.append(c)
+
+    logger.info(f"[URL Filter] {len(url_clean)} comparables after URL cleanup")
+
+    # ── Step 8: Rank + 5km filter ─────────────────────────────────────────
+    ranked = sorted(url_clean, key=lambda x: score_comp(x, subject), reverse=True)
+
+    nearby = []
+    for c in ranked:
+        d = c.get("distance_from_subject_km", 999)
+        if d <= 15:
+            nearby.append(c)
+        else:
+            log_drop(
+                stage="distance_filter",
+                project_name=c.get("project_name", ""),
+                reason="beyond_15km_radius",
+                extra={"distance_km": d},
+            )
+
+    logger.info(
+        f"[Agent Done] Final comparables: {len(nearby)} | "
+        f"Total tokens: {total_usage['total_tokens']}"
+    )
+
+    if run_logger:
+        run_logger.save_step("comparable_agent", "final_comps", nearby)
+
+    return {
+        "comparables":  nearby,
+        "count":        len(nearby),
+        "_token_usage": total_usage,
+    }

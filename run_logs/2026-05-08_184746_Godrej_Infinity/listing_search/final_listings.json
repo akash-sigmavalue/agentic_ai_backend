@@ -1,0 +1,1533 @@
+[
+  {
+    "currency": "₹",
+    "project_name": "Godrej Infinity",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹78.06 Lac",
+    "area_raw": "531 Sq.Ft.",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "78.06 Lac",
+    "area_sqft": 531,
+    "rate_per_sqft_raw": "₹11,581 Per Sq. Ft",
+    "possession_status": "Ready to Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project",
+    "is_subject": true,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 635,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 654,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 938,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kharadi Police Station",
+        "category": "police_stations",
+        "mapped_type": "Security",
+        "distance_m": 971,
+        "lat": 18.5490279,
+        "lng": 73.9474895,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "police_stations": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.540328,
+    "lng": 73.9466658,
+    "price_norm": 7806000.0,
+    "price_per_sqft": 14701
+  },
+  {
+    "currency": "₹",
+    "project_name": "Godrej Infinity",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹1.59 Cr",
+    "area_raw": "1079 Sq.Ft.",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.59 Cr",
+    "area_sqft": 1079,
+    "rate_per_sqft_raw": "₹11,581 Per Sq. Ft",
+    "possession_status": "Ready to Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project",
+    "is_subject": true,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 635,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 654,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 938,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kharadi Police Station",
+        "category": "police_stations",
+        "mapped_type": "Security",
+        "distance_m": 971,
+        "lat": 18.5490279,
+        "lng": 73.9474895,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "police_stations": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.540328,
+    "lng": 73.9466658,
+    "price_norm": 15900000.0,
+    "price_per_sqft": 14736
+  },
+  {
+    "currency": "₹",
+    "project_name": "Godrej Infinity",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 64 L",
+    "area_raw": "450 - 552 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "1 BHK",
+    "price": "64 L",
+    "area_sqft": "450 - 552",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342",
+    "is_subject": true,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 635,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 654,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 938,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kharadi Police Station",
+        "category": "police_stations",
+        "mapped_type": "Security",
+        "distance_m": 971,
+        "lat": 18.5490279,
+        "lng": 73.9474895,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "police_stations": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.540328,
+    "lng": 73.9466658,
+    "price_norm": 64.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Godrej Infinity",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 85 L",
+    "area_raw": "720 - 900 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "85 L",
+    "area_sqft": "720 - 900",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342",
+    "is_subject": true,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 635,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 654,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 938,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kharadi Police Station",
+        "category": "police_stations",
+        "mapped_type": "Security",
+        "distance_m": 971,
+        "lat": 18.5490279,
+        "lng": 73.9474895,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "police_stations": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.540328,
+    "lng": 73.9466658,
+    "price_norm": 85.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Godrej Infinity",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 1.1 Cr",
+    "area_raw": "1036 - 1450 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.1 Cr",
+    "area_sqft": "1036 - 1450",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342",
+    "is_subject": true,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 635,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 654,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 938,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kharadi Police Station",
+        "category": "police_stations",
+        "mapped_type": "Security",
+        "distance_m": 971,
+        "lat": 18.5490279,
+        "lng": 73.9474895,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "police_stations": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.540328,
+    "lng": 73.9466658,
+    "price_norm": 11000000.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Mantra Mesmer",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 65.33 Lac",
+    "area_raw": "490 Sq.Ft.",
+    "area_type": null,
+    "bhk": "1 BHK",
+    "price": "65.33 Lac",
+    "area_sqft": 490,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Partially Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Mantra Properties",
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 558,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 604,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 642,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 810,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.5381896,
+    "lng": 73.9488135,
+    "price_norm": 6533000.0,
+    "price_per_sqft": 13333
+  },
+  {
+    "currency": "₹",
+    "project_name": "Mantra Mesmer",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 1.51 Cr",
+    "area_raw": "1039 Sq.Ft.",
+    "area_type": null,
+    "bhk": "3 BHK",
+    "price": "1.51 Cr",
+    "area_sqft": 1039,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Partially Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Mantra Properties",
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 558,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 604,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 642,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 810,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.5381896,
+    "lng": 73.9488135,
+    "price_norm": 15100000.0,
+    "price_per_sqft": 14533
+  },
+  {
+    "currency": "₹",
+    "project_name": "Mantra Mesmer",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 90.12 L",
+    "area_raw": "751 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "90.12 L",
+    "area_sqft": "751",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Under Construction",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 558,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 604,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 642,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 810,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.5381896,
+    "lng": 73.9488135,
+    "price_norm": 90.12,
+    "price_per_sqft": 0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Mantra Mesmer",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 1.13 - 1.39 Cr",
+    "area_raw": "943 - 1161 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.13 - 1.39 Cr",
+    "area_sqft": "943 - 1161",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Under Construction",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 558,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 604,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 642,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 810,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 4
+    },
+    "lat": 18.5381896,
+    "lng": 73.9488135,
+    "price_norm": 11299999.999999998
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹74.01 Lac",
+    "area_raw": "606",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "74.01 Lac",
+    "area_sqft": 606,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Partially Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/vertical-oriana/22451/project",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 7401000.000000001,
+    "price_per_sqft": 12213
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹74.01 Lac - 1.13 Cr",
+    "area_raw": "982",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.13 Cr",
+    "area_sqft": 982,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Partially Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": null,
+    "source_url": "https://www.squareyards.com/pune-residential-property/vertical-oriana/22451/project",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 11299999.999999998,
+    "price_per_sqft": 11507
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 80.2 Lac",
+    "area_raw": "850-950 sq ft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "80.2 Lac",
+    "area_sqft": "850-950 sq ft",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Nearing Possession",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Vertical Infra",
+    "rera_id": "P52100003700",
+    "source_url": "https://cityair.in/vertical-oriana-keshav-nagar-pune_ppc.html",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 8020000.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 95 Lac",
+    "area_raw": "850-950 sq ft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "95 Lac",
+    "area_sqft": "850-950 sq ft",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Nearing Possession",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Vertical Infra",
+    "rera_id": "P52100021565",
+    "source_url": "https://cityair.in/vertical-oriana-keshav-nagar-pune_ppc.html",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 9500000.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 95 Lac",
+    "area_raw": "1000-1100 sq ft",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "95 Lac",
+    "area_sqft": "1000-1100 sq ft",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Nearing Possession",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Vertical Infra",
+    "rera_id": "P52100022830",
+    "source_url": "https://cityair.in/vertical-oriana-keshav-nagar-pune_ppc.html",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 9500000.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 1.08 Cr",
+    "area_raw": "1000-1100 sq ft",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.08 Cr",
+    "area_sqft": "1000-1100 sq ft",
+    "rate_per_sqft_raw": null,
+    "possession_status": "Nearing Possession",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": "Vertical Infra",
+    "rera_id": "P52100022830",
+    "source_url": "https://cityair.in/vertical-oriana-keshav-nagar-pune_ppc.html",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 10800000.0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 70 L",
+    "area_raw": "662 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "70 L",
+    "area_sqft": 662,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": "P52100003700",
+    "source_url": "https://www.99acres.com/vertical-oriana-keshav-nagar-pune-npxid-r28616",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 70.0,
+    "price_per_sqft": 0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 82 L",
+    "area_raw": "780 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "2 BHK",
+    "price": "82 L",
+    "area_sqft": 780,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": "P52100003700",
+    "source_url": "https://www.99acres.com/vertical-oriana-keshav-nagar-pune-npxid-r28616",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 82.0,
+    "price_per_sqft": 0
+  },
+  {
+    "currency": "₹",
+    "project_name": "Vertical Oriana",
+    "property_type": "apartment",
+    "listing_type": "Sale",
+    "location": "Keshav Nagar, Pune",
+    "price_raw": "₹ 1.59 Cr",
+    "area_raw": "1350 sqft",
+    "area_type": "Carpet Area",
+    "bhk": "3 BHK",
+    "price": "1.59 Cr",
+    "area_sqft": 1350,
+    "rate_per_sqft_raw": null,
+    "possession_status": "Ready To Move",
+    "furnishing": null,
+    "floor": null,
+    "total_floors": null,
+    "parking": null,
+    "facing": null,
+    "developer": null,
+    "rera_id": "P52100005269",
+    "source_url": "https://www.99acres.com/vertical-oriana-keshav-nagar-pune-npxid-r28616",
+    "is_subject": false,
+    "road_type": "A",
+    "amenities": [
+      {
+        "name": "Pharmacy",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 59,
+        "lat": 18.5348935,
+        "lng": 73.9448236,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Keshav Nagar Bus Stop",
+        "category": "bus_stops",
+        "mapped_type": "Transport",
+        "distance_m": 89,
+        "lat": 18.534906,
+        "lng": 73.9442523,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Old Orbis School",
+        "category": "schools",
+        "mapped_type": "Education",
+        "distance_m": 636,
+        "lat": 18.5325473,
+        "lng": 73.9501083,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "KH Technologies Private Limited",
+        "category": "it_parks",
+        "mapped_type": "IT_Office",
+        "distance_m": 701,
+        "lat": 18.5291334,
+        "lng": 73.9444213,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kaka Halwai",
+        "category": "restaurants_entertainment",
+        "mapped_type": "Restaurant",
+        "distance_m": 742,
+        "lat": 18.5310182,
+        "lng": 73.9501838,
+        "source": "PostgreSQL Database"
+      },
+      {
+        "name": "Kodre Hospital",
+        "category": "hospitals",
+        "mapped_type": "Healthcare",
+        "distance_m": 848,
+        "lat": 18.5317166,
+        "lng": 73.9378623,
+        "source": "PostgreSQL Database"
+      }
+    ],
+    "amenity_summary": {
+      "counts": {
+        "bus_stops": 1,
+        "hospitals": 2,
+        "it_parks": 1,
+        "restaurants_entertainment": 1,
+        "schools": 1
+      },
+      "total": 6
+    },
+    "lat": 18.5354211,
+    "lng": 73.9448949,
+    "price_norm": 15900000.0,
+    "price_per_sqft": 11778
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "project_name": "Robie House",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 130,
+    "possession_status": "Ready",
+    "source_url": "https://en.wikipedia.org/wiki/Robie_House",
+    "reason": "Designed by Frank Lloyd Wright, this historic villa is a prime example of early 20th-century residential architecture."
+  },
+  {
+    "project_name": "Roloson Houses",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 132,
+    "possession_status": "Ready",
+    "source_url": "https://en.wikipedia.org/wiki/Roloson_Houses",
+    "reason": "A group of four adjacent row houses designed by Frank Lloyd Wright, showcasing his distinctive architectural style."
+  },
+  {
+    "project_name": "McCormick Row House District",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 137,
+    "possession_status": "Ready",
+    "source_url": "https://en.wikipedia.org/wiki/McCormick_Row_House_District",
+    "reason": "A collection of historic row houses in Lincoln Park, reflecting late 19th-century residential design."
+  },
+  {
+    "project_name": "Rogers Park Manor Bungalow Historic District",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 100,
+    "possession_status": "Ready",
+    "source_url": "https://en.wikipedia.org/wiki/Rogers_Park_Manor_Bungalow_Historic_District",
+    "reason": "A district featuring Chicago bungalows built in the 1920s, representing a significant residential style."
+  },
+  {
+    "project_name": "1727 N Winnebago Avenue",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 10,
+    "possession_status": "Ready",
+    "source_url": "https://www.atproperties.com/12564526/1727-n-winnebago-avenue-chicago-illinois-60647-nei",
+    "reason": "A modern townhouse in Bucktown, offering contemporary living spaces in a historic neighborhood."
+  },
+  {
+    "project_name": "1341 N Wolcott Ave Unit A",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 10,
+    "possession_status": "Ready",
+    "source_url": "https://rocket.com/homes/listings/1341-n-wolcott-ave-unit-a-chicago-il-60622",
+    "reason": "A townhouse in Wicker Park, combining modern amenities with the charm of a historic area."
+  },
+  {
+    "project_name": "5168 S Wabash Ave",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A new construction row house in the Bronzeville neighborhood, offering modern living spaces."
+  },
+  {
+    "project_name": "968 W Cuyler Ave",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A newly built townhouse in the Lakeview neighborhood, featuring contemporary design elements."
+  },
+  {
+    "project_name": "41 E Elm St",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A luxury townhouse in the Gold Coast area, offering high-end finishes and amenities."
+  },
+  {
+    "project_name": "2727 N Hampden Ct",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A new construction row house in Lincoln Park, providing modern living spaces in a prime location."
+  },
+  {
+    "project_name": "6702 S Parnell Ave",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A townhouse in the Englewood neighborhood, offering affordable housing options."
+  },
+  {
+    "project_name": "1252 N State Pkwy",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A luxury townhouse in the Gold Coast area, featuring high-end finishes and historic charm."
+  },
+  {
+    "project_name": "1312 N Astor St",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A historic townhouse in the Gold Coast neighborhood, offering classic architecture and modern amenities."
+  },
+  {
+    "project_name": "55 E Elm St",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A luxury townhouse in the Gold Coast area, featuring elegant design and prime location."
+  }
+]

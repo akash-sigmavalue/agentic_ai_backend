@@ -1,0 +1,28 @@
+[
+  {
+    "project_name": "41 E Elm St",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.zillow.com/chicago-il/row-house_att/",
+    "reason": "A luxury townhouse in the Gold Coast area, offering high-end finishes and amenities.",
+    "map_search_lat": 41.90301,
+    "map_search_lng": -87.6270203,
+    "distance_from_subject_km": 3.06
+  },
+  {
+    "project_name": "1341 N Wolcott Ave Unit A",
+    "location": "Chicago, IL",
+    "country": "USA",
+    "property_type": "villa",
+    "age_years": 10,
+    "possession_status": "Ready",
+    "source_url": "https://rocket.com/homes/listings/1341-n-wolcott-ave-unit-a-chicago-il-60622",
+    "reason": "A townhouse in Wicker Park, combining modern amenities with the charm of a historic area.",
+    "map_search_lat": 41.8755616,
+    "map_search_lng": -87.6244212,
+    "distance_from_subject_km": 0
+  }
+]
