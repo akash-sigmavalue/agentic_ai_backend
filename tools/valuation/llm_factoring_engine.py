@@ -26,7 +26,6 @@ import logging
 import os
 import re
 from typing import Any, Dict, List, Optional, Tuple
-
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -235,6 +234,21 @@ def _format_neighborhood_amenities(project: Dict[str, Any]) -> str:
     return f"{total} amenities within {radius_m}m"
 
 
+def _format_map_report_factors(project: Dict[str, Any]) -> str:
+    """
+    Format the full below-map factor evidence for the LLM.
+    Keep this structured so the model can reason from counts, nearest distances,
+    category meaning, sample radii, and CBD hub details instead of one-line labels.
+    """
+    evidence = {
+        "road": project.get("road") or {},
+        "builtup_density": project.get("builtup_density") or {},
+        "cbd": project.get("cbd") or {},
+        "amenities": project.get("amenities") or {},
+    }
+    return json.dumps(evidence, ensure_ascii=False, indent=2, default=str)
+
+
 def _rate_value(value: Any) -> Optional[float]:
     try:
         return float(value)
@@ -381,6 +395,7 @@ def _enrich_project_row(
             amenities_raw = []
 
     amenity_details: Dict[str, Dict[str, Any]] = {}
+    nearby_amenities: List[Dict[str, Any]] = []
     if isinstance(amenities_raw, list):
         for amenity in amenities_raw:
             if not isinstance(amenity, dict):
@@ -391,6 +406,12 @@ def _enrich_project_row(
                 continue
 
             raw_key = str(raw_key)
+            nearby_amenities.append({
+                "name": amenity.get("name"),
+                "category": raw_key,
+                "mapped_type": amenity.get("mapped_type"),
+                "distance_m": amenity.get("distance_m"),
+            })
             detail = amenity_details.setdefault(
                 raw_key,
                 {
@@ -427,6 +448,7 @@ def _enrich_project_row(
         "total":         amenity_summary.get("total", sum(category_totals.values())),
         "by_category":   amenities_enriched,
         "details":       amenity_details,
+        "nearby":        nearby_amenities,
         "sample_radius_m": radii.get("amenity_m", DEFAULT_RADII["amenity_m"]),
     }
 
@@ -602,7 +624,7 @@ SECTION C: ADJUSTMENT CALCULATION — STAGE 2 ReAct LOOP
 STEP 1 — Market baseline: assess central tendency of comparable scores per factor.
 STEP 2 — Identify gaps: compare subject vs baseline. Classify: negligible/moderate/significant.
 STEP 3 — Direction & magnitude: assign adjustment per factor using weight guidance.
-STEP 4 — Proximity dampening: if all comps within ~1km, reduce AMENITY & DENSITY weight.
+STEP 4 — Proximity dampening: if all comps within ~1km, reduce NEIGHBORHOOD AMENITY & BUILTUP DENSITY weight.
 STEP 5 — Aggregate sense-check: sum adjustments, verify proportionality, scale back if inflated.
 STEP 6 — Derive rate: derived_rate = BASE_RATE × (1 + total_adj / 100)
 
@@ -660,11 +682,11 @@ REVISE: ...
 (same loop — state total adjustment %)
 
 ### STEP 6 — Derived Rate
-MARKET RATE RANGE: ₹X - ₹Y/sqft
-CALCULATION MIDPOINT: ₹X/sqft
+MARKET RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
+CALCULATION MIDPOINT: [CURRENCY]X/[UNIT]
 TOTAL ADJUSTMENT: X%
-DERIVED RATE: ₹X/sqft
-DERIVED RATE RANGE: ₹X - ₹Y/sqft
+DERIVED RATE: [CURRENCY]X/[UNIT]
+DERIVED RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
 
 ---
 
@@ -677,8 +699,8 @@ CRITIQUE: ...
 REVISE: ...
 
 ## FINAL ANSWER
-DERIVED RATE: ₹X/sqft
-DERIVED RATE RANGE: ₹X - ₹Y/sqft
+DERIVED RATE: [CURRENCY]X/[UNIT]
+DERIVED RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
 CONFIDENCE: High / Medium / Low
 KEY DRIVERS: [top 2 factors that drove the adjustment]
 UNCERTAINTIES: [what was inferred vs evidenced]
@@ -689,6 +711,10 @@ For the Subject Property:
 - Set `role` to "SUBJECT"
 - Set `adjustment` to 0
 - Set `value` and `interpretation` to reflect its actual data.
+  * For `neighborhood_amenity`: `value` should be the count of amenities (e.g. "12 amenities").
+  * For `road_type`: `value` should be the category (e.g. "Category D").
+  * For `builtup_density`: `value` should be the congestion score or density class (e.g. "Score: 7.5").
+  * For `cbd_score`: `value` should be the distance to the nearest CBD hub (e.g. "3.2 km").
 """
 
 
@@ -711,10 +737,10 @@ output_schema = {
             "avg_rate": "<number | null>",
             "distance_km": "<number | null>",
             "scores": {
-                "road": "<float 1-10 | null>",
-                "cbd": "<float 1-10 | null>",
-                "density": "<float 1-10 | null>",
-                "amenity": "<float 1-10 | null>"
+                "road_type": "<float 1-10 | null>",
+                "cbd_score": "<float 1-10 | null>",
+                "builtup_density": "<float 1-10 | null>",
+                "neighborhood_amenity": "<float 1-10 | null>"
             }
         }
     ],
@@ -738,22 +764,22 @@ output_schema = {
         "derived_rate_range": {"low": "<number>", "high": "<number>"},
         "factor_breakdown": {
             "neighborhood_amenity": {
-                "projects": [{"name": "<string>", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
+                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
                 "subject_vs_avg": "<string>",
                 "net_impact": "<float>"
             },
             "road_type": {
-                "projects": [{"name": "<string>", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
+                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
                 "subject_vs_avg": "<string>",
                 "net_impact": "<float>"
             },
             "builtup_density": {
-                "projects": [{"name": "<string>", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
+                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
                 "subject_vs_avg": "<string>",
                 "net_impact": "<float>"
             },
             "cbd_score": {
-                "projects": [{"name": "<string>", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
+                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
                 "subject_vs_avg": "<string>",
                 "net_impact": "<float>"
             }
@@ -778,7 +804,7 @@ output_schema = {
     ]
 }
 
-def build_user_prompt(subject_data: dict, comparables_data: list[dict]) -> str:
+def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency: str = "₹", area_unit: str = "sqft") -> str:
     """
     1:1 Mirror of build_user_prompt from property_valuation.py.
     Builds the user message from structured subject + comparable dicts.
@@ -790,14 +816,15 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict]) -> str:
     lines.append(f"- Name            : {subject_data['name']}")
     lines.append(f"- Property Type   : {subject_data['property_type']}")
     lines.append(
-        f"- Market Rate Range: ₹{subject_data['rate_range']['low']:,} - "
-        f"₹{subject_data['rate_range']['high']:,}/sqft (90% confidence interval)"
+        f"- Market Rate Range: {currency}{subject_data['rate_range']['low']:,} - "
+        f"{currency}{subject_data['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
     )
-    lines.append(f"- Calculation Midpoint: ₹{subject_data['calculation_rate']:,}/sqft")
-    lines.append(f"- Neighborhood    : {subject_data['neighborhood_amenity']}")
-    lines.append(f"- Road Category   : {subject_data['road_category']}")
-    lines.append(f"- Builtup Density : {subject_data['builtup_density']}")
-    lines.append(f"- CBD Info        : {subject_data['cbd_info']}")
+    lines.append(f"- Calculation Midpoint: {currency}{subject_data['calculation_rate']:,}/{area_unit}")
+    if subject_data.get("map_report_factors"):
+        lines.append("- Below-Map Report Factor Evidence:")
+        lines.append("```json")
+        lines.append(subject_data["map_report_factors"])
+        lines.append("```")
     lines.append("")
 
     # Comparables
@@ -806,22 +833,26 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict]) -> str:
         lines.append(f"\n### Comparable {i}: {comp['name']}")
         lines.append(f"- Property Type   : {comp['property_type']}")
         lines.append(
-            f"- Market Rate Range: ₹{comp['rate_range']['low']:,} - "
-            f"₹{comp['rate_range']['high']:,}/sqft (90% confidence interval)"
+            f"- Market Rate Range: {currency}{comp['rate_range']['low']:,} - "
+            f"{currency}{comp['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
         )
-        lines.append(f"- Calculation Midpoint: ₹{comp['calculation_rate']:,}/sqft")
-        lines.append(f"- Neighborhood    : {comp['neighborhood_amenity']}")
-        lines.append(f"- Road Category   : {comp['road_category']}")
-        lines.append(f"- Builtup Density : {comp['builtup_density']}")
-        lines.append(f"- CBD Info        : {comp['cbd_info']}")
+        lines.append(f"- Calculation Midpoint: {currency}{comp['calculation_rate']:,}/{area_unit}")
         lines.append(f"- Distance to Subject: {comp.get('distance_to_subject', 'Unknown')}")
+        if comp.get("map_report_factors"):
+            lines.append("- Below-Map Report Factor Evidence:")
+            lines.append("```json")
+            lines.append(comp["map_report_factors"])
+            lines.append("```")
 
     lines.append("\n---")
     lines.append(
         "Now run the full ReAct reasoning loop (Stage 1 → Stage 2 → Stage 3) "
         "and derive the final rate for the subject property. Use the market rate "
         "ranges as valuation evidence, and use the calculation midpoint only where "
-        "a single number is required by the formula or JSON schema."
+        "a single number is required by the formula or JSON schema. "
+        f"All monetary values are in {currency} and area is in {area_unit}. "
+        "The Below-Map Report Factor Evidence JSON is the sole source of truth "
+        "for all location factors: road_type, neighborhood_amenity, builtup_density, and cbd_score."
     )
 
     return "\n".join(lines)
@@ -840,15 +871,7 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
         "property_type": payload["property_type"],
         "rate_range": _project_rate_range(subject_proj),
         "calculation_rate": _project_calculation_rate(subject_proj),
-        "neighborhood_amenity": _format_neighborhood_amenities(subject_proj),
-        "road_category": subject_proj["road"]["category"],
-        "builtup_density": (
-            f"Density Score {subject_proj['builtup_density']['congestion_score']} | "
-            f"BCR {subject_proj['builtup_density']['bcr_pct']}% | "
-            f"Open Space {subject_proj['builtup_density']['open_space_ratio_pct']}% | "
-            f"{subject_proj['builtup_density']['description']}"
-        ),  
-        "cbd_info": f"{subject_proj['cbd']['nearest_km']}km to {subject_proj['cbd']['hubs'][0]['name'] if subject_proj['cbd']['hubs'] else 'CBD'}",
+        "map_report_factors": _format_map_report_factors(subject_proj),
     }
 
     expert_comparables = []
@@ -858,23 +881,32 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
             "property_type": payload["property_type"],
             "rate_range": _project_rate_range(comp),
             "calculation_rate": _project_calculation_rate(comp),
-            "neighborhood_amenity": _format_neighborhood_amenities(comp),
-            "road_category": comp["road"]["category"],
-            "builtup_density": (
-                f"Density Score {comp['builtup_density']['congestion_score']} | "
-                f"BCR {comp['builtup_density']['bcr_pct']}% | "
-                f"Open Space {comp['builtup_density']['open_space_ratio_pct']}% | "
-                f"{comp['builtup_density']['description']}"
-            ),
-            "cbd_info": f"{comp['cbd']['nearest_km']}km proximity",
             "distance_to_subject": f"{comp['distance_km']} km",
+            "map_report_factors": _format_map_report_factors(comp),
         })
 
     # Build the exact prompt from property_valuation.py
-    user_prompt_expert = build_user_prompt(expert_subject, expert_comparables)
+    user_prompt_expert = build_user_prompt(
+        expert_subject, expert_comparables, 
+        currency=payload.get("currency", "₹"),
+        area_unit=payload.get("area_unit", "sqft")
+    )
     
     # Append the hidden system instructions for JSON parsing
     user_prompt = user_prompt_expert + f"\n\nAfter your reasoning, provide a final JSON block matching the schema below for system integration:\n```json\n{json.dumps(output_schema, indent=2)}\n```"
+
+    print("\n" + "=" * 100, flush=True)
+    print("[LLM Factoring] PROMPT SENT TO LLM FOR RATE DERIVATION", flush=True)
+    print("=" * 100, flush=True)
+    print(f"Model: {model}", flush=True)
+    print(f"Projects: 1 subject + {len(comparables_projs)} comparables", flush=True)
+    print("-" * 100, flush=True)
+    print("SYSTEM MESSAGE:", flush=True)
+    print(_SYSTEM_PROMPT, flush=True)
+    print("-" * 100, flush=True)
+    print("USER MESSAGE:", flush=True)
+    print(user_prompt, flush=True)
+    print("=" * 100 + "\n", flush=True)
 
     try:
         response = _client.chat.completions.create(

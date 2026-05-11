@@ -35,18 +35,17 @@ _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
 # ── LLM prompts ──────────────────────────────────────────────────────────────
 
-SYSTEM_PROMPT = """You are an expert real estate geospatial analyst specialising in Indian cities.
-
+SYSTEM_PROMPT = """You are an expert real estate geospatial analyst specialising in global city structures.
 Your task is to identify the most relevant Central Business Districts (CBDs) or major commercial 
 micro-markets near each property given to you.
 
 RULES:
 - For each project, identify 2-4 nearby CBDs / key commercial districts.
-- A "CBD" in the Indian context includes areas like BKC (Mumbai), Nariman Point (Mumbai), 
-  Connaught Place (Delhi), UB City (Bengaluru), HITEC City (Hyderabad), etc.
+- A "CBD" is the commercial and business centre of a city (e.g., Downtown, Financial District, IT Parks, major employment hubs).
+- Examples: BKC (Mumbai), Canary Wharf (London), Downtown Dubai (Dubai), DIFC (Dubai), Abu Dhabi Global Market (Abu Dhabi).
 - Include both traditional city-centre CBDs AND newer business parks / SEZs if relevant.
-- Use your knowledge of Indian real estate micro-markets.
-- The CBD name must be specific enough to geocode (e.g. "Bandra Kurla Complex, Mumbai" not just "BKC").
+- Use your knowledge of the city's real estate micro-markets.
+- The CBD name must be specific enough to geocode (e.g. "Bandra Kurla Complex, Mumbai" or "Downtown Dubai, Dubai").
 - Do NOT invent CBDs. Only include well-known, real commercial zones.
 
 OUTPUT FORMAT (STRICT JSON — no markdown, no explanation):

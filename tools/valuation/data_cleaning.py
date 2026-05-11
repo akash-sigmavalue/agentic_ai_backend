@@ -18,6 +18,8 @@ logger = logging.getLogger("data_cleaning")
 
 # Optional fast json repair
 try:
+    
+    # pyrefly: ignore [missing-import]
     from json_repair import repair_json
     _HAS_JSON_REPAIR = True
 except ImportError:

@@ -36,8 +36,6 @@ from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 from dotenv import load_dotenv
-from tools.valuation.road_infrastructure_tool import get_road_category
-from tools.valuation.amenity_analytics_tool import get_nearby_amenities, get_amenity_counts
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
@@ -240,7 +238,7 @@ def is_html_useful(html: str) -> bool:
     # Check for heavy script sites that might need visible text capture instead
     soup = BeautifulSoup(html, "html.parser")
     scripts = soup.find_all("script")
-    if len(scripts) > 60: # Threshold from R&D
+    if len(scripts) > 60:
         return False
     
     return True
@@ -262,7 +260,7 @@ def score_url(url: str) -> int:
 
 def search_duckduckgo(query: str, num_results: int = 15) -> List[str]:
     """
-    Directly scrapes DuckDuckGo HTML results as implemented in R&D notebook.
+    "Directly scrapes DuckDuckGo HTML results
     """
     try:
         url = "https://html.duckduckgo.com/html/"
@@ -292,8 +290,7 @@ def search_urls_for_projects_batch(
     num_results:   int = 7,
 ) -> tuple:
     """
-    Updated to use DuckDuckGo scraping logic instead of OpenAI web_search.
-    Generates a targeted query for each project and scrapes results.
+    Uses DuckDuckGo scraping to find listing URLs for each project.
     """
     final_map = {}
     search_term = PROPERTY_TYPE_SEARCH_TERM.get(property_type, property_type)
@@ -330,7 +327,7 @@ def search_urls_for_projects_batch(
 # ── YIELD-03: Scraper — capture all listing rows, not just first ──────────
 def fetch_page_text(url: str, project_name: str = "", char_limit: int = 2000, run_logger: Optional[any] = None) -> str:
     """
-    Refactored to use Selenium for robust scraping, matching R&D logic.
+    Uses Selenium for robust scraping.
     Switches between HTML extraction and Visible Text based on usefulness.
     Now saves raw content to disk if run_logger is provided.
     """
@@ -503,17 +500,6 @@ def extract_listings_from_text(
 
         verified = []
         for item in listings:
-            # Property type guard
-            # if normalize_property_type(item.get("property_type", "")) != property_type:
-            #     log_drop(
-            #         "extract_type_filter",
-            #         item.get("project_name", project_name),
-            #         "property_type_mismatch",
-            #         extra={"got": item.get("property_type"), "expected": property_type, "url": url},
-            #     )
-            #     continue
-
-            # Project name guard (BUG-01/03 fix)
             extracted_proj = (item.get("project_name") or "").strip()
             if extracted_proj and not is_matching_project(extracted_proj, project_name):
                 log_drop(
@@ -740,24 +726,7 @@ def listing_pipeline(
         
         if on_progress:
             on_progress(pname, "started", {"message": f"Searching and scraping {pname}..."})
-
-        # Fetch road category and amenities (Local CSV or OSM)
-        road_type = get_road_category(p.get("lat"), p.get("lng"))
-        # We pass location as city_name; get_nearby_amenities uses fuzzy matching
-        amenities = get_nearby_amenities(p.get("lat"), p.get("lng"), city_name=p.get("location"))
         
-        print(f"\n>>> FETCHING AMENITY COUNTS FOR PROJECT: {pname} <<<")
-        amenity_counts = get_amenity_counts(amenities)
-        
-        # Summary counts for factorial table
-        amenity_summary = {
-            "counts": amenity_counts,
-            "total": len(amenities)
-        }
-        
-        logger.info(f"[Pipeline] Road Category for {pname}: {road_type}")
-        logger.info(f"[Pipeline] Amenities for {pname}: {amenity_summary}")
-
         # A. URL search (Sequential search is fine as it's one query)
         if custom_urls and pname in custom_urls:
             urls = custom_urls[pname]
@@ -778,11 +747,8 @@ def listing_pipeline(
 
         # B. Scrape + Extract URLs in PARALLEL for this project
         p_listings_valid = []
-        
-        # B. Scrape + Extract URLs in PARALLEL for this project
-        p_listings_valid = []
-        
-        def process_url(idx, url, current_pname, is_subject, current_road_type, current_amenities, current_amenity_summary, p_lat, p_lng):
+
+        def process_url(idx, url, current_pname, is_subject, p_lat, p_lng):
             logger.info(f"[Scrape] URL #{idx} Starting: {url}")
             text = fetch_page_text(url, project_name=current_pname, run_logger=run_logger)
             if not text: 
@@ -800,9 +766,6 @@ def listing_pipeline(
                     lst["project_name"]  = current_pname
                     lst["property_type"] = property_type
                     lst["is_subject"]    = is_subject
-                    lst["road_type"]     = current_road_type
-                    lst["amenities"]     = current_amenities
-                    lst["amenity_summary"] = current_amenity_summary
                     lst["lat"]           = p_lat
                     lst["lng"]           = p_lng
                     lst["price_norm"]    = normalise_price(lst.get("price"))
@@ -814,14 +777,20 @@ def listing_pipeline(
                             area_num = float(area)
                             if area_num > 0:
                                 lst["price_per_sqft"] = round(lst["price_norm"] / area_num)
-                        except: pass
+                        except Exception: pass
                     valid.append(lst)
             
             logger.info(f"[Scrape] URL #{idx} Finished: {url} -> {len(valid)} listings found")
             return valid, usage
 
         with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(process_url, i+1, url, pname, p["is_subject"], road_type, amenities, amenity_summary, p.get("lat"), p.get("lng")): url for i, url in enumerate(urls)}
+            futures = {
+                executor.submit(
+                    process_url, i + 1, url, pname,
+                    p["is_subject"], p.get("lat"), p.get("lng")
+                ): url
+                for i, url in enumerate(urls)
+            }
             for future in as_completed(futures):
                 try:
                     res_listings, usage = future.result()
