@@ -4,14 +4,11 @@ import tempfile
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from langchain_openai import ChatOpenAI
 
 from agents.user_input.main import token_usage
 from api.schemas.user_input import AskRequest, AskResponse
-from core.user_input.config import OPENAI_API_KEY
 from core.user_input.security import require_openai_key
 from database.user_input_runtime import runtime
-from utils.user_input.helpers import count_tokens
 
 
 router = APIRouter()
@@ -157,7 +154,14 @@ def ask(request: AskRequest) -> AskResponse:
         raise HTTPException(status_code=400, detail="Upload and process a document first.")
 
     final_state = rag_graph.invoke(
-        {"question": question, "context": [], "answer": "", "retrieval_timing": None, "token_usage": None}
+        {
+            "question": question,
+            "query_plan": None,
+            "context": [],
+            "answer": "",
+            "retrieval_timing": None,
+            "token_usage": None,
+        }
     )
     return AskResponse(
         answer=final_state["answer"],
@@ -170,7 +174,7 @@ def ask(request: AskRequest) -> AskResponse:
 @router.post("/ask/stream")
 async def ask_stream(request: AskRequest):
     require_openai_key()
-    build_context_string, _, retrieve_node, _, RAG_PROMPT_TEMPLATE = _load_rag_graph()
+    _, rag_graph, _, _, _ = _load_rag_graph()
 
     question = request.question.strip()
     if not question:
@@ -186,11 +190,12 @@ async def ask_stream(request: AskRequest):
         loop = asyncio.get_event_loop()
 
         with ThreadPoolExecutor() as pool:
-            state = await loop.run_in_executor(
+            final_state = await loop.run_in_executor(
                 pool,
-                lambda: retrieve_node(
+                lambda: rag_graph.invoke(
                     {
                         "question": question,
+                        "query_plan": None,
                         "context": [],
                         "answer": "",
                         "retrieval_timing": None,
@@ -199,32 +204,13 @@ async def ask_stream(request: AskRequest):
                 ),
             )
 
-        context_blocks = state["context"]
-        retrieval_timing = state.get("retrieval_timing")
-        context_str = build_context_string(context_blocks)
-        prompt = RAG_PROMPT_TEMPLATE.format(context_str=context_str, question=question)
+        answer = final_state["answer"]
+        context_blocks = final_state["context"]
+        retrieval_timing = final_state.get("retrieval_timing")
+        current_token_usage = final_state.get("token_usage") or {"input": 0, "output": 0}
 
-        llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0.2,
-            api_key=OPENAI_API_KEY,
-            streaming=True,
-        )
-
-        full_response = ""
-        in_tokens = count_tokens(prompt, "gpt-4o-mini")
-
-        async for chunk in llm.astream(prompt):
-            token = chunk.content
-            if token:
-                full_response += token
-                yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
-
-        out_tokens = count_tokens(full_response, "gpt-4o-mini")
-        runtime.total_llm_input_tokens += in_tokens
-        runtime.total_llm_output_tokens += out_tokens
-
-        yield f"data: {json.dumps({'type': 'done', 'chunks': context_blocks, 'token_usage': {'input': in_tokens, 'output': out_tokens}, 'retrieval_timing': retrieval_timing})}\n\n"
+        yield f"data: {json.dumps({'type': 'token', 'content': answer})}\n\n"
+        yield f"data: {json.dumps({'type': 'done', 'chunks': context_blocks, 'token_usage': current_token_usage, 'retrieval_timing': retrieval_timing})}\n\n"
 
     return StreamingResponse(
         generate(),

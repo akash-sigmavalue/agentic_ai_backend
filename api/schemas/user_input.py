@@ -1,4 +1,4 @@
-from typing import Any, NotRequired, TypedDict
+from typing import Any, NotRequired, TypedDict, Optional
 
 from pydantic import BaseModel
 
@@ -14,9 +14,13 @@ class AskResponse(BaseModel):
     retrieval_timing: dict[str, float] | None = None
 
 
-class GraphState(TypedDict):
+class GraphState(TypedDict, total=False):
     question: str
+    query_plan: Optional[dict[str, Any]]
     context: list[dict[str, Any]]
     answer: str
-    retrieval_timing: NotRequired[dict[str, float] | None]
-    token_usage: NotRequired[dict[str, int] | None]
+    retrieval_timing: Optional[dict[str, Any]]
+    token_usage: Optional[dict[str, int]]
+    query_understanding_token_usage: Optional[dict[str, int]]
+    checker_token_usage: Optional[dict[str, int]]
+    verified: bool
