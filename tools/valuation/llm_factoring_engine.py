@@ -131,30 +131,6 @@ AMENITY_CONTEXT: Dict[str, str] = {
     "IT_Office":     "IT parks, tech campuses, co-working — employment catchment premium for residential within 5 km.",
 }
 
-PROPERTY_TYPE_WEIGHT_GUIDE = """
-PROPERTY-TYPE WEIGHTING RULES (apply these before assigning adjustments):
-
-• RESIDENTIAL (apartments, condos, flats, villas, bungalows, row-houses):
-  Road × 0.9 | CBD × 1.0 | Density × 1.0 | Amenity (Education, Transport) × 1.4
-
-• COMMERCIAL / RETAIL (shops, showrooms, retail strips, high-street):
-  Road × 1.3 | CBD × 1.5 | Density × 1.2 | Amenity (Retail, Restaurant) × 1.2
-
-• OFFICE (office space, business parks, co-working):
-  Road × 1.1 | CBD × 1.5 | Density × 1.1 | Amenity (IT_Office, Transport) × 1.3
-
-• INDUSTRIAL / WAREHOUSE / LOGISTICS:
-  Road × 1.5 | CBD × 0.3 | Density × 0.5 | Amenity (any) × 0.3
-
-• LAND (plot, land parcel, agricultural):
-  Road × 1.2 | CBD × 1.3 | Density × 0.7 | Amenity × 0.6
-
-Adjust the above multipliers using your professional judgment if the property
-location context clearly warrants it (e.g., a branded residential project near
-an IT hub warrants higher IT_Office amenity weight).
-"""
-
-
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _cbd_zone(dist_km: Optional[float]) -> str:

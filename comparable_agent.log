@@ -3398,3 +3398,541 @@ ORDER BY
 2026-05-09 19:00:00,026 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-09 19:30:00 IST)" (scheduled at 2026-05-09 19:00:00+05:30)
 2026-05-09 19:00:00,084 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-09 19:30:00 IST)" executed successfully
 2026-05-09 19:16:17,871 | INFO | Scheduler has been shut down
+2026-05-12 10:50:39,761 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 10:50:39,762 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 10:50:39,763 | INFO | Scheduler started
+2026-05-12 10:51:23,264 | INFO | Scheduler has been shut down
+2026-05-12 10:51:52,673 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 10:51:52,675 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 10:51:52,675 | INFO | Scheduler started
+2026-05-12 11:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 11:00:00 IST)" (scheduled at 2026-05-12 11:00:00+05:30)
+2026-05-12 11:00:00,091 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 11:30:00 IST)" executed successfully
+2026-05-12 11:01:45,237 | INFO | Scheduler has been shut down
+2026-05-12 11:02:09,993 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 11:02:09,994 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 11:02:09,995 | INFO | Scheduler started
+2026-05-12 11:02:30,453 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:02:37,194 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:02:49,824 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:03:11,450 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:03:25,733 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:03:32,309 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:03:57,498 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:04:04,597 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:04:33,662 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:05:13,153 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:05:27,820 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:07:45,845 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:07:52,107 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:07:59,259 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:08:05,090 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:08:10,569 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:08:15,803 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:08:30,498 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:08:36,605 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:09:48,078 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:09:59,931 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 11:09:59,942 | INFO | [Agent Start] project='None' type='plot' search_term='plot or villa or independent house' location='bilaspur'
+2026-05-12 11:09:59,944 | INFO | [LLM Fetch] Pass 1/1
+2026-05-12 11:11:09,435 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-12 11:11:09,820 | INFO | [LLM Fetch] Received 14 raw comparables | tokens=2447
+2026-05-12 11:11:09,823 | INFO | [Multi-pass] Total raw comparables: 14
+2026-05-12 11:11:09,824 | INFO | [Dedup] 14/14 unique comparables
+2026-05-12 11:11:09,836 | WARNING | [DROP] stage=hard_filter | project='Swarnima Era' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Sarkanda, Bilaspur"}
+2026-05-12 11:11:09,837 | WARNING | [DROP] stage=hard_filter | project='3 BHK Independent House in Uslapur' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Uslapur, Bilaspur"}
+2026-05-12 11:11:09,838 | WARNING | [DROP] stage=hard_filter | project='5 BHK Villa in Masanganj' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Masanganj, Bilaspur"}
+2026-05-12 11:11:09,839 | WARNING | [DROP] stage=hard_filter | project='4 BHK Villa in Tifra' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Tifra, Bilaspur"}
+2026-05-12 11:11:09,840 | WARNING | [DROP] stage=hard_filter | project='5 BHK Villa in Tifra' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Tifra, Bilaspur"}
+2026-05-12 11:11:09,841 | WARNING | [DROP] stage=hard_filter | project='10 BHK Villa in Tifra' | reason=property_type_mismatch | detail={"got": "villa", "expected": "plot", "location": "Tifra, Bilaspur"}
+2026-05-12 11:11:09,842 | INFO | [Hard Filter] 8/14 passed type check
+2026-05-12 11:11:09,842 | INFO | [Geocode] Starting for 8 comparables
+2026-05-12 11:11:11,261 | INFO | [Geocode] OK 'Anantam Greens' -> (22.0081697, 82.2456124)
+2026-05-12 11:11:12,503 | INFO | [Geocode] OK 'Residential Land in Koni' -> (22.1322185, 82.1249317)
+2026-05-12 11:11:13,565 | INFO | [Geocode] OK 'Residential Land in Chakarbhatha' -> (21.9891341, 82.1341838)
+2026-05-12 11:11:14,955 | INFO | [Geocode] OK 'Residential Land in Bodri' -> (22.0322455, 82.1049075)
+2026-05-12 11:11:16,055 | INFO | [Geocode] OK 'Residential Plot in Seepat Road' -> (22.0967789, 82.15746630000001)
+2026-05-12 11:11:17,158 | INFO | [Geocode] OK 'Residential Plot in Devnandan Nagar' -> (22.0998381, 82.164003)
+2026-05-12 11:11:18,100 | INFO | [Geocode] OK 'Residential Plot in Bilha' -> (22.1025297, 82.174764)
+2026-05-12 11:11:19,044 | INFO | [Geocode] OK 'Residential Plot in Domuhani' -> (22.1025297, 82.174764)
+2026-05-12 11:11:19,245 | INFO | [Distance] 8 comparables with valid coordinates
+2026-05-12 11:11:19,245 | INFO | [URL Filter] 8 comparables after URL cleanup
+2026-05-12 11:11:19,245 | WARNING | [DROP] stage=distance_filter | project='Anantam Greens' | reason=beyond_15km_radius | detail={"distance_km": 16.16}
+2026-05-12 11:11:19,246 | INFO | [Agent Done] Final comparables: 7 | Total tokens: 2447
+2026-05-12 11:30:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 11:30:00 IST)" (scheduled at 2026-05-12 11:30:00+05:30)
+2026-05-12 11:30:00,024 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 12:00:00 IST)" executed successfully
+2026-05-12 11:42:41,237 | INFO | Scheduler has been shut down
+2026-05-12 11:44:30,670 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 11:44:30,670 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 11:44:30,671 | INFO | Scheduler started
+2026-05-12 12:00:00,013 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 12:00:00 IST)" (scheduled at 2026-05-12 12:00:00+05:30)
+2026-05-12 12:00:00,036 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 12:30:00 IST)" executed successfully
+2026-05-12 12:27:35,517 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:27:42,526 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:27:42,647 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-12 12:27:42,648 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-12 12:27:47,056 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:27:54,916 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:05,440 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:11,170 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:15,719 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:25,708 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:37,259 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:42,750 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:28:42,757 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-12 12:28:42,759 | INFO | [LLM Fetch] Pass 1/1
+2026-05-12 12:28:55,037 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-12 12:28:55,238 | INFO | [LLM Fetch] Received 10 raw comparables | tokens=2170
+2026-05-12 12:28:55,240 | INFO | [Multi-pass] Total raw comparables: 10
+2026-05-12 12:28:55,241 | INFO | [Dedup] 10/10 unique comparables
+2026-05-12 12:28:55,251 | INFO | [Hard Filter] 10/10 passed type check
+2026-05-12 12:28:55,251 | INFO | [Geocode] Starting for 10 comparables
+2026-05-12 12:28:56,205 | INFO | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999)
+2026-05-12 12:28:57,716 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001)
+2026-05-12 12:28:58,837 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5395198, 73.9485375)
+2026-05-12 12:29:00,268 | INFO | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948)
+2026-05-12 12:29:01,622 | INFO | [Geocode] OK 'Choice QUE 914' -> (18.5367267, 73.9484667)
+2026-05-12 12:29:02,758 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639)
+2026-05-12 12:29:04,012 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831)
+2026-05-12 12:29:05,189 | INFO | [Geocode] OK 'Nivasa Elevia' -> (18.5388686, 73.95435429999999)
+2026-05-12 12:29:06,255 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771)
+2026-05-12 12:29:07,363 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423)
+2026-05-12 12:29:07,564 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-12 12:29:07,564 | INFO | [URL Filter] 10 comparables after URL cleanup
+2026-05-12 12:29:07,565 | INFO | [Agent Done] Final comparables: 10 | Total tokens: 2170
+2026-05-12 12:29:15,362 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=1
+2026-05-12 12:29:15,363 | INFO | [Pipeline] Subject: {'project_name': 'Godrej Infinity', 'location_name': 'Keshav Nagar, Pune', 'country': 'India', 'currency': 'INR', 'property_type': 'apartment', 'lat': 18.5395129, 'lng': 73.94636849999999}
+2026-05-12 12:29:15,363 | INFO | [Pipeline] Total projects: 2
+2026-05-12 12:29:15,363 | INFO | [Pipeline] Projects: [{'project_name': 'Godrej Infinity', 'location': 'Keshav Nagar, Pune', 'country': 'India', 'lat': 18.5395129, 'lng': 73.94636849999999, 'is_subject': True}, {'project_name': 'ARV Richvue', 'location': 'Keshav Nagar, Pune', 'country': 'India', 'lat': 18.5411875, 'lng': 73.94531250000001, 'is_subject': False}]
+2026-05-12 12:29:15,364 | INFO | 
+============================================================
+[Pipeline] Processing Project: Godrej Infinity (Parallel URLs)
+============================================================
+2026-05-12 12:29:15,365 | INFO | [URL Search DDG] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-12 12:29:17,322 | INFO | [URL Search DDG] Result: 'Godrej Infinity' -> 5 URLs.
+2026-05-12 12:29:18,323 | INFO | ------------------- urls for Godrej Infinity --- 5 ---- ['https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342', 'https://www.godrejproperties.com/pune/residential/godrej-infinity', 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938', 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl', 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project']
+2026-05-12 12:29:18,324 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-12 12:29:18,324 | INFO | [Scrape] project='Godrej Infinity' url='https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-12 12:29:18,325 | INFO | [Scrape] URL #2 Starting: https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-12 12:29:18,325 | INFO | [Scrape] Trying requests for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-12 12:29:18,326 | INFO | [Scrape] project='Godrej Infinity' url='https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-12 12:29:18,326 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-12 12:29:18,327 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-12 12:29:18,327 | INFO | [Scrape] Trying requests for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-12 12:29:18,328 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-12 12:29:18,328 | INFO | [Scrape] project='Godrej Infinity' url='https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-12 12:29:18,329 | INFO | [Scrape] project='Godrej Infinity' url='https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-12 12:29:18,330 | INFO | [Scrape] project='Godrej Infinity' url='https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-12 12:29:18,331 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-12 12:29:18,331 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-12 12:29:18,331 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-12 12:29:19,949 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-12 12:29:19,949 | INFO | [Scrape] URL 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342' is difficult to scrape, using Selenium Pool.
+2026-05-12 12:29:19,949 | INFO | [Driver Pool] Creating new browser for thread 16772
+2026-05-12 12:29:21,288 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-12 12:29:21,533 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-12 12:29:21,540 | INFO | [Scrape] OK via Requests (200 OK) for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-12 12:29:22,593 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-12 12:29:22,664 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:22,666 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-12 12:29:22,667 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-12 12:29:22,667 | INFO | [Scrape] URL #2 Finished: https://www.godrejproperties.com/pune/residential/godrej-infinity -> 0 listings found
+2026-05-12 12:29:23,377 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:23,386 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-12 12:29:23,387 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-12 12:29:23,387 | INFO | [Scrape] URL #3 Finished: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938 -> 0 listings found
+2026-05-12 12:29:27,846 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:27,848 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-12 12:29:27,849 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-12 12:29:27,850 | INFO | [Scrape] URL #5 Finished: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project -> 2 listings found
+2026-05-12 12:29:27,983 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:27,986 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-12 12:29:27,986 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-12 12:29:27,987 | INFO | [Scrape] URL #4 Finished: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl -> 2 listings found
+2026-05-12 12:29:29,062 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-12 12:29:46,404 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:46,420 | INFO | [Extract] 'Godrej Infinity' -> 5 raw listings from 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-12 12:29:46,421 | INFO | [Extract Filter] 'Godrej Infinity' -> 5/5 passed type + name filter
+2026-05-12 12:29:46,421 | INFO | [Scrape] URL #1 Finished: https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342 -> 5 listings found
+2026-05-12 12:29:46,423 | INFO | [Project Done] Godrej Infinity -> 9 listings found on web.
+2026-05-12 12:29:46,423 | INFO | 
+============================================================
+[Pipeline] Processing Project: ARV Richvue (Parallel URLs)
+============================================================
+2026-05-12 12:29:46,424 | INFO | [URL Search DDG] Query: 'buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001'
+2026-05-12 12:29:48,183 | INFO | [URL Search DDG] Result: 'ARV Richvue' -> 5 URLs.
+2026-05-12 12:29:49,183 | INFO | ------------------- urls for ARV Richvue --- 5 ---- ['https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126', 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619', 'https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project', 'https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561', 'https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune']
+2026-05-12 12:29:49,185 | INFO | [Scrape] URL #1 Starting: https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126
+2026-05-12 12:29:49,185 | INFO | [Scrape] project='ARV Richvue' url='https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126'
+2026-05-12 12:29:49,185 | INFO | [Scrape] Trying requests for https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126
+2026-05-12 12:29:49,186 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-12 12:29:49,186 | INFO | [Scrape] URL #3 Starting: https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-12 12:29:49,187 | INFO | [Scrape] project='ARV Richvue' url='https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-12 12:29:49,188 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-12 12:29:49,188 | INFO | [Scrape] project='ARV Richvue' url='https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-12 12:29:49,188 | INFO | [Scrape] URL #5 Starting: https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-12 12:29:49,188 | INFO | [Scrape] Trying requests for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-12 12:29:49,189 | INFO | [Scrape] project='ARV Richvue' url='https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-12 12:29:49,189 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-12 12:29:49,190 | INFO | [Scrape] project='ARV Richvue' url='https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-12 12:29:49,191 | INFO | [Scrape] Trying requests for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-12 12:29:49,192 | INFO | [Scrape] Trying requests for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-12 12:29:50,978 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-12 12:29:50,978 | INFO | [Scrape] URL 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619' is difficult to scrape, using Selenium Pool.
+2026-05-12 12:29:50,978 | INFO | [Driver Pool] Creating new browser for thread 1936
+2026-05-12 12:29:51,311 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-12 12:29:51,482 | INFO | [Scrape] OK via Requests (200 OK) for https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126
+2026-05-12 12:29:52,015 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-12 12:29:52,135 | INFO | [Scrape] OK via Requests (200 OK) for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-12 12:29:55,472 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:55,473 | INFO | [Extract] 'ARV Richvue' -> 1 raw listings from 'https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126'
+2026-05-12 12:29:55,474 | INFO | [Extract Filter] 'ARV Richvue' -> 1/1 passed type + name filter
+2026-05-12 12:29:55,474 | INFO | [Scrape] URL #1 Finished: https://www.propertypistol.com/projects/arv-richvue-keshav-nagar-pid-20126 -> 1 listings found
+2026-05-12 12:29:55,658 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:55,665 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-12 12:29:55,665 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-12 12:29:55,666 | INFO | [Scrape] URL #3 Finished: https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project -> 2 listings found
+2026-05-12 12:29:57,600 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:57,602 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-12 12:29:57,602 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-12 12:29:57,602 | INFO | [Scrape] URL #5 Finished: https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune -> 2 listings found
+2026-05-12 12:29:57,680 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:29:57,705 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-12 12:29:57,728 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-12 12:29:57,753 | INFO | [Scrape] URL #4 Finished: https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561 -> 2 listings found
+2026-05-12 12:29:58,331 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-12 12:30:00,013 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:00:00 IST)" (scheduled at 2026-05-12 12:30:00+05:30)
+2026-05-12 12:30:00,019 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:00:00 IST)" executed successfully
+2026-05-12 12:30:04,015 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:30:04,018 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-12 12:30:04,018 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-12 12:30:04,018 | INFO | [Scrape] URL #2 Finished: https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619 -> 2 listings found
+2026-05-12 12:30:04,021 | INFO | [Project Done] ARV Richvue -> 9 listings found on web.
+2026-05-12 12:30:04,025 | INFO | [Pipeline Done] final_listings=18 | projects=2 | tokens=12518
+2026-05-12 12:30:45,501 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:30:56,484 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:31:11,660 | INFO | [CBD Tool] Identifying CBDs for 2 projects in a single LLM call...
+2026-05-12 12:31:17,317 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:31:17,319 | INFO | [CBD LLM] Raw response length: 973
+2026-05-12 12:31:17,319 | INFO | [CBD LLM] Tokens — prompt: 417, completion: 264, total: 681
+2026-05-12 12:31:17,320 | INFO | [CBD Geocode] Geocoding: 'Kharadi, Pune'
+2026-05-12 12:31:18,463 | INFO | [CBD Geocode] OK → (18.5539, 73.9476)
+2026-05-12 12:31:18,764 | INFO | [CBD Tool] Godrej Infinity → Kharadi (1.61 km)
+2026-05-12 12:31:18,764 | INFO | [CBD Geocode] Geocoding: 'Magarpatta City, Pune'
+2026-05-12 12:31:19,587 | INFO | [CBD Geocode] OK → (18.5158, 73.9272)
+2026-05-12 12:31:19,888 | INFO | [CBD Tool] Godrej Infinity → Magarpatta (3.32 km)
+2026-05-12 12:31:19,888 | INFO | [CBD Geocode] Geocoding: 'Downtown Pune, Pune'
+2026-05-12 12:31:20,993 | INFO | [CBD Geocode] OK → (18.5605, 73.9428)
+2026-05-12 12:31:21,294 | INFO | [CBD Tool] Godrej Infinity → Downtown Pune (2.36 km)
+2026-05-12 12:31:21,295 | INFO | [CBD Tool] ARV Richvue → Kharadi (1.44 km)
+2026-05-12 12:31:21,295 | INFO | [CBD Tool] ARV Richvue → Magarpatta (3.41 km)
+2026-05-12 12:31:21,295 | INFO | [CBD Tool] ARV Richvue → Downtown Pune (2.16 km)
+2026-05-12 12:31:21,296 | INFO | [CBD Tool] Done. Results for 2 projects.
+2026-05-12 12:31:21,296 | INFO | CBD identification complete for 2 projects
+2026-05-12 12:31:28,106 | INFO | [DB] Found 10 candidates in spatial bounding box
+2026-05-12 12:31:28,107 | INFO | Found 5 DB amenities near (18.5411875, 73.94531250000001)
+2026-05-12 12:31:28,107 | INFO | Aggregated raw counts: {'bus_stops': 1, 'gardens': 1, 'hospitals': 1, 'police_stations': 1, 'restaurants_entertainment': 1}
+2026-05-12 12:31:33,140 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-12 12:31:33,141 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-12 12:31:33,141 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'schools': 1}
+2026-05-12 12:32:23,985 | INFO | Factorial table: 2 projects, 22 total valid listings
+2026-05-12 12:32:39,261 | INFO | [LLM Factoring] Building payload for 2 projects...
+2026-05-12 12:32:39,261 | INFO | [LLM Factoring] Calling gpt-4o with 1 comparables...
+2026-05-12 12:33:20,703 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:33:20,711 | INFO | [LLM Factoring] Done. Subject final rate: 11636 INR/sqft
+2026-05-12 12:54:20,728 | INFO | [CBD Tool] Identifying CBDs for 2 projects in a single LLM call...
+2026-05-12 12:54:20,764 | INFO | [DB] Found 54 candidates in spatial bounding box
+2026-05-12 12:54:20,766 | INFO | [DB] Found 76 candidates in spatial bounding box
+2026-05-12 12:54:20,766 | INFO | Found 46 DB amenities near (18.974, 72.81)
+2026-05-12 12:54:20,767 | INFO | Found 62 DB amenities near (19.018, 72.827)
+2026-05-12 12:54:24,548 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:54:24,564 | INFO | [CBD LLM] Raw response length: 729
+2026-05-12 12:54:24,566 | INFO | [CBD LLM] Tokens — prompt: 396, completion: 193, total: 589
+2026-05-12 12:54:24,566 | INFO | [CBD Geocode] Geocoding: 'Nariman Point, Mumbai'
+2026-05-12 12:54:25,934 | INFO | [CBD Geocode] OK → (18.9256, 72.8242)
+2026-05-12 12:54:26,234 | INFO | [CBD Tool] Lodha Altamount → Nariman Point (5.59 km)
+2026-05-12 12:54:26,235 | INFO | [CBD Geocode] Geocoding: 'Bandra Kurla Complex, Mumbai'
+2026-05-12 12:54:27,083 | INFO | [CBD Geocode] OK → (19.0688, 72.8703)
+2026-05-12 12:54:27,384 | INFO | [CBD Tool] Lodha Altamount → BKC (12.3 km)
+2026-05-12 12:54:27,384 | INFO | [CBD Tool] Rustomjee Crown → BKC (7.25 km)
+2026-05-12 12:54:27,384 | INFO | [CBD Tool] Rustomjee Crown → Nariman Point (10.28 km)
+2026-05-12 12:54:27,384 | INFO | [CBD Tool] Done. Results for 2 projects.
+2026-05-12 12:54:27,385 | INFO | CBD identification complete for 2 projects
+2026-05-12 12:54:28,838 | INFO | [DB] Found 54 candidates in spatial bounding box
+2026-05-12 12:54:28,840 | INFO | Found 46 DB amenities near (18.974, 72.81)
+2026-05-12 12:54:28,840 | INFO | Aggregated raw counts: {'bus_stops': 1, 'gardens': 3, 'hospitals': 10, 'malls': 2, 'police_stations': 1, 'restaurants_entertainment': 19, 'schools': 10}
+2026-05-12 12:54:45,986 | INFO | [DB] Found 76 candidates in spatial bounding box
+2026-05-12 12:54:45,988 | INFO | Found 62 DB amenities near (19.018, 72.827)
+2026-05-12 12:54:45,989 | INFO | Aggregated raw counts: {'bus_stops': 20, 'fire_stations': 1, 'gardens': 1, 'hospitals': 11, 'malls': 1, 'metro_stations': 1, 'police_stations': 1, 'restaurants_entertainment': 14, 'schools': 12}
+2026-05-12 12:54:49,611 | INFO | Factorial table: 2 projects, 10 total valid listings
+2026-05-12 13:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:30:00 IST)" (scheduled at 2026-05-12 13:00:00+05:30)
+2026-05-12 13:00:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:30:00 IST)" executed successfully
+2026-05-12 13:06:28,864 | INFO | Scheduler has been shut down
+2026-05-12 13:30:02,404 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:30:02,405 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:30:02,406 | INFO | Scheduler started
+2026-05-12 13:34:35,677 | INFO | Scheduler has been shut down
+2026-05-12 13:35:03,787 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:35:03,788 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:35:03,789 | INFO | Scheduler started
+2026-05-12 13:35:23,135 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:35:31,222 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:35:31,400 | INFO | [DB] Found 26 candidates in spatial bounding box
+2026-05-12 13:35:31,401 | INFO | Found 20 DB amenities near (18.5914863, 73.80008409999999)
+2026-05-12 13:35:36,957 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:35:44,844 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:35:57,289 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:05,123 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:38,910 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:46,590 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:53,041 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:59,903 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:37:08,300 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:37:15,800 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:37:15,808 | INFO | [Agent Start] project='vision flora' type='commercial_office' search_term='office space' location='pimple saudagar'
+2026-05-12 13:37:15,810 | INFO | [LLM Fetch] Pass 1/1
+2026-05-12 13:37:27,804 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-12 13:37:28,124 | INFO | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-12 13:37:28,124 | INFO | [LLM Fetch] Received 11 raw comparables | tokens=2462
+2026-05-12 13:37:28,126 | INFO | [Multi-pass] Total raw comparables: 11
+2026-05-12 13:37:28,126 | WARNING | [DROP] stage=dedup | project='Office Space for Rent in Pimple Saudagar, Pune' | reason=duplicate
+2026-05-12 13:37:28,127 | WARNING | [DROP] stage=dedup | project='Office Space for Rent in Pimple Saudagar, Pune' | reason=duplicate
+2026-05-12 13:37:28,127 | INFO | [Dedup] 9/11 unique comparables
+2026-05-12 13:37:28,138 | INFO | [Hard Filter] 9/9 passed type check
+2026-05-12 13:37:28,139 | INFO | [Geocode] Starting for 9 comparables
+2026-05-12 13:37:29,395 | INFO | [Geocode] OK '11cowork Pimple Saudagar' -> (18.5936952, 73.7858961)
+2026-05-12 13:37:31,137 | INFO | [Geocode] OK 'Vision Flora' -> (18.5945967, 73.79322789999999)
+2026-05-12 13:37:32,468 | INFO | [Geocode] OK 'Vision Galleria' -> (18.5935887, 73.7926916)
+2026-05-12 13:37:34,009 | INFO | [Geocode] OK 'Bhoomi Allium (Pune)' -> (18.5992674, 73.7922909)
+2026-05-12 13:37:35,642 | INFO | [Geocode] OK 'Awfis - GK Mall' -> (18.5967663, 73.7960293)
+2026-05-12 13:37:37,283 | INFO | [Geocode] OK 'Qdesq PUN382' -> (18.5936952, 73.7858961)
+2026-05-12 13:37:38,714 | INFO | [Geocode] OK 'Qdesq PUN221' -> (18.5936952, 73.7858961)
+2026-05-12 13:37:39,885 | INFO | [Geocode] OK 'Qdesq PUN061' -> (18.5967262, 73.7956411)
+2026-05-12 13:37:41,299 | INFO | [Geocode] OK 'Office Space for Rent in Pimple Saudagar, Pune' -> (18.5935887, 73.7926916)
+2026-05-12 13:37:41,500 | INFO | [Distance] 9 comparables with valid coordinates
+2026-05-12 13:37:41,500 | INFO | [URL Filter] 9 comparables after URL cleanup
+2026-05-12 13:37:41,500 | INFO | [Agent Done] Final comparables: 9 | Total tokens: 2462
+2026-05-12 13:38:10,726 | INFO | [Pipeline Start] subject='vision flora' type='commercial_office' search_term='office space' listing='sale' comparables=2
+2026-05-12 13:38:10,729 | INFO | [Pipeline] Subject: {'project_name': 'vision flora', 'location_name': 'pimple saudagar', 'country': 'India', 'currency': 'INR', 'property_type': 'commercial_office', 'lat': 18.5914863, 'lng': 73.80008409999999}
+2026-05-12 13:38:10,729 | INFO | [Pipeline] Total projects: 3
+2026-05-12 13:38:10,731 | INFO | [Pipeline] Projects: [{'project_name': 'vision flora', 'location': 'pimple saudagar', 'country': 'India', 'lat': 18.5914863, 'lng': 73.80008409999999, 'is_subject': True}, {'project_name': 'Vision Galleria', 'location': 'Pimple Saudagar, Pimpri-Chinchwad, Maharashtra 411027', 'country': 'India', 'lat': 18.5935887, 'lng': 73.7926916, 'is_subject': False}, {'project_name': 'Bhoomi Allium (Pune)', 'location': 'Survey No.5, Near Konkane Chowk, Pimple Saudagar, Pune - 411027', 'country': 'India', 'lat': 18.5992674, 'lng': 73.7922909, 'is_subject': False}]
+2026-05-12 13:38:10,732 | INFO | 
+============================================================
+[Pipeline] Processing Project: vision flora (Parallel URLs)
+============================================================
+2026-05-12 13:38:10,733 | INFO | [URL Search DDG] Query: 'buy office space in vision flora, pimple saudagar, India, coordinates: 18.5914863, 73.80008409999999'
+2026-05-12 13:38:12,745 | INFO | [URL Search DDG] Result: 'vision flora' -> 5 URLs.
+2026-05-12 13:38:13,746 | INFO | ------------------- urls for vision flora --- 5 ---- ['https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid', 'https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542', 'https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338', 'https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune', 'https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm']
+2026-05-12 13:38:13,747 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid
+2026-05-12 13:38:13,748 | INFO | [Scrape] project='vision flora' url='https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid'
+2026-05-12 13:38:13,748 | INFO | [Scrape] URL #2 Starting: https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542
+2026-05-12 13:38:13,748 | INFO | [Scrape] Trying requests for https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid
+2026-05-12 13:38:13,749 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338
+2026-05-12 13:38:13,749 | INFO | [Scrape] project='vision flora' url='https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542'
+2026-05-12 13:38:13,750 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune
+2026-05-12 13:38:13,751 | INFO | [Scrape] URL #5 Starting: https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:38:13,752 | INFO | [Scrape] project='vision flora' url='https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338'
+2026-05-12 13:38:13,753 | INFO | [Scrape] Trying requests for https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542
+2026-05-12 13:38:13,753 | INFO | [Scrape] project='vision flora' url='https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune'
+2026-05-12 13:38:13,754 | INFO | [Scrape] project='vision flora' url='https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm'
+2026-05-12 13:38:13,754 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338
+2026-05-12 13:38:13,756 | INFO | [Scrape] Trying requests for https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune
+2026-05-12 13:38:13,757 | INFO | [Scrape] Trying requests for https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:38:15,411 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-12 13:38:15,411 | INFO | [Scrape] URL 'https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid' is difficult to scrape, using Selenium Pool.
+2026-05-12 13:38:15,411 | INFO | [Driver Pool] Creating new browser for thread 16520
+2026-05-12 13:38:16,983 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune
+2026-05-12 13:38:16,998 | INFO | [Scrape] OK via Requests (200 OK) for https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542
+2026-05-12 13:38:17,904 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338
+2026-05-12 13:38:18,752 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:18,754 | INFO | [Extract] 'vision flora' -> 0 raw listings from 'https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune'
+2026-05-12 13:38:18,754 | INFO | [Extract Filter] 'vision flora' -> 0/0 passed type + name filter
+2026-05-12 13:38:18,754 | INFO | [Scrape] URL #4 Finished: https://www.squareyards.com/sale/resale-properties-in-vision-flora-pune -> 0 listings found
+2026-05-12 13:38:18,798 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:18,804 | INFO | [Extract] 'vision flora' -> 0 raw listings from 'https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338'
+2026-05-12 13:38:18,804 | INFO | [Extract Filter] 'vision flora' -> 0/0 passed type + name filter
+2026-05-12 13:38:18,804 | INFO | [Scrape] URL #3 Finished: https://www.magicbricks.com/siddhivinayak-vision-flora-pimple-saudagar-pune-pdpid-4d4235303932383338 -> 0 listings found
+2026-05-12 13:38:20,780 | INFO | [Scrape] OK via Requests (200 OK) for https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:38:22,240 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:22,245 | INFO | [Extract] 'vision flora' -> 1 raw listings from 'https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542'
+2026-05-12 13:38:22,246 | INFO | [Extract Filter] 'vision flora' -> 1/1 passed type + name filter
+2026-05-12 13:38:22,247 | INFO | [Scrape] URL #2 Finished: https://houssed.com/commercial/pune/sun-vision-group/vision-flora-143542 -> 1 listings found
+2026-05-12 13:38:24,107 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid
+2026-05-12 13:38:24,280 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:24,283 | INFO | [Extract] 'vision flora' -> 1 raw listings from 'https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm'
+2026-05-12 13:38:24,284 | INFO | [Extract Filter] 'vision flora' -> 1/1 passed type + name filter
+2026-05-12 13:38:24,284 | INFO | [Scrape] URL #5 Finished: https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm -> 1 listings found
+2026-05-12 13:38:26,107 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:26,110 | INFO | [Extract] 'vision flora' -> 0 raw listings from 'https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid'
+2026-05-12 13:38:26,111 | INFO | [Extract Filter] 'vision flora' -> 0/0 passed type + name filter
+2026-05-12 13:38:26,111 | INFO | [Scrape] URL #1 Finished: https://www.99acres.com/commercial-office-space-for-resale-in-vision-flora-pimple-saudagar-pune-west-213223-cffid -> 0 listings found
+2026-05-12 13:38:26,113 | INFO | [Project Done] vision flora -> 2 listings found on web.
+2026-05-12 13:38:26,113 | INFO | 
+============================================================
+[Pipeline] Processing Project: Vision Galleria (Parallel URLs)
+============================================================
+2026-05-12 13:38:26,114 | INFO | [URL Search DDG] Query: 'buy office space in Vision Galleria, Pimple Saudagar, Pimpri-Chinchwad, Maharashtra 411027, India, coordinates: 18.5935887, 73.7926916'
+2026-05-12 13:38:28,121 | INFO | [URL Search DDG] Result: 'Vision Galleria' -> 5 URLs.
+2026-05-12 13:38:29,123 | INFO | ------------------- urls for Vision Galleria --- 5 ---- ['https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs', 'https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid', 'https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune', 'https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm', 'https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html']
+2026-05-12 13:38:29,124 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs
+2026-05-12 13:38:29,125 | INFO | [Scrape] project='Vision Galleria' url='https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs'
+2026-05-12 13:38:29,126 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid
+2026-05-12 13:38:29,126 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs
+2026-05-12 13:38:29,127 | INFO | [Scrape] project='Vision Galleria' url='https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid'
+2026-05-12 13:38:29,127 | INFO | [Scrape] URL #3 Starting: https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune
+2026-05-12 13:38:29,129 | INFO | [Scrape] URL #4 Starting: https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:38:29,130 | INFO | [Scrape] Trying requests for https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid
+2026-05-12 13:38:29,132 | INFO | [Scrape] project='Vision Galleria' url='https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune'
+2026-05-12 13:38:29,133 | INFO | [Scrape] URL #5 Starting: https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html
+2026-05-12 13:38:29,133 | INFO | [Scrape] project='Vision Galleria' url='https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm'
+2026-05-12 13:38:29,135 | INFO | [Scrape] Trying requests for https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune
+2026-05-12 13:38:29,137 | INFO | [Scrape] project='Vision Galleria' url='https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html'
+2026-05-12 13:38:29,139 | INFO | [Scrape] Trying requests for https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:38:29,142 | INFO | [Scrape] Trying requests for https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html
+2026-05-12 13:38:30,997 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-12 13:38:30,998 | INFO | [Scrape] URL 'https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid' is difficult to scrape, using Selenium Pool.
+2026-05-12 13:38:30,999 | INFO | [Driver Pool] Creating new browser for thread 11556
+2026-05-12 13:38:32,175 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune
+2026-05-12 13:38:32,372 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs
+2026-05-12 13:38:33,604 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:33,608 | INFO | [Extract] 'Vision Galleria' -> 0 raw listings from 'https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs'
+2026-05-12 13:38:33,609 | INFO | [Extract Filter] 'Vision Galleria' -> 0/0 passed type + name filter
+2026-05-12 13:38:33,610 | INFO | [Scrape] URL #1 Finished: https://www.magicbricks.com/commercial-property-for-sale-in-pimple-saudagar-pune-pppfs -> 0 listings found
+2026-05-12 13:38:35,166 | INFO | [Scrape] OK via Requests (200 OK) for https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html
+2026-05-12 13:38:36,326 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:36,332 | INFO | [Extract] 'Vision Galleria' -> 0 raw listings from 'https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html'
+2026-05-12 13:38:36,333 | INFO | [Extract Filter] 'Vision Galleria' -> 0/0 passed type + name filter
+2026-05-12 13:38:36,333 | INFO | [Scrape] URL #5 Finished: https://cityair.in/office-space-for-sale-in-pimple-saudagar-pune.html -> 0 listings found
+2026-05-12 13:38:38,598 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid
+2026-05-12 13:38:39,813 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:39,815 | INFO | [Extract] 'Vision Galleria' -> 0 raw listings from 'https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid'
+2026-05-12 13:38:39,815 | INFO | [Extract Filter] 'Vision Galleria' -> 0/0 passed type + name filter
+2026-05-12 13:38:39,816 | INFO | [Scrape] URL #2 Finished: https://www.99acres.com/commercial-property-in-pimple-saudagar-pune-west-ffid -> 0 listings found
+2026-05-12 13:38:41,177 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:38:41,180 | INFO | [Extract] 'Vision Galleria' -> 2 raw listings from 'https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune'
+2026-05-12 13:38:41,181 | INFO | [Extract Filter] 'Vision Galleria' -> 2/2 passed type + name filter
+2026-05-12 13:38:41,182 | INFO | [Scrape] URL #3 Finished: https://www.nobroker.in/commercial-properties-for-sale-in-pimple_saudagar_pune -> 2 listings found
+2026-05-12 13:38:46,171 | INFO | [Scrape] Requests exception: HTTPSConnectionPool(host='www.realestateindia.com', port=443): Read timed out. (read timeout=15). Falling back to Selenium.
+2026-05-12 13:38:46,172 | INFO | [Scrape] URL 'https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm' is difficult to scrape, using Selenium Pool.
+2026-05-12 13:38:46,172 | INFO | [Driver Pool] Creating new browser for thread 16404
+2026-05-12 13:39:17,336 | WARNING | [DROP] stage=scrape | project='Vision Galleria' | reason=selenium_exception: Message: timeout: Timed out receiving message from renderer: -0.012
+  (Session info: chrome=147.0.7727.138)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7db71a8e5+14e45]
+	chromedriver!GetHandleVerifier [0x7ff7db71a950+14eb0]
+	chromedriver!(No symbol) [0x7ff7db48d6ed]
+	chromedriver!(No symbol) [0x7ff7db479ec9]
+	chromedriver!(No symbol) [0x7ff7db479bb1]
+	chromedriver!(No symbol) [0x7ff7db4777e1]
+	chromedriver!(No symbol) [0x7ff7db47811f]
+	chromedriver!(No symbol) [0x7ff7db487aaa]
+	chromedriver!(No symbol) [0x7ff7db49e9b7]
+	chromedriver!(No symbol) [0x7ff7db4a610a]
+	chromedriver!(No symbol) [0x7ff7db4788e1]
+	chromedriver!(No symbol) [0x7ff7db49e6e5]
+	chromedriver!(No symbol) [0x7ff7db534703]
+	chromedriver!(No symbol) [0x7ff7db4d90e8]
+	chromedriver!(No symbol) [0x7ff7db4d9fc3]
+	chromedriver!GetHandleVerifier [0x7ff7dba30149+32a6a9]
+	chromedriver!GetHandleVerifier [0x7ff7dba2a715+324c75]
+	chromedriver!GetHandleVerifier [0x7ff7dba4c012+346572]
+	chromedriver!GetHandleVerifier [0x7ff7db737cb5+32215]
+	chromedriver!GetHandleVerifier [0x7ff7db74087c+3addc]
+	chromedriver!GetHandleVerifier [0x7ff7db7240e4+1e644]
+	chromedriver!GetHandleVerifier [0x7ff7db724296+1e7f6]
+	chromedriver!GetHandleVerifier [0x7ff7db708737+2c97]
+	KERNEL32!BaseThreadInitThunk [0x7ffba120259d+1d]
+	ntdll!RtlUserThreadStart [0x7ffba2d0af78+28]
+ | detail={"url": "https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm"}
+2026-05-12 13:39:17,339 | INFO | [Scrape] URL #4 Failed (No text): https://www.realestateindia.com/pune-property/office-space-for-sale-in-pimple-saudagar.htm
+2026-05-12 13:39:17,344 | INFO | [Project Done] Vision Galleria -> 2 listings found on web.
+2026-05-12 13:39:17,345 | INFO | 
+============================================================
+[Pipeline] Processing Project: Bhoomi Allium (Pune) (Parallel URLs)
+============================================================
+2026-05-12 13:39:17,346 | INFO | [URL Search DDG] Query: 'buy office space in Bhoomi Allium (Pune), Survey No.5, Near Konkane Chowk, Pimple Saudagar, Pune - 411027, India, coordinates: 18.5992674, 73.7922909'
+2026-05-12 13:39:19,489 | INFO | [URL Search DDG] Result: 'Bhoomi Allium (Pune)' -> 5 URLs.
+2026-05-12 13:39:20,489 | INFO | ------------------- urls for Bhoomi Allium (Pune) --- 5 ---- ['https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail', 'https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146', 'https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531', 'https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975', 'https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243']
+2026-05-12 13:39:20,492 | INFO | [Scrape] URL #1 Starting: https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail
+2026-05-12 13:39:20,493 | INFO | [Scrape] project='Bhoomi Allium (Pune)' url='https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail'
+2026-05-12 13:39:20,493 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146
+2026-05-12 13:39:20,494 | INFO | [Scrape] Trying requests for https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail
+2026-05-12 13:39:20,494 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531
+2026-05-12 13:39:20,494 | INFO | [Scrape] project='Bhoomi Allium (Pune)' url='https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146'
+2026-05-12 13:39:20,497 | INFO | [Scrape] project='Bhoomi Allium (Pune)' url='https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531'
+2026-05-12 13:39:20,497 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975
+2026-05-12 13:39:20,498 | INFO | [Scrape] Trying requests for https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146
+2026-05-12 13:39:20,499 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531
+2026-05-12 13:39:20,501 | INFO | [Scrape] URL #5 Starting: https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243
+2026-05-12 13:39:20,503 | INFO | [Scrape] project='Bhoomi Allium (Pune)' url='https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975'
+2026-05-12 13:39:20,511 | INFO | [Scrape] project='Bhoomi Allium (Pune)' url='https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243'
+2026-05-12 13:39:20,512 | INFO | [Scrape] Trying requests for https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243
+2026-05-12 13:39:20,514 | INFO | [Scrape] Trying requests for https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975
+2026-05-12 13:39:22,011 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-12 13:39:22,011 | INFO | [Scrape] URL 'https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146' is difficult to scrape, using Selenium Pool.
+2026-05-12 13:39:22,012 | INFO | [Driver Pool] Creating new browser for thread 20176
+2026-05-12 13:39:22,738 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail
+2026-05-12 13:39:23,274 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975
+2026-05-12 13:39:23,275 | INFO | [Scrape] OK via Requests (200 OK) for https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243
+2026-05-12 13:39:23,880 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531
+2026-05-12 13:39:24,140 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:24,143 | INFO | [Extract] 'Bhoomi Allium (Pune)' -> 0 raw listings from 'https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243'
+2026-05-12 13:39:24,144 | INFO | [Extract Filter] 'Bhoomi Allium (Pune)' -> 0/0 passed type + name filter
+2026-05-12 13:39:24,144 | INFO | [Scrape] URL #5 Finished: https://www.aurumproptech.in/pulse/rera/maharashtra/pune/bhoomi-allium-P52100009243 -> 0 listings found
+2026-05-12 13:39:24,668 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:24,674 | INFO | [Extract] 'Bhoomi Allium (Pune)' -> 0 raw listings from 'https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531'
+2026-05-12 13:39:24,674 | INFO | [Extract Filter] 'Bhoomi Allium (Pune)' -> 0/0 passed type + name filter
+2026-05-12 13:39:24,675 | INFO | [Scrape] URL #3 Finished: https://www.magicbricks.com/bhoomi-allium-pimple-saudagar-pune-pdpid-4d4235303839363531 -> 0 listings found
+2026-05-12 13:39:24,890 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:24,893 | INFO | [Extract] 'Bhoomi Allium (Pune)' -> 0 raw listings from 'https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975'
+2026-05-12 13:39:24,894 | INFO | [Extract Filter] 'Bhoomi Allium (Pune)' -> 0/0 passed type + name filter
+2026-05-12 13:39:24,894 | INFO | [Scrape] URL #4 Finished: https://www.squareyards.com/resale-910-sq-ft-retail-shop-in-bhoomi-allium/9123975 -> 0 listings found
+2026-05-12 13:39:25,541 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:25,544 | INFO | [Extract] 'Bhoomi Allium (Pune)' -> 1 raw listings from 'https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail'
+2026-05-12 13:39:25,545 | INFO | [Extract Filter] 'Bhoomi Allium (Pune)' -> 1/1 passed type + name filter
+2026-05-12 13:39:25,545 | INFO | [Scrape] URL #1 Finished: https://www.nobroker.in/property/commercial/buy/office-space-in-bhoomi-allium-pune/8a9fbd827f960c7f017f9649b8f91878/detail -> 1 listings found
+2026-05-12 13:39:31,949 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146
+2026-05-12 13:39:32,831 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:32,837 | INFO | [Extract] 'Bhoomi Allium (Pune)' -> 0 raw listings from 'https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146'
+2026-05-12 13:39:32,837 | INFO | [Extract Filter] 'Bhoomi Allium (Pune)' -> 0/0 passed type + name filter
+2026-05-12 13:39:32,838 | INFO | [Scrape] URL #2 Finished: https://www.99acres.com/ready-to-move-office-space-for-sale-in-bhoomi-allium-pimple-saudagar-pune-west-826-sq-ft-spid-T88298146 -> 0 listings found
+2026-05-12 13:39:32,841 | INFO | [Project Done] Bhoomi Allium (Pune) -> 1 listings found on web.
+2026-05-12 13:39:32,844 | INFO | [Pipeline Done] final_listings=5 | projects=3 | tokens=16102
+2026-05-12 13:39:53,791 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:56,096 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:39:56,185 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:40:00,216 | INFO | [CBD Tool] Identifying CBDs for 3 projects in a single LLM call...
+2026-05-12 13:40:06,184 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:40:06,186 | INFO | [CBD LLM] Raw response length: 1478
+2026-05-12 13:40:06,186 | INFO | [CBD LLM] Tokens — prompt: 478, completion: 409, total: 887
+2026-05-12 13:40:06,186 | INFO | [CBD Geocode] Geocoding: 'Hinjewadi IT Park, Pune'
+2026-05-12 13:40:07,449 | INFO | [CBD Geocode] OK → (18.5947, 73.7095)
+2026-05-12 13:40:07,750 | INFO | [CBD Tool] vision flora → Hinjewadi (9.55 km)
+2026-05-12 13:40:07,751 | INFO | [CBD Geocode] Geocoding: 'Pimpri-Chinchwad Industrial Area, Pune'
+2026-05-12 13:40:09,661 | INFO | [CBD Geocode] OK → (18.6199, 73.8251)
+2026-05-12 13:40:09,962 | INFO | [CBD Tool] vision flora → PCMC (4.12 km)
+2026-05-12 13:40:09,962 | INFO | [CBD Geocode] Geocoding: 'Aundh, Pune'
+2026-05-12 13:40:11,093 | INFO | [CBD Geocode] OK → (18.5602, 73.8031)
+2026-05-12 13:40:11,394 | INFO | [CBD Tool] vision flora → Aundh (3.5 km)
+2026-05-12 13:40:11,395 | INFO | [CBD Tool] Vision Galleria → Hinjewadi (8.77 km)
+2026-05-12 13:40:11,396 | INFO | [CBD Tool] Vision Galleria → PCMC (4.5 km)
+2026-05-12 13:40:11,396 | INFO | [CBD Tool] Vision Galleria → Aundh (3.88 km)
+2026-05-12 13:40:11,397 | INFO | [CBD Tool] Bhoomi Allium (Pune) → Hinjewadi (8.74 km)
+2026-05-12 13:40:11,398 | INFO | [CBD Tool] Bhoomi Allium (Pune) → PCMC (4.15 km)
+2026-05-12 13:40:11,398 | INFO | [CBD Tool] Bhoomi Allium (Pune) → Aundh (4.5 km)
+2026-05-12 13:40:11,398 | INFO | [CBD Tool] Done. Results for 3 projects.
+2026-05-12 13:40:11,399 | INFO | CBD identification complete for 3 projects
+2026-05-12 13:40:13,392 | INFO | [DB] Found 48 candidates in spatial bounding box
+2026-05-12 13:40:13,394 | INFO | Found 37 DB amenities near (18.5992674, 73.7922909)
+2026-05-12 13:40:13,395 | INFO | Aggregated raw counts: {'bus_stops': 3, 'gardens': 4, 'hospitals': 5, 'malls': 1, 'police_stations': 2, 'restaurants_entertainment': 20, 'schools': 2}
+2026-05-12 13:42:08,155 | INFO | [DB] Found 63 candidates in spatial bounding box
+2026-05-12 13:42:08,157 | INFO | Found 43 DB amenities near (18.5935887, 73.7926916)
+2026-05-12 13:42:08,157 | INFO | Aggregated raw counts: {'bus_stops': 4, 'gardens': 5, 'hospitals': 4, 'malls': 2, 'restaurants_entertainment': 27, 'schools': 1}
+2026-05-12 13:42:22,769 | INFO | [DB] Found 26 candidates in spatial bounding box
+2026-05-12 13:42:22,771 | INFO | Found 20 DB amenities near (18.5914863, 73.80008409999999)
+2026-05-12 13:42:22,772 | INFO | Aggregated raw counts: {'bus_stops': 2, 'gardens': 3, 'hospitals': 2, 'malls': 1, 'restaurants_entertainment': 10, 'schools': 2}
+2026-05-12 13:42:34,082 | INFO | Factorial table: 3 projects, 5 total valid listings
+2026-05-12 13:42:44,697 | INFO | [LLM Factoring] Building payload for 3 projects...
+2026-05-12 13:42:44,698 | INFO | [LLM Factoring] Calling gpt-4o with 2 comparables...
+2026-05-12 13:43:18,534 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:43:18,787 | INFO | [LLM Factoring] Done. Subject final rate: 18864 INR/sqft
+2026-05-12 13:46:33,429 | INFO | Scheduler has been shut down
