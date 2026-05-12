@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 LLM-based Web Search Implementation using OpenAI Responses API
 Uses GPT-4o's built-in web search tool for accurate results

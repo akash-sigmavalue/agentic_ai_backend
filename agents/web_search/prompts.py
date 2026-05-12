@@ -137,10 +137,12 @@ class LightweightAnalyzer:
 
     def _build_accuracy_prompt(self, query: str, results: List[Dict], validation: Dict, intent: str = None) -> str:
         source_context = []
+        exact_row_context = []
         for i, r in enumerate(results[:10], 1):
             content = r.get('content') or r.get('snippet') or "No content available."
             source_context.append(f"[{i}] {r.get('title')}\nURL: {r.get('url')}\nTrust Score: {r.get('source_trust', 0.5)*100:.0f}%\nContent: {content[:5000]}")
-
+            for row in r.get('exact_ready_reckoner_rows', []) or []:
+                exact_row_context.append(f"[{i}] {row.get('row_text')} | URL: {r.get('url')}")
         validated_str = "\n".join([f"- {c['claim']} (Verified by {c['source_count']} sources)" for c in validation.get('validated_claims', [])])
         sources_str = "\n\n".join(source_context)
 
@@ -223,7 +225,8 @@ Answer:"""
 
         return f"""You are a high-accuracy fact-checking search assistant.
 User Query: "{query}"
-
+EXACT ROW-LEVEL MATCHES:
+{chr(10).join(exact_row_context) if exact_row_context else "No exact survey/row-level match was extracted."}
 CROSS-SOURCE VALIDATION DATA:
 {validated_str or "No cross-source consensus found for specific numbers/facts."}
 
@@ -233,6 +236,7 @@ SEARCH RESULTS CONTEXT:
 {"-"*20}
 
 INSTRUCTIONS:
+0. If EXACT ROW-LEVEL MATCHES contains a row for the requested survey number, answer from that row first and do not replace it with general locality rates.
 1. Provide an EXTREMELY DETAILED and COMPREHENSIVE answer (aim for 90% extraction of all relevant facts).
 2. Structure your response with high-density information:
    - ## 📝 Executive Summary

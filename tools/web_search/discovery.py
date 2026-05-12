@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Query understanding and source discovery.
 
@@ -243,7 +245,11 @@ class SourceDiscovery:
 
         candidates = []
         seen_urls = set()
-
+        for preferred in self._preferred_ready_reckoner_sources(query):
+            if preferred["url"] in seen_urls:
+                continue
+            seen_urls.add(preferred["url"])
+            candidates.append(preferred)
         # Search multiple variants
         is_news_query = any(kw in query.lower() for kw in ['news', 'latest', 'recent', 'today'])
         days_back = 7 if is_news_query else None

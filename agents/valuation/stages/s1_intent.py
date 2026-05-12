@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Agent 1: Intent + Entity Extraction
 Parse user query -> structured property entity JSON for valuation.

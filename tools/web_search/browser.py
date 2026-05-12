@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 High-Accuracy Content Extraction with Trust Scoring and Multi-strategy fallback.
 """
@@ -73,7 +75,14 @@ class ContentProcessor:
     def _try_all_extraction_methods(self, html: str, url: str) -> List[Dict]:
         """Try multiple extraction methods and collect results"""
         results = []
-        
+        table_text = self._extract_tables_as_text(html)
+        if table_text:
+            results.append({
+                'method': 'html_tables',
+                'content': table_text,
+                'length': len(table_text),
+                'quality_score': 0.90
+            })
         # Method 1: Trafilatura (best for articles)
         try:
             content = trafilatura.extract(html, include_comments=False, include_tables=True)

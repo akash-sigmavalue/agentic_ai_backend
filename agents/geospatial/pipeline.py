@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # import json
 # from sqlalchemy import text
 # from langgraph.prebuilt import create_react_agent

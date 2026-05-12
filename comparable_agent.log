@@ -3398,3 +3398,70 @@ ORDER BY
 2026-05-09 19:00:00,026 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-09 19:30:00 IST)" (scheduled at 2026-05-09 19:00:00+05:30)
 2026-05-09 19:00:00,084 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-09 19:30:00 IST)" executed successfully
 2026-05-09 19:16:17,871 | INFO | Scheduler has been shut down
+2026-05-11 16:17:19,077 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:17:19,078 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:17:19,078 | INFO | Scheduler started
+2026-05-11 16:24:01,564 | INFO | Scheduler has been shut down
+2026-05-11 16:24:17,475 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:24:17,476 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:24:17,476 | INFO | Scheduler started
+2026-05-11 16:25:13,617 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-11 16:25:15,513 | WARNING | Impersonate 'safari_15.3' does not exist, using 'random'
+2026-05-11 16:25:15,638 | INFO | response: https://duckduckgo.com/?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28 200
+2026-05-11 16:25:15,786 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-200390695334803483653392811865093197968&bing_market=en-IN&ex=-1 202
+2026-05-11 16:25:24,632 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-11 16:25:24,794 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294977084838448849299580955150244155864&bing_market=en-IN&ex=-1 202
+2026-05-11 16:25:34,113 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2026 200
+2026-05-11 16:25:34,248 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-246670485095632525064730475670644582410&bing_market=en-IN&ex=-1 202
+2026-05-11 16:25:45,406 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2024-25 200
+2026-05-11 16:25:45,498 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2024-25&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-204005286703552979009809501435547690724&bing_market=en-IN&ex=-1 202
+2026-05-11 16:25:53,480 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+haveli+pune 200
+2026-05-11 16:25:53,615 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+haveli+pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-160430900039156079442570543974796951726&bing_market=en-IN&ex=-1 202
+2026-05-11 16:26:01,145 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+2026 200
+2026-05-11 16:26:01,273 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-194465655259524660956900317578308713805&bing_market=en-IN&ex=-1 202
+2026-05-11 16:26:16,362 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-11 16:26:26,861 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-11 16:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 16:30:00 IST)" (scheduled at 2026-05-11 16:30:00+05:30)
+2026-05-11 16:30:00,035 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 17:00:00 IST)" executed successfully
+2026-05-11 16:32:43,109 | INFO | Scheduler has been shut down
+2026-05-11 16:32:50,389 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:32:50,389 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:32:50,389 | INFO | Scheduler started
+2026-05-11 16:33:14,502 | INFO | Scheduler has been shut down
+2026-05-11 16:33:21,766 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:33:21,767 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:33:21,767 | INFO | Scheduler started
+2026-05-11 16:34:26,087 | INFO | Scheduler has been shut down
+2026-05-11 16:34:33,408 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:34:33,409 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:34:33,409 | INFO | Scheduler started
+2026-05-11 16:36:12,788 | INFO | Scheduler has been shut down
+2026-05-11 16:36:20,015 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:36:20,016 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:36:20,016 | INFO | Scheduler started
+2026-05-11 16:36:37,925 | INFO | Scheduler has been shut down
+2026-05-11 16:36:45,262 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:36:45,262 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:36:45,262 | INFO | Scheduler started
+2026-05-11 16:36:45,371 | INFO | Scheduler has been shut down
+2026-05-11 16:36:52,578 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:36:52,579 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:36:52,579 | INFO | Scheduler started
+2026-05-11 16:37:48,335 | INFO | Scheduler has been shut down
+2026-05-11 16:37:55,467 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:37:55,467 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:37:55,467 | INFO | Scheduler started
+2026-05-11 16:38:31,516 | INFO | Scheduler has been shut down
+2026-05-11 16:38:38,828 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 16:38:38,828 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 16:38:38,828 | INFO | Scheduler started
+2026-05-11 17:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 17:00:00 IST)" (scheduled at 2026-05-11 17:00:00+05:30)
+2026-05-11 17:00:00,023 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 17:30:00 IST)" executed successfully
+2026-05-11 17:29:07,924 | INFO | Scheduler has been shut down
+2026-05-11 17:29:16,731 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-11 17:29:16,731 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-11 17:29:16,731 | INFO | Scheduler started
+2026-05-11 17:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 17:30:00 IST)" (scheduled at 2026-05-11 17:30:00+05:30)
+2026-05-11 17:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 18:00:00 IST)" executed successfully
+2026-05-11 17:30:35,121 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-11 17:31:33,751 | INFO | Scheduler has been shut down
