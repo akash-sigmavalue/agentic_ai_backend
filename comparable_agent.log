@@ -3465,3 +3465,535 @@ ORDER BY
 2026-05-11 17:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-11 18:00:00 IST)" executed successfully
 2026-05-11 17:30:35,121 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-11 17:31:33,751 | INFO | Scheduler has been shut down
+2026-05-12 12:05:59,466 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:05:59,466 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:05:59,466 | INFO | Scheduler started
+2026-05-12 12:18:59,791 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:18:59,792 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:18:59,792 | INFO | Scheduler started
+2026-05-12 12:19:51,937 | INFO | Scheduler has been shut down
+2026-05-12 12:20:00,997 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:20:00,997 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:20:00,997 | INFO | Scheduler started
+2026-05-12 12:22:45,000 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:24:43,247 | INFO | Scheduler has been shut down
+2026-05-12 12:24:50,629 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:24:50,629 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:24:50,629 | INFO | Scheduler started
+2026-05-12 12:28:59,357 | INFO | Scheduler has been shut down
+2026-05-12 12:29:15,959 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:29:15,959 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:29:15,959 | INFO | Scheduler started
+2026-05-12 12:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 12:30:00 IST)" (scheduled at 2026-05-12 12:30:00+05:30)
+2026-05-12 12:30:00,036 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:00:00 IST)" executed successfully
+2026-05-12 12:31:07,422 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:31:09,489 | WARNING | Impersonate 'chrome_101' does not exist, using 'random'
+2026-05-12 12:31:09,625 | INFO | response: https://duckduckgo.com/?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28 200
+2026-05-12 12:31:09,789 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-200395384374374480205958303454933235648&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:15,889 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 12:31:15,972 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973785143935733581821569619727218312&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:22,489 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2026 200
+2026-05-12 12:31:22,639 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-246656952925476152724068058402066435930&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:29,571 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2024-25 200
+2026-05-12 12:31:29,709 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2024-25&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-204008474844815722600107115007543755188&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:34,890 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+haveli+pune 200
+2026-05-12 12:31:35,006 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+haveli+pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-160435345689810006980446011772071602174&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:40,055 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+2026 200
+2026-05-12 12:31:40,194 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-194481988937505422064355303680981998109&bing_market=en-IN&ex=-1 202
+2026-05-12 12:31:54,905 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:33:32,436 | INFO | Scheduler has been shut down
+2026-05-12 12:33:39,703 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:33:39,703 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:33:39,703 | INFO | Scheduler started
+2026-05-12 12:40:22,293 | INFO | Scheduler has been shut down
+2026-05-12 12:40:31,932 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:40:31,932 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:40:31,932 | INFO | Scheduler started
+2026-05-12 12:41:17,906 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:41:18,824 | WARNING | Impersonate 'chrome_119' does not exist, using 'random'
+2026-05-12 12:41:18,962 | INFO | response: https://duckduckgo.com/?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28 200
+2026-05-12 12:41:19,072 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-200395384374374480205958303454933235648&bing_market=en-IN&ex=-1 202
+2026-05-12 12:41:26,092 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 12:41:26,209 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973785143935733581821569619727218312&bing_market=en-IN&ex=-1 202
+2026-05-12 12:41:32,459 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2026 200
+2026-05-12 12:41:32,581 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-246656952925476152724068058402066435930&bing_market=en-IN&ex=-1 202
+2026-05-12 12:41:38,908 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+2024-25 200
+2026-05-12 12:41:39,026 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+2024-25&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-204008474844815722600107115007543755188&bing_market=en-IN&ex=-1 202
+2026-05-12 12:41:45,125 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+haveli+pune 200
+2026-05-12 12:41:45,289 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+haveli+pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-160435345689810006980446011772071602174&bing_market=en-IN&ex=-1 202
+2026-05-12 12:41:52,998 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+2026 200
+2026-05-12 12:41:53,126 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-194481988937505422064355303680981998109&bing_market=en-IN&ex=-1 202
+2026-05-12 12:42:08,610 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:42:19,966 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 12:56:07,857 | INFO | Scheduler has been shut down
+2026-05-12 12:56:22,549 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:56:22,549 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:56:22,549 | INFO | Scheduler started
+2026-05-12 12:56:25,790 | INFO | Scheduler has been shut down
+2026-05-12 12:56:32,854 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:56:32,854 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:56:32,854 | INFO | Scheduler started
+2026-05-12 12:56:37,976 | INFO | Scheduler has been shut down
+2026-05-12 12:56:45,052 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 12:56:45,052 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 12:56:45,052 | INFO | Scheduler started
+2026-05-12 13:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:00:00 IST)" (scheduled at 2026-05-12 13:00:00+05:30)
+2026-05-12 13:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:30:00 IST)" executed successfully
+2026-05-12 13:02:20,598 | INFO | Scheduler has been shut down
+2026-05-12 13:02:30,897 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:02:30,897 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:02:30,897 | INFO | Scheduler started
+2026-05-12 13:03:03,198 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:03:05,347 | WARNING | Impersonate 'safari_16.5' does not exist, using 'random'
+2026-05-12 13:03:05,464 | INFO | response: https://duckduckgo.com/?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28 200
+2026-05-12 13:03:05,580 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+ready+reckoner+rate+for+baner+for+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-200395384374374480205958303454933235648&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:11,231 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 13:03:11,364 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285958178979830691101898854674026610&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:18,697 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-12 13:03:18,780 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189850856234744557375574594555215359778&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:24,880 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+survey+no+28 200
+2026-05-12 13:03:24,997 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-111087855479834271697857372524494799127&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:30,480 | INFO | response: https://duckduckgo.com/?q=government+valuation+Baner+survey+no+28 200
+2026-05-12 13:03:30,605 | INFO | response: https://links.duckduckgo.com/d.js?q=government+valuation+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277106366615465432023416475313509979071&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:35,879 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 13:03:35,997 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973785143935733581821569619727218312&bing_market=en-IN&ex=-1 202
+2026-05-12 13:03:50,247 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:04:03,275 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:20:56,485 | INFO | Scheduler has been shut down
+2026-05-12 13:21:04,225 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:21:04,225 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:21:04,225 | INFO | Scheduler started
+2026-05-12 13:21:50,006 | INFO | Scheduler has been shut down
+2026-05-12 13:21:57,123 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:21:57,123 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:21:57,123 | INFO | Scheduler started
+2026-05-12 13:22:04,910 | INFO | Scheduler has been shut down
+2026-05-12 13:22:12,140 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:22:12,141 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:22:12,141 | INFO | Scheduler started
+2026-05-12 13:25:07,368 | INFO | Scheduler has been shut down
+2026-05-12 13:25:14,466 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:25:14,466 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:25:14,466 | INFO | Scheduler started
+2026-05-12 13:25:22,068 | INFO | Scheduler has been shut down
+2026-05-12 13:25:29,068 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:25:29,068 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:25:29,068 | INFO | Scheduler started
+2026-05-12 13:25:44,701 | INFO | Scheduler has been shut down
+2026-05-12 13:25:51,733 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:25:51,733 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:25:51,733 | INFO | Scheduler started
+2026-05-12 13:26:02,033 | INFO | Scheduler has been shut down
+2026-05-12 13:26:08,984 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:26:08,984 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:26:08,984 | INFO | Scheduler started
+2026-05-12 13:27:35,931 | INFO | Scheduler has been shut down
+2026-05-12 13:27:43,065 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:27:43,065 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:27:43,065 | INFO | Scheduler started
+2026-05-12 13:27:45,431 | INFO | Scheduler has been shut down
+2026-05-12 13:27:52,607 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:27:52,607 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:27:52,607 | INFO | Scheduler started
+2026-05-12 13:28:03,073 | INFO | Scheduler has been shut down
+2026-05-12 13:28:10,244 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:28:10,244 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:28:10,244 | INFO | Scheduler started
+2026-05-12 13:29:19,930 | INFO | Scheduler has been shut down
+2026-05-12 13:29:27,147 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:29:27,147 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:29:27,147 | INFO | Scheduler started
+2026-05-12 13:29:43,381 | INFO | Scheduler has been shut down
+2026-05-12 13:29:50,534 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:29:50,534 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:29:50,534 | INFO | Scheduler started
+2026-05-12 13:30:00,011 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 13:30:00 IST)" (scheduled at 2026-05-12 13:30:00+05:30)
+2026-05-12 13:30:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 14:00:00 IST)" executed successfully
+2026-05-12 13:32:25,285 | INFO | Scheduler has been shut down
+2026-05-12 13:32:35,641 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:32:35,641 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:32:35,641 | INFO | Scheduler started
+2026-05-12 13:33:25,857 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:33:27,574 | WARNING | Impersonate 'safari_17.4.1' does not exist, using 'random'
+2026-05-12 13:33:27,723 | INFO | response: https://duckduckgo.com/?q=tell+how+langchain+works 200
+2026-05-12 13:33:27,874 | INFO | response: https://links.duckduckgo.com/d.js?q=tell+how+langchain+works&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-330234437450491548253730401495159381787&bing_market=en-IN&ex=-1 202
+2026-05-12 13:33:33,927 | INFO | response: https://duckduckgo.com/?q=how+does+LangChain+work 200
+2026-05-12 13:33:34,040 | INFO | response: https://links.duckduckgo.com/d.js?q=how+does+LangChain+work&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-331216961717208648938712158363853907922&bing_market=en-IN&ex=-1 202
+2026-05-12 13:33:39,157 | INFO | response: https://duckduckgo.com/?q=understanding+LangChain+functionality 200
+2026-05-12 13:33:39,277 | INFO | response: https://links.duckduckgo.com/d.js?q=understanding+LangChain+functionality&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-174053769851949003575897627020356125879&bing_market=en-IN&ex=-1 202
+2026-05-12 13:33:44,040 | INFO | response: https://duckduckgo.com/?q=LangChain+architecture+explained 200
+2026-05-12 13:33:44,164 | INFO | response: https://links.duckduckgo.com/d.js?q=LangChain+architecture+explained&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-95804675397716276394786182909143708405&bing_market=en-IN&ex=-1 202
+2026-05-12 13:33:52,023 | INFO | response: https://duckduckgo.com/?q=LangChain+usage+guide 200
+2026-05-12 13:33:52,171 | INFO | response: https://links.duckduckgo.com/d.js?q=LangChain+usage+guide&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-132465786145121048447435195332055669891&bing_market=en-IN&ex=-1 202
+2026-05-12 13:34:05,979 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:34:15,973 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:11,845 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:36:12,881 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 13:36:13,018 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114258495901081892961044728855420920377&bing_market=en-IN&ex=-1 202
+2026-05-12 13:36:20,105 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 13:36:20,220 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223526344219059352145718168243936599798&bing_market=en-IN&ex=-1 202
+2026-05-12 13:36:25,229 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 13:36:25,356 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297816541237110568219600237888688500536&bing_market=en-IN&ex=-1 202
+2026-05-12 13:36:30,037 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 13:36:30,130 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284539483330768815275435125856408839239&bing_market=en-IN&ex=-1 202
+2026-05-12 13:36:35,287 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 13:36:35,397 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605531329312222924618806108968165335&bing_market=en-IN&ex=-1 202
+2026-05-12 13:36:52,620 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:37:09,845 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:48:31,521 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:48:33,771 | INFO | response: https://duckduckgo.com/?q=give+me+sea+view+project+name+in+chicago 200
+2026-05-12 13:48:33,904 | INFO | response: https://links.duckduckgo.com/d.js?q=give+me+sea+view+project+name+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-12898673401030507041397496894542864857&bing_market=en-IN&ex=-1 202
+2026-05-12 13:48:41,151 | INFO | response: https://duckduckgo.com/?q=sea+view+real+estate+projects+in+Chicago 200
+2026-05-12 13:48:41,271 | INFO | response: https://links.duckduckgo.com/d.js?q=sea+view+real+estate+projects+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-225130653312476503770892680885954566684&bing_market=en-IN&ex=-1 202
+2026-05-12 13:48:48,570 | INFO | response: https://duckduckgo.com/?q=waterfront+developments+in+Chicago 200
+2026-05-12 13:48:48,704 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+developments+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-334758033319779109346129216281852125326&bing_market=en-IN&ex=-1 202
+2026-05-12 13:48:53,336 | INFO | response: https://duckduckgo.com/?q=Chicago+projects+with+lake+views 200
+2026-05-12 13:48:53,470 | INFO | response: https://links.duckduckgo.com/d.js?q=Chicago+projects+with+lake+views&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-184354954842398480058838953671165386220&bing_market=en-IN&ex=-1 202
+2026-05-12 13:48:58,938 | INFO | response: https://duckduckgo.com/?q=best+sea+view+properties+in+Chicago 200
+2026-05-12 13:48:59,071 | INFO | response: https://links.duckduckgo.com/d.js?q=best+sea+view+properties+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-65123008653681081000452818366297161730&bing_market=en-IN&ex=-1 202
+2026-05-12 13:49:10,103 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:49:21,753 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:51:33,784 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:51:34,882 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 13:51:34,967 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40885801717290724585621547612682983481&bing_market=en-IN&ex=-1 202
+2026-05-12 13:51:40,850 | INFO | response: https://duckduckgo.com/?q=sea+view+real+estate+projects+in+Chicago 200
+2026-05-12 13:51:40,984 | INFO | response: https://links.duckduckgo.com/d.js?q=sea+view+real+estate+projects+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-225130653312476503770892680885954566684&bing_market=en-IN&ex=-1 202
+2026-05-12 13:51:46,727 | INFO | response: https://duckduckgo.com/?q=waterfront+properties+available+in+Chicago 200
+2026-05-12 13:51:46,867 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+properties+available+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-37096556663758149437850339323748817054&bing_market=en-IN&ex=-1 202
+2026-05-12 13:51:56,835 | INFO | response: https://duckduckgo.com/?q=existing+real+estate+developments+with+lake+views+in+Chicago 200
+2026-05-12 13:51:56,950 | INFO | response: https://links.duckduckgo.com/d.js?q=existing+real+estate+developments+with+lake+views+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-331266086308579547961019021146702489907&bing_market=en-IN&ex=-1 202
+2026-05-12 13:52:04,616 | INFO | response: https://duckduckgo.com/?q=Chicago+real+estate+listings+with+sea+views 200
+2026-05-12 13:52:04,717 | INFO | response: https://links.duckduckgo.com/d.js?q=Chicago+real+estate+listings+with+sea+views&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-260573117889458978888704390773711107679&bing_market=en-IN&ex=-1 202
+2026-05-12 13:52:16,616 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:52:18,783 | ERROR | parsed tree length: 0, wrong data type or not valid HTML
+2026-05-12 13:52:18,783 | ERROR | empty HTML tree: None
+2026-05-12 13:52:18,783 | WARNING | discarding data: None
+2026-05-12 13:52:24,783 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 13:58:21,224 | INFO | Scheduler has been shut down
+2026-05-12 13:58:29,429 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:58:29,430 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:58:29,430 | INFO | Scheduler started
+2026-05-12 13:58:47,008 | INFO | Scheduler has been shut down
+2026-05-12 13:58:54,090 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:58:54,090 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:58:54,090 | INFO | Scheduler started
+2026-05-12 13:59:52,338 | INFO | Scheduler has been shut down
+2026-05-12 13:59:59,507 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 13:59:59,507 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 13:59:59,507 | INFO | Scheduler started
+2026-05-12 14:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 14:00:00 IST)" (scheduled at 2026-05-12 14:00:00+05:30)
+2026-05-12 14:00:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 14:30:00 IST)" executed successfully
+2026-05-12 14:00:39,072 | INFO | Scheduler has been shut down
+2026-05-12 14:00:46,126 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 14:00:46,126 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 14:00:46,126 | INFO | Scheduler started
+2026-05-12 14:03:02,402 | INFO | Scheduler has been shut down
+2026-05-12 14:03:13,319 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 14:03:13,335 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 14:03:13,335 | INFO | Scheduler started
+2026-05-12 14:07:41,961 | INFO | Scheduler has been shut down
+2026-05-12 14:07:53,030 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 14:07:53,045 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 14:07:53,045 | INFO | Scheduler started
+2026-05-12 14:08:11,461 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 14:08:13,061 | WARNING | Impersonate 'safari_ios_17.2' does not exist, using 'random'
+2026-05-12 14:08:13,195 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 14:08:13,295 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40885801717290724585621547612682983481&bing_market=en-IN&ex=-1 202
+2026-05-12 14:08:18,784 | INFO | response: https://duckduckgo.com/?q=sea+view+real+estate+projects+in+Chicago 200
+2026-05-12 14:08:18,895 | INFO | response: https://links.duckduckgo.com/d.js?q=sea+view+real+estate+projects+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-225130653312476503770892680885954566684&bing_market=en-IN&ex=-1 202
+2026-05-12 14:08:24,460 | INFO | response: https://duckduckgo.com/?q=waterfront+properties+available+in+Chicago 200
+2026-05-12 14:08:24,578 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+properties+available+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-37096556663758149437850339323748817054&bing_market=en-IN&ex=-1 202
+2026-05-12 14:08:29,645 | INFO | response: https://duckduckgo.com/?q=Chicago+real+estate+with+lake+views 200
+2026-05-12 14:08:29,763 | INFO | response: https://links.duckduckgo.com/d.js?q=Chicago+real+estate+with+lake+views&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-322865756615614689189623557478256841620&bing_market=en-IN&ex=-1 202
+2026-05-12 14:08:35,711 | INFO | response: https://duckduckgo.com/?q=existing+sea+view+developments+in+Chicago 200
+2026-05-12 14:08:35,828 | INFO | response: https://links.duckduckgo.com/d.js?q=existing+sea+view+developments+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-250974295373937725344894164843740432560&bing_market=en-IN&ex=-1 202
+2026-05-12 14:08:52,491 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 14:08:59,358 | INFO | ruthless removal did not work. 
+2026-05-12 14:09:05,561 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 14:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 14:30:00 IST)" (scheduled at 2026-05-12 14:30:00+05:30)
+2026-05-12 14:30:00,024 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 15:00:00 IST)" executed successfully
+2026-05-12 15:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 15:30:00 IST)" (scheduled at 2026-05-12 15:00:00+05:30)
+2026-05-12 15:00:00,011 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 15:30:00 IST)" executed successfully
+2026-05-12 15:13:38,935 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:13:38,935 | INFO | Retrying request to /chat/completions in 0.499546 seconds
+2026-05-12 15:13:40,424 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:13:40,424 | INFO | Retrying request to /chat/completions in 0.814700 seconds
+2026-05-12 15:13:41,536 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:13:42,307 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 15:13:42,400 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40886168068314124725935674517974821417&bing_market=en-IN&ex=-1 202
+2026-05-12 15:13:57,657 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:13:57,657 | INFO | Retrying request to /chat/completions in 0.463079 seconds
+2026-05-12 15:13:58,923 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:13:58,923 | INFO | Retrying request to /chat/completions in 0.955266 seconds
+2026-05-12 15:14:00,163 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:14:01,240 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 15:14:01,386 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40886168068314124725935674517974821417&bing_market=en-IN&ex=-1 202
+2026-05-12 15:14:20,551 | INFO | Scheduler has been shut down
+2026-05-12 15:14:29,793 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 15:14:29,793 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 15:14:29,793 | INFO | Scheduler started
+2026-05-12 15:15:15,823 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:15:15,823 | INFO | Retrying request to /chat/completions in 0.404662 seconds
+2026-05-12 15:15:16,505 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:15:16,505 | INFO | Retrying request to /chat/completions in 0.885949 seconds
+2026-05-12 15:15:17,638 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:15:18,438 | WARNING | Impersonate 'chrome_129' does not exist, using 'random'
+2026-05-12 15:15:18,571 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 15:15:18,688 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40886168068314124725935674517974821417&bing_market=en-IN&ex=-1 202
+2026-05-12 15:17:08,686 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:17:08,686 | INFO | Retrying request to /chat/completions in 0.383815 seconds
+2026-05-12 15:17:09,336 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:17:09,336 | INFO | Retrying request to /chat/completions in 0.871013 seconds
+2026-05-12 15:17:10,478 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:17:11,522 | INFO | response: https://duckduckgo.com/?q=what+is+llm 200
+2026-05-12 15:17:11,738 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+llm&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-110935147508142952197221503475836269491&bing_market=en-IN&ex=-1 202
+2026-05-12 15:18:36,181 | INFO | Scheduler has been shut down
+2026-05-12 15:18:45,600 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 15:18:45,601 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 15:18:45,601 | INFO | Scheduler started
+2026-05-12 15:20:57,377 | INFO | Scheduler has been shut down
+2026-05-12 15:21:08,212 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 15:21:08,212 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 15:21:08,212 | INFO | Scheduler started
+2026-05-12 15:21:54,345 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:21:54,345 | INFO | Retrying request to /chat/completions in 0.397333 seconds
+2026-05-12 15:21:55,349 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:21:55,357 | INFO | Retrying request to /chat/completions in 0.799352 seconds
+2026-05-12 15:21:56,448 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:21:58,368 | WARNING | Impersonate 'chrome_104' does not exist, using 'random'
+2026-05-12 15:21:58,508 | INFO | response: https://duckduckgo.com/?q=give+me+sea+view+project+name+in+chicago 200
+2026-05-12 15:21:58,648 | INFO | response: https://links.duckduckgo.com/d.js?q=give+me+sea+view+project+name+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-12897739142538224134073245564109083593&bing_market=en-IN&ex=-1 202
+2026-05-12 15:22:13,629 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:22:13,629 | INFO | Retrying request to /chat/completions in 0.432342 seconds
+2026-05-12 15:22:14,296 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:22:14,296 | INFO | Retrying request to /chat/completions in 0.886387 seconds
+2026-05-12 15:22:15,763 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:22:25,079 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:22:25,079 | INFO | Retrying request to /chat/completions in 0.465772 seconds
+2026-05-12 15:22:25,912 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:22:25,912 | INFO | Retrying request to /chat/completions in 0.786989 seconds
+2026-05-12 15:22:27,613 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:28:05,603 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:28:05,604 | INFO | Retrying request to /chat/completions in 0.460655 seconds
+2026-05-12 15:28:06,369 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:28:06,369 | INFO | Retrying request to /chat/completions in 0.884862 seconds
+2026-05-12 15:28:07,533 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:28:08,661 | INFO | response: https://duckduckgo.com/?q=what+is+llm 200
+2026-05-12 15:28:08,814 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+llm&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-110935147508142952197221503475836269491&bing_market=en-IN&ex=-1 202
+2026-05-12 15:30:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 15:30:00 IST)" (scheduled at 2026-05-12 15:30:00+05:30)
+2026-05-12 15:30:00,030 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 16:00:00 IST)" executed successfully
+2026-05-12 15:38:10,906 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:38:10,906 | INFO | Retrying request to /chat/completions in 0.416361 seconds
+2026-05-12 15:38:12,047 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:38:12,047 | INFO | Retrying request to /chat/completions in 0.805607 seconds
+2026-05-12 15:38:14,186 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+2026-05-12 15:38:15,086 | INFO | response: https://duckduckgo.com/?q=give+me+sea+view+project+name+in+chicago 200
+2026-05-12 15:38:15,216 | INFO | response: https://links.duckduckgo.com/d.js?q=give+me+sea+view+project+name+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-12898102958260537154724193806729627129&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:14,957 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:51:16,812 | INFO | response: https://duckduckgo.com/?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago 200
+2026-05-12 15:51:16,940 | INFO | response: https://links.duckduckgo.com/d.js?q=Sugegst+me+sea+view+existing+real+estate+projects+in+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-40886529348735084993808782130625002521&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:21,824 | INFO | response: https://duckduckgo.com/?q=sea+view+real+estate+projects+in+Chicago 200
+2026-05-12 15:51:21,953 | INFO | response: https://links.duckduckgo.com/d.js?q=sea+view+real+estate+projects+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-225131218684644338377763048200591277628&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:27,028 | INFO | response: https://duckduckgo.com/?q=waterfront+properties+available+in+Chicago 200
+2026-05-12 15:51:27,298 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+properties+available+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-37097284295202851037016023021086588094&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:32,656 | INFO | response: https://duckduckgo.com/?q=existing+real+estate+developments+with+lake+views+in+Chicago 200
+2026-05-12 15:51:32,778 | INFO | response: https://links.duckduckgo.com/d.js?q=existing+real+estate+developments+with+lake+views+in+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-331266656751349480068760461552231910675&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:37,140 | INFO | response: https://duckduckgo.com/?q=Chicago+real+estate+listings+with+sea+views 200
+2026-05-12 15:51:37,283 | INFO | response: https://links.duckduckgo.com/d.js?q=Chicago+real+estate+listings+with+sea+views&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-260573688332228949955969385222557717119&bing_market=en-IN&ex=-1 202
+2026-05-12 15:51:52,057 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:52:04,867 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:54:13,869 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:54:14,854 | INFO | response: https://duckduckgo.com/?q=waterfront+lake+view+water+view+real+estate+projects+Mumbai 200
+2026-05-12 15:54:15,054 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+lake+view+water+view+real+estate+projects+Mumbai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-31000361176116697839438675987673225397&bing_market=en-IN&ex=-1 202
+2026-05-12 15:54:21,694 | INFO | response: https://duckduckgo.com/?q=waterfront+lake+view+water+view+homes+for+sale+Mumbai 200
+2026-05-12 15:54:21,820 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+lake+view+water+view+homes+for+sale+Mumbai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277961211739034598750880257796880076083&bing_market=en-IN&ex=-1 202
+2026-05-12 15:54:27,194 | INFO | response: https://duckduckgo.com/?q=waterfront+lake+view+water+view+condos+for+sale+Mumbai 200
+2026-05-12 15:54:27,324 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+lake+view+water+view+condos+for+sale+Mumbai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-306348630835400080613920184161368289044&bing_market=en-IN&ex=-1 202
+2026-05-12 15:54:31,936 | INFO | response: https://duckduckgo.com/?q=waterfront+lake+view+water+view+apartments+Mumbai 200
+2026-05-12 15:54:32,052 | INFO | response: https://links.duckduckgo.com/d.js?q=waterfront+lake+view+water+view+apartments+Mumbai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-11653728152581445125464215230510529792&bing_market=en-IN&ex=-1 202
+2026-05-12 15:54:37,136 | INFO | response: https://duckduckgo.com/?q=existing+real+estate+projects+Mumbai 200
+2026-05-12 15:54:37,264 | INFO | response: https://links.duckduckgo.com/d.js?q=existing+real+estate+projects+Mumbai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-257044727378377275354117747316292181006&bing_market=en-IN&ex=-1 202
+2026-05-12 15:54:49,293 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:54:52,108 | WARNING | discarding data: None
+2026-05-12 15:55:01,052 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:57:17,625 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:57:18,759 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Mumbai+2026 200
+2026-05-12 15:57:18,899 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-33829355939261056109079016022570051612&bing_market=en-IN&ex=-1 202
+2026-05-12 15:57:24,746 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Mumbai+2026 200
+2026-05-12 15:57:24,877 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-34264804309299441384389626194168839115&bing_market=en-IN&ex=-1 202
+2026-05-12 15:57:29,871 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Mumbai+2026 200
+2026-05-12 15:57:29,984 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-331166231091894058360170699602114081039&bing_market=en-IN&ex=-1 202
+2026-05-12 15:57:34,387 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Mumbai+2026 200
+2026-05-12 15:57:34,562 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-299089897686918979138138971787259855955&bing_market=en-IN&ex=-1 202
+2026-05-12 15:57:40,216 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Mumbai+2026+Pune 200
+2026-05-12 15:57:40,407 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Mumbai+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-201092102380144176526104866434033739028&bing_market=en-IN&ex=-1 202
+2026-05-12 15:57:55,318 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:58:11,723 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:59:11,071 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 15:59:12,252 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Mumbai+2026 200
+2026-05-12 15:59:12,401 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-33829355939261056109079016022570051612&bing_market=en-IN&ex=-1 202
+2026-05-12 15:59:18,428 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Mumbai+2026 200
+2026-05-12 15:59:18,542 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-34264804309299441384389626194168839115&bing_market=en-IN&ex=-1 202
+2026-05-12 15:59:23,721 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Mumbai+2026 200
+2026-05-12 15:59:23,829 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-331166231091894058360170699602114081039&bing_market=en-IN&ex=-1 202
+2026-05-12 15:59:28,971 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Mumbai+2026 200
+2026-05-12 15:59:29,098 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Mumbai+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-299089897686918979138138971787259855955&bing_market=en-IN&ex=-1 202
+2026-05-12 15:59:34,063 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Mumbai+2026+Pune 200
+2026-05-12 15:59:34,226 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Mumbai+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-201092102380144176526104866434033739028&bing_market=en-IN&ex=-1 202
+2026-05-12 15:59:49,068 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:00:00,055 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 16:30:00 IST)" (scheduled at 2026-05-12 16:00:00+05:30)
+2026-05-12 16:00:00,349 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 16:30:00 IST)" executed successfully
+2026-05-12 16:00:04,529 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:01:23,373 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:01:25,290 | INFO | response: https://duckduckgo.com/?q=the+pocess+to+purchase+3+bhk+aprtmnet+in+dubai 200
+2026-05-12 16:01:25,420 | INFO | response: https://links.duckduckgo.com/d.js?q=the+pocess+to+purchase+3+bhk+aprtmnet+in+dubai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-232195307599338245822445883021894886378&bing_market=en-IN&ex=-1 202
+2026-05-12 16:01:33,170 | INFO | response: https://duckduckgo.com/?q=the+pocess+to+purchase+3+bhk+aprtmnet+in+dubai+%223+bhk%22 200
+2026-05-12 16:01:33,300 | INFO | response: https://links.duckduckgo.com/d.js?q=the+pocess+to+purchase+3+bhk+aprtmnet+in+dubai+%223+bhk%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-112385086823227215599495185709828976046&bing_market=en-IN&ex=-1 202
+2026-05-12 16:01:37,973 | INFO | response: https://duckduckgo.com/?q=3+BHK+apartment+Dubai+%223+bhk%22 200
+2026-05-12 16:01:38,077 | INFO | response: https://links.duckduckgo.com/d.js?q=3+BHK+apartment+Dubai+%223+bhk%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-63682393494613578087232343773903728678&bing_market=en-IN&ex=-1 202
+2026-05-12 16:01:44,165 | INFO | response: https://duckduckgo.com/?q=3+BHK+apartment+Dubai+%223+bhk%22+official 200
+2026-05-12 16:01:44,299 | INFO | response: https://links.duckduckgo.com/d.js?q=3+BHK+apartment+Dubai+%223+bhk%22+official&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-177376908978840585371889777802603943999&bing_market=en-IN&ex=-1 202
+2026-05-12 16:01:48,733 | INFO | response: https://duckduckgo.com/?q=how+to+buy+a+3+BHK+apartment+in+Dubai 200
+2026-05-12 16:01:48,882 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+buy+a+3+BHK+apartment+in+Dubai&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-1017805673065055238929337506048292939&bing_market=en-IN&ex=-1 202
+2026-05-12 16:02:03,102 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:02:15,769 | WARNING | discarding data: None
+2026-05-12 16:02:15,774 | INFO | ruthless removal did not work. 
+2026-05-12 16:02:19,568 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:18:28,837 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:18:29,723 | INFO | response: https://duckduckgo.com/?q=what+is+aprtment+value+heart+of+streeterville+chicago 200
+2026-05-12 16:18:29,863 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+aprtment+value+heart+of+streeterville+chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-195265914001448190012287826960873464522&bing_market=en-IN&ex=-1 202
+2026-05-12 16:18:34,628 | INFO | response: https://duckduckgo.com/?q=current+apartment+values+in+Streeterville+Chicago 200
+2026-05-12 16:18:34,722 | INFO | response: https://links.duckduckgo.com/d.js?q=current+apartment+values+in+Streeterville+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-259513993374085943572386748994094721750&bing_market=en-IN&ex=-1 202
+2026-05-12 16:18:39,522 | INFO | response: https://duckduckgo.com/?q=average+apartment+prices+in+Streeterville 200
+2026-05-12 16:18:39,680 | INFO | response: https://links.duckduckgo.com/d.js?q=average+apartment+prices+in+Streeterville&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-258385142873561343114695528062481365686&bing_market=en-IN&ex=-1 202
+2026-05-12 16:18:45,642 | INFO | response: https://duckduckgo.com/?q=real+estate+market+trends+Streeterville+Chicago 200
+2026-05-12 16:18:45,794 | INFO | response: https://links.duckduckgo.com/d.js?q=real+estate+market+trends+Streeterville+Chicago&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-22490006600712864036562595231295948835&bing_market=en-IN&ex=-1 202
+2026-05-12 16:18:50,946 | INFO | response: https://duckduckgo.com/?q=how+much+do+apartments+cost+in+Streeterville 200
+2026-05-12 16:18:51,077 | INFO | response: https://links.duckduckgo.com/d.js?q=how+much+do+apartments+cost+in+Streeterville&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-163521439783953362205025194282872768447&bing_market=en-IN&ex=-1 202
+2026-05-12 16:19:01,878 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:19:12,180 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:26:40,170 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:26:41,147 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+baner+survey+no.+28 200
+2026-05-12 16:26:41,281 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+baner+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-242090610842857264663214015993064756149&bing_market=en-IN&ex=-1 202
+2026-05-12 16:26:45,932 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 16:26:46,090 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285515768920562660088803501529458082&bing_market=en-IN&ex=-1 202
+2026-05-12 16:26:50,717 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-12 16:26:50,830 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189849929582156027543649972885789350642&bing_market=en-IN&ex=-1 202
+2026-05-12 16:26:56,350 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+survey+no+28 200
+2026-05-12 16:26:56,484 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-111086837556402502411879168321856566471&bing_market=en-IN&ex=-1 202
+2026-05-12 16:27:01,685 | INFO | response: https://duckduckgo.com/?q=government+valuation+Baner+survey+no+28 200
+2026-05-12 16:27:01,831 | INFO | response: https://links.duckduckgo.com/d.js?q=government+valuation+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277105325874322844462209700427199899247&bing_market=en-IN&ex=-1 202
+2026-05-12 16:27:06,769 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 16:27:06,911 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973565840381796404178517970922488664&bing_market=en-IN&ex=-1 202
+2026-05-12 16:27:17,831 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:27:29,089 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:28:22,997 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:28:24,878 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+baner+survey+no.+28 200
+2026-05-12 16:28:25,003 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+baner+survey+no.+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-242090610842857264663214015993064756149&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:29,157 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 16:28:29,289 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285515768920562660088803501529458082&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:33,402 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-12 16:28:33,521 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189849929582156027543649972885789350642&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:36,211 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:28:37,253 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+survey+no.+28+for+baner 200
+2026-05-12 16:28:37,394 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+survey+no.+28+for+baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-247119461046724570227034012471898016923&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:38,435 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+survey+no+28 200
+2026-05-12 16:28:38,566 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-111086837556402502411879168321856566471&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:42,093 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 16:28:42,232 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285515768920562660088803501529458082&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:42,941 | INFO | response: https://duckduckgo.com/?q=government+valuation+Baner+survey+no+28 200
+2026-05-12 16:28:43,044 | INFO | response: https://links.duckduckgo.com/d.js?q=government+valuation+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277105325874322844462209700427199899247&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:47,355 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-12 16:28:47,520 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189849929582156027543649972885789350642&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:48,601 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 16:28:48,725 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973565840381796404178517970922488664&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:51,796 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+survey+no+28 200
+2026-05-12 16:28:51,930 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-111086837556402502411879168321856566471&bing_market=en-IN&ex=-1 202
+2026-05-12 16:28:55,962 | INFO | response: https://duckduckgo.com/?q=government+valuation+Baner+survey+no+28 200
+2026-05-12 16:28:56,077 | INFO | response: https://links.duckduckgo.com/d.js?q=government+valuation+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277105325874322844462209700427199899247&bing_market=en-IN&ex=-1 202
+2026-05-12 16:29:01,011 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 16:29:01,170 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294973565840381796404178517970922488664&bing_market=en-IN&ex=-1 202
+2026-05-12 16:29:05,710 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+survey+no.+28+for+baner 200
+2026-05-12 16:29:05,834 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+survey+no.+28+for+baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-247119461046724570227034012471898016923&bing_market=en-IN&ex=-1 202
+2026-05-12 16:29:06,286 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:29:10,127 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 16:29:10,263 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285515768920562660088803501529458082&bing_market=en-IN&ex=-1 202
+2026-05-12 16:29:39,572 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:29:50,948 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:29:52,492 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+survey+no.+28+for+baner 200
+2026-05-12 16:29:52,635 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+survey+no.+28+for+baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-247119461046724570227034012471898016923&bing_market=en-IN&ex=-1 202
+2026-05-12 16:29:57,000 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-12 16:29:57,138 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305285515768920562660088803501529458082&bing_market=en-IN&ex=-1 202
+2026-05-12 16:30:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 17:00:00 IST)" (scheduled at 2026-05-12 16:30:00+05:30)
+2026-05-12 16:30:00,020 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 17:00:00 IST)" executed successfully
+2026-05-12 16:30:02,381 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-12 16:30:02,758 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189841855915483240358870415646226245858&bing_market=en-IN&ex=-1 202
+2026-05-12 16:30:08,539 | INFO | response: https://duckduckgo.com/?q=annual+statement+of+rates+Baner+survey+no+28 200
+2026-05-12 16:30:08,680 | INFO | response: https://links.duckduckgo.com/d.js?q=annual+statement+of+rates+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-111091663502235823710464506073460278999&bing_market=en-IN&ex=-1 202
+2026-05-12 16:30:12,623 | INFO | response: https://duckduckgo.com/?q=government+valuation+Baner+survey+no+28 200
+2026-05-12 16:30:12,773 | INFO | response: https://links.duckduckgo.com/d.js?q=government+valuation+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-277110154355459802958358751357928117375&bing_market=en-IN&ex=-1 202
+2026-05-12 16:30:19,556 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-12 16:30:19,673 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294964764542262362005242229324516045128&bing_market=en-IN&ex=-1 202
+2026-05-12 16:30:31,838 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:30:38,839 | ERROR | parsed tree length: 0, wrong data type or not valid HTML
+2026-05-12 16:30:38,839 | ERROR | empty HTML tree: None
+2026-05-12 16:30:38,839 | WARNING | discarding data: None
+2026-05-12 16:30:59,305 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:37:49,746 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:37:50,713 | INFO | response: https://duckduckgo.com/?q=can+you+tell+me+about+name+of+projects+nearest+to+bhurj+khalifa+building 200
+2026-05-12 16:37:50,855 | INFO | response: https://links.duckduckgo.com/d.js?q=can+you+tell+me+about+name+of+projects+nearest+to+bhurj+khalifa+building&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-19576437248438642313348139516655088825&bing_market=en-IN&ex=-1 202
+2026-05-12 16:37:56,146 | INFO | response: https://duckduckgo.com/?q=projects+near+Burj+Khalifa 200
+2026-05-12 16:37:56,282 | INFO | response: https://links.duckduckgo.com/d.js?q=projects+near+Burj+Khalifa&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-172178417634435978457129491083956991138&bing_market=en-IN&ex=-1 202
+2026-05-12 16:38:00,907 | INFO | response: https://duckduckgo.com/?q=buildings+close+to+Burj+Khalifa 200
+2026-05-12 16:38:01,032 | INFO | response: https://links.duckduckgo.com/d.js?q=buildings+close+to+Burj+Khalifa&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-242265112736157575869941735034047077117&bing_market=en-IN&ex=-1 202
+2026-05-12 16:38:06,803 | INFO | response: https://duckduckgo.com/?q=real+estate+developments+near+Burj+Khalifa 200
+2026-05-12 16:38:06,930 | INFO | response: https://links.duckduckgo.com/d.js?q=real+estate+developments+near+Burj+Khalifa&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-295824273339404659889020955316900182764&bing_market=en-IN&ex=-1 202
+2026-05-12 16:38:12,021 | INFO | response: https://duckduckgo.com/?q=construction+projects+around+Burj+Khalifa 200
+2026-05-12 16:38:12,099 | INFO | response: https://links.duckduckgo.com/d.js?q=construction+projects+around+Burj+Khalifa&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-58561927802310536811746903571615585119&bing_market=en-IN&ex=-1 202
+2026-05-12 16:38:23,302 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:38:24,239 | INFO | ruthless removal did not work. 
+2026-05-12 16:38:25,568 | INFO | ruthless removal did not work. 
+2026-05-12 16:38:31,318 | INFO | ruthless removal did not work. 
+2026-05-12 16:38:32,529 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:48:43,335 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:48:44,315 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 16:48:44,448 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254970564763630767426686105721189385&bing_market=en-IN&ex=-1 202
+2026-05-12 16:48:49,048 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 16:48:49,188 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519568626602690345358519940198648006&bing_market=en-IN&ex=-1 202
+2026-05-12 16:48:54,115 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 16:48:54,249 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297813091959827110203630539170783426824&bing_market=en-IN&ex=-1 202
+2026-05-12 16:48:58,881 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 16:48:59,065 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546175258286447586098402039831982711&bing_market=en-IN&ex=-1 202
+2026-05-12 16:49:03,865 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 16:49:03,947 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267606546717443374966398452079950711271&bing_market=en-IN&ex=-1 202
+2026-05-12 16:49:20,055 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:49:31,398 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 16:56:57,435 | INFO | Scheduler has been shut down
+2026-05-12 16:57:05,054 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 16:57:05,054 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 16:57:05,054 | INFO | Scheduler started
+2026-05-12 16:57:53,188 | INFO | Scheduler has been shut down
+2026-05-12 16:58:00,235 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 16:58:00,236 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 16:58:00,236 | INFO | Scheduler started
+2026-05-12 17:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 17:00:00 IST)" (scheduled at 2026-05-12 17:00:00+05:30)
+2026-05-12 17:00:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 17:30:00 IST)" executed successfully
+2026-05-12 17:01:20,177 | INFO | Scheduler has been shut down
+2026-05-12 17:01:29,771 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 17:01:29,771 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 17:01:29,771 | INFO | Scheduler started
+2026-05-12 17:02:17,394 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:02:19,038 | WARNING | Impersonate 'chrome_114' does not exist, using 'random'
+2026-05-12 17:02:19,164 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 17:02:19,282 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254970564763630767426686105721189385&bing_market=en-IN&ex=-1 202
+2026-05-12 17:02:24,364 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 17:02:24,489 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519568626602690345358519940198648006&bing_market=en-IN&ex=-1 202
+2026-05-12 17:02:29,364 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 17:02:29,480 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297813091959827110203630539170783426824&bing_market=en-IN&ex=-1 202
+2026-05-12 17:02:34,547 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 17:02:34,667 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546175258286447586098402039831982711&bing_market=en-IN&ex=-1 202
+2026-05-12 17:02:39,239 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 17:02:39,480 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267606546717443374966398452079950711271&bing_market=en-IN&ex=-1 202
+2026-05-12 17:02:52,280 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:03:02,563 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:20:04,272 | INFO | Scheduler has been shut down

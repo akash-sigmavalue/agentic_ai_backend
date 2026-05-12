@@ -24,7 +24,7 @@ from tools.web_search.search import DuckDuckGoSearcher, SearchResult
 STOP_WORDS = {
     "a", "an", "and", "are", "as", "at", "be", "by", "can", "do", "for",
     "from", "give", "have", "how", "i", "in", "is", "it", "me", "most",
-    "of", "on", "or", "regarding", "search", "show", "that", "the", "this",
+    "no", "number", "of", "on", "or", "regarding", "search", "show", "that", "the", "this",
     "to", "want", "what", "whatever", "when", "where", "which", "will",
     "with", "you",
 }
@@ -231,6 +231,9 @@ class SourceDiscovery:
         understanding = self.understand_query(query, debug_llm_payloads=debug_llm_payloads)
         detector = RealEstateIntentDetector()
         understanding.is_real_estate = detector.is_real_estate_query(query)
+        understanding.rewritten_queries = self._dedupe_queries(
+            self._build_specific_search_queries(query, understanding) + understanding.rewritten_queries
+        )
         
         # If real estate, add specialized project queries
         if understanding.is_real_estate:
@@ -245,16 +248,11 @@ class SourceDiscovery:
 
         candidates = []
         seen_urls = set()
-        for preferred in self._preferred_ready_reckoner_sources(query):
-            if preferred["url"] in seen_urls:
-                continue
-            seen_urls.add(preferred["url"])
-            candidates.append(preferred)
         # Search multiple variants
         is_news_query = any(kw in query.lower() for kw in ['news', 'latest', 'recent', 'today'])
         days_back = 7 if is_news_query else None
         
-        query_limit = 6 if self._is_property_rate_query(query) else 4
+        query_limit = 6 if self._is_property_rate_query(query) else 5
         for i, search_query in enumerate(understanding.rewritten_queries[:query_limit]):
             if status_callback:
                 status_callback(f"Finding sources... (Step {i+1}/{query_limit})")
@@ -368,29 +366,49 @@ class SourceDiscovery:
     def generate_project_search_queries(self, query: str) -> List[str]:
         """Generate targeted real estate project or rate queries"""
         query_lower = query.lower()
-        locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
-        location = 'Pune'
-        for loc in locations:
-            if loc.lower() in query_lower:
-                location = loc
-                break
+        location = self._extract_real_estate_location(query)
         
         is_rate_query = self._is_property_rate_query(query_lower)
 
         if is_rate_query:
-            return [
+            survey_number = self._extract_survey_number(query)
+            queries = []
+            if survey_number:
+                queries.extend([
+                    f"ready reckoner rate {location} survey no {survey_number}",
+                    f"{location} survey no {survey_number} ready reckoner rate",
+                    f"annual statement of rates {location} survey no {survey_number}",
+                    f"government valuation {location} survey no {survey_number}",
+                ])
+            queries.extend([
                 f"ready reckoner rate {location}",
                 f"ready reckoner rate {location} 2026",
                 f"ready reckoner rate {location} 2024-25",
+                f"ready reckoner rate {location} 2024",
                 f"ready reckoner rate {location} haveli pune",
                 f"annual statement of rates {location} 2026",
                 f"government valuation property rate {location}",
                 f"circle rate {location} residential land rate",
                 f"stamp duty market value rate {location}"
-            ]
+            ])
+            return self._dedupe_queries(queries)
 
         year_match = re.search(r'20\d{2}', query)
         year = year_match.group(0) if year_match else '2026'
+
+        if self._is_existing_real_estate_query(query):
+            view_terms = []
+            if any(term in query_lower for term in ["sea view", "waterfront", "lake view", "lake-view", "river view", "water view"]):
+                view_terms = ["waterfront", "lake view", "water view"]
+            descriptor = " ".join(view_terms) if view_terms else "existing"
+            return self._dedupe_queries([
+                f"{descriptor} real estate projects {location}",
+                f"{descriptor} homes for sale {location}",
+                f"{descriptor} condos for sale {location}",
+                f"{descriptor} apartments {location}",
+                f"existing real estate projects {location}",
+                f"residential communities {location}",
+            ])
         
         return [
             f"registered residential projects {location} {year}",
@@ -465,6 +483,58 @@ class SourceDiscovery:
         if "ready reckoner" not in corrected and "reckoner" in corrected:
             corrected = corrected.replace("reckoner", "ready reckoner", 1)
         return corrected
+
+    def _extract_survey_number(self, query: str) -> str:
+        match = re.search(
+            r"\b(?:survey|survay|srv|s\.?\s*no|gat|plot|cts)\s*(?:no\.?|number|#|is|:|-)?\s*([A-Za-z0-9][A-Za-z0-9/-]*)",
+            query,
+            re.IGNORECASE,
+        )
+        if match:
+            return match.group(1).strip(" .,#:-")
+        return ""
+
+    def _is_existing_real_estate_query(self, query: str) -> bool:
+        query_lower = query.lower()
+        existing_terms = [
+            "existing", "available", "for sale", "resale", "ready to move",
+            "ready-to-move", "sea view", "waterfront", "lake view", "lake-view",
+            "river view", "water view", "listing", "listings",
+        ]
+        return any(term in query_lower for term in existing_terms)
+
+    def _extract_real_estate_location(self, query: str) -> str:
+        query_lower = query.lower()
+        locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
+        for loc in locations:
+            if loc.lower() in query_lower:
+                return loc
+
+        match = re.search(r"\b(?:in|at|near|around)\s+([A-Za-z][A-Za-z\s,.-]{2,80})", query)
+        if match:
+            location = re.split(r"\b(?:with|for|and|that|which|having)\b", match.group(1), maxsplit=1)[0]
+            location = re.sub(r"\s+", " ", location).strip(" ,.-")
+            if location:
+                return location.title()
+
+        return "requested location"
+
+    def _extract_property_rate_location(self, query: str) -> str:
+        query_lower = query.lower()
+        for location in sorted(KNOWN_REAL_ESTATE_LOCATIONS, key=len, reverse=True):
+            if re.search(rf"\b{re.escape(location)}\b", query_lower):
+                return location.title()
+
+        match = re.search(r"\b(?:for|in|at|of)\s+([a-z][a-z\s-]{2,40})", query_lower)
+        if not match:
+            return ""
+
+        words = [
+            word
+            for word in re.findall(r"[a-z]+", match.group(1))
+            if word not in STOP_WORDS and word not in {"survey", "survay", "no", "number", "rate"}
+        ]
+        return " ".join(words[:3]).title()
 
     def _looks_like_property_rate_result(self, text: str) -> bool:
         text_lower = text.lower()
@@ -594,13 +664,80 @@ Return this JSON shape:
         return {"expansions": [], "context_terms": [], "avoid_terms": [], "domain": None}
 
     def _build_search_queries(self, query: str, intent: str, entities: List[str], domain_context: Dict) -> List[str]:
-        return [query]
+        return self._dedupe_queries([query] + self._build_constraint_queries(query, entities))
 
     def _build_positive_terms(self, query: str, entities: List[str], domain_context: Dict) -> List[str]:
         return entities
 
     def _dedupe_queries(self, queries: List[str]) -> List[str]:
-        return list(dict.fromkeys(queries))
+        cleaned = []
+        seen = set()
+        for query in queries:
+            normalized = re.sub(r"\s+", " ", str(query or "")).strip()
+            key = normalized.lower()
+            if normalized and key not in seen:
+                seen.add(key)
+                cleaned.append(normalized)
+        return cleaned
+
+    def _build_specific_search_queries(self, query: str, understanding: QueryUnderstanding) -> List[str]:
+        queries = [query]
+        entities = understanding.key_entities or self._extract_key_entities(query)
+        queries.extend(self._build_constraint_queries(query, entities))
+        return self._dedupe_queries(queries)
+
+    def _build_constraint_queries(self, query: str, entities: List[str]) -> List[str]:
+        constraints = self._extract_query_constraints(query, entities)
+        focus_terms = constraints["phrases"] + constraints["ids"] + constraints["years"]
+        if not focus_terms:
+            return []
+
+        normalized = self._normalize_query(query)
+        quoted_focus = " ".join(f'"{term}"' for term in focus_terms[:4])
+        core_entities = " ".join(constraints["entities"][:4])
+        queries = [
+            f"{normalized} {quoted_focus}".strip(),
+            " ".join(part for part in [core_entities, quoted_focus] if part),
+            " ".join(part for part in [core_entities, quoted_focus, "official"] if part),
+        ]
+
+        if constraints["years"]:
+            latest_year = constraints["years"][-1]
+            queries.append(" ".join(part for part in [core_entities, quoted_focus, latest_year] if part))
+
+        return queries
+
+    def _extract_query_constraints(self, query: str, entities: List[str]) -> Dict[str, List[str]]:
+        quoted_phrases = re.findall(r'"([^"]{2,80})"', query)
+        named_phrases = re.findall(r"\b[A-Z][A-Za-z0-9]*(?:\s+[A-Z0-9][A-Za-z0-9]*){1,5}\b", query)
+        years = re.findall(r"\b(?:19|20)\d{2}(?:-\d{2})?\b", query)
+        identifiers = re.findall(
+            r"\b(?:no\.?|number|id|code|section|rule|article|survey|plot|cts|case|order|form|model|version)\s*(?:is|:|#|-)?\s*([A-Za-z0-9][A-Za-z0-9./_-]{0,40})",
+            query,
+            re.IGNORECASE,
+        )
+        slash_ids = re.findall(r"\b[A-Za-z]{1,8}[-/]?\d{1,8}(?:[-/][A-Za-z0-9]{1,12})*\b", query)
+        spec_values = re.findall(r"\b\d+(?:\.\d+)?\s*(?:gb|tb|mb|bhk|sqft|sq\.?ft|sq\.?m|km|m|%|percent|lakh|crore)\b", query, re.IGNORECASE)
+        meaningful_entities = [
+            entity
+            for entity in entities
+            if len(entity) > 2 and entity.lower() not in STOP_WORDS
+        ]
+
+        return {
+            "phrases": self._dedupe_queries(quoted_phrases + named_phrases),
+            "years": self._dedupe_queries(years),
+            "ids": self._filter_constraint_values(identifiers + slash_ids + spec_values),
+            "entities": self._dedupe_queries(meaningful_entities),
+        }
+
+    def _filter_constraint_values(self, values: List[str]) -> List[str]:
+        blocked = STOP_WORDS | {"no.", "number.", "id.", "code.", "section.", "rule."}
+        return self._dedupe_queries(
+            value.strip(" .,#:-")
+            for value in values
+            if value and value.strip(" .,#:-").lower() not in blocked
+        )
 
     def _rank_result(self, result: SearchResult, understanding: QueryUnderstanding, search_query: str) -> Dict:
         haystack = f"{result.title} {result.snippet} {result.url}".lower()

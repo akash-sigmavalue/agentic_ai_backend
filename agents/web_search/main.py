@@ -16,7 +16,7 @@ from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v6-top10"
+SEARCH_CACHE_VERSION = "source-discovery-v8-specific-fallback"
 
 
 class DuckDuckGoSearchAgent:
@@ -117,6 +117,8 @@ class DuckDuckGoSearchAgent:
                             result['published_date'] = content.get('published_date')
                             result['time_ago'] = content.get('time_ago', 'Date unknown')
                             result['source_trust'] = content.get('source_trust', 0.5)
+                            result['exact_ready_reckoner_rows'] = content.get('exact_ready_reckoner_rows', [])
+                            result['exact_evidence_matches'] = content.get('exact_evidence_matches', [])
                             result['extracted_data'] = content.get('extracted_data')
                             found_content = True
                             break
@@ -148,7 +150,20 @@ class DuckDuckGoSearchAgent:
                 'validated_claims': trusted_response['validated_claims']
             }
         else:
-            output_metadata = {}
+            analysis = self.analyzer.build_source_based_answer(query, results_dict)
+            if stream_callback and analysis:
+                stream_callback(analysis)
+            output_metadata = {
+                'accuracy_score': 0,
+                'confidence_level': 'Source-based fallback',
+                'recommendation': 'Verify details on the linked source pages',
+                'validated_claims': []
+            }
+
+        if not str(analysis or "").strip():
+            analysis = self.analyzer.build_source_based_answer(query, results_dict)
+            if stream_callback and analysis:
+                stream_callback(analysis)
 
         # Prepare output
         output = {

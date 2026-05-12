@@ -140,6 +140,127 @@ class ContentProcessor:
         
         return results
 
+    def _extract_tables_as_text(self, html: str) -> str:
+        """Extract HTML tables as compact row text for rate/valuation pages."""
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+        except Exception:
+            return ""
+
+        table_blocks = []
+        for table in soup.find_all("table")[:8]:
+            rows = []
+            for tr in table.find_all("tr")[:80]:
+                cells = [
+                    cell.get_text(" ", strip=True)
+                    for cell in tr.find_all(["th", "td"])
+                ]
+                cells = [re.sub(r"\s+", " ", cell).strip() for cell in cells if cell.strip()]
+                if cells:
+                    rows.append(" | ".join(cells))
+
+            if len(rows) >= 2:
+                table_blocks.append("\n".join(rows))
+
+        text = "\n\n".join(table_blocks)
+        return text[: self.max_content_length]
+
+    def _extract_exact_ready_reckoner_rows(self, content: str, query: str) -> List[Dict]:
+        survey_numbers = self._extract_requested_survey_numbers(query)
+        if not survey_numbers or not content:
+            return []
+
+        rows = []
+        for line in re.split(r"[\r\n]+", content):
+            row_text = re.sub(r"\s+", " ", line).strip()
+            if len(row_text) < 3:
+                continue
+
+            matched_numbers = [
+                number
+                for number in survey_numbers
+                if re.search(rf"(?<!\d){re.escape(number)}(?!\d)", row_text, re.IGNORECASE)
+            ]
+            if matched_numbers:
+                rows.append({
+                    "survey_numbers": matched_numbers,
+                    "row_text": row_text[:1000],
+                })
+
+        return rows[:10]
+
+    def _extract_requested_survey_numbers(self, query: str) -> List[str]:
+        matches = re.findall(
+            r"\b(?:survey|survay|srv|s\.?\s*no|gat|plot|cts)\s*(?:no\.?|number|#|is|:|-)?\s*([A-Za-z0-9][A-Za-z0-9/-]*)",
+            query,
+            re.IGNORECASE,
+        )
+        cleaned = [match.strip(" .,#:-") for match in matches if match.strip(" .,#:-")]
+        return list(dict.fromkeys(cleaned))
+
+    def _extract_exact_evidence_matches(self, content: str, query: str) -> List[Dict]:
+        constraints = self._extract_query_constraints(query)
+        important_terms = self._important_query_terms(query)
+        if not content or (not constraints and not important_terms):
+            return []
+
+        matches = []
+        for line in re.split(r"[\r\n]+", content):
+            text = re.sub(r"\s+", " ", line).strip()
+            if len(text) < 20:
+                continue
+
+            text_lower = text.lower()
+            matched_constraints = [
+                constraint
+                for constraint in constraints
+                if re.search(rf"(?<!\w){re.escape(constraint.lower())}(?!\w)", text_lower)
+            ]
+            term_hits = [term for term in important_terms if term in text_lower]
+            has_specific_value = bool(re.search(r"\b(?:19|20)\d{2}(?:-\d{2})?\b|\d+(?:[.,]\d+)?%?|[A-Z]{1,8}[-/]?\d+", text))
+
+            if matched_constraints or (has_specific_value and len(term_hits) >= max(2, min(4, len(important_terms)))):
+                matches.append({
+                    "matched_constraints": matched_constraints,
+                    "matched_terms": term_hits[:8],
+                    "text": text[:1200],
+                })
+
+        return matches[:12]
+
+    def _extract_query_constraints(self, query: str) -> List[str]:
+        quoted_phrases = re.findall(r'"([^"]{2,80})"', query)
+        named_phrases = re.findall(r"\b[A-Z][A-Za-z0-9]*(?:\s+[A-Z0-9][A-Za-z0-9]*){1,5}\b", query)
+        years = re.findall(r"\b(?:19|20)\d{2}(?:-\d{2})?\b", query)
+        labelled_values = re.findall(
+            r"\b(?:no\.?|number|id|code|section|rule|article|survey|plot|cts|case|order|form|model|version)\s*(?:is|:|#|-)?\s*([A-Za-z0-9][A-Za-z0-9./_-]{0,40})",
+            query,
+            re.IGNORECASE,
+        )
+        compact_ids = re.findall(r"\b[A-Za-z]{1,8}[-/]?\d{1,8}(?:[-/][A-Za-z0-9]{1,12})*\b", query)
+        spec_values = re.findall(r"\b\d+(?:\.\d+)?\s*(?:gb|tb|mb|bhk|sqft|sq\.?ft|sq\.?m|km|m|%|percent|lakh|crore)\b", query, re.IGNORECASE)
+        constraints = quoted_phrases + named_phrases + years + labelled_values + compact_ids + spec_values
+        blocked = {"no", "number", "id", "code", "section", "rule", "article", "survey", "plot", "cts"}
+        return list(dict.fromkeys(
+            item.strip(" .,#:-")
+            for item in constraints
+            if item.strip(" .,#:-") and item.strip(" .,#:-").lower() not in blocked
+        ))
+
+    def _important_query_terms(self, query: str) -> List[str]:
+        stop_words = {
+            "a", "an", "and", "are", "as", "at", "be", "by", "can", "do", "for",
+            "from", "give", "have", "how", "i", "in", "is", "it", "me", "most",
+            "no", "number", "of", "on", "or", "regarding", "search", "show", "that", "the", "this",
+            "to", "want", "what", "whatever", "when", "where", "which", "will",
+            "with", "you",
+        }
+        return [
+            word.lower()
+            for word in re.findall(r"[A-Za-z0-9]+", query)
+            if len(word) > 2 and word.lower() not in stop_words
+        ][:12]
+
     def _select_best_extraction(self, results: List[Dict], query: str) -> ExtractedData:
         """Select the best extraction result"""
         if not results:
@@ -321,6 +442,8 @@ class ContentProcessor:
             if html:
                 extracted = self.extract_with_confidence(url, html, query)
                 pub_date = extract_publish_date(html, url)
+                exact_rows = self._extract_exact_ready_reckoner_rows(extracted.main_content, query)
+                exact_matches = self._extract_exact_evidence_matches(extracted.main_content, query)
                 results.append({
                     'url': url,
                     'title': extracted.title or "No Title",
@@ -329,6 +452,8 @@ class ContentProcessor:
                     'time_ago': get_time_ago(pub_date) if pub_date else "Recently",
                     'confidence_score': extracted.confidence_score,
                     'source_trust': extracted.source_trust,
+                    'exact_ready_reckoner_rows': exact_rows,
+                    'exact_evidence_matches': exact_matches,
                     'extracted_data': extracted  # Keep the full object for validation
                 })
             if i < len(urls) - 1: time.sleep(delay)
