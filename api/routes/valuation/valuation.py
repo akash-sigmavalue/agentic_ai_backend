@@ -27,8 +27,8 @@ def _sse(event_type: str, content: Any, **kwargs: Any) -> str:
     return f"data: {json.dumps(payload, default=str)}\n\n"
 
 
-@router.get("/ask_stream_valuation")
-async def ask_stream_valuation(question: str):
+@router.get("/ask_stream")
+async def ask_stream(question: str):
     return StreamingResponse(
         valuation_agent.execute_stream(question),
         media_type="text/event-stream",

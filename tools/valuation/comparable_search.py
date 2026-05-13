@@ -37,8 +37,8 @@ PROPERTY_TYPE_ALIASES = {
 
 PROPERTY_TYPE_DISPLAY = {
     "apartment":         "apartment (flat / condo / penthouse)",
-    "villa":             "villa (bungalow / row house / townhouse)",
-    "plot":              "plot (land / site)",
+    "villa":             "villa (bungalow / row house / townhouse) or residential plot",
+    "plot":              "plot (land / site) or villa / bungalow / independent house",
     "retail":            "shop (retail space / showroom)",
     "commercial_office": "office space (workspace / coworking)",
 }
@@ -46,7 +46,7 @@ PROPERTY_TYPE_DISPLAY = {
 PROPERTY_TYPE_SEARCH_TERM = {
     "apartment":         "apartment",
     "villa":             "villa",
-    "plot":              "plot",
+    "plot":              "plot or villa",
     "retail":            "shop",
     "commercial_office": "office space",
 }
@@ -61,7 +61,7 @@ PROPERTY_TYPE_EXCLUSIONS = {
         "shop", "office", "retail", "showroom"
     ],
     "plot": [
-        "apartment", "flat", "villa", "bungalow",
+        "apartment", "flat",
         "shop", "office", "built-up", "constructed"
     ],
     "retail": [
@@ -298,14 +298,28 @@ def parse_json_safely(raw: str) -> list:
 def hard_filter_by_type(comps: list, required_type: str) -> list:
     """
     Layer 1 defense — programmatic type check.
-    Never trust AI label alone.
+    Allows certain cross-type matches (e.g., Plot vs Villa).
     """
-    valid   = []
+    valid = []
+    
+    # Define which types are considered comparable cross-categories
+    ALLOW_CROSS = {
+        "plot": {"plot", "villa"}
+    }
+
     for c in comps:
         raw_type   = c.get("property_type", "")
         normalized = normalize_property_type(raw_type)
-        if normalized == required_type:
-            c["property_type"] = normalized
+        
+        # Check if it's an exact match or an allowed cross-type
+        is_allowed = (normalized == required_type) or (
+            required_type in ALLOW_CROSS and normalized in ALLOW_CROSS[required_type]
+        )
+
+        if is_allowed:
+            # We keep the normalized type but allow it to pass the filter
+            if normalized:
+                c["property_type"] = normalized
             valid.append(c)
         else:
             log_drop(
@@ -318,7 +332,7 @@ def hard_filter_by_type(comps: list, required_type: str) -> list:
                     "location": c.get("location", ""),
                 }
             )
-    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check")
+    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check (allowed cross-types included)")
     return valid
 
 

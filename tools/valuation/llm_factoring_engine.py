@@ -957,7 +957,7 @@ def run_llm_factoring(
     -------
     dict — factoring result with factor_table, subject_final_rate, project_reports
     """
-    logger.info(f"[LLM Factoring] Building payload for {len(factorial_data.get('table', []))} projects...")
+    # logger.info(f"[LLM Factoring] Building payload for {len(factorial_data.get('table', []))} projects...")
     payload = build_factoring_payload(factorial_data, subject, comparables, radii)
 
     n_comps = sum(1 for p in payload["projects"] if not p["is_subject"])

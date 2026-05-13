@@ -300,6 +300,8 @@ def search_urls_for_projects_batch(
         pname = p["project_name"]
         loc = p.get("location", "")
         country = p.get("country", "India")
+        per_project_type = p.get("property_type", property_type)
+        search_term = PROPERTY_TYPE_SEARCH_TERM.get(per_project_type, per_project_type)
         
         # Build a high-intent query
         lat = p.get("lat")
@@ -693,6 +695,7 @@ def listing_pipeline(
         "country":      subject.get("country", "India"),
         "lat":          subject.get("lat"),
         "lng":          subject.get("lng"),
+        "property_type": subject.get("property_type", property_type),  
         "is_subject":   True,
     }]
     for c in comparables:
@@ -704,6 +707,7 @@ def listing_pipeline(
                 "country":      c.get("country") or subject.get("country", "India"),
                 "lat":          c.get("map_search_lat") or c.get("lat"),
                 "lng":          c.get("map_search_lng") or c.get("lng"),
+                "property_type": c.get("property_type", property_type),
                 "is_subject":   False,
             })
 
