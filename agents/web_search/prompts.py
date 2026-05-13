@@ -272,7 +272,10 @@ class LightweightAnalyzer:
         exact_evidence_context = []
         for i, r in enumerate(results[:10], 1):
             content = r.get('content') or r.get('snippet') or "No content available."
-            source_context.append(f"[{i}] {r.get('title')}\nURL: {r.get('url')}\nTrust Score: {r.get('source_trust', 0.5)*100:.0f}%\nContent: {content[:5000]}")
+            source_type = r.get('source') or "web"
+            document = r.get('document') or {}
+            doc_line = f"\nDocument: {document.get('filename')} from {document.get('source_url')}" if document else ""
+            source_context.append(f"[{i}] {r.get('title')}\nSource Type: {source_type}{doc_line}\nURL: {r.get('url')}\nTrust Score: {r.get('source_trust', 0.5)*100:.0f}%\nContent: {content[:5000]}")
             for row in r.get('exact_ready_reckoner_rows', []) or []:
                 exact_row_context.append(f"[{i}] {row.get('row_text')} | URL: {r.get('url')}")
             for match in r.get('exact_evidence_matches', []) or []:

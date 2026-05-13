@@ -5,18 +5,22 @@ Complete working agent with minimal token usage
 
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
+import asyncio
+import re
 import sys
 from dataclasses import asdict
 
 from tools.web_search.search import DuckDuckGoSearcher
 from tools.web_search.discovery import SourceDiscovery
 from tools.web_search.browser import ContentProcessor
+from tools.web_search.crawler import LLMGuidedCrawler, WebCrawler
+from tools.web_search.document_downloader import DocumentDownloader
 from agents.web_search.prompts import LightweightAnalyzer
 from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v8-specific-fallback"
+SEARCH_CACHE_VERSION = "source-discovery-v9-crawl-docs"
 
 
 class DuckDuckGoSearchAgent:
@@ -29,8 +33,13 @@ class DuckDuckGoSearchAgent:
         # Primary searcher is DuckDuckGo (with Bing fallback)
         self.searcher = DuckDuckGoSearcher()
         self.discovery = SourceDiscovery(self.searcher)
-        self.processor = ContentProcessor()
         self.analyzer = LightweightAnalyzer()
+        self.processor = ContentProcessor()
+        if config.USE_LLM_GUIDED_CRAWL and self.analyzer.client:
+            self.crawler = LLMGuidedCrawler(self.analyzer.client)
+        else:
+            self.crawler = WebCrawler()
+        self.downloader = DocumentDownloader()
         self.cache = SearchCache() if config.CACHE_ENABLED else None
         self.validator = AccuracyValidator()
 
@@ -124,6 +133,19 @@ class DuckDuckGoSearchAgent:
                             break
                     final_results.append(result)
                 results_dict = final_results
+
+        if config.ENABLE_CRAWLING and search_results:
+            crawled_sources, document_sources = self._crawl_and_extract_documents(
+                query,
+                results_dict,
+                status_callback=status_callback,
+            )
+            if crawled_sources or document_sources:
+                known_urls = {result.get('url') for result in results_dict}
+                for extra in crawled_sources + document_sources:
+                    if extra.get('url') and extra.get('url') not in known_urls:
+                        known_urls.add(extra.get('url'))
+                        results_dict.append(extra)
 
         # Analyze if needed
         analysis = None
@@ -220,6 +242,133 @@ class DuckDuckGoSearchAgent:
             self.cache.set(cache_query, output)
 
         return output
+
+    def _crawl_and_extract_documents(self, query: str, results: List[Dict], status_callback=None) -> tuple[List[Dict], List[Dict]]:
+        if not results:
+            return [], []
+
+        urls = [
+            result.get('url')
+            for result in results[: max(1, config.CRAWL_TOP_RESULTS)]
+            if result.get('url')
+        ]
+        if not urls:
+            return [], []
+
+        try:
+            if status_callback:
+                status_callback(f"Crawling {len(urls)} top sources for deeper evidence...")
+            crawled_pages = self._run_async(self.crawler.crawl_many(urls, query))
+        except Exception as exc:
+            print(f"Deep crawling failed: {exc}")
+            crawled_pages = []
+
+        crawled_sources = self._crawled_pages_to_results(query, crawled_pages)
+        document_sources = []
+
+        if config.ENABLE_DOCUMENT_DOWNLOAD and crawled_pages:
+            try:
+                if status_callback:
+                    status_callback("Downloading and reading linked documents...")
+                documents = self._run_async(self.downloader.find_and_download_documents(crawled_pages))
+                document_sources = self._documents_to_results(query, documents)
+            except Exception as exc:
+                print(f"Document extraction failed: {exc}")
+
+        return crawled_sources, document_sources
+
+    def _run_async(self, coro):
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return asyncio.run(coro)
+
+        result_box = {}
+        error_box = {}
+
+        def runner():
+            try:
+                result_box["result"] = asyncio.run(coro)
+            except Exception as exc:
+                error_box["error"] = exc
+
+        import threading
+
+        thread = threading.Thread(target=runner, daemon=True)
+        thread.start()
+        thread.join()
+        if error_box:
+            raise error_box["error"]
+        return result_box.get("result")
+
+    def _crawled_pages_to_results(self, query: str, crawled_pages: List[Dict]) -> List[Dict]:
+        converted = []
+        for index, page in enumerate(crawled_pages or [], 1):
+            content = page.get('content') or ''
+            if not content:
+                continue
+            exact_rows = self.processor._extract_exact_ready_reckoner_rows(content, query)
+            exact_matches = self.processor._extract_exact_evidence_matches(content, query)
+            converted.append({
+                'url': page.get('url'),
+                'title': page.get('title') or f"Crawled page {index}",
+                'snippet': content[:400],
+                'content': content,
+                'rank': 100 + index,
+                'source': 'deep-crawl',
+                'search_query': query,
+                'matched_entities': [],
+                'relevance_score': self._content_relevance(query, content),
+                'source_trust': 0.45,
+                'exact_ready_reckoner_rows': exact_rows,
+                'exact_evidence_matches': exact_matches,
+            })
+        return converted
+
+    def _documents_to_results(self, query: str, documents: List[Dict]) -> List[Dict]:
+        converted = []
+        for index, doc in enumerate(documents or [], 1):
+            content = doc.get('content') or ''
+            if not content:
+                continue
+            exact_rows = self.processor._extract_exact_ready_reckoner_rows(content, query)
+            exact_matches = self.processor._extract_exact_evidence_matches(content, query)
+            converted.append({
+                'url': doc.get('url'),
+                'title': doc.get('filename') or f"Document {index}",
+                'snippet': content[:400],
+                'content': content,
+                'rank': 200 + index,
+                'source': 'document-extraction',
+                'search_query': query,
+                'matched_entities': [],
+                'relevance_score': self._content_relevance(query, content) + 0.1,
+                'source_trust': 0.55,
+                'published_date': None,
+                'time_ago': 'Date unknown',
+                'exact_ready_reckoner_rows': exact_rows,
+                'exact_evidence_matches': exact_matches,
+                'document': {
+                    'filename': doc.get('filename'),
+                    'filepath': doc.get('filepath'),
+                    'source_url': doc.get('source_url'),
+                    'size': doc.get('size'),
+                    'content_type': doc.get('content_type'),
+                },
+            })
+        return converted
+
+    def _content_relevance(self, query: str, content: str) -> float:
+        terms = [
+            word.lower()
+            for word in re.findall(r"[A-Za-z0-9]+", query)
+            if len(word) > 2
+        ]
+        if not terms:
+            return 0.2
+        content_lower = content.lower()
+        matched = sum(1 for term in terms if term in content_lower)
+        return min(max(matched / len(terms), 0.1), 1.0)
 
     def extract_from_url(self, url: str, query: str) -> Dict:
         """Extract exact data from a given URL"""

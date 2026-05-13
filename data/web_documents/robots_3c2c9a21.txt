@@ -1,0 +1,17 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /leads
+
+User-Agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /leads
+
+User-Agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /leads
+
+Host: www.banerproperty.com
+Sitemap: https://www.banerproperty.com/sitemap.xml

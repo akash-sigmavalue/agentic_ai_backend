@@ -3997,3 +3997,389 @@ ORDER BY
 2026-05-12 17:02:52,280 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-12 17:03:02,563 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-12 17:20:04,272 | INFO | Scheduler has been shut down
+2026-05-12 17:53:33,447 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 17:53:33,448 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 17:53:33,448 | INFO | Scheduler started
+2026-05-12 17:54:10,093 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:54:10,826 | WARNING | Impersonate 'safari_15.6.1' does not exist, using 'random'
+2026-05-12 17:54:10,943 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+guide+with+examples 200
+2026-05-12 17:54:11,077 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+guide+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-154615061004436565312342592433434749860&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:15,493 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+tutorial+with+examples 200
+2026-05-12 17:54:15,610 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+tutorial+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-306670790834895485367562492762907668489&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:20,076 | INFO | response: https://duckduckgo.com/?q=how+to+perform+database+migrations+in+Django 200
+2026-05-12 17:54:20,160 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+perform+database+migrations+in+Django&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-6448421012717560875831885195764026127&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:24,380 | INFO | response: https://duckduckgo.com/?q=Django+migration+guide+with+code+examples 200
+2026-05-12 17:54:24,493 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+migration+guide+with+code+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-158083360054422832575576094872127387778&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:28,975 | INFO | response: https://duckduckgo.com/?q=step-by-step+Django+database+migration 200
+2026-05-12 17:54:29,093 | INFO | response: https://links.duckduckgo.com/d.js?q=step-by-step+Django+database+migration&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-337506732353523857343144285461214650706&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:48,826 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:54:49,725 | INFO | response: https://duckduckgo.com/?q=what+is+llm 200
+2026-05-12 17:54:49,804 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+llm&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-110931786966403740885177984876656314851&bing_market=en-IN&ex=-1 202
+2026-05-12 17:54:55,928 | INFO | response: https://duckduckgo.com/?q=what+is+a+large+language+model 200
+2026-05-12 17:54:56,026 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+a+large+language+model&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-130660897365589681995622673944917474118&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:00,992 | INFO | response: https://duckduckgo.com/?q=understanding+LLM+technology 200
+2026-05-12 17:55:01,093 | INFO | response: https://links.duckduckgo.com/d.js?q=understanding+LLM+technology&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-94420282856165080809777853210753468447&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:05,412 | INFO | response: https://duckduckgo.com/?q=applications+of+large+language+models 200
+2026-05-12 17:55:05,573 | INFO | response: https://links.duckduckgo.com/d.js?q=applications+of+large+language+models&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-225107266209103860872934178066888818625&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:10,576 | INFO | response: https://duckduckgo.com/?q=how+do+large+language+models+work 200
+2026-05-12 17:55:10,659 | INFO | response: https://links.duckduckgo.com/d.js?q=how+do+large+language+models+work&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-332613773190184173300900784850018578544&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:21,995 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:55:23,024 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:55:24,140 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+guide+with+examples 200
+2026-05-12 17:55:24,258 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+guide+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-154615061004436565312342592433434749860&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:29,491 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+tutorial+with+examples 200
+2026-05-12 17:55:29,625 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+tutorial+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-306670790834895485367562492762907668489&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:33,441 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:55:33,958 | INFO | response: https://duckduckgo.com/?q=how+to+perform+database+migrations+in+Django 200
+2026-05-12 17:55:34,075 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+perform+database+migrations+in+Django&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-6448421012717560875831885195764026127&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:38,458 | INFO | response: https://duckduckgo.com/?q=Django+migration+guide+with+code+examples 200
+2026-05-12 17:55:38,578 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+migration+guide+with+code+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-158083360054422832575576094872127387778&bing_market=en-IN&ex=-1 202
+2026-05-12 17:55:42,841 | INFO | response: https://duckduckgo.com/?q=step-by-step+Django+database+migration 200
+2026-05-12 17:55:42,941 | INFO | response: https://links.duckduckgo.com/d.js?q=step-by-step+Django+database+migration&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-337506732353523857343144285461214650706&bing_market=en-IN&ex=-1 202
+2026-05-12 17:56:26,457 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:56:28,440 | INFO | response: https://duckduckgo.com/?q=what+is+llm 200
+2026-05-12 17:56:28,622 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+llm&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-110931786966403740885177984876656314851&bing_market=en-IN&ex=-1 202
+2026-05-12 17:56:33,457 | INFO | response: https://duckduckgo.com/?q=what+is+a+large+language+model 200
+2026-05-12 17:56:33,590 | INFO | response: https://links.duckduckgo.com/d.js?q=what+is+a+large+language+model&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-130660897365589681995622673944917474118&bing_market=en-IN&ex=-1 202
+2026-05-12 17:56:38,090 | INFO | response: https://duckduckgo.com/?q=understanding+LLM+technology 200
+2026-05-12 17:56:38,174 | INFO | response: https://links.duckduckgo.com/d.js?q=understanding+LLM+technology&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-94420282856165080809777853210753468447&bing_market=en-IN&ex=-1 202
+2026-05-12 17:56:44,540 | INFO | response: https://duckduckgo.com/?q=how+do+large+language+models+work 200
+2026-05-12 17:56:44,624 | INFO | response: https://links.duckduckgo.com/d.js?q=how+do+large+language+models+work&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-332613773190184173300900784850018578544&bing_market=en-IN&ex=-1 202
+2026-05-12 17:56:49,355 | INFO | response: https://duckduckgo.com/?q=applications+of+LLM+in+AI 200
+2026-05-12 17:56:49,474 | INFO | response: https://links.duckduckgo.com/d.js?q=applications+of+LLM+in+AI&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-308225484880189385939281225361356310252&bing_market=en-IN&ex=-1 202
+2026-05-12 17:57:00,689 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 17:57:12,306 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 18:00:00 IST)" (scheduled at 2026-05-12 18:00:00+05:30)
+2026-05-12 18:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 18:30:00 IST)" executed successfully
+2026-05-12 18:03:13,115 | INFO | Scheduler has been shut down
+2026-05-12 18:03:20,648 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:03:20,648 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:03:20,648 | INFO | Scheduler started
+2026-05-12 18:06:13,411 | INFO | Scheduler has been shut down
+2026-05-12 18:06:20,759 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:06:20,760 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:06:20,760 | INFO | Scheduler started
+2026-05-12 18:06:20,876 | INFO | Scheduler has been shut down
+2026-05-12 18:06:28,117 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:06:28,118 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:06:28,118 | INFO | Scheduler started
+2026-05-12 18:07:08,011 | INFO | Scheduler has been shut down
+2026-05-12 18:07:15,209 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:07:15,209 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:07:15,209 | INFO | Scheduler started
+2026-05-12 18:07:55,142 | INFO | Scheduler has been shut down
+2026-05-12 18:08:02,408 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:08:02,408 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:08:02,424 | INFO | Scheduler started
+2026-05-12 18:08:21,089 | INFO | Scheduler has been shut down
+2026-05-12 18:08:28,174 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:08:28,174 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:08:28,174 | INFO | Scheduler started
+2026-05-12 18:08:33,323 | INFO | Scheduler has been shut down
+2026-05-12 18:08:40,441 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:08:40,441 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:08:40,441 | INFO | Scheduler started
+2026-05-12 18:11:31,036 | INFO | Scheduler has been shut down
+2026-05-12 18:11:40,081 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-12 18:11:40,081 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-12 18:11:40,081 | INFO | Scheduler started
+2026-05-12 18:16:27,746 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:16:28,581 | WARNING | Impersonate 'safari_15.6.1' does not exist, using 'random'
+2026-05-12 18:16:28,696 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+guide+with+examples 200
+2026-05-12 18:16:28,833 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+guide+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-154615061004436565312342592433434749860&bing_market=en-IN&ex=-1 202
+2026-05-12 18:16:33,831 | INFO | response: https://duckduckgo.com/?q=Django+database+migration+tutorial+with+examples 200
+2026-05-12 18:16:33,926 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+database+migration+tutorial+with+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-306670790834895485367562492762907668489&bing_market=en-IN&ex=-1 202
+2026-05-12 18:16:39,150 | INFO | response: https://duckduckgo.com/?q=how+to+perform+database+migrations+in+Django 200
+2026-05-12 18:16:39,276 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+perform+database+migrations+in+Django&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-6448421012717560875831885195764026127&bing_market=en-IN&ex=-1 202
+2026-05-12 18:16:44,622 | INFO | response: https://duckduckgo.com/?q=Django+migration+guide+with+code+examples 200
+2026-05-12 18:16:44,743 | INFO | response: https://links.duckduckgo.com/d.js?q=Django+migration+guide+with+code+examples&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-158083360054422832575576094872127387778&bing_market=en-IN&ex=-1 202
+2026-05-12 18:16:48,998 | INFO | response: https://duckduckgo.com/?q=step-by-step+Django+database+migration 200
+2026-05-12 18:16:49,130 | INFO | response: https://links.duckduckgo.com/d.js?q=step-by-step+Django+database+migration&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-337506732353523857343144285461214650706&bing_market=en-IN&ex=-1 202
+2026-05-12 18:16:59,889 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:17:30,128 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:19:03,276 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:19:04,210 | INFO | response: https://duckduckgo.com/?q=build+a+web+app+from+scratch+step+by+step+tutorial 200
+2026-05-12 18:19:04,310 | INFO | response: https://links.duckduckgo.com/d.js?q=build+a+web+app+from+scratch+step+by+step+tutorial&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-238703818617191897620231239302510426691&bing_market=en-IN&ex=-1 202
+2026-05-12 18:19:08,543 | INFO | response: https://duckduckgo.com/?q=how+to+build+a+web+app+from+scratch 200
+2026-05-12 18:19:08,660 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+build+a+web+app+from+scratch&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-201617802606454969104730245999773169781&bing_market=en-IN&ex=-1 202
+2026-05-12 18:19:13,209 | INFO | response: https://duckduckgo.com/?q=step+by+step+guide+to+creating+a+web+application 200
+2026-05-12 18:19:13,326 | INFO | response: https://links.duckduckgo.com/d.js?q=step+by+step+guide+to+creating+a+web+application&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-288444373612496625081011001320339928876&bing_market=en-IN&ex=-1 202
+2026-05-12 18:19:17,458 | INFO | response: https://duckduckgo.com/?q=tutorial+for+building+a+web+app 200
+2026-05-12 18:19:17,609 | INFO | response: https://links.duckduckgo.com/d.js?q=tutorial+for+building+a+web+app&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-244079831589477597309042170061448870145&bing_market=en-IN&ex=-1 202
+2026-05-12 18:19:21,901 | INFO | response: https://duckduckgo.com/?q=web+app+development+tutorial 200
+2026-05-12 18:19:22,047 | INFO | response: https://links.duckduckgo.com/d.js?q=web+app+development+tutorial&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-203055687572860587730542140340031802640&bing_market=en-IN&ex=-1 202
+2026-05-12 18:19:59,992 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:20:01,009 | INFO | response: https://duckduckgo.com/?q=Stack+Overflow+solution+for+Python+async+programming 200
+2026-05-12 18:20:01,095 | INFO | response: https://links.duckduckgo.com/d.js?q=Stack+Overflow+solution+for+Python+async+programming&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-118602264227051888421224783575098821212&bing_market=en-IN&ex=-1 202
+2026-05-12 18:20:06,689 | INFO | response: https://duckduckgo.com/?q=Stack+Overflow+solution+for+Python+async+programming+%22Stack+Overflow%22 200
+2026-05-12 18:20:06,858 | INFO | response: https://links.duckduckgo.com/d.js?q=Stack+Overflow+solution+for+Python+async+programming+%22Stack+Overflow%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-239349070428766895492203818732255317775&bing_market=en-IN&ex=-1 202
+2026-05-12 18:20:11,251 | INFO | response: https://duckduckgo.com/?q=Stack+Overflow+Python+async+programming+%22Stack+Overflow%22 200
+2026-05-12 18:20:11,359 | INFO | response: https://links.duckduckgo.com/d.js?q=Stack+Overflow+Python+async+programming+%22Stack+Overflow%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-120534358363809139391570616690696467511&bing_market=en-IN&ex=-1 202
+2026-05-12 18:20:16,239 | INFO | response: https://duckduckgo.com/?q=Stack+Overflow+Python+async+programming+%22Stack+Overflow%22+official 200
+2026-05-12 18:20:16,342 | INFO | response: https://links.duckduckgo.com/d.js?q=Stack+Overflow+Python+async+programming+%22Stack+Overflow%22+official&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-167408808595939035106079741610931554590&bing_market=en-IN&ex=-1 202
+2026-05-12 18:20:21,271 | INFO | response: https://duckduckgo.com/?q=Python+async+programming+solutions+site%3Astackoverflow.com 200
+2026-05-12 18:20:21,415 | INFO | response: https://links.duckduckgo.com/d.js?q=Python+async+programming+solutions+site%3Astackoverflow.com&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-217484742006980764271622418142234913874&bing_market=en-IN&ex=-1 202
+2026-05-12 18:20:29,684 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:21:00,232 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:23:40,398 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:23:41,292 | INFO | response: https://duckduckgo.com/?q=build+a+web+app+from+scratch+step+by+step+tutorial 200
+2026-05-12 18:23:41,442 | INFO | response: https://links.duckduckgo.com/d.js?q=build+a+web+app+from+scratch+step+by+step+tutorial&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-238703818617191897620231239302510426691&bing_market=en-IN&ex=-1 202
+2026-05-12 18:23:45,818 | INFO | response: https://duckduckgo.com/?q=step+by+step+guide+to+build+a+web+app 200
+2026-05-12 18:23:45,927 | INFO | response: https://links.duckduckgo.com/d.js?q=step+by+step+guide+to+build+a+web+app&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-137997212078159471633476114342710052336&bing_market=en-IN&ex=-1 202
+2026-05-12 18:23:52,677 | INFO | response: https://duckduckgo.com/?q=how+to+create+a+web+application+from+scratch 200
+2026-05-12 18:23:52,823 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+create+a+web+application+from+scratch&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-196757998279662321358828643809039565839&bing_market=en-IN&ex=-1 202
+2026-05-12 18:23:57,687 | INFO | response: https://duckduckgo.com/?q=tutorial+for+building+a+web+app 200
+2026-05-12 18:23:57,804 | INFO | response: https://links.duckduckgo.com/d.js?q=tutorial+for+building+a+web+app&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-244079831589477597309042170061448870145&bing_market=en-IN&ex=-1 202
+2026-05-12 18:24:01,849 | INFO | response: https://duckduckgo.com/?q=web+app+development+tutorial 200
+2026-05-12 18:24:01,970 | INFO | response: https://links.duckduckgo.com/d.js?q=web+app+development+tutorial&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-203055687572860587730542140340031802640&bing_market=en-IN&ex=-1 202
+2026-05-12 18:24:13,162 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:24:37,240 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:27:35,232 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:27:36,914 | INFO | response: https://duckduckgo.com/?q=Twitter+trending+topics+current 200
+2026-05-12 18:27:37,051 | INFO | response: https://links.duckduckgo.com/d.js?q=Twitter+trending+topics+current&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-179019333221212736195025713917345182103&bing_market=en-IN&ex=-1 202
+2026-05-12 18:27:42,662 | INFO | response: https://duckduckgo.com/?q=current+Twitter+trending+topics 200
+2026-05-12 18:27:42,749 | INFO | response: https://links.duckduckgo.com/d.js?q=current+Twitter+trending+topics&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-43560858225435178897823884457381183960&bing_market=en-IN&ex=-1 202
+2026-05-12 18:27:46,927 | INFO | response: https://duckduckgo.com/?q=latest+trending+topics+on+Twitter 200
+2026-05-12 18:27:47,101 | INFO | response: https://links.duckduckgo.com/d.js?q=latest+trending+topics+on+Twitter&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-302081296767628724194349664527084005428&bing_market=en-IN&ex=-1 202
+2026-05-12 18:27:51,927 | INFO | response: https://duckduckgo.com/?q=Twitter+trends+today 200
+2026-05-12 18:27:52,066 | INFO | response: https://links.duckduckgo.com/d.js?q=Twitter+trends+today&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-329253994448323994383396021368303738142&bing_market=en-IN&ex=-1 202
+2026-05-12 18:27:56,765 | INFO | response: https://duckduckgo.com/?q=what%27s+trending+on+Twitter+right+now 200
+2026-05-12 18:27:56,884 | INFO | response: https://links.duckduckgo.com/d.js?q=what%27s+trending+on+Twitter+right+now&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-88936307170426407664206911497526660223&bing_market=en-IN&ex=-1 202
+2026-05-12 18:28:04,968 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:28:35,142 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:29:30,346 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:29:31,212 | INFO | response: https://duckduckgo.com/?q=machine+learning+transformer+attention+mechanism+research+paper+PDF 200
+2026-05-12 18:29:31,396 | INFO | response: https://links.duckduckgo.com/d.js?q=machine+learning+transformer+attention+mechanism+research+paper+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-143212366694444441404014230765263032610&bing_market=en-IN&ex=-1 202
+2026-05-12 18:29:36,379 | INFO | response: https://duckduckgo.com/?q=latest+research+papers+on+transformer+attention+mechanism+PDF 200
+2026-05-12 18:29:36,497 | INFO | response: https://links.duckduckgo.com/d.js?q=latest+research+papers+on+transformer+attention+mechanism+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-18270613925505210557862995770464557111&bing_market=en-IN&ex=-1 202
+2026-05-12 18:29:40,746 | INFO | response: https://duckduckgo.com/?q=transformer+architecture+attention+mechanism+academic+PDF 200
+2026-05-12 18:29:40,883 | INFO | response: https://links.duckduckgo.com/d.js?q=transformer+architecture+attention+mechanism+academic+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-108958820508570051756405941499271605465&bing_market=en-IN&ex=-1 202
+2026-05-12 18:29:46,246 | INFO | response: https://duckduckgo.com/?q=attention+mechanism+in+machine+learning+research+PDF 200
+2026-05-12 18:29:46,380 | INFO | response: https://links.duckduckgo.com/d.js?q=attention+mechanism+in+machine+learning+research+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-285477651776014733340578046986592436953&bing_market=en-IN&ex=-1 202
+2026-05-12 18:29:51,461 | INFO | response: https://duckduckgo.com/?q=download+PDF+of+transformer+attention+mechanism+studies 200
+2026-05-12 18:29:52,579 | INFO | response: https://links.duckduckgo.com/d.js?q=download+PDF+of+transformer+attention+mechanism+studies&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-320969402880134722615913756441093617228&bing_market=en-IN&ex=-1 202
+2026-05-12 18:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 18:30:00 IST)" (scheduled at 2026-05-12 18:30:00+05:30)
+2026-05-12 18:30:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 19:00:00 IST)" executed successfully
+2026-05-12 18:30:06,545 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:30:07,412 | INFO | response: https://duckduckgo.com/?q=machine+learning+transformer+attention+mechanism+research+paper+PDF 200
+2026-05-12 18:30:07,545 | INFO | response: https://links.duckduckgo.com/d.js?q=machine+learning+transformer+attention+mechanism+research+paper+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-143211351306313725000542246751565947698&bing_market=en-IN&ex=-1 202
+2026-05-12 18:30:13,277 | INFO | response: https://duckduckgo.com/?q=transformer+attention+mechanism+academic+paper+download 200
+2026-05-12 18:30:13,415 | INFO | response: https://links.duckduckgo.com/d.js?q=transformer+attention+mechanism+academic+paper+download&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-112157282585764080489385948900229804556&bing_market=en-IN&ex=-1 202
+2026-05-12 18:30:18,895 | INFO | response: https://duckduckgo.com/?q=latest+research+on+transformer+attention+in+machine+learning+PDF 200
+2026-05-12 18:30:19,032 | INFO | response: https://links.duckduckgo.com/d.js?q=latest+research+on+transformer+attention+in+machine+learning+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-147302888538377203568500538136447904963&bing_market=en-IN&ex=-1 202
+2026-05-12 18:30:23,279 | INFO | response: https://duckduckgo.com/?q=attention+mechanism+in+transformers+research+articles+PDF 200
+2026-05-12 18:30:23,427 | INFO | response: https://links.duckduckgo.com/d.js?q=attention+mechanism+in+transformers+research+articles+PDF&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-122402643595409820616525552992626978851&bing_market=en-IN&ex=-1 202
+2026-05-12 18:30:43,278 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:30:46,965 | ERROR | parsed tree length: 1, wrong data type or not valid HTML
+2026-05-12 18:30:46,965 | ERROR | empty HTML tree: None
+2026-05-12 18:30:46,965 | WARNING | discarding data: None
+2026-05-12 18:31:07,833 | ERROR | parsed tree length: 1, wrong data type or not valid HTML
+2026-05-12 18:31:07,833 | ERROR | empty HTML tree: None
+2026-05-12 18:31:07,833 | WARNING | discarding data: None
+2026-05-12 18:31:18,584 | ERROR | parsed tree length: 1, wrong data type or not valid HTML
+2026-05-12 18:31:18,584 | ERROR | empty HTML tree: None
+2026-05-12 18:31:18,584 | WARNING | discarding data: None
+2026-05-12 18:31:22,036 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:44:02,915 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:44:04,064 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:44:04,205 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:09,336 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:44:09,462 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:13,564 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 18:44:13,654 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297812531658261714288609631454272410984&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:18,385 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 18:44:18,526 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546750771659046239872100503868661271&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:23,102 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 18:44:23,246 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605971204070699574169309677400253831&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:27,391 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:44:27,538 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:31,990 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:44:32,272 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:46,324 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:44:47,243 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:44:47,370 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:51,347 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:44:51,450 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:44:56,696 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 18:44:56,846 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297812531658261714288609631454272410984&bing_market=en-IN&ex=-1 202
+2026-05-12 18:45:01,911 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 18:45:02,037 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546750771659046239872100503868661271&bing_market=en-IN&ex=-1 202
+2026-05-12 18:45:06,447 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 18:45:06,601 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605971204070699574169309677400253831&bing_market=en-IN&ex=-1 202
+2026-05-12 18:45:15,627 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:45:40,687 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:47:52,868 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:47:54,420 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:47:54,599 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:47:59,874 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:47:59,971 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:48:04,423 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 18:48:04,554 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297812531658261714288609631454272410984&bing_market=en-IN&ex=-1 202
+2026-05-12 18:48:10,054 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 18:48:10,149 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546750771659046239872100503868661271&bing_market=en-IN&ex=-1 202
+2026-05-12 18:48:15,199 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 18:48:15,357 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605971204070699574169309677400253831&bing_market=en-IN&ex=-1 202
+2026-05-12 18:48:27,242 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:48:53,449 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:52:02,301 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:52:03,404 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:52:03,541 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:52:09,401 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:52:09,500 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:52:14,529 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 18:52:14,663 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297812531658261714288609631454272410984&bing_market=en-IN&ex=-1 202
+2026-05-12 18:52:21,166 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 18:52:21,273 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546750771659046239872100503868661271&bing_market=en-IN&ex=-1 202
+2026-05-12 18:52:26,249 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 18:52:26,392 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605971204070699574169309677400253831&bing_market=en-IN&ex=-1 202
+2026-05-12 18:52:37,786 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:53:00,182 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:54:35,434 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:54:37,146 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Pune+2026 200
+2026-05-12 18:54:37,307 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-114254395051391336706291106345521715305&bing_market=en-IN&ex=-1 202
+2026-05-12 18:54:42,560 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Pune+2026 200
+2026-05-12 18:54:42,654 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-223519981880698194152654245398152701094&bing_market=en-IN&ex=-1 202
+2026-05-12 18:54:46,727 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Pune+2026 200
+2026-05-12 18:54:46,872 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-297812531658261714288609631454272410984&bing_market=en-IN&ex=-1 202
+2026-05-12 18:54:51,762 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Pune+2026 200
+2026-05-12 18:54:51,889 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Pune+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-284546750771659046239872100503868661271&bing_market=en-IN&ex=-1 202
+2026-05-12 18:54:58,055 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Pune+2026+Pune 200
+2026-05-12 18:54:58,184 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Pune+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-267605971204070699574169309677400253831&bing_market=en-IN&ex=-1 202
+2026-05-12 18:55:18,694 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:55:45,529 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:59:26,987 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 18:59:28,148 | INFO | response: https://duckduckgo.com/?q=GitHub+trending+repositories+Python 200
+2026-05-12 18:59:28,341 | INFO | response: https://links.duckduckgo.com/d.js?q=GitHub+trending+repositories+Python&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-104288329589073488061282515355357868122&bing_market=en-IN&ex=-1 202
+2026-05-12 18:59:34,323 | INFO | response: https://duckduckgo.com/?q=GitHub+trending+Python+repositories 200
+2026-05-12 18:59:34,460 | INFO | response: https://links.duckduckgo.com/d.js?q=GitHub+trending+Python+repositories&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-147353243698349797188310634672227336863&bing_market=en-IN&ex=-1 202
+2026-05-12 18:59:38,671 | INFO | response: https://duckduckgo.com/?q=popular+Python+projects+on+GitHub 200
+2026-05-12 18:59:38,792 | INFO | response: https://links.duckduckgo.com/d.js?q=popular+Python+projects+on+GitHub&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-58545821383457491214133071281792901703&bing_market=en-IN&ex=-1 202
+2026-05-12 18:59:44,239 | INFO | response: https://duckduckgo.com/?q=top+trending+repositories+for+Python 200
+2026-05-12 18:59:44,393 | INFO | response: https://links.duckduckgo.com/d.js?q=top+trending+repositories+for+Python&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-205891871057722485693323209016830223985&bing_market=en-IN&ex=-1 202
+2026-05-12 18:59:49,082 | INFO | response: https://duckduckgo.com/?q=best+Python+repositories+GitHub 200
+2026-05-12 18:59:49,210 | INFO | response: https://links.duckduckgo.com/d.js?q=best+Python+repositories+GitHub&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-151155871123376502174500605826065025303&bing_market=en-IN&ex=-1 202
+2026-05-12 18:59:59,371 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 19:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 19:30:00 IST)" (scheduled at 2026-05-12 19:00:00+05:30)
+2026-05-12 19:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-12 19:30:00 IST)" executed successfully
+2026-05-12 19:00:06,140 | WARNING | discarding data: None
+2026-05-12 19:00:06,141 | INFO | ruthless removal did not work. 
+2026-05-12 19:00:24,025 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 19:06:18,843 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 19:06:19,842 | INFO | response: https://duckduckgo.com/?q=Amazon+best+selling+laptops+specifications 200
+2026-05-12 19:06:19,972 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+best+selling+laptops+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-112781796953246451421710757218689820469&bing_market=en-IN&ex=-1 202
+2026-05-12 19:06:25,014 | INFO | response: https://duckduckgo.com/?q=best+selling+laptops+specifications+on+Amazon 200
+2026-05-12 19:06:25,163 | INFO | response: https://links.duckduckgo.com/d.js?q=best+selling+laptops+specifications+on+Amazon&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-41804985013826363101502264964339471081&bing_market=en-IN&ex=-1 202
+2026-05-12 19:06:29,036 | INFO | response: https://duckduckgo.com/?q=top+rated+laptops+2023+specifications 200
+2026-05-12 19:06:29,185 | INFO | response: https://links.duckduckgo.com/d.js?q=top+rated+laptops+2023+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-235668335965358958984270940636707913674&bing_market=en-IN&ex=-1 202
+2026-05-12 19:06:33,745 | INFO | response: https://duckduckgo.com/?q=popular+laptops+features+and+specifications 200
+2026-05-12 19:06:33,912 | INFO | response: https://links.duckduckgo.com/d.js?q=popular+laptops+features+and+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-236629920773936916456453591733546940768&bing_market=en-IN&ex=-1 202
+2026-05-12 19:06:38,992 | INFO | response: https://duckduckgo.com/?q=Amazon+laptops+best+sellers+list 200
+2026-05-12 19:06:39,084 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+laptops+best+sellers+list&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-36695679215651225923569415714505334632&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:09,025 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 19:15:11,064 | INFO | response: https://duckduckgo.com/?q=Amazon+best+selling+laptops+specifications 200
+2026-05-12 19:15:11,221 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+best+selling+laptops+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-112781796953246451421710757218689820469&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:15,971 | INFO | response: https://duckduckgo.com/?q=best+selling+laptops+specifications+on+Amazon 200
+2026-05-12 19:15:16,049 | INFO | response: https://links.duckduckgo.com/d.js?q=best+selling+laptops+specifications+on+Amazon&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-41804985013826363101502264964339471081&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:20,584 | INFO | response: https://duckduckgo.com/?q=top+rated+laptops+2023+specifications 200
+2026-05-12 19:15:20,747 | INFO | response: https://links.duckduckgo.com/d.js?q=top+rated+laptops+2023+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-235668335965358958984270940636707913674&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:27,085 | INFO | response: https://duckduckgo.com/?q=popular+laptops+features+and+specifications 200
+2026-05-12 19:15:27,224 | INFO | response: https://links.duckduckgo.com/d.js?q=popular+laptops+features+and+specifications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-236629920773936916456453591733546940768&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:31,511 | INFO | response: https://duckduckgo.com/?q=Amazon+best+laptops+reviews+and+specs 200
+2026-05-12 19:15:31,620 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+best+laptops+reviews+and+specs&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-251084318924355925133564150850659623793&bing_market=en-IN&ex=-1 202
+2026-05-12 19:15:42,425 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-12 19:17:00,762 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:17:38,531 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-13 11:17:38,531 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-13 11:17:38,531 | INFO | Scheduler started
+2026-05-13 11:28:11,119 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:28:13,386 | WARNING | Impersonate 'chrome_106' does not exist, using 'random'
+2026-05-13 11:28:13,503 | INFO | response: https://duckduckgo.com/?q=Twitter+trending+topics+current 200
+2026-05-13 11:28:13,636 | INFO | response: https://links.duckduckgo.com/d.js?q=Twitter+trending+topics+current&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-179003410262019552607942724991315321479&bing_market=en-IN&ex=-1 202
+2026-05-13 11:28:19,786 | INFO | response: https://duckduckgo.com/?q=current+Twitter+trending+topics 200
+2026-05-13 11:28:19,934 | INFO | response: https://links.duckduckgo.com/d.js?q=current+Twitter+trending+topics&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-43545667968293791264814568022747960008&bing_market=en-IN&ex=-1 202
+2026-05-13 11:28:24,869 | INFO | response: https://duckduckgo.com/?q=latest+trending+topics+on+Twitter 200
+2026-05-13 11:28:25,010 | INFO | response: https://links.duckduckgo.com/d.js?q=latest+trending+topics+on+Twitter&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-302096568154408394207781968813960641316&bing_market=en-IN&ex=-1 202
+2026-05-13 11:28:31,168 | INFO | response: https://duckduckgo.com/?q=Twitter+trends+today 200
+2026-05-13 11:28:31,305 | INFO | response: https://links.duckduckgo.com/d.js?q=Twitter+trends+today&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-329249067090432383679358464239104052750&bing_market=en-IN&ex=-1 202
+2026-05-13 11:28:36,400 | INFO | response: https://duckduckgo.com/?q=what%27s+trending+on+Twitter+right+now 200
+2026-05-13 11:28:36,578 | INFO | response: https://links.duckduckgo.com/d.js?q=what%27s+trending+on+Twitter+right+now&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-88972956216926040322589157021525892975&bing_market=en-IN&ex=-1 202
+2026-05-13 11:28:44,018 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:29:23,349 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 11:30:00 IST)" (scheduled at 2026-05-13 11:30:00+05:30)
+2026-05-13 11:30:00,035 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 12:00:00 IST)" executed successfully
+2026-05-13 11:31:17,615 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:31:19,682 | INFO | response: https://duckduckgo.com/?q=Google+products+overview+%28Gmail%2C+Drive%2C+Docs%2C+Calendar%29 200
+2026-05-13 11:31:19,878 | INFO | response: https://links.duckduckgo.com/d.js?q=Google+products+overview+%28Gmail%2C+Drive%2C+Docs%2C+Calendar%29&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-118628207420623858646915254057752637392&bing_market=en-IN&ex=-1 202
+2026-05-13 11:31:26,131 | INFO | response: https://duckduckgo.com/?q=overview+of+Google+products+Gmail+Drive+Docs+Calendar 200
+2026-05-13 11:31:26,248 | INFO | response: https://links.duckduckgo.com/d.js?q=overview+of+Google+products+Gmail+Drive+Docs+Calendar&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-319738433636325068739684084505496556447&bing_market=en-IN&ex=-1 202
+2026-05-13 11:31:31,081 | INFO | response: https://duckduckgo.com/?q=features+of+Gmail+Drive+Docs+and+Calendar 200
+2026-05-13 11:31:31,238 | INFO | response: https://links.duckduckgo.com/d.js?q=features+of+Gmail+Drive+Docs+and+Calendar&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-243646934902776984466611248863895238227&bing_market=en-IN&ex=-1 202
+2026-05-13 11:31:36,598 | INFO | response: https://duckduckgo.com/?q=comparison+of+Google+services+Gmail+Drive+Docs+Calendar 200
+2026-05-13 11:31:36,731 | INFO | response: https://links.duckduckgo.com/d.js?q=comparison+of+Google+services+Gmail+Drive+Docs+Calendar&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-153102976290582991489691545201159299465&bing_market=en-IN&ex=-1 202
+2026-05-13 11:31:41,631 | INFO | response: https://duckduckgo.com/?q=Google+productivity+tools+overview 200
+2026-05-13 11:31:41,765 | INFO | response: https://links.duckduckgo.com/d.js?q=Google+productivity+tools+overview&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-118522164711410596232231094726665205333&bing_market=en-IN&ex=-1 202
+2026-05-13 11:31:55,347 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:33:05,846 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:43:46,197 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:43:47,049 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Baner+2026 200
+2026-05-13 11:43:47,180 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-134614228607660865597475475127779438709&bing_market=en-IN&ex=-1 202
+2026-05-13 11:43:53,332 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Baner+2026 200
+2026-05-13 11:43:53,466 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-21693404660721130613958014539366259070&bing_market=en-IN&ex=-1 202
+2026-05-13 11:44:00,982 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Baner+2026 200
+2026-05-13 11:44:01,114 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-56040931198351784649110790984155364648&bing_market=en-IN&ex=-1 202
+2026-05-13 11:44:07,548 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Baner+2026 200
+2026-05-13 11:44:07,665 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-177123213724785666620792851898836253433&bing_market=en-IN&ex=-1 202
+2026-05-13 11:44:13,331 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Baner+2026+Pune 200
+2026-05-13 11:44:13,431 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Baner+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-54173818176173906605841674401111248757&bing_market=en-IN&ex=-1 202
+2026-05-13 11:44:28,087 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 11:45:15,780 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 12:30:00 IST)" (scheduled at 2026-05-13 12:00:00+05:30)
+2026-05-13 12:00:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 12:30:00 IST)" executed successfully
+2026-05-13 12:02:02,091 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:02:04,724 | INFO | response: https://duckduckgo.com/?q=compare+Samsung+Galaxy+S24+vs+iPhone+15+specifications+across+review+sites 200
+2026-05-13 12:02:04,908 | INFO | response: https://links.duckduckgo.com/d.js?q=compare+Samsung+Galaxy+S24+vs+iPhone+15+specifications+across+review+sites&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-57048784712704722372744994628985048723&bing_market=en-IN&ex=-1 202
+2026-05-13 12:02:10,674 | INFO | response: https://duckduckgo.com/?q=compare+Samsung+Galaxy+S24+vs+iPhone+15+specifications+across+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22 200
+2026-05-13 12:02:10,808 | INFO | response: https://links.duckduckgo.com/d.js?q=compare+Samsung+Galaxy+S24+vs+iPhone+15+specifications+across+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-99626434642194785257481887002649898191&bing_market=en-IN&ex=-1 202
+2026-05-13 12:02:16,007 | INFO | response: https://duckduckgo.com/?q=Samsung+Galaxy+S24+iPhone+15+specifications+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22 200
+2026-05-13 12:02:16,107 | INFO | response: https://links.duckduckgo.com/d.js?q=Samsung+Galaxy+S24+iPhone+15+specifications+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-151663971095342161330486847946374094519&bing_market=en-IN&ex=-1 202
+2026-05-13 12:02:21,957 | INFO | response: https://duckduckgo.com/?q=Samsung+Galaxy+S24+iPhone+15+specifications+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22+official 200
+2026-05-13 12:02:22,091 | INFO | response: https://links.duckduckgo.com/d.js?q=Samsung+Galaxy+S24+iPhone+15+specifications+review+sites+%22Samsung+Galaxy+S24%22+%22S24%22+official&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-39200414936902005215368274397883586955&bing_market=en-IN&ex=-1 202
+2026-05-13 12:02:27,773 | INFO | response: https://duckduckgo.com/?q=Samsung+Galaxy+S24+vs+iPhone+15+specifications+comparison 200
+2026-05-13 12:02:27,891 | INFO | response: https://links.duckduckgo.com/d.js?q=Samsung+Galaxy+S24+vs+iPhone+15+specifications+comparison&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-299999164646408225205367878809574545317&bing_market=en-IN&ex=-1 202
+2026-05-13 12:02:39,190 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:03:08,623 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:11:08,229 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:11:10,062 | INFO | response: https://duckduckgo.com/?q=find+active+alternatives+to+discontinued+software 200
+2026-05-13 12:11:10,196 | INFO | response: https://links.duckduckgo.com/d.js?q=find+active+alternatives+to+discontinued+software&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-43957538135981222458059773295751090600&bing_market=en-IN&ex=-1 202
+2026-05-13 12:11:15,795 | INFO | response: https://duckduckgo.com/?q=active+alternatives+to+discontinued+software 200
+2026-05-13 12:11:15,913 | INFO | response: https://links.duckduckgo.com/d.js?q=active+alternatives+to+discontinued+software&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-313011107100398779632327351546314395220&bing_market=en-IN&ex=-1 202
+2026-05-13 12:11:20,929 | INFO | response: https://duckduckgo.com/?q=best+replacement+software+for+discontinued+applications 200
+2026-05-13 12:11:21,107 | INFO | response: https://links.duckduckgo.com/d.js?q=best+replacement+software+for+discontinued+applications&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-136457397449383357755316759741433175890&bing_market=en-IN&ex=-1 202
+2026-05-13 12:11:26,112 | INFO | response: https://duckduckgo.com/?q=comparison+of+alternatives+to+discontinued+software 200
+2026-05-13 12:11:26,228 | INFO | response: https://links.duckduckgo.com/d.js?q=comparison+of+alternatives+to+discontinued+software&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-279135314139613324151407809191350453477&bing_market=en-IN&ex=-1 202
+2026-05-13 12:11:31,595 | INFO | response: https://duckduckgo.com/?q=recently+launched+software+alternatives 200
+2026-05-13 12:11:31,747 | INFO | response: https://links.duckduckgo.com/d.js?q=recently+launched+software+alternatives&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-31401055508376122836405244614261957084&bing_market=en-IN&ex=-1 202
+2026-05-13 12:11:45,178 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:11:52,645 | WARNING | discarding data: None
+2026-05-13 12:11:52,645 | INFO | ruthless removal did not work. 
+2026-05-13 12:12:04,877 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:25:43,143 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:25:44,260 | INFO | response: https://duckduckgo.com/?q=Amazon+product+categories+electronics+computers+laptops+gaming 200
+2026-05-13 12:25:44,414 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+product+categories+electronics+computers+laptops+gaming&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-119857343818869743653494094229230516690&bing_market=en-IN&ex=-1 202
+2026-05-13 12:25:51,309 | INFO | response: https://duckduckgo.com/?q=best+gaming+laptops+on+Amazon 200
+2026-05-13 12:25:51,393 | INFO | response: https://links.duckduckgo.com/d.js?q=best+gaming+laptops+on+Amazon&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-332298149609937261253917270461074300253&bing_market=en-IN&ex=-1 202
+2026-05-13 12:25:55,709 | INFO | response: https://duckduckgo.com/?q=top+rated+laptops+for+gaming+electronics 200
+2026-05-13 12:25:55,810 | INFO | response: https://links.duckduckgo.com/d.js?q=top+rated+laptops+for+gaming+electronics&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-24076177431209033755889003939630261636&bing_market=en-IN&ex=-1 202
+2026-05-13 12:26:02,859 | INFO | response: https://duckduckgo.com/?q=Amazon+electronics+category+laptops 200
+2026-05-13 12:26:02,993 | INFO | response: https://links.duckduckgo.com/d.js?q=Amazon+electronics+category+laptops&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-315199201324081838083603255249742369182&bing_market=en-IN&ex=-1 202
+2026-05-13 12:26:07,609 | INFO | response: https://duckduckgo.com/?q=latest+gaming+laptops+available+on+Amazon 200
+2026-05-13 12:26:07,762 | INFO | response: https://links.duckduckgo.com/d.js?q=latest+gaming+laptops+available+on+Amazon&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-171270949373878631245910722035739308622&bing_market=en-IN&ex=-1 202
+2026-05-13 12:26:23,942 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:27:42,890 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-13 12:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 13:00:00 IST)" (scheduled at 2026-05-13 12:30:00+05:30)
+2026-05-13 12:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 13:00:00 IST)" executed successfully
+2026-05-13 13:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 13:30:00 IST)" (scheduled at 2026-05-13 13:00:00+05:30)
+2026-05-13 13:00:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 13:30:00 IST)" executed successfully
+2026-05-13 13:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 14:00:00 IST)" (scheduled at 2026-05-13 13:30:00+05:30)
+2026-05-13 13:30:00,001 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 14:00:00 IST)" executed successfully
+2026-05-13 13:37:17,044 | INFO | Scheduler has been shut down

@@ -18,6 +18,18 @@ class Config:
     # Content processing
     MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH", 5000))
     EXTRACT_READABLE = os.getenv("EXTRACT_READABLE", "true").lower() == "true"
+
+    # Optional deep crawling and document extraction
+    ENABLE_CRAWLING = os.getenv("ENABLE_CRAWLING", "true").lower() == "true"
+    CRAWL_MAX_DEPTH = int(os.getenv("CRAWL_MAX_DEPTH", 1))
+    CRAWL_MAX_PAGES = int(os.getenv("CRAWL_MAX_PAGES", 12))
+    CRAWL_TOP_RESULTS = int(os.getenv("CRAWL_TOP_RESULTS", 3))
+    CRAWL_TIMEOUT = int(os.getenv("CRAWL_TIMEOUT", 10))
+    USE_LLM_GUIDED_CRAWL = os.getenv("USE_LLM_GUIDED_CRAWL", "false").lower() == "true"
+    ENABLE_DOCUMENT_DOWNLOAD = os.getenv("ENABLE_DOCUMENT_DOWNLOAD", "true").lower() == "true"
+    DOCUMENT_DOWNLOAD_DIR = os.getenv("DOCUMENT_DOWNLOAD_DIR", "data/web_documents")
+    DOCUMENT_MAX_DOWNLOADS = int(os.getenv("DOCUMENT_MAX_DOWNLOADS", 8))
+    DOCUMENT_MAX_BYTES = int(os.getenv("DOCUMENT_MAX_BYTES", 15 * 1024 * 1024))
     
     # Cache settings
     CACHE_ENABLED = os.getenv("CACHE_ENABLED", "true").lower() == "true"
