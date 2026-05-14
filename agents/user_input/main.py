@@ -6,7 +6,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 
 from agents.user_input.prompts import (
-    ANSWER_VERIFICATION_PROMPT,
+    # ANSWER_VERIFICATION_PROMPT,
     QUERY_UNDERSTANDING_PROMPT,
     RAG_PROMPT_TEMPLATE,
 )
@@ -105,6 +105,7 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
     for index, doc in enumerate(compressed_docs):
         metadata = doc.metadata or {}
         page = metadata.get("page", "unknown")
+        page_range = metadata.get("page_range")
         source = metadata.get("source", runtime.document_name or "document")
 
         doc_type = metadata.get("type", "text")
@@ -117,6 +118,7 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
         block = {
             "source": str(source),
             "page": str(page),
+            "page_range": str(page_range or page),
             "section": str(metadata.get("section", "")),
             "title": str(metadata.get("title", "")),
             "type": doc_type,
@@ -169,7 +171,7 @@ def build_context_string(context_blocks: List[Dict]) -> str:
     for context in context_blocks:
         metadata_lines = [
             f"Source: {context['source']}",
-            f"Page: {context['page']}",
+            f"Page: {context.get('page_range') or context['page']}",
         ]
         if context.get("section"):
             metadata_lines.append(f"Section: {context['section']}")
@@ -213,9 +215,12 @@ def understand_query_node(state: GraphState) -> GraphState:
             "sub_questions": [question],
             "intent_type": "general_document_qa",
             "is_multiple_questions": False,
-            "is_mathematical": False,
+            "is_mathematical_calculation": False,
             "city_specific": None,
             "key_conditions": [],
+            "calculation_targets": [],
+            "table_columns_to_retrieve": [],
+            "aggregation_required": False,
             "retrieval_queries": [question],
             "missing_information": []
         }
@@ -254,6 +259,7 @@ def retrieve_node(state: GraphState) -> GraphState:
         docs,
         max_docs=RERANK_TOP_K,
         applicability_terms=applicability_terms,
+        query_plan=query_plan,
     )
     expanded = expand_parent_sections(reranked)
     compressed = compress_context(question, expanded)
@@ -329,13 +335,14 @@ builder = StateGraph(GraphState)
 builder.add_node("understand_query", understand_query_node)
 builder.add_node("retrieve", retrieve_node)
 builder.add_node("generate", generate_node)
-builder.add_node("check_answer", check_answer_node)
+# builder.add_node("check_answer", check_answer_node)
 
 builder.set_entry_point("understand_query")
 builder.add_edge("understand_query", "retrieve")
 builder.add_edge("retrieve", "generate")
-builder.add_edge("generate", "check_answer")
-builder.add_edge("check_answer", END)
+# builder.add_edge("generate", "check_answer")
+builder.add_edge("generate", END)
+# builder.add_edge("check_answer", END)
 
 rag_graph = builder.compile()
 

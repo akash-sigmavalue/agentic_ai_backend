@@ -11,6 +11,7 @@ class AskResponse(BaseModel):
     answer: str
     chunks: list[dict[str, Any]]
     token_usage: dict[str, int]
+    verified: bool = False
     retrieval_timing: dict[str, float] | None = None
 
 

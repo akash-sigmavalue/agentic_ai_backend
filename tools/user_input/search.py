@@ -26,7 +26,8 @@ from utils.user_input.helpers import is_table_like, is_toc_like, preprocess_for_
 class ChunkingConfig:
     PRIMARY_CHUNK_SIZE = 1300
     PRIMARY_CHUNK_OVERLAP = 250
-    SECTION_PATTERN = r"(?=\n(?:\d{1,3}\.\d+(?:\.\d+){0,5}\b|CHAPTER|SECTION|Regulation|Article|\d+\.\d+\*|\d+\.\d+\#))"
+    SECTION_PATTERN = r"(?=\n(?:\d{1,3}\.\d+(?:\.\d+){0,5}\b|CHAPTER|SECTION|\d+\.\d+\*|\d+\.\d+\#))"
+    PAGE_MARKER_PATTERN = r"\[\[PAGE_BREAK:(\d+)\]\]"
     
     DOMAIN_KEYWORDS = {
         "fsi", "setback", "marginal", "height", "parking", "tdr", "premium",
@@ -35,11 +36,81 @@ class ChunkingConfig:
 
 
 # ========================= CHUNKING =========================
+def _page_sort_value(page) -> int:
+    try:
+        return int(page)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _format_page_range(pages: List[int]) -> str:
+    if not pages:
+        return "unknown"
+
+    unique_pages = sorted(set(pages))
+    if len(unique_pages) == 1:
+        return str(unique_pages[0])
+
+    ranges = []
+    start = previous = unique_pages[0]
+    for page in unique_pages[1:]:
+        if page == previous + 1:
+            previous = page
+            continue
+        ranges.append(f"{start}-{previous}" if start != previous else str(start))
+        start = previous = page
+    ranges.append(f"{start}-{previous}" if start != previous else str(start))
+    return ", ".join(ranges)
+
+
+def merge_pages_for_structural_chunking(documents: List[Document], config: ChunkingConfig) -> List[Document]:
+    """Merge page-level PDF docs so structural sections can continue across page breaks."""
+    text_docs = [doc for doc in documents if doc.metadata.get("type") != "image"]
+    non_text_docs = [doc for doc in documents if doc.metadata.get("type") == "image"]
+
+    page_numbers = [_page_sort_value(doc.metadata.get("page")) for doc in text_docs]
+    has_multiple_pages = len({page for page in page_numbers if page}) > 1
+    if not has_multiple_pages:
+        return documents
+
+    ordered_docs = sorted(
+        enumerate(text_docs),
+        key=lambda item: (_page_sort_value(item[1].metadata.get("page")), item[0]),
+    )
+
+    merged_parts = []
+    merged_pages = []
+    base_metadata = text_docs[0].metadata.copy() if text_docs else {}
+
+    for _, doc in ordered_docs:
+        page = _page_sort_value(doc.metadata.get("page"))
+        if page:
+            merged_pages.append(page)
+            merged_parts.append(f"[[PAGE_BREAK:{page}]]\n{doc.page_content.strip()}")
+        else:
+            merged_parts.append(doc.page_content.strip())
+
+    if not merged_parts:
+        return documents
+
+    merged_text = "\n\n".join(part for part in merged_parts if part)
+    base_metadata.update({
+        "page": min(merged_pages) if merged_pages else base_metadata.get("page"),
+        "pages": sorted(set(merged_pages)),
+        "page_range": _format_page_range(merged_pages),
+        "chunking_source": "merged_pages",
+    })
+
+    return [Document(page_content=merged_text, metadata=base_metadata), *non_text_docs]
+
+
 def improved_hierarchical_split(documents: List[Document], config: Optional[ChunkingConfig] = None) -> List[Document]:
     if config is None:
         config = ChunkingConfig()
     
     structured_chunks = []
+    
+    main_heading = ""
     
     for doc in documents:
         if doc.metadata.get("type") == "image":
@@ -48,6 +119,8 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
 
         text = doc.page_content
         page = doc.metadata.get("page")
+        active_page = _page_sort_value(page)
+        pending_page = None
 
         raw_sections = re.split(config.SECTION_PATTERN, text)
 
@@ -56,6 +129,32 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
 
         for section_text in raw_sections:
             section_text = section_text.strip()
+
+            if pending_page:
+                active_page = pending_page
+                pending_page = None
+
+            trailing_markers = re.findall(
+                rf"(?:\s*{config.PAGE_MARKER_PATTERN})+\s*$",
+                section_text,
+            )
+            if trailing_markers:
+                pending_page = int(trailing_markers[-1])
+                section_text = re.sub(
+                    rf"(?:\s*{config.PAGE_MARKER_PATTERN})+\s*$",
+                    "",
+                    section_text,
+                ).strip()
+
+            marker_pages = [
+                int(page)
+                for page in re.findall(config.PAGE_MARKER_PATTERN, section_text)
+            ]
+            section_pages = ([active_page] if active_page else []) + marker_pages
+            section_text = re.sub(config.PAGE_MARKER_PATTERN, "", section_text).strip()
+            if marker_pages:
+                active_page = marker_pages[-1]
+
             if len(section_text) < 40:
                 continue
 
@@ -65,14 +164,25 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
             if section_id:
                 if "." in section_id:
                     parts = section_id.split(".")
+                    # If it's a top level like 14.2, update main_heading
+                    if len(parts) == 2:
+                        main_heading = section_text.split("\n")[0][:200].strip()
+                    
                     current_parent = ".".join(parts[:-1])
                     current_section = section_id
                 else:
                     current_parent = None
                     current_section = section_id
+                    main_heading = section_text.split("\n")[0][:200].strip()
+
+            # Prepend main heading if this is a sub-section
+            final_content = section_text
+            if main_heading and section_id and section_id.count(".") >= 2:
+                if main_heading not in section_text:
+                    final_content = f"{main_heading}\n\n{section_text}"
 
             chunk_doc = Document(
-                page_content=section_text,
+                page_content=final_content,
                 metadata={
                     **doc.metadata,
                     "section": current_section,
@@ -82,7 +192,9 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
                     "chunk_type": "section",
                     "is_table": is_table_like(section_text),
                     "has_notes": bool(re.search(r"\*|\#|\(\d+\)", section_text[:400])),
-                    "page": page,
+                    "page": min(section_pages) if section_pages else page,
+                    "pages": sorted(set(section_pages)) if section_pages else doc.metadata.get("pages"),
+                    "page_range": _format_page_range(section_pages) if section_pages else doc.metadata.get("page_range"),
                 }
             )
             structured_chunks.append(chunk_doc)
@@ -94,30 +206,33 @@ def hybrid_chunking(documents: List[Document], config: Optional[ChunkingConfig] 
     if config is None:
         config = ChunkingConfig()
 
-    structured_docs = improved_hierarchical_split(documents, config)
-    final_chunks = []
+    documents = merge_pages_for_structural_chunking(documents, config)
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=config.PRIMARY_CHUNK_SIZE,
-        chunk_overlap=config.PRIMARY_CHUNK_OVERLAP,
-        separators=["\n\n\n", "\n\n", "\n", ". ", " ", ""],
-        keep_separator=True
-    )
+    # Get structural sections only
+    final_chunks = improved_hierarchical_split(documents, config)
 
-    for doc in structured_docs:
-        if doc.metadata.get("type") == "image" or len(doc.page_content) <= config.PRIMARY_CHUNK_SIZE + 300:
-            final_chunks.append(doc)
-            continue
+    # RECURSIVE CHUNKING IS NOW COMMENTED OUT AS REQUESTED
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=config.PRIMARY_CHUNK_SIZE,
+    #     chunk_overlap=config.PRIMARY_CHUNK_OVERLAP,
+    #     separators=["\n\n\n", "\n\n", "\n", ". ", " ", ""],
+    #     keep_separator=True
+    # )
 
-        sub_chunks = text_splitter.split_documents([doc])
-        for i, sub in enumerate(sub_chunks):
-            sub.metadata = {**doc.metadata, **sub.metadata}
-            sub.metadata.update({
-                "chunk_type": "sub_chunk",
-                "sub_chunk_index": i,
-                "parent_chunk_id": doc.metadata.get("section")
-            })
-        final_chunks.extend(sub_chunks)
+    # for doc in structured_docs:
+    #     if doc.metadata.get("type") == "image" or len(doc.page_content) <= config.PRIMARY_CHUNK_SIZE + 300:
+    #         final_chunks.append(doc)
+    #         continue
+
+    #     sub_chunks = text_splitter.split_documents([doc])
+    #     for i, sub in enumerate(sub_chunks):
+    #         sub.metadata = {**doc.metadata, **sub.metadata}
+    #         sub.metadata.update({
+    #             "chunk_type": "sub_chunk",
+    #             "sub_chunk_index": i,
+    #             "parent_chunk_id": doc.metadata.get("section")
+    #         })
+    #     final_chunks.extend(sub_chunks)
 
     final_chunks = enrich_metadata(final_chunks, config)
     return final_chunks
@@ -155,7 +270,7 @@ def create_faiss_retriever(chunks: List[Document]):
     runtime.faiss_index = index
 
 
-def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.65, bm25_weight: float = 0.35):
+def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.6, bm25_weight: float = 0.4):
     bm25_retriever = BM25Retriever.from_documents(chunks, preprocess_func=preprocess_for_bm25)
     bm25_retriever.k = RETRIEVAL_BM25_K
 
@@ -203,14 +318,67 @@ def rerank_documents(
     docs: List[Document],
     max_docs: int = RERANK_TOP_K,
     applicability_terms: Optional[List[str]] = None,
+    query_plan: Optional[Dict] = None,
 ) -> List[Document]:
     """Dynamic, LLM-free but intelligent reranker focused on relevance + applicability"""
     q_lower = question.lower()
     q_words = set(re.findall(r"\w+", q_lower))
+    query_plan = query_plan or {}
     normalized_applicability_terms = [
         term.strip().lower()
         for term in (applicability_terms or [])
         if isinstance(term, str) and term.strip()
+    ]
+    aggregation_value = query_plan.get("aggregation_required")
+    aggregation_required = aggregation_value is True or str(aggregation_value).strip().lower() in {"true", "yes", "1"}
+    plan_terms = []
+    for key in ("calculation_targets", "table_columns_to_retrieve"):
+        value = query_plan.get(key)
+        if isinstance(value, str):
+            plan_terms.append(value)
+        elif isinstance(value, list):
+            plan_terms.extend(item for item in value if isinstance(item, str))
+
+    retrieval_queries = query_plan.get("retrieval_queries") or []
+    if isinstance(retrieval_queries, str):
+        retrieval_queries = [retrieval_queries]
+    plan_text = " ".join([
+        *plan_terms,
+        *(item for item in retrieval_queries if isinstance(item, str)),
+    ]).lower()
+    needs_fsi_components = (
+        aggregation_required
+        or "fsi" in q_lower
+        or "fsi" in plan_text
+        or "development potential" in q_lower
+        or "building potential" in q_lower
+        or "building potential" in plan_text
+    )
+    component_terms = [
+        term.lower()
+        for term in plan_terms
+        if isinstance(term, str) and term.strip()
+    ]
+    if needs_fsi_components:
+        component_terms.extend([
+            "basic fsi",
+            "base fsi",
+            "premium fsi",
+            "fsi on payment",
+            "payment of premium",
+            "tdr",
+            "tdr loading",
+            "maximum permissible tdr",
+            "maximum building potential",
+            "building potential",
+            "ancillary fsi",
+            "additional fsi",
+        ])
+
+    seen_component_terms = set()
+    component_terms = [
+        term for term in component_terms
+        if term and not (term in seen_component_terms or seen_component_terms.add(term))
     ]
 
     for doc in docs:
@@ -233,9 +401,26 @@ def rerank_documents(
         if re.search(r"\d+\.\d+", section) or "regulation" in content or "chapter" in content:
             score += 0.25
 
+        if aggregation_required and (metadata.get("is_table") or "table" in content):
+            score += 0.6
+
+        if component_terms:
+            matched_components = [
+                term for term in component_terms
+                if re.search(rf"\b{re.escape(term)}\b", searchable_text)
+            ]
+            if matched_components:
+                score += min(2.0, 0.3 * len(matched_components))
+
+        if needs_fsi_components and any(
+            term in content
+            for term in ["maximum building potential", "building potential on plot", "maximum permissible tdr", "fsi on payment"]
+        ):
+            score += 0.75
+
         # === Dynamic Applicability Awareness ===
         # Look for conditions mentioned in query inside the chunk
-        condition_keywords = ["road width", "plot area", "sqm", "meter", "width", "area", "zone", "congested"]
+        condition_keywords = ["road width", "plot area", "sqm", "sq.m", "sq.m.", "meter", "m.", "width", "area", "zone", "congested"]
         condition_match = sum(1 for kw in condition_keywords if kw in content and kw in q_lower)
         score += condition_match * 0.4
 
@@ -257,7 +442,11 @@ def rerank_documents(
 
         # Slight penalty for very promotional / incentive language unless asked
         incentive_words = ["premium", "incentive", "additional", "tod", "higher", "maximum"]
-        if any(word in content for word in incentive_words) and not any(word in q_lower for word in incentive_words):
+        if (
+            not needs_fsi_components
+            and any(word in content for word in incentive_words)
+            and not any(word in q_lower for word in incentive_words)
+        ):
             score -= 0.25
 
         doc.metadata["rerank_score"] = max(0.0, score)
@@ -302,8 +491,8 @@ def legal_aware_compressor(question: str, docs: List[Document]) -> List[Document
     total_chars = 0
 
     for doc in docs:
-        if total_chars > MAX_CONTEXT_CHARS:
-            break
+        # if total_chars > MAX_CONTEXT_CHARS:
+        #     break
 
         if doc.metadata.get("is_table") or doc.metadata.get("has_notes") or len(doc.page_content) < 700:
             compressed.append(doc)
