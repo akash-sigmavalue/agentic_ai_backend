@@ -1,0 +1,12 @@
+{
+  "input_count": 17,
+  "dedup_removed": 0,
+  "llm_processed": 17,
+  "relevant_ok_count": 16,
+  "outlier_count": 4,
+  "token_usage": {
+    "prompt_tokens": 6112,
+    "completion_tokens": 2756,
+    "total_tokens": 8868
+  }
+}

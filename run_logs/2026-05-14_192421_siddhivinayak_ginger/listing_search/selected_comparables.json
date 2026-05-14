@@ -1,0 +1,30 @@
+[
+  {
+    "project_name": "Amberwood Phase 1",
+    "location": "Kokane Chowk, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://bookmywing.com/project/363/amberwood-phase-1",
+    "reason": "Located in Kokane Chowk, this project offers 2, 3, and 4 BHK apartments with green building certifications, aligning with the subject project's location and residential category.",
+    "map_search_lat": 18.5972537,
+    "map_search_lng": 73.7903721,
+    "distance_from_subject_km": 1.2
+  },
+  {
+    "project_name": "Namrata Amberwood",
+    "location": "Kokane Chowk, Rahatani, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://www.buyindiahomes.com/namrata-amberwood-kokane-chowk-rahatani-pune",
+    "reason": "Located in Kokane Chowk, this project offers 2, 3, and 4 BHK apartments, aligning with the subject project's location and residential category.",
+    "map_search_lat": 18.5972537,
+    "map_search_lng": 73.7903721,
+    "distance_from_subject_km": 1.2
+  }
+]

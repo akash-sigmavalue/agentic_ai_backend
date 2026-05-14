@@ -1,0 +1,72 @@
+[
+  {
+    "project_name": "Amberwood Phase 1",
+    "location": "Kokane Chowk, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://bookmywing.com/project/363/amberwood-phase-1",
+    "reason": "Located in Kokane Chowk, this project offers 2, 3, and 4 BHK apartments with green building certifications, aligning with the subject project's location and residential category.",
+    "map_search_lat": 18.5972537,
+    "map_search_lng": 73.7903721,
+    "distance_from_subject_km": 1.2
+  },
+  {
+    "project_name": "Namrata Amberwood",
+    "location": "Kokane Chowk, Rahatani, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://www.buyindiahomes.com/namrata-amberwood-kokane-chowk-rahatani-pune",
+    "reason": "Located in Kokane Chowk, this project offers 2, 3, and 4 BHK apartments, aligning with the subject project's location and residential category.",
+    "map_search_lat": 18.5972537,
+    "map_search_lng": 73.7903721,
+    "distance_from_subject_km": 1.2
+  },
+  {
+    "project_name": "Swaraaj Paradise",
+    "location": "Pimple Saudagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Ready to Move",
+    "possession_status": "Ready",
+    "source_url": "https://www.nobrokerage.com/project/details/swaraaj-paradise-kokanechowk-pimplesaudagar-pune-028491",
+    "reason": "Situated near Kokane Chowk, this project offers 3 BHK apartments, matching the subject project's location and residential category.",
+    "map_search_lat": 18.5981553,
+    "map_search_lng": 73.7977661,
+    "distance_from_subject_km": 0.83
+  },
+  {
+    "project_name": "Kokane Square One",
+    "location": "Rahatani, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://gharpe.com/pune/kokane-square-one",
+    "reason": "Situated in Rahatani, this project offers 1 and 2 BHK apartments, matching the subject project's location and residential category.",
+    "map_search_lat": 18.6024826,
+    "map_search_lng": 73.7959899,
+    "distance_from_subject_km": 1.34
+  },
+  {
+    "project_name": "Kokane KK Shriram",
+    "location": "Rahatani, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": "Under Construction",
+    "possession_status": "Under Construction",
+    "source_url": "https://dwello.in/project/kokane-kk-shriram-by-kokane-builders-at-rahatani_e18ccb6f-da35-41a0-8443-7c53ddeb139d/directions",
+    "reason": "Located in Rahatani, this project offers residential apartments, aligning with the subject project's location and residential category.",
+    "map_search_lat": 18.6024826,
+    "map_search_lng": 73.7959899,
+    "distance_from_subject_km": 1.34
+  }
+]

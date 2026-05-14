@@ -1,0 +1,72 @@
+[
+  {
+    "project_name": "Sagar Waters Edge Vibes",
+    "location": "Pimple Nilakh",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 1,
+    "possession_status": "Ready",
+    "source_url": "https://www.squareyards.com/pune-residential-property/sagar-waters-edge-vibes/22846/project/location-map",
+    "reason": "Situated in Pimple Nilakh, offering 4 BHK apartments with possession in April 2025.",
+    "map_search_lat": 18.5789027,
+    "map_search_lng": 73.7825809,
+    "distance_from_subject_km": 2.23
+  },
+  {
+    "project_name": "Vastukalp Esquire",
+    "location": "Pimple Nilakh",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 1,
+    "possession_status": "Ready",
+    "source_url": "https://www.squareyards.com/pune-residential-property/vastukalp-esquire/113110/project",
+    "reason": "Located in Pimple Nilakh, offering 1, 2, and 3 BHK flats with possession in April 2025.",
+    "map_search_lat": 18.568116,
+    "map_search_lng": 73.79277499999999,
+    "distance_from_subject_km": 2.62
+  },
+  {
+    "project_name": "SSD Sai Pearl Phase 6",
+    "location": "Pimple Saudagar",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 1,
+    "possession_status": "Under Construction",
+    "source_url": "https://housing.com/in/buy/pune/ready_to_move_projects-pimple_saudagar",
+    "reason": "Situated in Pimple Saudagar, offering 3 BHK flats with possession in December 2025.",
+    "map_search_lat": 18.591993,
+    "map_search_lng": 73.79822999999999,
+    "distance_from_subject_km": 0.2
+  },
+  {
+    "project_name": "Sonigara 24 Sunshine Viva",
+    "location": "Pimple Saudagar",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 1,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.squareyards.com/projects-in-pimple-saudagar-pune",
+    "reason": "Located in Pimple Saudagar, offering 3 BHK apartments with possession in April 2025.",
+    "map_search_lat": 18.5895229,
+    "map_search_lng": 73.8016335,
+    "distance_from_subject_km": 0.25
+  },
+  {
+    "project_name": "Apple Galaxy",
+    "location": "Pimple Saudagar",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 1,
+    "possession_status": "Ready",
+    "source_url": "https://www.brickfolio.in/apple-galaxy-pimple-saudagar-1467-pid",
+    "reason": "Located in Pimple Saudagar, offering 1 and 2 BHK flats with possession in April 2025.",
+    "map_search_lat": 18.5891375,
+    "map_search_lng": 73.8036719,
+    "distance_from_subject_km": 0.46
+  }
+]

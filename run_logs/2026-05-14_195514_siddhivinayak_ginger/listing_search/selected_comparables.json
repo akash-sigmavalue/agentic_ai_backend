@@ -1,0 +1,30 @@
+[
+  {
+    "project_name": "Vantage Twenty One",
+    "location": "Pimple Saudagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.prophunt.ai/projects/vantage-twenty-one-pimple-saudagar",
+    "reason": "Located in Pimple Saudagar, offering 2, 3, and 4 BHK apartments with possession in October 2027.",
+    "map_search_lat": 18.5981553,
+    "map_search_lng": 73.7977661,
+    "distance_from_subject_km": 0.7
+  },
+  {
+    "project_name": "Futuristic The Miracle",
+    "location": "Pimple Saudagar, Pune",
+    "country": "India",
+    "property_type": "apartment",
+    "project_category": "Residential",
+    "age_years": 0,
+    "possession_status": "Under Construction",
+    "source_url": "https://www.squareyards.com/pune-residential-property/futuristic-the-miracle/145424/project",
+    "reason": "Situated in Pimple Saudagar, offering 2 and 3 BHK flats with possession in December 2025.",
+    "map_search_lat": 18.5981553,
+    "map_search_lng": 73.7977661,
+    "distance_from_subject_km": 0.7
+  }
+]
