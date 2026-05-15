@@ -11,6 +11,7 @@ from tools.valuation.amenity_analytics_tool import get_nearby_amenities
 from tools.valuation.builtup_density_tool import analyze_congestion
 from tools.valuation.cbd_identification_tool import identify_cbds
 from tools.valuation.data_cleaning import data_cleaning_pipeline
+from tools.valuation.plot_rate_pipeline import calculate_plot_rates
 from tools.valuation.factorial_table import compute_factorial_table
 from tools.valuation.listing_search import listing_pipeline
 from tools.valuation.llm_factoring_engine import run_llm_factoring
@@ -121,8 +122,45 @@ def _cleaning_stream_generator(req: CleaningRequest):
             on_progress=on_progress,
         )
 
+        # Only calculate plot rates if the subject property is a plot
+        if req.property_type.strip().lower() == "plot":
+            location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
+            country = req.subject.get("country") or "India"
+            result = calculate_plot_rates(
+                pipeline_output=result,
+                subject=req.subject,
+                location=location,
+                country=country,
+                property_type=req.property_type,
+                on_progress=on_progress,
+            )
+
         for event in progress_events:
             yield _sse("cleaning_progress", event)
+
+        # Define columns for the UI
+        columns = [
+            "cleaned_match_project",
+            "cleaned_relevant_for_valuation",
+            "cleaned_price_value",
+            "cleaned_area_sqft",
+            "cleaned_area_type",
+            "cleaned_config",
+            "cleaned_possession_status",
+            "cleaned_listing_type",
+            "final_super_builtup_area",
+            "stat_flag",
+        ]
+        # Only include plot derived columns if the subject is a plot
+        if req.property_type.strip().lower() == "plot":
+            columns.extend(
+                [
+                    "plot_derived_rate_per_sqft",
+                    "plot_fsi_range",
+                    "plot_construction_cost_range",
+                    "plot_derived_rate_range",
+                ]
+            )
 
         run_logger.save_step("data_cleaning", "results", result["audit_stats"])
         yield _sse(
@@ -131,6 +169,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
                 "cleaned_listings": result["cleaned_listings"],
                 "review_listings": result["review_listings"],
                 "audit_stats": result["audit_stats"],
+                "columns": columns,
             },
         )
     except Exception as exc:

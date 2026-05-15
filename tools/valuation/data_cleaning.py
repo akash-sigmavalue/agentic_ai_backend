@@ -337,6 +337,14 @@ def data_cleaning_pipeline(
     
     subject_name = subject.get("project_name", "Subject")
     comp_names = [c.get("project_name", "Comp") for c in comparables]
+    
+    # NEW: Include location name or listings without a specific project name in the target list
+    # so the LLM doesn't drop them.
+    found_projects = {l.get("project_name") for l in unique_listings if l.get("project_name")}
+    general_loc_name = subject.get("location_name") or subject.get("locality") or "General Locality"
+    if general_loc_name in found_projects:
+        comp_names.append(general_loc_name)
+    
     sys_prompt = build_cleaning_system_prompt(subject_name, comp_names)
     
     llm_results = []

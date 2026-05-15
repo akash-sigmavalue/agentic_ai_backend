@@ -41,6 +41,10 @@ def compute_factorial_table(
     s_lng = subject.get("lng") or subject.get("map_search_lng")
     if subject_name and s_lat and s_lng:
         coord_map[subject_name.lower()] = (float(s_lat), float(s_lng), subject.get("location_name") or subject.get("location", ""))
+        # Also map the location name to these coordinates (for general search benchmarks)
+        loc_name = subject.get("location_name") or subject.get("locality")
+        if loc_name:
+            coord_map[loc_name.lower()] = (float(s_lat), float(s_lng), loc_name)
         
     # Comparable coords
     for c in comparables:
@@ -98,7 +102,13 @@ def compute_factorial_table(
             "total_valid": 0,
         }
 
-    valid["rate"] = valid[price_col] / valid[area_col]
+    # --- Calculate Rate per listing --------------------------------------
+    # If plot derived rates are present, use them. Otherwise fallback to built-up rate.
+    if "plot_derived_rate_per_sqft" in valid.columns:
+        # Use plot_derived_rate_per_sqft where available, else fallback to standard price/area
+        valid["rate"] = valid["plot_derived_rate_per_sqft"].fillna(valid[price_col] / valid[area_col])
+    else:
+        valid["rate"] = valid[price_col] / valid[area_col]
 
     # --- Group by project ------------------------------------------------
     summary_rows: List[Dict] = []
@@ -209,7 +219,9 @@ def compute_factorial_table(
 
     # Identify primary area type from valid listings
     area_type = "Built-up Area"
-    if "cleaned_area_type" in valid.columns:
+    if "plot_derived_rate_per_sqft" in valid.columns and valid["plot_derived_rate_per_sqft"].notna().any():
+        area_type = "Plot Land Area"
+    elif "cleaned_area_type" in valid.columns:
         mode_series = valid["cleaned_area_type"].mode()
         if not mode_series.empty:
             area_type = str(mode_series[0]).replace("_", " ").title()

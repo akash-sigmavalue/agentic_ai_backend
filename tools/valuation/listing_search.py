@@ -82,18 +82,20 @@ HEADERS = {
 # ── Property types ────────────────────────────────────────────────────────
 PROPERTY_TYPE_ALIASES = {
     "apartment":         {"apartment", "flat", "condo", "condominium", "penthouse"},
-    "villa":             {"villa", "bungalow", "row house", "townhouse"},
-    "plot":              {"plot", "land", "site"},
+    "villa":             {"villa", "bungalow", "row house", "townhouse", "independent house", "independent villa", "house"},
+    "plot":              {"plot", "land", "site", "residential plot", "na plot"},
     "retail":            {"shop", "retail", "showroom"},
     "commercial_office": {"office", "workspace", "coworking"},
+    "mixed_use":         {"mixed use", "mixed-use", "residential+commercial", "residential + commercial"},
 }
 
 PROPERTY_TYPE_DISPLAY = {
     "apartment":         "apartment (flat / condo / penthouse)",
     "villa":             "villa (bungalow / row house / townhouse)",
-    "plot":              "plot (land / site)",
+    "plot":              "plot (land / site) or villa / bungalow / independent house",
     "retail":            "shop (retail space / showroom)",
     "commercial_office": "office space (workspace / coworking)",
+    "mixed_use":         "mixed-use (residential + commercial)",
 }
 
 PROPERTY_TYPE_SEARCH_TERM = {
@@ -102,14 +104,16 @@ PROPERTY_TYPE_SEARCH_TERM = {
     "plot":              "plot",
     "retail":            "shop",
     "commercial_office": "office space",
+    "mixed_use":         "mixed-use development",
 }
 
 PROPERTY_TYPE_EXCLUSIONS = {
     "apartment":         ["villa", "bungalow", "plot", "land", "shop", "office", "retail", "showroom", "row house", "townhouse"],
     "villa":             ["apartment", "flat", "condo", "plot", "land", "shop", "office", "retail", "showroom"],
-    "plot":              ["apartment", "flat", "villa", "bungalow", "shop", "office", "built-up", "constructed"],
+    "plot":              ["apartment", "flat", "shop", "office", "built-up", "constructed"],
     "retail":            ["apartment", "flat", "villa", "bungalow", "plot", "land", "office", "residential", "condo"],
     "commercial_office": ["apartment", "flat", "villa", "bungalow", "plot", "land", "shop", "retail", "showroom", "residential"],
+    "mixed_use":         ["purely residential", "purely commercial", "plot", "land"],
 }
 
 # ── Project category defaults (fallback if not provided by comparable) ────
@@ -119,6 +123,7 @@ PROJECT_CATEGORY_DEFAULT = {
     "plot":              "Plot",
     "retail":            "Commercial",
     "commercial_office": "Commercial",
+    "mixed_use":         "Residential + Commercial",
 }
 
 LISTING_SIGNALS = [
@@ -312,7 +317,15 @@ def search_urls_for_projects_batch(
 
         lat = p.get("lat")
         lng = p.get("lng")
-        if lat and lng and lat != 0 and lng != 0:
+        is_general = p.get("is_general_search", False)
+
+        if is_general:
+            # User requested specific "buy plot" query for general plot search
+            if per_project_type == "plot":
+                query = f"buy plot in {loc}, {country}"
+            else:
+                query = f"buy {search_term} in {loc}, {country}"
+        elif lat and lng and lat != 0 and lng != 0:
             query = f"buy {search_term} in {pname}, {loc}, {country}, coordinates: {lat}, {lng}"
         else:
             query = f"buy {search_term} in {pname}, {loc}, {country}"
@@ -412,17 +425,24 @@ def fetch_page_text(
 
 
 # ── Extraction prompt ─────────────────────────────────────────────────────
-def build_extract_prompt(property_type: str, project_name: str, text: str) -> str:
+def build_extract_prompt(property_type: str, project_name: str, text: str, is_general: bool = False) -> str:
     display_name  = PROPERTY_TYPE_DISPLAY.get(property_type, property_type)
     search_term   = PROPERTY_TYPE_SEARCH_TERM.get(property_type, property_type)
     valid_terms   = ", ".join(PROPERTY_TYPE_ALIASES.get(property_type, {property_type}))
     exclusion_str = ", ".join(PROPERTY_TYPE_EXCLUSIONS.get(property_type, []))
 
+    if is_general:
+        target_instruction = "extract EVERY distinct property listing found in the text"
+        name_instruction = "Extract the actual project name if mentioned, otherwise use null"
+    else:
+        target_instruction = f"extract EVERY distinct property listing for project: \"{project_name}\""
+        name_instruction = f"exactly \"{project_name}\""
+
     return f"""You are a real estate listing data extractor.
-Read the text and extract EVERY distinct property listing for project: "{project_name}".
+Read the text and {target_instruction}.
 
 STRICT RULES:
-1. Extract ONLY listings for project: "{project_name}". IGNORE nearby projects.
+1. {"IGNORE projects that are not relevant to the search area." if is_general else f"Extract ONLY listings for project: \"{project_name}\". IGNORE nearby projects."}
 2. Property type MUST be: {display_name} (valid terms: {valid_terms}). 
 3. DO NOT extract: {exclusion_str}.
 4. CRITICAL: COPY values EXACTLY as they appear. No calculations, no unit conversions (e.g., leave "1.2 Cr" as "1.2 Cr").
@@ -431,7 +451,7 @@ STRICT RULES:
 
 Return ONLY a JSON array of objects with these keys:
 - currency (e.g. "₹", "INR", "USD")
-- project_name (exactly "{project_name}")
+- project_name ({name_instruction})
 - property_type (exactly "{property_type}")
 - listing_type ("Sale" or "Rental")
 - location (address/locality)
@@ -462,13 +482,14 @@ def extract_listings_from_text(
     page_text:     str,
     project_name:  str,
     property_type: str,
+    is_general:    bool = False,
 ) -> tuple:
     if not page_text:
         log_drop("extract", project_name, "empty_page_text", extra={"url": url})
         return [], {}
 
     try:
-        user_prompt   = build_extract_prompt(property_type, project_name, page_text)
+        user_prompt   = build_extract_prompt(property_type, project_name, page_text, is_general=is_general)
         system_prompt = "You are a precise data extraction agent. Return only a JSON array of objects."
         response = _client.chat.completions.create(
             model="gpt-4o-mini",
@@ -499,7 +520,7 @@ def extract_listings_from_text(
         verified = []
         for item in listings:
             extracted_proj = (item.get("project_name") or "").strip()
-            if extracted_proj and not is_matching_project(extracted_proj, project_name):
+            if not is_general and extracted_proj and not is_matching_project(extracted_proj, project_name):
                 log_drop(
                     "extract_project_name_filter",
                     extracted_proj,
@@ -509,7 +530,8 @@ def extract_listings_from_text(
                 continue
 
             item["source_url"]   = url
-            item["project_name"] = project_name
+            if not is_general:
+                item["project_name"] = project_name
             item["property_type"] = property_type
             verified.append(item)
 
@@ -724,6 +746,23 @@ def listing_pipeline(
             "is_subject":       False,
         })
 
+    # ── CAT-02: Add General Locality Search for Plots ──
+    # If the subject is a plot, we also search for general land data in the area.
+    if property_type == "plot":
+        loc = subject.get("location_name") or subject.get("locality", "")
+        if loc:
+            projects.append({
+                "project_name":     loc,
+                "location":         loc,
+                "country":          subject.get("country", "India"),
+                "lat":              subject.get("lat"),
+                "lng":              subject.get("lng"),
+                "property_type":    "plot",
+                "project_category": "Plot",
+                "is_subject":       False,
+                "is_general_search": True,
+            })
+
     logger.info(f"[Pipeline] Total projects: {len(projects)}")
     logger.info(
         f"[Pipeline] Categories: "
@@ -773,7 +812,7 @@ def listing_pipeline(
         # B. Scrape + Extract URLs in PARALLEL
         p_listings_valid = []
 
-        def process_url(idx, url, current_pname, is_subject, p_lat, p_lng, proj_ptype, proj_cat):
+        def process_url(idx, url, current_pname, is_subject, p_lat, p_lng, proj_ptype, proj_cat, is_general=False):
             logger.info(f"[Scrape] URL #{idx} Starting: {url}")
             text = fetch_page_text(url, project_name=current_pname, run_logger=run_logger)
             if not text:
@@ -781,13 +820,16 @@ def listing_pipeline(
                 return [], {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
             listings, usage = extract_listings_from_text(
-                url, text, project_name=current_pname, property_type=proj_ptype
+                url, text, project_name=current_pname, property_type=proj_ptype, is_general=is_general
             )
 
             valid = []
             for lst in listings:
-                if is_matching_project(lst.get("project_name", ""), current_pname):
-                    lst["project_name"]     = current_pname
+                if is_general or is_matching_project(lst.get("project_name", ""), current_pname):
+                    if not is_general:
+                        lst["project_name"] = current_pname
+                    elif not lst.get("project_name"):
+                        lst["project_name"] = current_pname
                     lst["property_type"]    = proj_ptype
                     lst["project_category"] = proj_cat      
                     lst["is_subject"]       = is_subject
@@ -820,6 +862,7 @@ def listing_pipeline(
                     p.get("lng"),
                     p_ptype,
                     p_cat,           # ← pass category to thread
+                    p.get("is_general_search", False)
                 ): url
                 for i, url in enumerate(urls)
             }

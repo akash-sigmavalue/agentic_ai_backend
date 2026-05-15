@@ -1,0 +1,112 @@
+2026-05-15 10:09:56,033 | INFO | [Pipeline Start] subject='Test Plot Project' type='plot' search_term='plot or villa' listing='sale' comparables=1
+2026-05-15 10:09:56,034 | INFO | [Pipeline] Total projects: 3
+2026-05-15 10:09:56,059 | INFO | 
+============================================================
+[Pipeline] Project: 'Test Plot Project' | type=plot | category=Plot
+============================================================
+2026-05-15 10:09:56,059 | INFO | [URL Search DDG] Query: 'buy plot or villa in Test Plot Project, Baner, India, coordinates: 18.559, 73.779'
+2026-05-15 10:09:57,795 | INFO | [URL Search DDG] Result: 'Test Plot Project' -> 1 URLs.
+2026-05-15 10:09:58,796 | INFO | [URLs] Test Plot Project -> 1 urls
+2026-05-15 10:09:58,798 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:09:58,799 | INFO | [Scrape] project='Test Plot Project' url='https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:09:58,799 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:00,494 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:03,655 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:10:03,682 | INFO | [Extract] 'Test Plot Project' -> 0 raw listings from 'https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:10:03,682 | INFO | [Extract Filter] 'Test Plot Project' -> 0/0 passed type + name filter
+2026-05-15 10:10:03,682 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:03,683 | INFO | [Project Done] 'Test Plot Project' -> 0 listings
+2026-05-15 10:10:03,683 | INFO | 
+============================================================
+[Pipeline] Project: 'Comp Plot 1' | type=plot | category=Plot
+============================================================
+2026-05-15 10:10:03,683 | INFO | [URL Search DDG] Query: 'buy plot or villa in Comp Plot 1, Baner, India, coordinates: 18.56, 73.78'
+2026-05-15 10:10:05,329 | INFO | [URL Search DDG] Result: 'Comp Plot 1' -> 1 URLs.
+2026-05-15 10:10:06,330 | INFO | [URLs] Comp Plot 1 -> 1 urls
+2026-05-15 10:10:06,331 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:10:06,332 | INFO | [Scrape] project='Comp Plot 1' url='https://www.99acres.com/residential-land-plots-in-baner-pune-ffid'
+2026-05-15 10:10:06,332 | INFO | [Scrape] Trying requests for https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:10:06,897 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-15 10:10:06,898 | INFO | [Scrape] URL 'https://www.99acres.com/residential-land-plots-in-baner-pune-ffid' is difficult to scrape, using Selenium Pool.
+2026-05-15 10:10:06,898 | INFO | [Driver Pool] Creating new browser for thread 892
+2026-05-15 10:10:16,207 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:10:18,349 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:10:18,350 | INFO | [Extract] 'Comp Plot 1' -> 0 raw listings from 'https://www.99acres.com/residential-land-plots-in-baner-pune-ffid'
+2026-05-15 10:10:18,350 | INFO | [Extract Filter] 'Comp Plot 1' -> 0/0 passed type + name filter
+2026-05-15 10:10:18,350 | INFO | [Scrape] URL #1 -> 0 listings | https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:10:18,351 | INFO | [Project Done] 'Comp Plot 1' -> 0 listings
+2026-05-15 10:10:18,351 | INFO | 
+============================================================
+[Pipeline] Project: 'General Locality' | type=plot | category=Plot
+============================================================
+2026-05-15 10:10:18,351 | INFO | [URL Search DDG] Query: 'buy plot in Baner, India'
+2026-05-15 10:10:19,964 | INFO | [URL Search DDG] Result: 'General Locality' -> 1 URLs.
+2026-05-15 10:10:20,964 | INFO | [URLs] General Locality -> 1 urls
+2026-05-15 10:10:20,965 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:20,966 | INFO | [Scrape] project='General Locality' url='https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:10:20,966 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:22,060 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:23,908 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:10:23,910 | INFO | [Extract] 'General Locality' -> 0 raw listings from 'https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:10:23,911 | INFO | [Extract Filter] 'General Locality' -> 0/0 passed type + name filter
+2026-05-15 10:10:23,911 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:10:23,912 | INFO | [Project Done] 'General Locality' -> 0 listings
+2026-05-15 10:10:23,913 | INFO | [Pipeline Done] final_listings=0 | projects=3 | tokens=2966
+2026-05-15 10:25:05,608 | INFO | [Pipeline Start] subject='Test Plot Project' type='plot' search_term='plot or villa' listing='sale' comparables=1
+2026-05-15 10:25:05,608 | INFO | [Pipeline] Total projects: 3
+2026-05-15 10:25:05,611 | INFO | 
+============================================================
+[Pipeline] Project: 'Test Plot Project' | type=plot | category=Plot
+============================================================
+2026-05-15 10:25:05,611 | INFO | [URL Search DDG] Query: 'buy plot or villa in Test Plot Project, Baner, India, coordinates: 18.559, 73.779'
+2026-05-15 10:25:07,155 | INFO | [URL Search DDG] Result: 'Test Plot Project' -> 1 URLs.
+2026-05-15 10:25:08,156 | INFO | [URLs] Test Plot Project -> 1 urls
+2026-05-15 10:25:08,157 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:08,157 | INFO | [Scrape] project='Test Plot Project' url='https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:25:08,157 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:09,488 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:11,746 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:25:11,765 | INFO | [Extract] 'Test Plot Project' -> 0 raw listings from 'https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:25:11,765 | INFO | [Extract Filter] 'Test Plot Project' -> 0/0 passed type + name filter
+2026-05-15 10:25:11,765 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:11,766 | INFO | [Project Done] 'Test Plot Project' -> 0 listings
+2026-05-15 10:25:11,766 | INFO | 
+============================================================
+[Pipeline] Project: 'Comp Plot 1' | type=plot | category=Plot
+============================================================
+2026-05-15 10:25:11,767 | INFO | [URL Search DDG] Query: 'buy plot or villa in Comp Plot 1, Baner, India, coordinates: 18.56, 73.78'
+2026-05-15 10:25:13,245 | INFO | [URL Search DDG] Result: 'Comp Plot 1' -> 1 URLs.
+2026-05-15 10:25:14,246 | INFO | [URLs] Comp Plot 1 -> 1 urls
+2026-05-15 10:25:14,247 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:25:14,247 | INFO | [Scrape] project='Comp Plot 1' url='https://www.99acres.com/residential-land-plots-in-baner-pune-ffid'
+2026-05-15 10:25:14,248 | INFO | [Scrape] Trying requests for https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:25:14,876 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-15 10:25:14,876 | INFO | [Scrape] URL 'https://www.99acres.com/residential-land-plots-in-baner-pune-ffid' is difficult to scrape, using Selenium Pool.
+2026-05-15 10:25:14,876 | INFO | [Driver Pool] Creating new browser for thread 20368
+2026-05-15 10:25:22,881 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:25:31,355 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:25:31,360 | INFO | [Extract] 'Comp Plot 1' -> 3 raw listings from 'https://www.99acres.com/residential-land-plots-in-baner-pune-ffid'
+2026-05-15 10:25:31,361 | INFO | [Extract Filter] 'Comp Plot 1' -> 3/3 passed type + name filter
+2026-05-15 10:25:31,361 | INFO | [Scrape] URL #1 -> 3 listings | https://www.99acres.com/residential-land-plots-in-baner-pune-ffid
+2026-05-15 10:25:31,362 | INFO | [Project Done] 'Comp Plot 1' -> 3 listings
+2026-05-15 10:25:31,362 | INFO | 
+============================================================
+[Pipeline] Project: 'General Locality' | type=plot | category=Plot
+============================================================
+2026-05-15 10:25:31,362 | INFO | [URL Search DDG] Query: 'buy plot in Baner, India'
+2026-05-15 10:25:33,690 | INFO | [URL Search DDG] Result: 'General Locality' -> 1 URLs.
+2026-05-15 10:25:34,690 | INFO | [URLs] General Locality -> 1 urls
+2026-05-15 10:25:34,691 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:34,691 | INFO | [Scrape] project='General Locality' url='https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:25:34,692 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:36,356 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:40,621 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 10:25:40,623 | INFO | [Extract] 'General Locality' -> 2 raw listings from 'https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs'
+2026-05-15 10:25:40,623 | INFO | [Extract Filter] 'General Locality' -> 2/2 passed type + name filter
+2026-05-15 10:25:40,623 | INFO | [Scrape] URL #1 -> 2 listings | https://www.magicbricks.com/residential-plots-land-for-sale-in-baner-pune-pppfs
+2026-05-15 10:25:40,623 | INFO | [Project Done] 'General Locality' -> 2 listings
+2026-05-15 10:25:40,624 | WARNING | [DROP] stage=final_validation | project='Comp Plot 1' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "10 Cr", "area_sqft": null}
+2026-05-15 10:25:40,624 | WARNING | [DROP] stage=final_validation | project='Comp Plot 1' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "7.8 Cr", "area_sqft": null}
+2026-05-15 10:25:40,624 | WARNING | [DROP] stage=final_validation | project='General Locality' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "20400000", "area_sqft": null}
+2026-05-15 10:25:40,624 | WARNING | [DROP] stage=final_validation | project='General Locality' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "132300000", "area_sqft": null}
+2026-05-15 10:25:40,624 | INFO | [Pipeline Done] final_listings=1 | projects=3 | tokens=3825
