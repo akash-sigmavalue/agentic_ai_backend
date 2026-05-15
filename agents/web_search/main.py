@@ -20,7 +20,7 @@ from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v9-crawl-docs"
+SEARCH_CACHE_VERSION = "source-discovery-v10-strict-ready-reckoner"
 
 
 class DuckDuckGoSearchAgent:
@@ -102,7 +102,7 @@ class DuckDuckGoSearchAgent:
 
         # Fetch full content if requested
         if fetch_content:
-            urls = [r['url'] for r in search_results[:min(5, len(search_results))]]
+            urls = [r['url'] for r in search_results[:min(max_results, len(search_results))]]
             if status_callback: status_callback(f'Reading full content from {len(urls)} top sources...')
             content_results = self.processor.process_batch(urls, query=query, status_callback=status_callback)
 

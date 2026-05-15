@@ -33,7 +33,7 @@ class Config:
     
     # Cache settings
     CACHE_ENABLED = os.getenv("CACHE_ENABLED", "true").lower() == "true"
-    CACHE_TTL = int(os.getenv("CACHE_TTL", 3600))  # 1 hour in seconds
+    CACHE_TTL = int(os.getenv("CACHE_TTL", 1800))  # 30 minutes in seconds
     CACHE_DIR = os.getenv("CACHE_DIR", "data/cache")
     
     # Rate limiting

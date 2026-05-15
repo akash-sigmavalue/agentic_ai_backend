@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 import requests
 
 from core.web_search.config import config
+from database.web_search.cache import SearchCache
 
 
 DOCUMENT_PATTERN = re.compile(
@@ -31,6 +32,7 @@ class DocumentDownloader:
         self.download_dir.mkdir(parents=True, exist_ok=True)
         self.max_downloads = config.DOCUMENT_MAX_DOWNLOADS if max_downloads is None else max_downloads
         self.max_bytes = config.DOCUMENT_MAX_BYTES if max_bytes is None else max_bytes
+        self.cache = SearchCache() if config.CACHE_ENABLED else None
 
     async def find_and_download_documents(self, crawler_results: List[Dict]) -> List[Dict]:
         document_urls = []
@@ -50,8 +52,14 @@ class DocumentDownloader:
 
         documents = []
         for url in list(dict.fromkeys(document_urls))[: self.max_downloads]:
+            cached = self._get_cached_document(url, source_by_url.get(url, ""))
+            if cached:
+                documents.append(cached)
+                continue
+
             doc_info = await self._download_and_extract(url, source_by_url.get(url, ""))
             if doc_info:
+                self._cache_document(url, doc_info)
                 documents.append(doc_info)
         return documents
 
@@ -150,3 +158,26 @@ class DocumentDownloader:
 
     def _is_document_url(self, url: str) -> bool:
         return bool(DOCUMENT_PATTERN.search(url or ""))
+
+    def _get_cached_document(self, url: str, source_url: str) -> Optional[Dict]:
+        if not self.cache:
+            return None
+
+        cached = self.cache.get(url, search_type="document")
+        if not cached:
+            return None
+
+        filepath = cached.get("filepath")
+        if filepath and not Path(filepath).exists():
+            return None
+
+        doc_info = dict(cached)
+        if source_url:
+            doc_info["source_url"] = source_url
+        print(f"Document cache hit for: {url}")
+        return doc_info
+
+    def _cache_document(self, url: str, doc_info: Dict) -> None:
+        if not self.cache:
+            return
+        self.cache.set(url, doc_info, search_type="document")

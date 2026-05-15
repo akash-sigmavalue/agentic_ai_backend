@@ -4383,3 +4383,165 @@ ORDER BY
 2026-05-13 13:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 14:00:00 IST)" (scheduled at 2026-05-13 13:30:00+05:30)
 2026-05-13 13:30:00,001 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-13 14:00:00 IST)" executed successfully
 2026-05-13 13:37:17,044 | INFO | Scheduler has been shut down
+2026-05-15 12:18:34,802 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 12:18:34,802 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 12:18:34,802 | INFO | Scheduler started
+2026-05-15 12:20:50,283 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:20:52,000 | WARNING | Impersonate 'chrome_114' does not exist, using 'random'
+2026-05-15 12:20:52,133 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Baner+2026 200
+2026-05-15 12:20:52,217 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-134622726937282807531094565274805146997&bing_market=en-IN&ex=-1 202
+2026-05-15 12:20:57,266 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Baner+2026 200
+2026-05-15 12:20:57,384 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-21700442656856794785704771354744290430&bing_market=en-IN&ex=-1 202
+2026-05-15 12:21:02,283 | INFO | response: https://duckduckgo.com/?q=upcoming+residential+projects+Baner+2026 200
+2026-05-15 12:21:02,366 | INFO | response: https://links.duckduckgo.com/d.js?q=upcoming+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-56054459565554223271175335051581446184&bing_market=en-IN&ex=-1 202
+2026-05-15 12:21:07,633 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Baner+2026 202
+2026-05-15 12:21:12,549 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Baner+2026+Pune 200
+2026-05-15 12:21:12,666 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Baner+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-54186048469161758744663622070813862517&bing_market=en-IN&ex=-1 202
+2026-05-15 12:21:26,765 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:21:43,865 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:29:06,357 | INFO | Scheduler has been shut down
+2026-05-15 12:29:13,819 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 12:29:13,819 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 12:29:13,819 | INFO | Scheduler started
+2026-05-15 12:29:40,388 | INFO | Scheduler has been shut down
+2026-05-15 12:29:47,587 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 12:29:47,603 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 12:29:47,603 | INFO | Scheduler started
+2026-05-15 12:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 12:30:00 IST)" (scheduled at 2026-05-15 12:30:00+05:30)
+2026-05-15 12:30:00,019 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 13:00:00 IST)" executed successfully
+2026-05-15 12:31:19,152 | INFO | Scheduler has been shut down
+2026-05-15 12:31:26,768 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 12:31:26,768 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 12:31:26,768 | INFO | Scheduler started
+2026-05-15 12:33:50,464 | INFO | Scheduler has been shut down
+2026-05-15 12:34:00,890 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 12:34:00,890 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 12:34:00,890 | INFO | Scheduler started
+2026-05-15 12:34:36,364 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:34:43,348 | WARNING | Impersonate 'chrome_120' does not exist, using 'random'
+2026-05-15 12:34:43,470 | INFO | response: https://duckduckgo.com/?q=ROUGE-1+F1+score+for+web+scraping+accuracy 200
+2026-05-15 12:34:43,614 | INFO | response: https://links.duckduckgo.com/d.js?q=ROUGE-1+F1+score+for+web+scraping+accuracy&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-275532132454580439669021219868390022418&bing_market=en-IN&ex=-1 202
+2026-05-15 12:35:02,730 | INFO | response: https://duckduckgo.com/?q=ROUGE-1+F1+score+for+web+scraping+accuracy+%22ROUGE-1%22+%22F1%22 200
+2026-05-15 12:35:02,922 | INFO | response: https://links.duckduckgo.com/d.js?q=ROUGE-1+F1+score+for+web+scraping+accuracy+%22ROUGE-1%22+%22F1%22&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-199426526411380456636246475326103726520&bing_market=en-IN&ex=-1 202
+2026-05-15 12:35:17,030 | INFO | response: https://duckduckgo.com/?q=ROUGE-1+F1+score+web+scraping+accuracy+%22ROUGE-1%22+%22F1%22 202
+2026-05-15 12:35:39,029 | INFO | response: https://duckduckgo.com/?q=ROUGE-1+F1+score+web+scraping+accuracy+%22ROUGE-1%22+%22F1%22+official 200
+2026-05-15 12:35:39,164 | INFO | response: https://links.duckduckgo.com/d.js?q=ROUGE-1+F1+score+web+scraping+accuracy+%22ROUGE-1%22+%22F1%22+official&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-210204376033743123541355442703975284050&bing_market=en-IN&ex=-1 202
+2026-05-15 12:36:01,081 | INFO | response: https://duckduckgo.com/?q=ROUGE-1+F1+score+web+scraping+accuracy+evaluation 200
+2026-05-15 12:36:01,212 | INFO | response: https://links.duckduckgo.com/d.js?q=ROUGE-1+F1+score+web+scraping+accuracy+evaluation&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-235557476787112464317189008341805864129&bing_market=en-IN&ex=-1 202
+2026-05-15 12:36:27,306 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:36:51,025 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:37:35,777 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:37:43,377 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Baner+2026 200
+2026-05-15 12:37:43,460 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-134621146176984691568764342484542515045&bing_market=en-IN&ex=-1 202
+2026-05-15 12:38:00,843 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Baner+2026 200
+2026-05-15 12:38:00,979 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-21699429804027429954419143318170177134&bing_market=en-IN&ex=-1 202
+2026-05-15 12:38:23,291 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Baner+2026 202
+2026-05-15 12:38:38,637 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Baner+2026+Pune 200
+2026-05-15 12:38:38,775 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Baner+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-54185033081030910114930148355937425509&bing_market=en-IN&ex=-1 202
+2026-05-15 12:38:59,621 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:39:00,193 | INFO | ruthless removal did not work. 
+2026-05-15 12:39:14,478 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:42:20,587 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:42:51,774 | INFO | response: https://duckduckgo.com/?q=latitude+and+longitude+of+Adiam+Villa+Punawale 200
+2026-05-15 12:42:51,854 | INFO | response: https://links.duckduckgo.com/d.js?q=latitude+and+longitude+of+Adiam+Villa+Punawale&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-298153775420060477168159378172410076408&bing_market=en-IN&ex=-1 202
+2026-05-15 12:43:24,548 | INFO | response: https://duckduckgo.com/?q=coordinates+for+Adiam+Villa+Punawale 200
+2026-05-15 12:43:24,683 | INFO | response: https://links.duckduckgo.com/d.js?q=coordinates+for+Adiam+Villa+Punawale&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-291716895057147181507633150354204469915&bing_market=en-IN&ex=-1 202
+2026-05-15 12:43:41,455 | INFO | response: https://duckduckgo.com/?q=find+latitude+and+longitude+Adiam+Villa+Punawale 200
+2026-05-15 12:43:41,599 | INFO | response: https://links.duckduckgo.com/d.js?q=find+latitude+and+longitude+Adiam+Villa+Punawale&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-27451313051426634851639379815660659859&bing_market=en-IN&ex=-1 202
+2026-05-15 12:43:50,988 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:43:52,311 | INFO | ruthless removal did not work. 
+2026-05-15 12:44:12,790 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:57:28,049 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:57:37,801 | INFO | response: https://duckduckgo.com/?q=registered+residential+projects+Baner+2026 200
+2026-05-15 12:57:37,964 | INFO | response: https://links.duckduckgo.com/d.js?q=registered+residential+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-134621146176984691568764342484542515045&bing_market=en-IN&ex=-1 202
+2026-05-15 12:57:46,901 | INFO | response: https://duckduckgo.com/?q=new+projects+in+Baner+2026 200
+2026-05-15 12:57:46,983 | INFO | response: https://links.duckduckgo.com/d.js?q=new+projects+in+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-21699429804027429954419143318170177134&bing_market=en-IN&ex=-1 202
+2026-05-15 12:58:00,095 | INFO | response: https://duckduckgo.com/?q=new+launch+housing+projects+Baner+2026 200
+2026-05-15 12:58:00,233 | INFO | response: https://links.duckduckgo.com/d.js?q=new+launch+housing+projects+Baner+2026&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-177132118970255674463425367705931361769&bing_market=en-IN&ex=-1 202
+2026-05-15 12:58:08,572 | INFO | response: https://duckduckgo.com/?q=new+residential+project+launch+Baner+2026+Pune 200
+2026-05-15 12:58:08,700 | INFO | response: https://links.duckduckgo.com/d.js?q=new+residential+project+launch+Baner+2026+Pune&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-54185033081030910114930148355937425509&bing_market=en-IN&ex=-1 202
+2026-05-15 12:58:26,831 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 12:58:29,189 | INFO | ruthless removal did not work. 
+2026-05-15 12:58:40,098 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:00:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 13:00:00 IST)" (scheduled at 2026-05-15 13:00:00+05:30)
+2026-05-15 13:00:00,023 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 13:30:00 IST)" executed successfully
+2026-05-15 13:11:43,743 | INFO | Scheduler has been shut down
+2026-05-15 13:11:51,318 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:11:51,318 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:11:51,318 | INFO | Scheduler started
+2026-05-15 13:12:13,096 | INFO | Scheduler has been shut down
+2026-05-15 13:12:20,515 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:12:20,517 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:12:20,517 | INFO | Scheduler started
+2026-05-15 13:12:31,513 | INFO | Scheduler has been shut down
+2026-05-15 13:12:38,913 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:12:38,913 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:12:38,913 | INFO | Scheduler started
+2026-05-15 13:12:39,036 | INFO | Scheduler has been shut down
+2026-05-15 13:12:46,580 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:12:46,580 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:12:46,580 | INFO | Scheduler started
+2026-05-15 13:16:54,606 | INFO | Scheduler has been shut down
+2026-05-15 13:17:03,857 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:17:03,857 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:17:03,857 | INFO | Scheduler started
+2026-05-15 13:17:57,856 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:18:02,496 | WARNING | Impersonate 'chrome_105' does not exist, using 'random'
+2026-05-15 13:18:02,607 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+survey+no.+28+in+baner 200
+2026-05-15 13:18:02,777 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+survey+no.+28+in+baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-140098408989720375881145917661456246462&bing_market=en-IN&ex=-1 202
+2026-05-15 13:18:11,230 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-15 13:18:11,323 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305306494118698722999510945435189337074&bing_market=en-IN&ex=-1 202
+2026-05-15 13:18:37,706 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-15 13:18:37,788 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294994706449437014991736209514723015944&bing_market=en-IN&ex=-1 202
+2026-05-15 13:18:53,204 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:18:55,253 | ERROR | parsed tree length: 1, wrong data type or not valid HTML
+2026-05-15 13:18:55,253 | ERROR | empty HTML tree: None
+2026-05-15 13:18:55,254 | WARNING | discarding data: None
+2026-05-15 13:19:21,519 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 13:30:00 IST)" (scheduled at 2026-05-15 13:30:00+05:30)
+2026-05-15 13:30:00,029 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 14:00:00 IST)" executed successfully
+2026-05-15 13:43:38,436 | INFO | Scheduler has been shut down
+2026-05-15 13:43:46,215 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:43:46,216 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:43:46,216 | INFO | Scheduler started
+2026-05-15 13:43:48,871 | INFO | Scheduler has been shut down
+2026-05-15 13:43:56,120 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:43:56,120 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:43:56,120 | INFO | Scheduler started
+2026-05-15 13:45:08,850 | INFO | Scheduler has been shut down
+2026-05-15 13:45:18,654 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:45:18,654 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:45:18,654 | INFO | Scheduler started
+2026-05-15 13:45:49,886 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:45:57,147 | WARNING | Impersonate 'chrome_120' does not exist, using 'random'
+2026-05-15 13:45:57,289 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+for+survey+no.+28+in+baner 200
+2026-05-15 13:45:57,470 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+for+survey+no.+28+in+baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-140098192221467629124932846041378730062&bing_market=en-IN&ex=-1 202
+2026-05-15 13:46:07,125 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner+survey+no+28 200
+2026-05-15 13:46:07,249 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner+survey+no+28&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-305306784410686245804393202199890316546&bing_market=en-IN&ex=-1 202
+2026-05-15 13:46:17,087 | INFO | response: https://duckduckgo.com/?q=Baner+survey+no+28+ready+reckoner+rate 200
+2026-05-15 13:46:17,207 | INFO | response: https://links.duckduckgo.com/d.js?q=Baner+survey+no+28+ready+reckoner+rate&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-189871517671872892643897570764342964818&bing_market=en-IN&ex=-1 202
+2026-05-15 13:46:35,250 | INFO | response: https://duckduckgo.com/?q=ready+reckoner+rate+Baner 200
+2026-05-15 13:46:35,384 | INFO | response: https://links.duckduckgo.com/d.js?q=ready+reckoner+rate+Baner&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-294995133647689355361844111865239563256&bing_market=en-IN&ex=-1 202
+2026-05-15 13:46:48,550 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:46:51,816 | ERROR | parsed tree length: 1, wrong data type or not valid HTML
+2026-05-15 13:46:51,816 | ERROR | empty HTML tree: None
+2026-05-15 13:46:51,816 | WARNING | discarding data: None
+2026-05-15 13:47:20,902 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:53:54,688 | INFO | Scheduler has been shut down
+2026-05-15 13:54:36,281 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-15 13:54:36,281 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-15 13:54:36,281 | INFO | Scheduler started
+2026-05-15 13:54:47,096 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:54:52,366 | WARNING | Impersonate 'chrome_105' does not exist, using 'random'
+2026-05-15 13:54:52,488 | INFO | response: https://duckduckgo.com/?q=pytest+web+scraping+pipeline+end+to+end 200
+2026-05-15 13:54:52,621 | INFO | response: https://links.duckduckgo.com/d.js?q=pytest+web+scraping+pipeline+end+to+end&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-180617255221691246858304458485276078786&bing_market=en-IN&ex=-1 202
+2026-05-15 13:55:01,288 | INFO | response: https://duckduckgo.com/?q=how+to+create+a+web+scraping+pipeline+with+pytest 200
+2026-05-15 13:55:01,406 | INFO | response: https://links.duckduckgo.com/d.js?q=how+to+create+a+web+scraping+pipeline+with+pytest&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-128821228542727335125533334257643949515&bing_market=en-IN&ex=-1 202
+2026-05-15 13:55:15,738 | INFO | response: https://duckduckgo.com/?q=pytest+web+scraping+pipeline+example 200
+2026-05-15 13:55:15,867 | INFO | response: https://links.duckduckgo.com/d.js?q=pytest+web+scraping+pipeline+example&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-6903007023898869106024154390434328710&bing_market=en-IN&ex=-1 202
+2026-05-15 13:55:25,304 | INFO | response: https://duckduckgo.com/?q=building+a+web+scraping+pipeline+with+pytest 200
+2026-05-15 13:55:25,421 | INFO | response: https://links.duckduckgo.com/d.js?q=building+a+web+scraping+pipeline+with+pytest&kl=in-en&l=in-en&p=&s=0&df=&vqd=4-326166764069349542305527017769703520768&bing_market=en-IN&ex=-1 202
+2026-05-15 13:55:36,504 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:55:42,319 | INFO | ruthless removal did not work. 
+2026-05-15 13:56:10,485 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-15 13:58:29,467 | INFO | Scheduler has been shut down

@@ -46,10 +46,14 @@ DOMAIN_EXPANSIONS = {
 
 PROPERTY_RATE_TERMS = [
     "ready reckoner",
+    "ready reckon",
     "reckoner rate",
+    "reckon rate",
     "ready rekoner",
     "rekoner rate",
     "ready reckner",
+    "ready recknor",
+    "recknor rate",
     "circle rate",
     "government valuation",
     "property rate",
@@ -79,6 +83,8 @@ PROJECT_LISTING_TERMS = [
     "residential projects",
     "upcoming projects",
     "project in",
+    "launch project",
+    "launched projects",
     "flats",
     "apartments",
     "bhk",
@@ -87,9 +93,22 @@ PROJECT_LISTING_TERMS = [
     "floor plan",
     "builder",
     "developer",
+    "nobroker",
+    "housing.com",
+    "magicbricks",
+    "99acres",
+    "propertypistol",
+    "homebazaar",
 ]
 
 PROPERTY_RATE_AVOID_TERMS = [
+    "new launch",
+    "upcoming project",
+    "residential project",
+    "property for sale",
+    "rent",
+    "rental",
+    "roi",
     "health.gov",
     "immunisation",
     "immunization",
@@ -248,6 +267,16 @@ class SourceDiscovery:
 
         candidates = []
         seen_urls = set()
+        if self._is_property_rate_query(query):
+            for result in self._direct_property_rate_sources(query):
+                if result.url in seen_urls:
+                    continue
+                seen_urls.add(result.url)
+                ranked_item = self._rank_result(result, understanding, result.title)
+                ranked_item['trust_score'] = max(self._calculate_source_trust(result.url), 0.75)
+                ranked_item['verification_status'] = self._check_verification(ranked_item)
+                candidates.append(ranked_item)
+
         # Search multiple variants
         is_news_query = any(kw in query.lower() for kw in ['news', 'latest', 'recent', 'today'])
         days_back = 7 if is_news_query else None
@@ -279,7 +308,7 @@ class SourceDiscovery:
                 candidates.append(ranked_item)
 
         # Fallback: if zero results after strict filtering, try once more with relaxed filtering
-        if not candidates and understanding.is_real_estate:
+        if not candidates and understanding.is_real_estate and not self._is_property_rate_query(query):
             if status_callback: status_callback("Broadening search criteria...")
             for search_query in understanding.rewritten_queries[:2]:
                 results = self.searcher.search(search_query, max_results=3)
@@ -419,6 +448,70 @@ class SourceDiscovery:
             f"upcoming housing project {location} possession date {year}"
         ]
 
+    def _direct_property_rate_sources(self, query: str) -> List[SearchResult]:
+        """Add known public ready-reckoner/eASR sources for locality-rate queries."""
+        location = self._extract_property_rate_location(query) or self._extract_real_estate_location(query)
+        location_key = location.lower().strip()
+        location_map = {
+            "baner": ("pune", "haveli", "baner"),
+            "banner": ("pune", "haveli", "baner"),
+            "balewadi": ("pune", "haveli", "balewadi"),
+            "aundh": ("pune", "haveli", "aundh"),
+            "wakad": ("pune", "haveli", "wakad"),
+            "kharadi": ("pune", "haveli", "kharadi"),
+            "hadapsar": ("pune", "haveli", "hadapsar"),
+            "kothrud": ("pune", "haveli", "kothrud"),
+            "hinjewadi": ("pune", "mulshi", "hinjewadi"),
+        }
+        if location_key not in location_map:
+            return []
+
+        current_year = time.localtime().tm_year
+        years = re.findall(r"\b20\d{2}\b", query) or [str(current_year), str(current_year - 1), str(current_year - 2)]
+        district, taluka, village = location_map[location_key]
+        results = []
+
+        for year in self._dedupe_queries(years + [str(current_year)]):
+            results.append(SearchResult(
+                url=f"https://www.e-stampdutyreadyreckoner.com/reckoner/{year}/{district}/{taluka}/{village}",
+                title=f"Ready Reckoner Rate {village.title()} {year}",
+                snippet=f"Ready reckoner / Annual Statement of Rates page for {village.title()}, {taluka.title()}, {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ))
+            results.append(SearchResult(
+                url=f"https://www.onlinereadyreckoner.com/reckoner-{district}/{year}/{taluka}/{village}",
+                title=f"Online Ready Reckoner {village.title()} {year}",
+                snippet=f"Ready reckoner reference for {village.title()}, {taluka.title()}, {district.title()} for {year}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ))
+
+        results.extend([
+            SearchResult(
+                url=f"https://findcirclerate.com/india/maharashtra/{district}/{village}",
+                title=f"Ready Reckoner {village.title()} {district.title()}",
+                snippet=f"Circle-rate / ready-reckoner calculator reference for {village.title()}, {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ),
+            SearchResult(
+                url=f"https://igreval.maharashtra.gov.in/eASR2.0/eASRCommon.aspx?hDistName={district.title()}",
+                title=f"IGR Maharashtra eASR Rates {district.title()}",
+                snippet=f"Official Maharashtra IGR eASR entry point for Annual Statement of Rates in {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 2,
+            ),
+            SearchResult(
+                url=f"https://easr.igrmaharashtra.gov.in/eASRCommon.aspx?hDistName={district.title()}",
+                title=f"Maharashtra eASR Rates {district.title()}",
+                snippet=f"Official Maharashtra eASR entry point for ready-reckoner / market value rates in {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 3,
+            ),
+        ])
+        return results
+
     def _calculate_source_trust(self, url: str) -> float:
         """Calculate trust score from generic source signals."""
         domain = urlparse(url).netloc.replace('www.', '').lower()
@@ -474,11 +567,12 @@ class SourceDiscovery:
         query_lower = query.lower()
         if any(term in query_lower for term in PROPERTY_RATE_TERMS):
             return True
-        return bool(re.search(r"\bready\s+r(?:eckoner|ekoner|eckner|ekner|econer)\b", query_lower))
+        return bool(re.search(r"\bready\s+r(?:eckoner|eckon|ecknor|ekoner|eckner|ekner|econer)\b", query_lower))
 
     def _normalize_property_rate_query(self, query: str) -> str:
         query_lower = query.lower()
-        corrected = re.sub(r"\brekoner\b|\breckner\b|\brekner\b|\breconer\b", "reckoner", query_lower)
+        corrected = re.sub(r"\breckon\b|\brekoner\b|\brecknor\b|\breckner\b|\brekner\b|\breconer\b", "reckoner", query_lower)
+        corrected = re.sub(r"\bbanner\b", "baner", corrected)
         corrected = re.sub(r"\s+", " ", corrected).strip()
         if "ready reckoner" not in corrected and "reckoner" in corrected:
             corrected = corrected.replace("reckoner", "ready reckoner", 1)
@@ -505,6 +599,8 @@ class SourceDiscovery:
 
     def _extract_real_estate_location(self, query: str) -> str:
         query_lower = query.lower()
+        if re.search(r"\bbanner\b", query_lower):
+            return "Baner"
         locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
         for loc in locations:
             if loc.lower() in query_lower:
@@ -521,6 +617,8 @@ class SourceDiscovery:
 
     def _extract_property_rate_location(self, query: str) -> str:
         query_lower = query.lower()
+        if re.search(r"\bbanner\b", query_lower):
+            return "Baner"
         for location in sorted(KNOWN_REAL_ESTATE_LOCATIONS, key=len, reverse=True):
             if re.search(rf"\b{re.escape(location)}\b", query_lower):
                 return location.title()
@@ -538,9 +636,19 @@ class SourceDiscovery:
 
     def _looks_like_property_rate_result(self, text: str) -> bool:
         text_lower = text.lower()
+        if any(term in text_lower for term in PROPERTY_RATE_AVOID_TERMS):
+            return False
         has_rate_signal = any(term in text_lower for term in PROPERTY_RATE_RESULT_TERMS)
+        has_property_signal = any(term in text_lower for term in [
+            "ready reckoner", "reckoner", "circle rate", "guideline value",
+            "government valuation", "market value", "annual statement of rates",
+            "asr", "stamp duty", "valuation", "survey no", "survey number",
+            "cts", "gat no", "igr", "easr",
+        ])
         has_listing_signal = any(term in text_lower for term in PROJECT_LISTING_TERMS)
-        return has_rate_signal and not (has_listing_signal and "ready reckoner" not in text_lower and "valuation" not in text_lower)
+        return has_rate_signal and has_property_signal and not (
+            has_listing_signal and "ready reckoner" not in text_lower and "valuation" not in text_lower
+        )
 
     def _reset_token_usage(self):
         self.last_token_usage = {
