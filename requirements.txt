@@ -51,3 +51,4 @@ python-docx
 pypdf
 langchain-community
 PyMuPDF
+undetected-chromedriver

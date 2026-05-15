@@ -30,13 +30,20 @@ import threading
 import logging
 import requests
 import urllib.parse
-from typing import Optional, List
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from bs4 import BeautifulSoup
+from typing import Optional, List
 from openai import OpenAI
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import random
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
@@ -220,14 +227,56 @@ def derive_project_category(
     return PROJECT_CATEGORY_DEFAULT.get(property_type, "Unknown")
 
 
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+]
+
+
+def make_uc_driver(headless: bool = True):
+    """
+    Create an undetected Chrome driver.
+    Patches ChromeDriver to remove automation fingerprints.
+    """
+    options = uc.ChromeOptions()
+    if headless:
+        options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1366,768")
+    options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
+    options.add_argument("--lang=en-US,en;q=0.9")
+
+    driver = uc.Chrome(options=options, use_subprocess=True)
+    # Stealth patches
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+            Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3]});
+            Object.defineProperty(navigator, 'languages', {get: () => ['en-US','en']});
+            window.chrome = { runtime: {} };
+        """
+    })
+    return driver
+
+
 # ── Driver Pool for Parallel Scraping ────────────────────────────────────
 _driver_pool: dict[int, webdriver.Chrome] = {}
 _driver_lock = threading.Lock()
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/124.0.0.0 Safari/537.36"
-)
+_uc_search_driver = None
+_uc_search_lock = threading.Lock()
+
+
+def _get_uc_search_driver() -> uc.Chrome:
+    """Singleton-like undetected driver for search operations."""
+    global _uc_search_driver
+    with _uc_search_lock:
+        if _uc_search_driver is None:
+            logger.info("[Search] Creating new undetected browser")
+            _uc_search_driver = make_uc_driver(headless=True)
+    return _uc_search_driver
 
 
 def _get_thread_driver() -> webdriver.Chrome:
@@ -259,7 +308,7 @@ def _get_thread_driver() -> webdriver.Chrome:
 
 def is_html_useful(html: str) -> bool:
     """Decides if the HTML content is substantial enough for extraction."""
-    if not html or len(html) < 2000:
+    if not html or len(html) < 10000:
         return False
     soup = BeautifulSoup(html, "html.parser")
     scripts = soup.find_all("script")
@@ -281,21 +330,155 @@ def score_url(url: str) -> int:
     return score
 
 
+# ── Multi-engine search with fallback chain ──────────────────────────────
+_SEARCH_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+}
+
+
 def search_duckduckgo(query: str, num_results: int = 15) -> List[str]:
-    """Directly scrapes DuckDuckGo HTML results."""
+    """Browser-based DuckDuckGo search using undetected-chromedriver."""
     try:
-        url = "https://html.duckduckgo.com/html/"
-        params = {"q": query}
-        headers = {"User-Agent": "Mozilla/5.0"}
-        res = requests.post(url, data=params, headers=headers)
-        soup = BeautifulSoup(res.text, "html.parser")
-        links = []
-        for a in soup.select("a.result__a"):
-            links.append(a.get("href"))
-        return links[:num_results]
+        driver = _get_uc_search_driver()
+        logger.info(f"[DDG] Searching: {query}")
+        driver.get("https://duckduckgo.com/")
+        time.sleep(random.uniform(1.5, 2.5))
+
+        try:
+            box = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.NAME, "q"))
+            )
+            box.clear()
+            for ch in query:
+                box.send_keys(ch)
+                time.sleep(random.uniform(0.04, 0.12))
+            box.send_keys(Keys.RETURN)
+        except TimeoutException:
+            logger.warning("[DDG] Search box not found")
+            return []
+
+        time.sleep(random.uniform(2.0, 3.5))
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        results = []
+
+        # Primary DDG result selectors
+        for article in soup.select("article[data-testid='result']"):
+            title_el = article.select_one("h2 a") or article.select_one("a[data-testid='result-title-a']")
+            if not title_el: continue
+            href = title_el.get("href", "")
+            if href.startswith("http") and "duckduckgo.com" not in href:
+                results.append(href)
+            if len(results) >= num_results: break
+
+        # Fallback for older layouts or simpler parsing
+        if not results:
+            for a in soup.select("a[href^='http']"):
+                href = a.get("href", "")
+                if "duckduckgo.com" in href or not href: continue
+                text = a.get_text(strip=True)
+                if len(text) > 15:
+                    results.append(href)
+                if len(results) >= num_results: break
+
+        logger.info(f"[DDG] Found {len(results)} URLs")
+        return results
     except Exception as e:
-        logger.error(f"[DuckDuckGo] Search failed for '{query}': {e}")
+        logger.error(f"[DDG] Search failed: {e}")
         return []
+
+
+def search_bing(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Bing search using undetected-chromedriver."""
+    try:
+        driver = _get_uc_search_driver()
+        logger.info(f"[Bing] Searching: {query}")
+        url = f"https://www.bing.com/search?q={urllib.parse.quote_plus(query)}&count={num_results}"
+        driver.get(url)
+        time.sleep(random.uniform(2.0, 3.5))
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        links = []
+        for li in soup.select("li.b_algo"):
+            title_el = li.select_one("h2 a")
+            if not title_el: continue
+            href = title_el.get("href", "")
+            if href.startswith("http"):
+                links.append(href)
+            if len(links) >= num_results: break
+
+        logger.info(f"[Bing] Found {len(links)} URLs")
+        return links
+    except Exception as e:
+        logger.error(f"[Bing] Search failed: {e}")
+        return []
+
+
+def search_google(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Google search using undetected-chromedriver."""
+    try:
+        driver = _get_uc_search_driver()
+        logger.info(f"[Google] Searching: {query}")
+        url = f"https://www.google.com/search?q={urllib.parse.quote_plus(query)}&hl=en&num={num_results}"
+        driver.get(url)
+        time.sleep(random.uniform(2.5, 4.0))
+
+        # Handle cookie consent if it pops up
+        try:
+            accept = driver.find_element(By.XPATH, '//button[contains(.,"Accept") or contains(.,"I agree")]')
+            accept.click()
+            time.sleep(1)
+        except NoSuchElementException:
+            pass
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        links = []
+        for div in soup.select("div.g"):
+            link_el = div.select_one("a[href]")
+            if not link_el: continue
+            href = link_el.get("href", "")
+            if href.startswith("http") and "google.com" not in href:
+                links.append(href)
+            if len(links) >= num_results: break
+
+        logger.info(f"[Google] Found {len(links)} URLs")
+        return links
+    except Exception as e:
+        logger.error(f"[Google] Search failed: {e}")
+        return []
+
+
+def search_web_with_fallback(query: str, num_results: int = 15) -> List[str]:
+    """
+    Multi-engine search with automatic fallback:
+      1. DuckDuckGo HTML (primary)
+      2. Bing              (fallback if DDG returns 0 or is blocked)
+      3. Google            (last resort)
+    Returns the first non-empty result set.
+    """
+    engines = [
+        ("DDG",    search_duckduckgo),
+        ("Bing",   search_bing),
+        ("Google", search_google),
+    ]
+    for name, fn in engines:
+        results = fn(query, num_results)
+        if results:
+            logger.info(f"[Search] Engine '{name}' succeeded with {len(results)} URLs for '{query}'")
+            return results
+        logger.warning(f"[Search] Engine '{name}' returned 0 results for '{query}' — trying next fallback")
+        time.sleep(0.5)
+    logger.error(f"[Search] All search engines failed for '{query}'")
+    return []
 
 
 def search_urls_for_projects_batch(
@@ -330,12 +513,12 @@ def search_urls_for_projects_batch(
         else:
             query = f"buy {search_term} in {pname}, {loc}, {country}"
 
-        logger.info(f"[URL Search DDG] Query: '{query}'")
+        logger.info(f"[URL Search] Query: '{query}'")
 
-        urls = search_duckduckgo(query, num_results=num_results)
+        urls = search_web_with_fallback(query, num_results=num_results)
         valid_urls = sorted(urls, key=score_url, reverse=True)
         final_map[pname] = valid_urls
-        logger.info(f"[URL Search DDG] Result: '{pname}' -> {len(valid_urls)} URLs.")
+        logger.info(f"[URL Search] Result: '{pname}' -> {len(valid_urls)} URLs.")
         time.sleep(1)
 
     usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}

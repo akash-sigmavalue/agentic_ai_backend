@@ -30,8 +30,19 @@ def compute_factorial_table(
 ) -> Dict[str, Any]:
     """
     Build the factorial rate summary.
+
+    MICROMARKET FALLBACK (non-plot types only):
+      If the subject project has zero listings, derive its rate from
+      the average of all comparable projects.  The 90 % CI is set to
+      ±5 % of that average.  A ``rate_derived_from`` field is stamped
+      on every row: "listing" (real data) or "micromarket" (derived).
     """
     subject_name = subject.get("project_name", "Subject Property")
+    property_type = subject.get("property_type", "apartment")
+
+    # Property types eligible for micromarket fallback (not plots)
+    MICROMARKET_ELIGIBLE = {"apartment", "flat", "villa", "retail", "shop",
+                            "commercial_office", "office", "mixed_use"}
     
     # Map project names to coordinates for dynamic tool lookups
     coord_map = {}
@@ -191,6 +202,7 @@ def compute_factorial_table(
             "p90_rate": round(p90_rate, 2),
             "ci_90_lower": ci_90_lower,
             "ci_90_upper": ci_90_upper,
+            "rate_derived_from": "listing",
             "road_type": road_type,
             "amenities": amenities,
             "amenity_summary": amenity_summary,
@@ -198,6 +210,86 @@ def compute_factorial_table(
             "builtup_density": builtup_density,
         }
         summary_rows.append(row_data)
+
+    # ── Micromarket fallback: derive subject rate from comparables ────────
+    # Only for non-plot property types (apartment, villa, shop, office, etc.)
+    subject_found = any(r["is_subject"] for r in summary_rows)
+    ptype_lower = property_type.lower().strip()
+
+    if not subject_found and ptype_lower in MICROMARKET_ELIGIBLE:
+        # Collect rates from all comparable rows
+        comp_rates = [r["avg_rate"] for r in summary_rows if not r["is_subject"] and r["avg_rate"] > 0]
+
+        if comp_rates:
+            micromarket_avg = sum(comp_rates) / len(comp_rates)
+            ci_lower = round(micromarket_avg * 0.95, 2)  # −5 %
+            ci_upper = round(micromarket_avg * 1.05, 2)  # +5 %
+
+            logger.info(
+                f"[Micromarket Fallback] Subject '{subject_name}' has no listings. "
+                f"Deriving rate from {len(comp_rates)} comparable(s): "
+                f"avg={round(micromarket_avg, 2)}, CI=[{ci_lower}, {ci_upper}]"
+            )
+
+            # Build subject metrics (road, amenity, CBD, density)
+            subj_road_type = None
+            subj_amenities = []
+            subj_amenity_summary = {"total": 0, "counts": get_amenity_counts([])}
+            subj_builtup_density = None
+            subj_cbd_data = []
+
+            if s_lat and s_lng:
+                from tools.valuation.road_infrastructure_tool import get_road_category
+                from tools.valuation.amenity_analytics_tool import get_nearby_amenities
+                from tools.valuation.builtup_density_tool import analyze_congestion
+
+                try:
+                    subj_road_type = get_road_category(float(s_lat), float(s_lng))
+                except Exception as e:
+                    logger.error(f"Road fetch failed for subject '{subject_name}': {e}")
+
+                subj_loc = subject.get("location_name") or subject.get("location", "")
+                try:
+                    subj_amenities = get_nearby_amenities(float(s_lat), float(s_lng), city_name=subj_loc)
+                    subj_amenity_summary = {
+                        "total": len(subj_amenities),
+                        "counts": get_amenity_counts(subj_amenities),
+                    }
+                except Exception as e:
+                    logger.error(f"Amenity fetch failed for subject '{subject_name}': {e}")
+
+                try:
+                    subj_builtup_density = analyze_congestion(float(s_lat), float(s_lng), 500)
+                except Exception as e:
+                    logger.error(f"Builtup density failed for subject '{subject_name}': {e}")
+
+            # CBD data for subject
+            for cbd_key, cbd_list in cbd_map.items():
+                if _fuzzy_match(subject_name, cbd_key):
+                    subj_cbd_data = cbd_list
+                    break
+
+            summary_rows.insert(0, {
+                "project_name": subject_name,
+                "is_subject": True,
+                "listing_count": 0,
+                "avg_rate": round(micromarket_avg, 2),
+                "median_rate": round(micromarket_avg, 2),
+                "p90_rate": round(micromarket_avg, 2),
+                "ci_90_lower": ci_lower,
+                "ci_90_upper": ci_upper,
+                "rate_derived_from": "micromarket",
+                "road_type": subj_road_type,
+                "amenities": subj_amenities,
+                "amenity_summary": subj_amenity_summary,
+                "cbd_data": subj_cbd_data,
+                "builtup_density": subj_builtup_density,
+            })
+        else:
+            logger.warning(
+                f"[Micromarket Fallback] Subject '{subject_name}' has no listings "
+                f"and no comparable rates available — cannot derive rate"
+            )
 
     # Sort: subject first, then by listing_count descending
     summary_rows.sort(key=lambda r: (not r["is_subject"], -r["listing_count"]))
