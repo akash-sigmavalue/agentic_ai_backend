@@ -8,7 +8,7 @@ class AgentMetrics:
         self.prompt_tokens = 0
         self.completion_tokens = 0
         self.tools_called = 0
-        self.cache_hits = 0
+        self.cache_hits = 0 
         self.sql_retries = 0
 
     def _extract_tokens(self, usage):
