@@ -256,6 +256,16 @@ def _get_thread_driver() -> webdriver.Chrome:
             _driver_pool[tid] = driver
     return _driver_pool[tid]
 
+def close_all_drivers():
+    """Gracefully quit all Selenium drivers in the pool."""
+    with _driver_lock:
+        for tid, driver in list(_driver_pool.items()):
+            try:
+                driver.quit()
+                logger.info(f"[Driver Pool] Closed driver for thread {tid}")
+            except Exception as e:
+                logger.warning(f"[Driver Pool] Error closing driver for thread {tid}: {e}")
+        _driver_pool.clear()
 
 def is_html_useful(html: str) -> bool:
     """Decides if the HTML content is substantial enough for extraction."""
@@ -926,6 +936,9 @@ def listing_pipeline(
         f"[Pipeline Done] final_listings={len(final_listings)} | "
         f"projects={len(projects)} | tokens={cumulative_tokens['total_tokens']}"
     )
+     
+    # After all scraping is done
+    close_all_drivers()
 
     return {
         "listings":           final_listings,

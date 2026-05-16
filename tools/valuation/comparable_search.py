@@ -235,6 +235,7 @@ JSON Keys for each object:
 - "possession_status" (String: "Ready" or "Under Construction")
 - "source_url"        (String, direct listing URL)
 - "reason"            (String, short explanation of why it is comparable)
+- "location_certainty_score" (Number, 1.0 if project and location are explicit, <1.0 if ambiguous or inferred)
 """
 
     user_prompt = f"""
@@ -526,8 +527,14 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             )
             c["map_search_lat"] = res.get("lat")
             c["map_search_lng"] = res.get("lng")
+            c["geocode_source"] = res.get("source")
+
+            # Initialize score if missing
+            if "location_certainty_score" not in c:
+                c["location_certainty_score"] = 1.0
 
             if not c["map_search_lat"] or not c["map_search_lng"]:
+                c["location_certainty_score"] = 0.0
                 log_drop(
                     stage="geocode",
                     project_name=c.get("project_name", ""),
@@ -538,9 +545,17 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                     }
                 )
             else:
+                # Refine score based on geocode quality
+                source = res.get("source", "")
+                if "nominatim" in source:
+                    c["location_certainty_score"] = min(c["location_certainty_score"], 0.7)
+                elif "geocoding_api" in source: # Usually means fallback to general locality
+                    c["location_certainty_score"] = min(c["location_certainty_score"], 0.85)
+                
                 logger.info(
                     f"[Geocode] OK '{c['project_name']}' -> "
-                    f"({c['map_search_lat']}, {c['map_search_lng']})"
+                    f"({c['map_search_lat']}, {c['map_search_lng']}) | "
+                    f"Certainty: {c['location_certainty_score']}"
                 )
 
         except Exception as e:
