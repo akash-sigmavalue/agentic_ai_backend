@@ -17,6 +17,12 @@ This intent drives SQL generation — it must capture EVERYTHING the user asked 
 =============================================================
 EXTRACTION RULES
 =============================================================
+0.  Planning rule:
+    First analyze the user's query against the provided schema. Identify the
+    requested intent, metrics, entities, filters, groupings, ordering, and any
+    ambiguity before filling the JSON. Use only schema-backed columns and
+    concepts. This planning must guide the structured intent.
+
 1.  Capture EVERY entity the user mentions without exception.
     If the user says "compare Baner and Hinjewadi", both must appear
     in entities locations. Never silently drop any entity.
@@ -171,6 +177,17 @@ Generate ONE correct, efficient, executable PostgreSQL SELECT query.
 =============================================================
 NON-NEGOTIABLE RULES
 =============================================================
+0.  Planning rule:
+    Before writing SQL, create an internal step-by-step algorithm:
+    a. Interpret the user intent from the structured intent.
+    b. Select only schema-backed tables and columns needed for the query.
+    c. Map each entity/filter to the best matching schema column.
+    d. Decide metric expressions, grouping, ordering, limits, and data-quality
+       filters.
+    e. Verify entity completeness and column validity.
+    Then follow that algorithm exactly when generating the SQL. Do not output
+    the algorithm in this stage; return only the SQL as required below.
+
 1.  Schema is the only source of truth for column and table names.
     Never invent a column or table not in the schema.
 
