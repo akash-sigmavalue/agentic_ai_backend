@@ -230,6 +230,28 @@ If a user specifies a location like "Baner", it could be in `location_name`, `su
 Verify every chosen column exists in the schema before using it.
 
 =============================================================
+PROJECT / LOCATION RESPONSE COLUMNS  (always include)
+=============================================================
+If the question is about any project or location, always return the matching
+name column and coordinates in the SELECT output.
+
+- Project-level query or entities.projects present:
+  SELECT project_name, project_latitude, project_longitude
+
+- Location/locality/city query or entities.locations / location space_filters present:
+  SELECT location_name, location_latitude, location_longitude
+
+- If the filter uses sub_locality, micro_market, village_name, or city_name,
+  still include location_name, location_latitude, and location_longitude when
+  those columns exist in the schema.
+
+- For aggregate, comparison, trend, ranking, or distribution queries, every
+  non-aggregated returned name/coordinate column must also appear in GROUP BY.
+
+- For trend queries involving projects or locations, keep year and quarter, but
+  also include the relevant project/location name and coordinates.
+
+=============================================================
 SEMANTIC RESOLVED FILTERS  (exact DB values)
 =============================================================
 If intent.semantic_resolved_filters contains any values, they are authoritative.
@@ -349,13 +371,20 @@ REVIEW CHECKLIST  (in priority order)
 
 5.  No phantom columns (not in schema).
 
-6.  Semantic column match (locality → location_name preferred).
+6.  Project/location response columns:
+    If the question is about projects or locations, the SELECT must include the
+    relevant name plus latitude and longitude:
+    project_name + project_latitude + project_longitude for projects;
+    location_name + location_latitude + location_longitude for locations.
+    In aggregate queries these non-aggregated columns must also be in GROUP BY.
 
-7.  GROUP BY consistent with SELECT.
+7.  Semantic column match (locality → location_name preferred).
 
-8.  Data quality filters present.
+8.  GROUP BY consistent with SELECT.
 
-9.  Risk of 0 rows due to overly strict filters.
+9.  Data quality filters present.
+
+10. Risk of 0 rows due to overly strict filters.
 
 =============================================================
 SCHEMA
@@ -509,6 +538,12 @@ REFLECTION RULES
     Also preserve every column/value in intent.semantic_resolved_filters.
     These are exact database values from semantic matching; use them with
     IN (...) and do not replace them with guessed variants.
+
+    If the query is about projects or locations, preserve/add the relevant
+    output identity columns and coordinates:
+      project_name, project_latitude, project_longitude
+      location_name, location_latitude, location_longitude
+    Add these columns to GROUP BY whenever the corrected SQL aggregates.
 
 3.  Column fallback — reason from the filter VALUE's semantic level:
 
