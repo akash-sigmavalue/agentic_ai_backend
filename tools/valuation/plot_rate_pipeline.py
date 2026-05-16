@@ -46,7 +46,7 @@ For EACH property in the input JSON array, estimate the parameters needed to rev
 
 INPUT per item:
   id             - identifier
-  property_type  - (e.g., Villa, Apartment, House)
+  property_category - (e.g., Villa, Apartment, House)
   built_up_sqft  - super built-up area
   total_price    - property price (in local currency)
   location       - locality / city
@@ -202,14 +202,15 @@ def calculate_plot_rates(
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
         area  = lst.get("final_super_builtup_area")
-        ptype = str(lst.get("property_type") or "").strip().lower()
+        category_raw = lst.get("property_category") or lst.get("project_category") or lst.get("property_type") or ""
+        ptype = str(category_raw).strip().lower()
 
         if not price or not area or float(price) <= 0 or float(area) <= 0:
             _stamp_null_plot_fields(cleaned[orig_idx])
             skipped_count += 1
             continue
 
-        if ptype == "plot":
+        if ptype in ["plot", "residential land", "land"]:
             # Already a plot - use direct rate, skip LLM
             _stamp_direct_plot_fields(cleaned[orig_idx])
         else:
@@ -315,9 +316,12 @@ def calculate_plot_rates(
     for seq_id, (orig_idx, lst) in enumerate(processable):
         price = lst.get("cleaned_price_value")
         area  = lst.get("final_super_builtup_area")
+        category_raw = lst.get("property_category") or lst.get("project_category") or lst.get("property_type") or ""
+        item_ptype = str(category_raw).strip().lower()
+
         llm_items.append({
             "id":            seq_id,
-            "property_type": ptype,
+            "property_category": item_ptype,
             "project_name":  lst.get("project_name", "Unknown"),
             "total_price":   price,
             "built_up_sqft": area,
