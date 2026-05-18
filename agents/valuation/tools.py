@@ -5,11 +5,13 @@ Deterministic logic for approach selection and input validation.
 
 # Mandatory fields by property type (Independent of approach)
 MANDATORY_FIELDS_BY_TYPE = {
-    "apartment": ["location_name", "country", "property_type", "carpet_area_sqft", "age_years"],
-    "villa": ["location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "age_years"],
+    # project_name is mandatory for built/named properties (apartment, villa, retail, office)
+    # It is intentionally EXCLUDED for plot — plots don't belong to named projects.
+    "apartment": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "age_years"],
+    "villa": ["project_name", "location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "age_years"],
     "plot": ["location_name", "country", "property_type", "plot_area_sqft", "land_type"],
-    "retail": ["location_name", "country", "property_type", "carpet_area_sqft", "frontage"],
-    "commercial_office": ["location_name", "country", "property_type", "carpet_area_sqft", "occupancy_status"],
+    "retail": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "frontage"],
+    "commercial_office": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "occupancy_status"],
     "industrial": ["location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "clear_height"],
     "agricultural": ["location_name", "country", "property_type", "plot_area_sqft", "water_availability"],
     "building": ["location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "age_years", "occupancy_status"],
@@ -23,6 +25,7 @@ APPROACH_REQUIREMENTS = {
 
 # Friendly names for fields used in clarification questions
 FIELD_LABELS = {
+    "project_name": "project / society name",
     "location_name": "location",
     "country": "country",
     "property_type": "property type",
@@ -41,6 +44,14 @@ FIELD_LABELS = {
 
 # Rich UI schemas for fields that need dropdowns
 FIELD_SCHEMAS = {
+    "project_name": {
+        "field": "project_name",
+        "label": "Project / Society Name",
+        "type": "text",
+        "required": True,
+        "placeholder": "e.g. Godrej Infinity, Lodha Altamount",
+        "default": None
+    },
     "property_type": {
         "field": "property_type",
         "label": "Property Type",

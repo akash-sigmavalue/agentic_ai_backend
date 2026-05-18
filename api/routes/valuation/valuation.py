@@ -11,6 +11,7 @@ from tools.valuation.amenity_analytics_tool import get_nearby_amenities
 from tools.valuation.builtup_density_tool import analyze_congestion
 from tools.valuation.cbd_identification_tool import identify_cbds
 from tools.valuation.data_cleaning import data_cleaning_pipeline
+from tools.valuation.plot_rate_pipeline import calculate_plot_rates
 from tools.valuation.factorial_table import compute_factorial_table
 from tools.valuation.listing_search import listing_pipeline
 from tools.valuation.llm_factoring_engine import run_llm_factoring
@@ -28,7 +29,7 @@ def _sse(event_type: str, content: Any, **kwargs: Any) -> str:
 
 
 @router.get("/ask_stream_valuation")
-async def ask_stream_valuation(question: str):
+async def ask_stream(question: str):
     return StreamingResponse(
         valuation_agent.execute_stream(question),
         media_type="text/event-stream",
@@ -121,8 +122,46 @@ def _cleaning_stream_generator(req: CleaningRequest):
             on_progress=on_progress,
         )
 
+        # Only calculate plot rates if the subject property is a plot
+        if req.property_type.strip().lower() == "plot":
+            location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
+            country = req.subject.get("country") or "India"
+            result = calculate_plot_rates(
+                pipeline_output=result,
+                subject=req.subject,
+                location=location,
+                country=country,
+                property_type=req.property_type,
+                on_progress=on_progress,
+            )
+
         for event in progress_events:
             yield _sse("cleaning_progress", event)
+
+        # Define columns for the UI
+        columns = [
+            "cleaned_match_project",
+            "cleaned_relevant_for_valuation",
+            "cleaned_price_value",
+            "cleaned_area_sqft",
+            "cleaned_area_type",
+            "cleaned_config",
+            "cleaned_possession_status",
+            "cleaned_listing_type",
+            "final_super_builtup_area",
+            "stat_flag",
+        ]
+        # Only include plot derived columns if the subject is a plot
+        if req.property_type.strip().lower() == "plot":
+            columns.extend(
+                [
+                    "plot_derived_rate_per_sqft",
+                    "plot_fsi_range",
+                    "plot_construction_cost_range",
+                    "plot_derived_rate_range",
+                    "plot_derived_by",
+                ]
+            )
 
         run_logger.save_step("data_cleaning", "results", result["audit_stats"])
         yield _sse(
@@ -131,6 +170,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
                 "cleaned_listings": result["cleaned_listings"],
                 "review_listings": result["review_listings"],
                 "audit_stats": result["audit_stats"],
+                "columns": columns,
             },
         )
     except Exception as exc:
@@ -143,6 +183,49 @@ def _cleaning_stream_generator(req: CleaningRequest):
 @router.post("/cleaning_stream")
 async def cleaning_stream(req: CleaningRequest):
     return StreamingResponse(_cleaning_stream_generator(req), media_type="text/event-stream")
+
+
+class RecalculatePlotRatesRequest(BaseModel):
+    cleaned_listings: list[dict[str, Any]]
+    subject: dict[str, Any]
+    property_type: str
+    overrides: dict[str, dict[str, Any]] | None = None
+    fsi_override: float | None = None
+    cc_override: float | None = None
+
+
+def _recalculate_stream_generator(req: RecalculatePlotRatesRequest):
+    yield _sse("recalculate_start", "Recalculating plot rates with user overrides...")
+    
+    overrides_dict = req.overrides if req.overrides is not None else {}
+    pipeline_output = {"cleaned_listings": req.cleaned_listings, "audit_stats": {}}
+    location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
+    country = req.subject.get("country") or "India"
+    
+    try:
+        result = calculate_plot_rates(
+            pipeline_output=pipeline_output,
+            subject=req.subject,
+            location=location,
+            country=country,
+            property_type=req.property_type,
+            on_progress=None,
+            overrides=overrides_dict,
+            fsi_override=req.fsi_override,
+            cc_override=req.cc_override
+        )
+        yield _sse("recalculate_results", {"listings": result["cleaned_listings"]})
+    except Exception as exc:
+        logger.exception("Recalculate pipeline failed")
+        yield _sse("error", f"Recalculate pipeline failed: {exc}")
+
+    yield _sse("recalculate_done", "Recalculation complete.")
+
+
+@router.post("/recalculate_plot_rates_stream")
+async def recalculate_plot_rates_stream(req: RecalculatePlotRatesRequest):
+    return StreamingResponse(_recalculate_stream_generator(req), media_type="text/event-stream")
+
 
 
 class FactorialRequest(BaseModel):
@@ -204,13 +287,61 @@ def _factorial_analysis_stream_generator(req: FactorialAnalysisRequest):
         },
     )
     try:
-        result = run_llm_factoring(
-            factorial_data=req.factorial_data,
-            subject=req.subject,
-            comparables=req.comparables,
-            radii=req.radii or None,
-            model=req.model,
-        )
+        property_type = req.subject.get("property_type", "")
+        if property_type and property_type.strip().lower() == "plot":
+            # Bypass LLM for plots and calculate the simple average of all cleaned listings
+            table = req.factorial_data.get("table", [])
+            total_rate_sum = sum(row.get("avg_rate", 0) * row.get("listing_count", 0) for row in table if row.get("avg_rate") is not None)
+            total_listings = sum(row.get("listing_count", 0) for row in table if row.get("avg_rate") is not None)
+            simple_avg = int(total_rate_sum / total_listings) if total_listings > 0 else 0
+
+            currency = req.factorial_data.get("currency", "INR")
+            area_unit = req.factorial_data.get("area_unit", "sqft")
+
+            result = {
+                "methodology": "Direct Average (Plot)",
+                "property_type": property_type,
+                "currency": currency,
+                "area_unit": area_unit,
+                "area_type": req.factorial_data.get("area_type", "Built-up Area"),
+                "total_listing_count": req.factorial_data.get("total_valid", 0),
+                "factor_table": [],
+                "valuation_details": {
+                    "base_rate": simple_avg,
+                    "base_rate_range": {"low": simple_avg, "high": simple_avg},
+                    "attribute_weights": {"neighborhood_amenity": 0, "road_type": 0, "builtup_density": 0, "cbd_score": 0},
+                    "net_impacts": {"neighborhood_amenity": 0, "road_type": 0, "builtup_density": 0, "cbd_score": 0},
+                    "total_net_adjustment": 0,
+                    "derived_rate": simple_avg,
+                    "derived_rate_range": {"low": simple_avg, "high": simple_avg},
+                    "factor_breakdown": {
+                        "neighborhood_amenity": {"projects": [], "subject_vs_avg": "", "net_impact": 0},
+                        "road_type": {"projects": [], "subject_vs_avg": "", "net_impact": 0},
+                        "builtup_density": {"projects": [], "subject_vs_avg": "", "net_impact": 0},
+                        "cbd_score": {"projects": [], "subject_vs_avg": "", "net_impact": 0}
+                    }
+                },
+                "subject_final_rate": simple_avg,
+                "subject_rate_range": {"low": simple_avg, "high": simple_avg},
+                "confidence": "High",
+                "reasoning_audit": {
+                    "stage_1_scoring_thought": "Bypassed LLM scoring for plot.",
+                    "stage_2_adjustment_thought": "Bypassed adjustments. Used simple average of all cleaned listings.",
+                    "final_reflection": "Calculated the global average rate directly from the cleaning table without adjustments.",
+                    "key_drivers": "Direct mathematical average",
+                    "uncertainties": "None"
+                },
+                "reconciliation_note": "For plots, the final rate is calculated directly as the simple average of all rates found in the cleaning table, without any LLM-based amenity or infrastructure adjustments.",
+                "project_reports": []
+            }
+        else:
+            result = run_llm_factoring(
+                factorial_data=req.factorial_data,
+                subject=req.subject,
+                comparables=req.comparables,
+                radii=req.radii or None,
+                model=req.model,
+            )
         project_name = req.subject.get("project_name") or "Factoring_Request"
         RunLogger(project_name).save_step("llm_factoring", "results", result)
         yield _sse("factorial_analysis_result", result)
