@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Comparable Selection Agent — LLM-first, globally scalable
 """

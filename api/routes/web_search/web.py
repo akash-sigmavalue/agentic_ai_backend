@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Browser-facing HTML route."""
 
 from fastapi import APIRouter

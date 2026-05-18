@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Query understanding and source discovery.
 
@@ -22,7 +24,7 @@ from tools.web_search.search import DuckDuckGoSearcher, SearchResult
 STOP_WORDS = {
     "a", "an", "and", "are", "as", "at", "be", "by", "can", "do", "for",
     "from", "give", "have", "how", "i", "in", "is", "it", "me", "most",
-    "of", "on", "or", "regarding", "search", "show", "that", "the", "this",
+    "no", "number", "of", "on", "or", "regarding", "search", "show", "that", "the", "this",
     "to", "want", "what", "whatever", "when", "where", "which", "will",
     "with", "you",
 }
@@ -44,10 +46,14 @@ DOMAIN_EXPANSIONS = {
 
 PROPERTY_RATE_TERMS = [
     "ready reckoner",
+    "ready reckon",
     "reckoner rate",
+    "reckon rate",
     "ready rekoner",
     "rekoner rate",
     "ready reckner",
+    "ready recknor",
+    "recknor rate",
     "circle rate",
     "government valuation",
     "property rate",
@@ -77,6 +83,8 @@ PROJECT_LISTING_TERMS = [
     "residential projects",
     "upcoming projects",
     "project in",
+    "launch project",
+    "launched projects",
     "flats",
     "apartments",
     "bhk",
@@ -85,9 +93,22 @@ PROJECT_LISTING_TERMS = [
     "floor plan",
     "builder",
     "developer",
+    "nobroker",
+    "housing.com",
+    "magicbricks",
+    "99acres",
+    "propertypistol",
+    "homebazaar",
 ]
 
 PROPERTY_RATE_AVOID_TERMS = [
+    "new launch",
+    "upcoming project",
+    "residential project",
+    "property for sale",
+    "rent",
+    "rental",
+    "roi",
     "health.gov",
     "immunisation",
     "immunization",
@@ -229,6 +250,9 @@ class SourceDiscovery:
         understanding = self.understand_query(query, debug_llm_payloads=debug_llm_payloads)
         detector = RealEstateIntentDetector()
         understanding.is_real_estate = detector.is_real_estate_query(query)
+        understanding.rewritten_queries = self._dedupe_queries(
+            self._build_specific_search_queries(query, understanding) + understanding.rewritten_queries
+        )
         
         # If real estate, add specialized project queries
         if understanding.is_real_estate:
@@ -243,12 +267,21 @@ class SourceDiscovery:
 
         candidates = []
         seen_urls = set()
+        if self._is_property_rate_query(query):
+            for result in self._direct_property_rate_sources(query):
+                if result.url in seen_urls:
+                    continue
+                seen_urls.add(result.url)
+                ranked_item = self._rank_result(result, understanding, result.title)
+                ranked_item['trust_score'] = max(self._calculate_source_trust(result.url), 0.75)
+                ranked_item['verification_status'] = self._check_verification(ranked_item)
+                candidates.append(ranked_item)
 
         # Search multiple variants
         is_news_query = any(kw in query.lower() for kw in ['news', 'latest', 'recent', 'today'])
         days_back = 7 if is_news_query else None
         
-        query_limit = 6 if self._is_property_rate_query(query) else 4
+        query_limit = 6 if self._is_property_rate_query(query) else 5
         for i, search_query in enumerate(understanding.rewritten_queries[:query_limit]):
             if status_callback:
                 status_callback(f"Finding sources... (Step {i+1}/{query_limit})")
@@ -275,7 +308,7 @@ class SourceDiscovery:
                 candidates.append(ranked_item)
 
         # Fallback: if zero results after strict filtering, try once more with relaxed filtering
-        if not candidates and understanding.is_real_estate:
+        if not candidates and understanding.is_real_estate and not self._is_property_rate_query(query):
             if status_callback: status_callback("Broadening search criteria...")
             for search_query in understanding.rewritten_queries[:2]:
                 results = self.searcher.search(search_query, max_results=3)
@@ -362,29 +395,49 @@ class SourceDiscovery:
     def generate_project_search_queries(self, query: str) -> List[str]:
         """Generate targeted real estate project or rate queries"""
         query_lower = query.lower()
-        locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
-        location = 'Pune'
-        for loc in locations:
-            if loc.lower() in query_lower:
-                location = loc
-                break
+        location = self._extract_real_estate_location(query)
         
         is_rate_query = self._is_property_rate_query(query_lower)
 
         if is_rate_query:
-            return [
+            survey_number = self._extract_survey_number(query)
+            queries = []
+            if survey_number:
+                queries.extend([
+                    f"ready reckoner rate {location} survey no {survey_number}",
+                    f"{location} survey no {survey_number} ready reckoner rate",
+                    f"annual statement of rates {location} survey no {survey_number}",
+                    f"government valuation {location} survey no {survey_number}",
+                ])
+            queries.extend([
                 f"ready reckoner rate {location}",
                 f"ready reckoner rate {location} 2026",
                 f"ready reckoner rate {location} 2024-25",
+                f"ready reckoner rate {location} 2024",
                 f"ready reckoner rate {location} haveli pune",
                 f"annual statement of rates {location} 2026",
                 f"government valuation property rate {location}",
                 f"circle rate {location} residential land rate",
                 f"stamp duty market value rate {location}"
-            ]
+            ])
+            return self._dedupe_queries(queries)
 
         year_match = re.search(r'20\d{2}', query)
         year = year_match.group(0) if year_match else '2026'
+
+        if self._is_existing_real_estate_query(query):
+            view_terms = []
+            if any(term in query_lower for term in ["sea view", "waterfront", "lake view", "lake-view", "river view", "water view"]):
+                view_terms = ["waterfront", "lake view", "water view"]
+            descriptor = " ".join(view_terms) if view_terms else "existing"
+            return self._dedupe_queries([
+                f"{descriptor} real estate projects {location}",
+                f"{descriptor} homes for sale {location}",
+                f"{descriptor} condos for sale {location}",
+                f"{descriptor} apartments {location}",
+                f"existing real estate projects {location}",
+                f"residential communities {location}",
+            ])
         
         return [
             f"registered residential projects {location} {year}",
@@ -394,6 +447,70 @@ class SourceDiscovery:
             f"new residential project launch {location} {year} Pune",
             f"upcoming housing project {location} possession date {year}"
         ]
+
+    def _direct_property_rate_sources(self, query: str) -> List[SearchResult]:
+        """Add known public ready-reckoner/eASR sources for locality-rate queries."""
+        location = self._extract_property_rate_location(query) or self._extract_real_estate_location(query)
+        location_key = location.lower().strip()
+        location_map = {
+            "baner": ("pune", "haveli", "baner"),
+            "banner": ("pune", "haveli", "baner"),
+            "balewadi": ("pune", "haveli", "balewadi"),
+            "aundh": ("pune", "haveli", "aundh"),
+            "wakad": ("pune", "haveli", "wakad"),
+            "kharadi": ("pune", "haveli", "kharadi"),
+            "hadapsar": ("pune", "haveli", "hadapsar"),
+            "kothrud": ("pune", "haveli", "kothrud"),
+            "hinjewadi": ("pune", "mulshi", "hinjewadi"),
+        }
+        if location_key not in location_map:
+            return []
+
+        current_year = time.localtime().tm_year
+        years = re.findall(r"\b20\d{2}\b", query) or [str(current_year), str(current_year - 1), str(current_year - 2)]
+        district, taluka, village = location_map[location_key]
+        results = []
+
+        for year in self._dedupe_queries(years + [str(current_year)]):
+            results.append(SearchResult(
+                url=f"https://www.e-stampdutyreadyreckoner.com/reckoner/{year}/{district}/{taluka}/{village}",
+                title=f"Ready Reckoner Rate {village.title()} {year}",
+                snippet=f"Ready reckoner / Annual Statement of Rates page for {village.title()}, {taluka.title()}, {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ))
+            results.append(SearchResult(
+                url=f"https://www.onlinereadyreckoner.com/reckoner-{district}/{year}/{taluka}/{village}",
+                title=f"Online Ready Reckoner {village.title()} {year}",
+                snippet=f"Ready reckoner reference for {village.title()}, {taluka.title()}, {district.title()} for {year}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ))
+
+        results.extend([
+            SearchResult(
+                url=f"https://findcirclerate.com/india/maharashtra/{district}/{village}",
+                title=f"Ready Reckoner {village.title()} {district.title()}",
+                snippet=f"Circle-rate / ready-reckoner calculator reference for {village.title()}, {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 1,
+            ),
+            SearchResult(
+                url=f"https://igreval.maharashtra.gov.in/eASR2.0/eASRCommon.aspx?hDistName={district.title()}",
+                title=f"IGR Maharashtra eASR Rates {district.title()}",
+                snippet=f"Official Maharashtra IGR eASR entry point for Annual Statement of Rates in {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 2,
+            ),
+            SearchResult(
+                url=f"https://easr.igrmaharashtra.gov.in/eASRCommon.aspx?hDistName={district.title()}",
+                title=f"Maharashtra eASR Rates {district.title()}",
+                snippet=f"Official Maharashtra eASR entry point for ready-reckoner / market value rates in {district.title()}.",
+                source="direct-ready-reckoner",
+                rank=len(results) + 3,
+            ),
+        ])
+        return results
 
     def _calculate_source_trust(self, url: str) -> float:
         """Calculate trust score from generic source signals."""
@@ -450,21 +567,88 @@ class SourceDiscovery:
         query_lower = query.lower()
         if any(term in query_lower for term in PROPERTY_RATE_TERMS):
             return True
-        return bool(re.search(r"\bready\s+r(?:eckoner|ekoner|eckner|ekner|econer)\b", query_lower))
+        return bool(re.search(r"\bready\s+r(?:eckoner|eckon|ecknor|ekoner|eckner|ekner|econer)\b", query_lower))
 
     def _normalize_property_rate_query(self, query: str) -> str:
         query_lower = query.lower()
-        corrected = re.sub(r"\brekoner\b|\breckner\b|\brekner\b|\breconer\b", "reckoner", query_lower)
+        corrected = re.sub(r"\breckon\b|\brekoner\b|\brecknor\b|\breckner\b|\brekner\b|\breconer\b", "reckoner", query_lower)
+        corrected = re.sub(r"\bbanner\b", "baner", corrected)
         corrected = re.sub(r"\s+", " ", corrected).strip()
         if "ready reckoner" not in corrected and "reckoner" in corrected:
             corrected = corrected.replace("reckoner", "ready reckoner", 1)
         return corrected
 
+    def _extract_survey_number(self, query: str) -> str:
+        match = re.search(
+            r"\b(?:survey|survay|srv|s\.?\s*no|gat|plot|cts)\s*(?:no\.?|number|#|is|:|-)?\s*([A-Za-z0-9][A-Za-z0-9/-]*)",
+            query,
+            re.IGNORECASE,
+        )
+        if match:
+            return match.group(1).strip(" .,#:-")
+        return ""
+
+    def _is_existing_real_estate_query(self, query: str) -> bool:
+        query_lower = query.lower()
+        existing_terms = [
+            "existing", "available", "for sale", "resale", "ready to move",
+            "ready-to-move", "sea view", "waterfront", "lake view", "lake-view",
+            "river view", "water view", "listing", "listings",
+        ]
+        return any(term in query_lower for term in existing_terms)
+
+    def _extract_real_estate_location(self, query: str) -> str:
+        query_lower = query.lower()
+        if re.search(r"\bbanner\b", query_lower):
+            return "Baner"
+        locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
+        for loc in locations:
+            if loc.lower() in query_lower:
+                return loc
+
+        match = re.search(r"\b(?:in|at|near|around)\s+([A-Za-z][A-Za-z\s,.-]{2,80})", query)
+        if match:
+            location = re.split(r"\b(?:with|for|and|that|which|having)\b", match.group(1), maxsplit=1)[0]
+            location = re.sub(r"\s+", " ", location).strip(" ,.-")
+            if location:
+                return location.title()
+
+        return "requested location"
+
+    def _extract_property_rate_location(self, query: str) -> str:
+        query_lower = query.lower()
+        if re.search(r"\bbanner\b", query_lower):
+            return "Baner"
+        for location in sorted(KNOWN_REAL_ESTATE_LOCATIONS, key=len, reverse=True):
+            if re.search(rf"\b{re.escape(location)}\b", query_lower):
+                return location.title()
+
+        match = re.search(r"\b(?:for|in|at|of)\s+([a-z][a-z\s-]{2,40})", query_lower)
+        if not match:
+            return ""
+
+        words = [
+            word
+            for word in re.findall(r"[a-z]+", match.group(1))
+            if word not in STOP_WORDS and word not in {"survey", "survay", "no", "number", "rate"}
+        ]
+        return " ".join(words[:3]).title()
+
     def _looks_like_property_rate_result(self, text: str) -> bool:
         text_lower = text.lower()
+        if any(term in text_lower for term in PROPERTY_RATE_AVOID_TERMS):
+            return False
         has_rate_signal = any(term in text_lower for term in PROPERTY_RATE_RESULT_TERMS)
+        has_property_signal = any(term in text_lower for term in [
+            "ready reckoner", "reckoner", "circle rate", "guideline value",
+            "government valuation", "market value", "annual statement of rates",
+            "asr", "stamp duty", "valuation", "survey no", "survey number",
+            "cts", "gat no", "igr", "easr",
+        ])
         has_listing_signal = any(term in text_lower for term in PROJECT_LISTING_TERMS)
-        return has_rate_signal and not (has_listing_signal and "ready reckoner" not in text_lower and "valuation" not in text_lower)
+        return has_rate_signal and has_property_signal and not (
+            has_listing_signal and "ready reckoner" not in text_lower and "valuation" not in text_lower
+        )
 
     def _reset_token_usage(self):
         self.last_token_usage = {
@@ -494,19 +678,28 @@ class SourceDiscovery:
         if not self.client:
             return None
 
-        prompt = f"""You are a search query planner.
+        prompt = f"""You are an expert web-search query planner.
 Analyze the user query and produce only valid JSON.
+
+Your job is to make source discovery work for any domain without hardcoded rules.
+Infer the domain, the user's exact information need, and the best source types.
+For legal, regulatory, government, planning, policy, tax, court, or compliance questions:
+- Prefer official government/authority PDFs, notifications, acts/rules, circulars, FAQs, and regulator pages.
+- Expand acronyms and include the official full form when useful.
+- Create queries that target applicability, exclusions, exemptions, exceptions, jurisdiction, and authority names when the user asks where something applies or does not apply.
+- Avoid dictionary pages, generic explainers, forums, and low-evidence SEO pages unless no primary source exists.
 
 User query: {query}
 
 Return this JSON shape:
 {{
-  "intent": "explanation|latest|comparison|pricing|recommendation|research|how_to",
+  "intent": "explanation|latest|comparison|pricing|recommendation|research|how_to|legal_regulatory|applicability",
   "key_entities": ["specific terms, acronyms, locations"],
   "synonyms": ["technical synonyms, alternative terms"],
-  "search_queries": ["3-5 optimized queries"],
+  "search_queries": ["5-8 optimized queries, with official-source and PDF-focused variants where useful"],
   "positive_terms": ["technical terms that indicate relevance"],
-  "avoid_terms": ["terms that indicate wrong context"]
+  "avoid_terms": ["terms that indicate wrong context"],
+  "preferred_source_types": ["official authority", "government PDF", "regulator FAQ", "primary law"]
 }}"""
 
         try:
@@ -530,7 +723,7 @@ Return this JSON shape:
             cleaned = self._normalize_query(query)
             entities = data.get("key_entities", [])
             intent = str(data.get("intent") or "research").strip().lower()
-            rewritten_queries = data.get("search_queries", [])[:5]
+            rewritten_queries = data.get("search_queries", [])[:8]
 
             return QueryUnderstanding(
                 original_query=query,
@@ -546,20 +739,120 @@ Return this JSON shape:
 
     def _rerank_with_llm(self, query: str, understanding: QueryUnderstanding, candidates: List[Dict], debug_llm_payloads: bool = False) -> List[Dict]:
         if not self.client: return candidates
-        shortlist = candidates[:10]
-        source_lines = [f"{i}. {item.get('title')} | {item.get('url')}" for i, item in enumerate(shortlist, 1)]
-        
-        prompt = f"Rerank these results for query: {query}\n\n" + "\n".join(source_lines)
+        shortlist = candidates[: min(len(candidates), 20)]
+        source_lines = [
+            (
+                f"{i}. Title: {item.get('title')}\n"
+                f"   URL: {item.get('url')}\n"
+                f"   Snippet: {item.get('snippet')}\n"
+                f"   Search query: {item.get('search_query') or ''}"
+            )
+            for i, item in enumerate(shortlist, 1)
+        ]
+
+        prompt = f"""You are an evidence-source reranker for a web-search agent.
+Score each result for whether it can help answer the user's exact query.
+
+User query: {query}
+Detected intent: {understanding.intent}
+Key entities: {', '.join(understanding.key_entities or [])}
+
+Rules:
+- Give high scores to primary/official sources, authority PDFs, laws/rules, notifications, regulator pages, and pages whose title/snippet directly mention the requested entity and constraint.
+- Give low scores to dictionary pages, generic definitions, unrelated domains, SEO pages, pages about a different topic, and pages that only share a location word.
+- For applicability/exclusion questions, prefer sources that mention applicability, exceptions, exclusions, jurisdiction, authority, regulation scope, or official rules.
+- Do not guess content that is not visible in the title/snippet/url.
+
+Results:
+{chr(10).join(source_lines)}
+
+Return only JSON:
+{{
+  "ranked": [
+    {{
+      "index": 1,
+      "relevance": 0.0,
+      "officialness": 0.0,
+      "answers_query": true,
+      "reason": "short reason"
+    }}
+  ]
+}}"""
         
         try:
-            response = self.client.chat.completions.create(
-                model=config.LLM_MODEL,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0
+            payload = {
+                "model": config.LLM_MODEL,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 1200,
+                "temperature": 0.0,
+            }
+            if debug_llm_payloads:
+                self.last_llm_payloads.append({
+                    "stage": "source_reranking",
+                    "payload": payload,
+                })
+            response = self.client.chat.completions.create(**payload)
+            self._add_token_usage(response)
+            data = self._parse_json(response.choices[0].message.content)
+            ranked_items = data.get("ranked", []) if isinstance(data, dict) else []
+            scored_by_index = {}
+            for item in ranked_items:
+                try:
+                    idx = int(item.get("index")) - 1
+                except Exception:
+                    continue
+                if 0 <= idx < len(shortlist):
+                    scored_by_index[idx] = item
+
+            if not scored_by_index:
+                return candidates
+
+            reranked = []
+            for idx, candidate in enumerate(shortlist):
+                score = scored_by_index.get(idx)
+                if not score:
+                    continue
+                relevance = self._coerce_score(score.get("relevance"))
+                officialness = self._coerce_score(score.get("officialness"))
+                answers_query = bool(score.get("answers_query", relevance >= 0.5))
+                updated = dict(candidate)
+                updated["llm_relevance_score"] = relevance
+                updated["llm_officialness_score"] = officialness
+                updated["llm_relevance_reason"] = str(score.get("reason") or "")
+                updated["relevance_score"] = max(
+                    candidate.get("relevance_score", 0.0) * 0.45,
+                    (relevance * 0.75) + (officialness * 0.25),
+                )
+                updated["trust_score"] = max(candidate.get("trust_score", 0.5), officialness)
+                if answers_query or relevance >= 0.35:
+                    reranked.append(updated)
+
+            if not reranked:
+                return candidates
+
+            reranked.sort(
+                key=lambda item: (
+                    item.get("llm_relevance_score", 0.0) * 0.7
+                    + item.get("llm_officialness_score", 0.0) * 0.3,
+                    item.get("trust_score", 0.5),
+                ),
+                reverse=True,
             )
-            return candidates # Simplified for now to ensure stability
+
+            seen = {item.get("url") for item in reranked}
+            tail = [item for item in candidates if item.get("url") not in seen]
+            return reranked + tail
         except Exception:
             return candidates
+
+    def _coerce_score(self, value) -> float:
+        try:
+            score = float(value)
+        except Exception:
+            return 0.0
+        if score > 1.0:
+            score = score / 100.0
+        return min(max(score, 0.0), 1.0)
 
     def _parse_json(self, text: str) -> Optional[Dict]:
         try:
@@ -588,13 +881,80 @@ Return this JSON shape:
         return {"expansions": [], "context_terms": [], "avoid_terms": [], "domain": None}
 
     def _build_search_queries(self, query: str, intent: str, entities: List[str], domain_context: Dict) -> List[str]:
-        return [query]
+        return self._dedupe_queries([query] + self._build_constraint_queries(query, entities))
 
     def _build_positive_terms(self, query: str, entities: List[str], domain_context: Dict) -> List[str]:
         return entities
 
     def _dedupe_queries(self, queries: List[str]) -> List[str]:
-        return list(dict.fromkeys(queries))
+        cleaned = []
+        seen = set()
+        for query in queries:
+            normalized = re.sub(r"\s+", " ", str(query or "")).strip()
+            key = normalized.lower()
+            if normalized and key not in seen:
+                seen.add(key)
+                cleaned.append(normalized)
+        return cleaned
+
+    def _build_specific_search_queries(self, query: str, understanding: QueryUnderstanding) -> List[str]:
+        queries = [query]
+        entities = understanding.key_entities or self._extract_key_entities(query)
+        queries.extend(self._build_constraint_queries(query, entities))
+        return self._dedupe_queries(queries)
+
+    def _build_constraint_queries(self, query: str, entities: List[str]) -> List[str]:
+        constraints = self._extract_query_constraints(query, entities)
+        focus_terms = constraints["phrases"] + constraints["ids"] + constraints["years"]
+        if not focus_terms:
+            return []
+
+        normalized = self._normalize_query(query)
+        quoted_focus = " ".join(f'"{term}"' for term in focus_terms[:4])
+        core_entities = " ".join(constraints["entities"][:4])
+        queries = [
+            f"{normalized} {quoted_focus}".strip(),
+            " ".join(part for part in [core_entities, quoted_focus] if part),
+            " ".join(part for part in [core_entities, quoted_focus, "official"] if part),
+        ]
+
+        if constraints["years"]:
+            latest_year = constraints["years"][-1]
+            queries.append(" ".join(part for part in [core_entities, quoted_focus, latest_year] if part))
+
+        return queries
+
+    def _extract_query_constraints(self, query: str, entities: List[str]) -> Dict[str, List[str]]:
+        quoted_phrases = re.findall(r'"([^"]{2,80})"', query)
+        named_phrases = re.findall(r"\b[A-Z][A-Za-z0-9]*(?:\s+[A-Z0-9][A-Za-z0-9]*){1,5}\b", query)
+        years = re.findall(r"\b(?:19|20)\d{2}(?:-\d{2})?\b", query)
+        identifiers = re.findall(
+            r"\b(?:no\.?|number|id|code|section|rule|article|survey|plot|cts|case|order|form|model|version)\s*(?:is|:|#|-)?\s*([A-Za-z0-9][A-Za-z0-9./_-]{0,40})",
+            query,
+            re.IGNORECASE,
+        )
+        slash_ids = re.findall(r"\b[A-Za-z]{1,8}[-/]?\d{1,8}(?:[-/][A-Za-z0-9]{1,12})*\b", query)
+        spec_values = re.findall(r"\b\d+(?:\.\d+)?\s*(?:gb|tb|mb|bhk|sqft|sq\.?ft|sq\.?m|km|m|%|percent|lakh|crore)\b", query, re.IGNORECASE)
+        meaningful_entities = [
+            entity
+            for entity in entities
+            if len(entity) > 2 and entity.lower() not in STOP_WORDS
+        ]
+
+        return {
+            "phrases": self._dedupe_queries(quoted_phrases + named_phrases),
+            "years": self._dedupe_queries(years),
+            "ids": self._filter_constraint_values(identifiers + slash_ids + spec_values),
+            "entities": self._dedupe_queries(meaningful_entities),
+        }
+
+    def _filter_constraint_values(self, values: List[str]) -> List[str]:
+        blocked = STOP_WORDS | {"no.", "number.", "id.", "code.", "section.", "rule."}
+        return self._dedupe_queries(
+            value.strip(" .,#:-")
+            for value in values
+            if value and value.strip(" .,#:-").lower() not in blocked
+        )
 
     def _rank_result(self, result: SearchResult, understanding: QueryUnderstanding, search_query: str) -> Dict:
         haystack = f"{result.title} {result.snippet} {result.url}".lower()
