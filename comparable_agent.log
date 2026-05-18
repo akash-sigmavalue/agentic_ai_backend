@@ -12467,3 +12467,6 @@ Stacktrace:
 2026-05-15 16:25:54,294 | INFO | Factorial table: 2 projects, 22 total valid listings
 2026-05-15 16:30:00,016 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 16:30:00 IST)" (scheduled at 2026-05-15 16:30:00+05:30)
 2026-05-15 16:30:00,108 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-15 17:00:00 IST)" executed successfully
+2026-05-18 13:08:42,781 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-18 13:08:42,781 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-18 13:08:42,781 | INFO | Scheduler started
