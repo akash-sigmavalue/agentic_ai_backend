@@ -3,4 +3,4 @@
 __pycache__
 *.pyc
 data/cache
-listing_tool.log
+listing_tool.log 
