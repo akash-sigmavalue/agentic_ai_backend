@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from agents.valuation.main import PropertyValuationAgent
+from agents.valuation.stages.s3_cost_execution import CostExecutionAgent
 from tools.valuation.amenity_analytics_tool import get_nearby_amenities
 from tools.valuation.builtup_density_tool import analyze_congestion
 from tools.valuation.cbd_identification_tool import identify_cbds
@@ -402,3 +403,107 @@ def cbd_identification(req: CbdRequest):
     except Exception as exc:
         logger.exception("CBD identification failed")
         return {"error": str(exc)}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# COST APPROACH — Phase 2: Apply formula after rate derivation
+# ──────────────────────────────────────────────────────────────────────────────
+
+_cost_agent = CostExecutionAgent()
+
+
+class CostCalculationRequest(BaseModel):
+    """
+    Payload sent by the frontend after the comparable pipeline has derived the
+    subject property rate (subject_final_rate from LLM factoring).
+
+    Applicable only for: apartment, villa, retail, commercial_office
+    NOT applicable for:  plot
+    """
+
+    # ── Rate derivation output (from Phase 1 / LLM factoring) ─────────────────
+    derived_rate_per_sqft: float = Field(
+        ..., description="Market-derived rate per sqft for the subject property"
+    )
+    area_sqft: float = Field(
+        ..., description="Carpet / built-up area of the subject property in sqft"
+    )
+    property_type: str = Field(
+        ..., description="Canonical property type: apartment | villa | retail | commercial_office"
+    )
+
+    # ── Cost-specific user inputs ─────────────────────────────────────────────
+    net_plot_area_sqft: float = Field(
+        ..., description="Total net plot / site area in sqft"
+    )
+    rate_of_plot_per_sqft: float = Field(
+        ..., description="Current land rate per sqft (₹/sqft or local currency)"
+    )
+    uds_sqft: float | None = Field(
+        default=None,
+        description=(
+            "Undivided Share of Land in sqft — required for apartment / retail / "
+            "commercial_office. Not needed for villa (net_plot_area is used instead)."
+        ),
+    )
+    total_life_of_building: float = Field(
+        default=60,
+        description="Expected total economic life of the building in years (default 60)",
+    )
+    age_of_property: float = Field(
+        ..., description="Completed age of the building in years"
+    )
+
+
+def _cost_calculation_stream_generator(req: CostCalculationRequest):
+    yield _sse(
+        "cost_calculation_start",
+        {
+            "message": "Applying Cost Approach formula...",
+            "property_type": req.property_type,
+            "derived_rate_per_sqft": req.derived_rate_per_sqft,
+        },
+    )
+
+    try:
+        result = _cost_agent.calculate_cost_value(
+            derived_rate_per_sqft=req.derived_rate_per_sqft,
+            area_sqft=req.area_sqft,
+            property_type=req.property_type,
+            net_plot_area_sqft=req.net_plot_area_sqft,
+            rate_of_plot_per_sqft=req.rate_of_plot_per_sqft,
+            age_of_property=req.age_of_property,
+            total_life_of_building=req.total_life_of_building,
+            uds_sqft=req.uds_sqft,
+        )
+
+        if not result.get("success"):
+            yield _sse("error", result.get("error", "Cost calculation failed."))
+        else:
+            yield _sse("cost_calculation_result", result)
+
+    except Exception as exc:
+        logger.exception("Cost calculation failed")
+        yield _sse("error", f"Cost calculation failed: {exc}")
+
+    yield _sse("cost_calculation_done", "Cost Approach calculation complete.")
+
+
+@router.post("/cost_calculation_stream")
+async def cost_calculation_stream(req: CostCalculationRequest):
+    """
+    Phase 2 of the Cost Approach pipeline.
+
+    Call this endpoint after the frontend has:
+      1. Completed the market-style comparable pipeline (steps 1-6)
+      2. Collected the 5 cost-specific inputs from the user
+
+    Returns a streaming SSE response with:
+      - cost_calculation_start   : confirmation echo
+      - cost_calculation_result  : full result including inputs, calculations, formula audit
+      - cost_calculation_done    : terminal event
+      - error                    : if validation or calculation fails
+    """
+    return StreamingResponse(
+        _cost_calculation_stream_generator(req), media_type="text/event-stream"
+    )
