@@ -240,6 +240,8 @@ USER_AGENTS = [
 
 # hilton add this code for docker .................. 
 
+import shutil
+
 def get_chrome_binary_path():
     chrome_bin = (
         os.getenv("CHROME_BIN")

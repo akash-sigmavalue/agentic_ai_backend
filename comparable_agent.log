@@ -7949,3 +7949,25 @@ ORDER BY
 2026-05-18 16:09:18,638 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-18 16:10:38,935 | INFO | Scheduler has been shut down
 >>>>>>> origin/web_search_agent_backend
+2026-05-18 19:59:16,332 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-18 19:59:16,332 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-18 19:59:16,332 | INFO | Scheduler started
+2026-05-18 19:59:21,263 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 19:59:57,229 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 19:59:58,182 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 20:00:00 IST)" (scheduled at 2026-05-18 20:00:00+05:30)
+2026-05-18 20:00:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 20:30:00 IST)" executed successfully
+2026-05-18 20:00:04,016 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:01:10,120 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:01:11,614 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:01:13,455 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:01:32,273 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:01:47,282 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:01:47,504 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:01:59,323 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:02:41,515 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:02:55,386 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:02:55,623 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-18 20:02:56,797 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 20:30:00,018 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 21:00:00 IST)" (scheduled at 2026-05-18 20:30:00+05:30)
+2026-05-18 20:30:00,026 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 21:00:00 IST)" executed successfully
