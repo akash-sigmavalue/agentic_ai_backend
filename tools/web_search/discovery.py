@@ -678,19 +678,28 @@ class SourceDiscovery:
         if not self.client:
             return None
 
-        prompt = f"""You are a search query planner.
+        prompt = f"""You are an expert web-search query planner.
 Analyze the user query and produce only valid JSON.
+
+Your job is to make source discovery work for any domain without hardcoded rules.
+Infer the domain, the user's exact information need, and the best source types.
+For legal, regulatory, government, planning, policy, tax, court, or compliance questions:
+- Prefer official government/authority PDFs, notifications, acts/rules, circulars, FAQs, and regulator pages.
+- Expand acronyms and include the official full form when useful.
+- Create queries that target applicability, exclusions, exemptions, exceptions, jurisdiction, and authority names when the user asks where something applies or does not apply.
+- Avoid dictionary pages, generic explainers, forums, and low-evidence SEO pages unless no primary source exists.
 
 User query: {query}
 
 Return this JSON shape:
 {{
-  "intent": "explanation|latest|comparison|pricing|recommendation|research|how_to",
+  "intent": "explanation|latest|comparison|pricing|recommendation|research|how_to|legal_regulatory|applicability",
   "key_entities": ["specific terms, acronyms, locations"],
   "synonyms": ["technical synonyms, alternative terms"],
-  "search_queries": ["3-5 optimized queries"],
+  "search_queries": ["5-8 optimized queries, with official-source and PDF-focused variants where useful"],
   "positive_terms": ["technical terms that indicate relevance"],
-  "avoid_terms": ["terms that indicate wrong context"]
+  "avoid_terms": ["terms that indicate wrong context"],
+  "preferred_source_types": ["official authority", "government PDF", "regulator FAQ", "primary law"]
 }}"""
 
         try:
@@ -714,7 +723,7 @@ Return this JSON shape:
             cleaned = self._normalize_query(query)
             entities = data.get("key_entities", [])
             intent = str(data.get("intent") or "research").strip().lower()
-            rewritten_queries = data.get("search_queries", [])[:5]
+            rewritten_queries = data.get("search_queries", [])[:8]
 
             return QueryUnderstanding(
                 original_query=query,
@@ -730,20 +739,120 @@ Return this JSON shape:
 
     def _rerank_with_llm(self, query: str, understanding: QueryUnderstanding, candidates: List[Dict], debug_llm_payloads: bool = False) -> List[Dict]:
         if not self.client: return candidates
-        shortlist = candidates[:10]
-        source_lines = [f"{i}. {item.get('title')} | {item.get('url')}" for i, item in enumerate(shortlist, 1)]
-        
-        prompt = f"Rerank these results for query: {query}\n\n" + "\n".join(source_lines)
+        shortlist = candidates[: min(len(candidates), 20)]
+        source_lines = [
+            (
+                f"{i}. Title: {item.get('title')}\n"
+                f"   URL: {item.get('url')}\n"
+                f"   Snippet: {item.get('snippet')}\n"
+                f"   Search query: {item.get('search_query') or ''}"
+            )
+            for i, item in enumerate(shortlist, 1)
+        ]
+
+        prompt = f"""You are an evidence-source reranker for a web-search agent.
+Score each result for whether it can help answer the user's exact query.
+
+User query: {query}
+Detected intent: {understanding.intent}
+Key entities: {', '.join(understanding.key_entities or [])}
+
+Rules:
+- Give high scores to primary/official sources, authority PDFs, laws/rules, notifications, regulator pages, and pages whose title/snippet directly mention the requested entity and constraint.
+- Give low scores to dictionary pages, generic definitions, unrelated domains, SEO pages, pages about a different topic, and pages that only share a location word.
+- For applicability/exclusion questions, prefer sources that mention applicability, exceptions, exclusions, jurisdiction, authority, regulation scope, or official rules.
+- Do not guess content that is not visible in the title/snippet/url.
+
+Results:
+{chr(10).join(source_lines)}
+
+Return only JSON:
+{{
+  "ranked": [
+    {{
+      "index": 1,
+      "relevance": 0.0,
+      "officialness": 0.0,
+      "answers_query": true,
+      "reason": "short reason"
+    }}
+  ]
+}}"""
         
         try:
-            response = self.client.chat.completions.create(
-                model=config.LLM_MODEL,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0
+            payload = {
+                "model": config.LLM_MODEL,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 1200,
+                "temperature": 0.0,
+            }
+            if debug_llm_payloads:
+                self.last_llm_payloads.append({
+                    "stage": "source_reranking",
+                    "payload": payload,
+                })
+            response = self.client.chat.completions.create(**payload)
+            self._add_token_usage(response)
+            data = self._parse_json(response.choices[0].message.content)
+            ranked_items = data.get("ranked", []) if isinstance(data, dict) else []
+            scored_by_index = {}
+            for item in ranked_items:
+                try:
+                    idx = int(item.get("index")) - 1
+                except Exception:
+                    continue
+                if 0 <= idx < len(shortlist):
+                    scored_by_index[idx] = item
+
+            if not scored_by_index:
+                return candidates
+
+            reranked = []
+            for idx, candidate in enumerate(shortlist):
+                score = scored_by_index.get(idx)
+                if not score:
+                    continue
+                relevance = self._coerce_score(score.get("relevance"))
+                officialness = self._coerce_score(score.get("officialness"))
+                answers_query = bool(score.get("answers_query", relevance >= 0.5))
+                updated = dict(candidate)
+                updated["llm_relevance_score"] = relevance
+                updated["llm_officialness_score"] = officialness
+                updated["llm_relevance_reason"] = str(score.get("reason") or "")
+                updated["relevance_score"] = max(
+                    candidate.get("relevance_score", 0.0) * 0.45,
+                    (relevance * 0.75) + (officialness * 0.25),
+                )
+                updated["trust_score"] = max(candidate.get("trust_score", 0.5), officialness)
+                if answers_query or relevance >= 0.35:
+                    reranked.append(updated)
+
+            if not reranked:
+                return candidates
+
+            reranked.sort(
+                key=lambda item: (
+                    item.get("llm_relevance_score", 0.0) * 0.7
+                    + item.get("llm_officialness_score", 0.0) * 0.3,
+                    item.get("trust_score", 0.5),
+                ),
+                reverse=True,
             )
-            return candidates # Simplified for now to ensure stability
+
+            seen = {item.get("url") for item in reranked}
+            tail = [item for item in candidates if item.get("url") not in seen]
+            return reranked + tail
         except Exception:
             return candidates
+
+    def _coerce_score(self, value) -> float:
+        try:
+            score = float(value)
+        except Exception:
+            return 0.0
+        if score > 1.0:
+            score = score / 100.0
+        return min(max(score, 0.0), 1.0)
 
     def _parse_json(self, text: str) -> Optional[Dict]:
         try:

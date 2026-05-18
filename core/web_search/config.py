@@ -21,8 +21,8 @@ class Config:
 
     # Optional deep crawling and document extraction
     ENABLE_CRAWLING = os.getenv("ENABLE_CRAWLING", "true").lower() == "true"
-    CRAWL_MAX_DEPTH = int(os.getenv("CRAWL_MAX_DEPTH", 1))
-    CRAWL_MAX_PAGES = int(os.getenv("CRAWL_MAX_PAGES", 12))
+    CRAWL_MAX_DEPTH = int(os.getenv("CRAWL_MAX_DEPTH", 2))
+    CRAWL_MAX_PAGES = int(os.getenv("CRAWL_MAX_PAGES", 25))
     CRAWL_TOP_RESULTS = int(os.getenv("CRAWL_TOP_RESULTS", 3))
     CRAWL_TIMEOUT = int(os.getenv("CRAWL_TIMEOUT", 10))
     USE_LLM_GUIDED_CRAWL = os.getenv("USE_LLM_GUIDED_CRAWL", "false").lower() == "true"

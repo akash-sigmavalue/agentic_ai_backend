@@ -34,7 +34,7 @@ class DocumentDownloader:
         self.max_bytes = config.DOCUMENT_MAX_BYTES if max_bytes is None else max_bytes
         self.cache = SearchCache() if config.CACHE_ENABLED else None
 
-    async def find_and_download_documents(self, crawler_results: List[Dict]) -> List[Dict]:
+    async def find_and_download_documents(self, crawler_results: List[Dict], query_context: str = "") -> List[Dict]:
         document_urls = []
         source_by_url = {}
 
@@ -51,16 +51,38 @@ class DocumentDownloader:
                     source_by_url.setdefault(url, source_url)
 
         documents = []
-        for url in list(dict.fromkeys(document_urls))[: self.max_downloads]:
+        queued_urls = self._prioritize_documents(list(dict.fromkeys(document_urls)), query_context)
+        seen_urls = set()
+        index = 0
+
+        while index < len(queued_urls) and len(documents) < self.max_downloads:
+            url = queued_urls[index]
+            index += 1
+            if url in seen_urls:
+                continue
+            seen_urls.add(url)
+
             cached = self._get_cached_document(url, source_by_url.get(url, ""))
             if cached:
                 documents.append(cached)
+                new_links = []
+                for linked_url in self._extract_links_from_document(cached.get("content", "")):
+                    if linked_url not in seen_urls and self._is_document_url(linked_url):
+                        source_by_url.setdefault(linked_url, url)
+                        new_links.append(linked_url)
+                queued_urls.extend(self._prioritize_documents(list(dict.fromkeys(new_links)), query_context))
                 continue
 
             doc_info = await self._download_and_extract(url, source_by_url.get(url, ""))
             if doc_info:
                 self._cache_document(url, doc_info)
                 documents.append(doc_info)
+                new_links = []
+                for linked_url in self._extract_links_from_document(doc_info.get("content", "")):
+                    if linked_url not in seen_urls and self._is_document_url(linked_url):
+                        source_by_url.setdefault(linked_url, url)
+                        new_links.append(linked_url)
+                queued_urls.extend(self._prioritize_documents(list(dict.fromkeys(new_links)), query_context))
         return documents
 
     async def _download_and_extract(self, url: str, source_url: str) -> Optional[Dict]:
@@ -181,3 +203,51 @@ class DocumentDownloader:
         if not self.cache:
             return
         self.cache.set(url, doc_info, search_type="document")
+
+    def _prioritize_documents(self, document_links: List[str], query_context: str) -> List[str]:
+        if not document_links:
+            return []
+
+        query_terms = {
+            word.lower()
+            for word in re.findall(r"[A-Za-z0-9]+", query_context or "")
+            if len(word) > 1
+        }
+        years = re.findall(r"\b20\d{2}\b", query_context or "")
+        scored_docs = []
+        for index, doc_url in enumerate(document_links):
+            url_lower = doc_url.lower()
+            score = 0
+            extension_match = re.search(r"\.([a-z0-9]+)(?:$|\?|#)", url_lower)
+            extension = extension_match.group(1) if extension_match else ""
+
+            if extension in query_terms:
+                score += 30
+            if "excel" in query_terms and extension in {"xls", "xlsx"}:
+                score += 30
+            if "pdf" in query_terms and extension == "pdf":
+                score += 30
+            if any(year in url_lower for year in years):
+                score += 20
+            for term in query_terms:
+                if term in url_lower:
+                    score += 10
+            if any(term in url_lower for term in ["official", "easr", "asr", "rate", "rates", "valuation", "reckoner", "circle", "guideline"]):
+                score += 15
+
+            scored_docs.append((score, -index, doc_url))
+
+        scored_docs.sort(reverse=True)
+        return [doc_url for _score, _index, doc_url in scored_docs]
+
+    def _extract_links_from_document(self, document_content: str) -> List[str]:
+        if not document_content:
+            return []
+
+        url_pattern = r"https?://[^\s<>\"{}|\\^`\[\]]+"
+        urls = []
+        for raw_url in re.findall(url_pattern, document_content):
+            url = raw_url.rstrip(").,;:'\"")
+            if self._is_document_url(url):
+                urls.append(url)
+        return list(dict.fromkeys(urls))

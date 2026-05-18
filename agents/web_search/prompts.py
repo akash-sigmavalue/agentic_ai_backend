@@ -417,6 +417,7 @@ INSTRUCTIONS:
 2. Preserve the user's exact constraints: location, year, ID/code/number, product/model/version, person/company, legal section/rule, date range, and quoted phrases.
 3. If sources do not contain the requested specific constraint, say that clearly instead of giving a generic answer.
 4. Provide an EXTREMELY DETAILED and COMPREHENSIVE answer (aim for 90% extraction of all relevant facts).
+4a. For legal/regulatory applicability questions, extract the regulation's scope, applicable jurisdictions, non-applicable/excluded jurisdictions, exempted authorities, special planning areas, exceptions, and source wording that supports each item. Distinguish directly stated exclusions from inferred exclusions.
 5. Structure your response with high-density information:
    - ## 📝 Executive Summary
    - ## 🔍 Exhaustive Findings (Extract EVERY specific number, fee, date, and legal rule found)

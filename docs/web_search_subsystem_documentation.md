@@ -174,6 +174,14 @@ DOCUMENT_MAX_BYTES
 
 These control whether the agent follows links and downloads linked documents.
 
+Default crawl behavior:
+
+- `CRAWL_TOP_RESULTS` defaults to `3`.
+- Only the first 3 ranked search-result URLs are used as crawl start URLs.
+- The crawler can still discover additional same-domain pages from those 3 start URLs, up to `CRAWL_MAX_DEPTH` and `CRAWL_MAX_PAGES`.
+- Linked documents found from those crawled pages are downloaded and extracted when `ENABLE_DOCUMENT_DOWNLOAD=true`.
+- Extracted crawled-page data and extracted document data are added to the final `results` output, with source values such as `deep-crawl` and `document-extraction`.
+
 ### 3.5 Cache Settings
 
 ```python
@@ -326,6 +334,37 @@ Each result may include:
     "exact_ready_reckoner_rows": [],
     "exact_evidence_matches": [],
     "extracted_data": ...
+}
+```
+
+Crawled pages and downloaded documents are also returned as normal result entries.
+For crawled pages, the source is `deep-crawl`:
+
+```python
+{
+    "url": "...",
+    "title": "...",
+    "snippet": "...",
+    "content": "...",
+    "rank": 100,
+    "source": "deep-crawl",
+    "exact_ready_reckoner_rows": [],
+    "exact_evidence_matches": []
+}
+```
+
+For downloaded documents, the source is `document-extraction` and document metadata is included:
+
+```python
+{
+    "source": "document-extraction",
+    "document": {
+        "filename": "...",
+        "filepath": "...",
+        "source_url": "...",
+        "size": 12345,
+        "content_type": "pdf|docx|xlsx|txt"
+    }
 }
 ```
 
@@ -1080,6 +1119,8 @@ The crawler enriches top search results by following same-domain links that may 
 - Related reports.
 - Download pages.
 
+Important clarification: crawling does not start from every discovered search result. By default, it starts only from the first 3 top-ranked result URLs. For each of those URLs, the system reads the page content, follows relevant same-domain links within the configured crawl limits, collects document links, downloads supported documents, extracts text from those pages/documents, and appends that extracted evidence to the API output.
+
 ### 9.2 WebCrawler Initialization
 
 Config-driven defaults:
@@ -1112,6 +1153,8 @@ await crawl_many(start_urls, query_context="")
 ```
 
 Crawls multiple start URLs until `max_pages` is reached.
+
+Direct document URLs are handled before HTML URLs. The crawler records them as document-bearing crawl results using the same output shape, so `DocumentDownloader` can process them without needing the crawler to fetch the document as HTML.
 
 ### 9.5 Recursive Crawl
 
@@ -1157,7 +1200,7 @@ Skipped:
 Method:
 
 ```python
-_is_relevant_link(url, query_context)
+_is_relevant_link(url, query_context, depth=0)
 ```
 
 If fewer than 5 pages have been collected, it allows links more broadly.
@@ -1167,7 +1210,58 @@ After that, it scores link paths using:
 - Query keywords.
 - Relevance terms like `download`, `document`, `pdf`, `rates`, `report`, `data`, `details`.
 
-### 9.8 LLMGuidedCrawler
+Depth is now part of the decision. Deeper pages need stronger URL signals such as:
+
+```text
+download, pdf, document, report, data, rate, valuation, easr, asr, reckoner, circle, guideline
+```
+
+This keeps the crawler focused when it moves away from the original search-result page.
+
+### 9.8 Pagination Limits
+
+The crawler detects common pagination URLs such as:
+
+```text
+?page=2
+?p=2
+?offset=20
+?start=20
+/page/2
+```
+
+It limits pagination exploration to the first three pages per pagination group. This prevents large listing/archive pages from consuming the crawl budget.
+
+### 9.9 Crawl Cache
+
+Fetched HTML page crawl results are cached through `SearchCache` using:
+
+```python
+search_type="crawl"
+```
+
+If a page was crawled recently, the crawler reuses the cached page dictionary instead of fetching the URL again. The returned output shape is unchanged.
+
+### 9.10 Document Priority
+
+Document links found on a page are sorted before being returned in `document_links`.
+
+Scoring prioritizes:
+
+- file type mentioned in the query, such as `pdf` or `excel`
+- year match, such as `2024`
+- query terms in the URL
+- official/rate/valuation terms in the URL
+
+This means a URL like:
+
+```text
+thane-west-circle-rate-2024.pdf
+```
+
+is preferred over a generic document link.
+
+### 9.11 LLMGuidedCrawler
 
 Subclass:
 
@@ -1254,6 +1348,15 @@ search_type="document"
 If the document was downloaded and extracted within the cache TTL, the cached document dictionary is reused and returned in the same output format. This avoids repeated downloads and repeated PDF/DOCX/XLSX extraction work.
 
 If the cached entry points to a local filepath that no longer exists, the cache entry is ignored and the document is downloaded again so the on-disk file can be restored.
+
+Documents are also prioritized before download using the same query-sensitive signals:
+
+- requested file type
+- year in the filename/path
+- query terms in the URL
+- rate/valuation/official terms
+
+The downloader can also discover additional documents recursively. After extracting text from a PDF/DOCX/XLSX/TXT, it scans the extracted text for URLs pointing to other documents and adds those to the download queue, while still respecting `DOCUMENT_MAX_DOWNLOADS`.
 
 ### 10.3 Download Limits
 

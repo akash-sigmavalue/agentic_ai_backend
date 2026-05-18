@@ -150,6 +150,7 @@ class ContentProcessor:
         table_blocks = []
         for table in soup.find_all("table")[:8]:
             rows = []
+            structured_rows = []
             for tr in table.find_all("tr")[:80]:
                 cells = [
                     cell.get_text(" ", strip=True)
@@ -157,13 +158,89 @@ class ContentProcessor:
                 ]
                 cells = [re.sub(r"\s+", " ", cell).strip() for cell in cells if cell.strip()]
                 if cells:
-                    rows.append(" | ".join(cells))
+                    row_text = " | ".join(cells)
+                    rows.append(row_text)
+                    structured_rows.append(cells)
 
             if len(rows) >= 2:
+                rows.extend(self._build_ready_reckoner_context_rows(structured_rows))
                 table_blocks.append("\n".join(rows))
 
         text = "\n\n".join(table_blocks)
         return text[: self.max_content_length]
+
+    _INDIC_DIGIT_TRANSLATION = str.maketrans({
+        "०": "0", "१": "1", "२": "2", "३": "3", "४": "4",
+        "५": "5", "६": "6", "७": "7", "८": "8", "९": "9",
+        "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4",
+        "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9",
+    })
+
+    def _normalize_digits(self, text: str) -> str:
+        return str(text or "").translate(self._INDIC_DIGIT_TRANSLATION)
+
+    def _build_ready_reckoner_context_rows(self, table_rows: List[List[str]]) -> List[str]:
+        """
+        Online ready-reckoner pages often store rates in one row and survey numbers
+        in the next row. Build one joined evidence line so exact survey matches keep
+        their rate context after plain-text extraction.
+        """
+        context_rows = []
+        for index, cells in enumerate(table_rows):
+            row_text = " | ".join(cells)
+            normalized_row = self._normalize_digits(row_text)
+            if not re.search(r"(?:survey|survay|सर्वे|स\.?\s*नं)", normalized_row, re.IGNORECASE):
+                continue
+
+            header_cells = self._nearest_header_cells(table_rows, index)
+            value_cells = self._nearest_value_cells(table_rows, index, len(header_cells))
+            pairs = self._pair_table_headers_and_values(header_cells, value_cells)
+
+            parts = [f"Survey row: {row_text}"]
+            if normalized_row != row_text:
+                parts.append(f"Survey row normalized: {normalized_row}")
+            if pairs:
+                parts.append("Rates for this survey row: " + " | ".join(pairs))
+
+            context_rows.append(" ".join(parts))
+
+        return context_rows
+
+    def _nearest_header_cells(self, table_rows: List[List[str]], row_index: int) -> List[str]:
+        for previous in range(row_index - 1, max(-1, row_index - 6), -1):
+            cells = table_rows[previous]
+            text = " ".join(cells)
+            if re.search(r"(?:जमीन|निवासी|कार्यालय|दुकान|औद्योगिक|plot|residential|office|shop|industrial|rate)", text, re.IGNORECASE):
+                return cells
+        return []
+
+    def _nearest_value_cells(self, table_rows: List[List[str]], row_index: int, preferred_length: int) -> List[str]:
+        for previous in range(row_index - 1, max(-1, row_index - 6), -1):
+            cells = table_rows[previous]
+            if preferred_length and len(cells) != preferred_length:
+                continue
+            normalized = [self._normalize_digits(cell) for cell in cells]
+            numeric_cells = sum(1 for cell in normalized if re.search(r"\d", cell))
+            if numeric_cells >= max(2, len(cells) // 2):
+                return cells
+        return []
+
+    def _pair_table_headers_and_values(self, header_cells: List[str], value_cells: List[str]) -> List[str]:
+        if not header_cells or not value_cells:
+            return []
+
+        pairs = []
+        for header, value in zip(header_cells, value_cells):
+            header_clean = re.sub(r"\s+", " ", header).strip()
+            value_clean = re.sub(r"\s+", " ", value).strip()
+            value_normalized = self._normalize_digits(value_clean)
+            if not header_clean or not value_clean:
+                continue
+            if value_normalized != value_clean:
+                pairs.append(f"{header_clean}={value_clean} ({value_normalized})")
+            else:
+                pairs.append(f"{header_clean}={value_clean}")
+        return pairs
 
     def _extract_exact_ready_reckoner_rows(self, content: str, query: str) -> List[Dict]:
         survey_numbers = self._extract_requested_survey_numbers(query)
@@ -176,17 +253,19 @@ class ContentProcessor:
             if len(row_text) < 3:
                 continue
 
+            normalized_row_text = self._normalize_digits(row_text)
             matched_numbers = [
                 number
                 for number in survey_numbers
-                if re.search(rf"(?<!\d){re.escape(number)}(?!\d)", row_text, re.IGNORECASE)
+                if re.search(rf"(?<!\d){re.escape(self._normalize_digits(number))}(?!\d)", normalized_row_text, re.IGNORECASE)
             ]
             if matched_numbers:
                 rows.append({
                     "survey_numbers": matched_numbers,
-                    "row_text": row_text[:1000],
+                    "row_text": normalized_row_text[:1000] if normalized_row_text != row_text else row_text[:1000],
                 })
 
+        rows.sort(key=lambda row: "rates for this survey row" not in row.get("row_text", "").lower())
         return rows[:10]
 
     def _extract_requested_survey_numbers(self, query: str) -> List[str]:
@@ -195,7 +274,7 @@ class ContentProcessor:
             query,
             re.IGNORECASE,
         )
-        cleaned = [match.strip(" .,#:-") for match in matches if match.strip(" .,#:-")]
+        cleaned = [self._normalize_digits(match.strip(" .,#:-")) for match in matches if match.strip(" .,#:-")]
         return list(dict.fromkeys(cleaned))
 
     def _extract_exact_evidence_matches(self, content: str, query: str) -> List[Dict]:

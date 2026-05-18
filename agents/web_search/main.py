@@ -15,12 +15,13 @@ from tools.web_search.discovery import SourceDiscovery
 from tools.web_search.browser import ContentProcessor
 from tools.web_search.crawler import LLMGuidedCrawler, WebCrawler
 from tools.web_search.document_downloader import DocumentDownloader
+from tools.web_search.weather import WeatherLookup
 from agents.web_search.prompts import LightweightAnalyzer
 from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v10-strict-ready-reckoner"
+SEARCH_CACHE_VERSION = "source-discovery-v14-llm-source-rerank"
 
 
 class DuckDuckGoSearchAgent:
@@ -40,6 +41,7 @@ class DuckDuckGoSearchAgent:
         else:
             self.crawler = WebCrawler()
         self.downloader = DocumentDownloader()
+        self.weather = WeatherLookup()
         self.cache = SearchCache() if config.CACHE_ENABLED else None
         self.validator = AccuracyValidator()
 
@@ -71,6 +73,15 @@ class DuckDuckGoSearchAgent:
 
         self.stats['cache_misses'] += 1
         self.stats['queries'] += 1
+
+        # Weather questions need live structured data, not generic search snippets.
+        if self.weather.is_weather_query(query):
+            if status_callback:
+                status_callback('Fetching current weather data...')
+            weather_output = self._search_weather(query, stream_callback=stream_callback)
+            if use_cache and self.cache and weather_output.get("success"):
+                self.cache.set(cache_query, weather_output)
+            return weather_output
 
         # Step 1: Query understanding and source discovery
         if status_callback: status_callback('Understanding query and discovering sources...')
@@ -243,6 +254,75 @@ class DuckDuckGoSearchAgent:
 
         return output
 
+    def _search_weather(self, query: str, stream_callback=None) -> Dict:
+        weather_result = self.weather.lookup(query)
+        if not weather_result.get("success"):
+            message = (
+                f"I could not fetch current weather data for this query. "
+                f"{weather_result.get('error') or 'Please try a more specific city name.'}"
+            )
+            if stream_callback:
+                stream_callback(message)
+            return {
+                'query': query,
+                'success': False,
+                'error': weather_result.get('error'),
+                'results': [],
+                'analysis': message,
+                'accuracy': {
+                    'accuracy_score': 0,
+                    'confidence_level': 'Low',
+                    'recommendation': 'Try a more specific city and country',
+                    'validated_claims': []
+                },
+                'timestamp': datetime.now().isoformat()
+            }
+
+        analysis = weather_result['analysis']
+        if stream_callback:
+            stream_callback(analysis)
+
+        return {
+            'query': query,
+            'success': True,
+            'discovery': {
+                'original_query': query,
+                'intent': 'weather',
+                'key_entities': [weather_result.get('location_query')],
+                'rewritten_queries': [],
+                'positive_terms': ['weather', 'temperature'],
+                'avoid_terms': [],
+                'used_llm': False,
+                'is_real_estate': False,
+            },
+            'discovery_token_usage': {
+                'input_tokens': 0,
+                'output_tokens': 0,
+                'total_tokens': 0,
+                'total_cost': 0.0,
+            },
+            'results_count': len(weather_result['results']),
+            'results': weather_result['results'],
+            'analysis': analysis,
+            'accuracy': {
+                'accuracy_score': 100,
+                'confidence_level': 'High - live weather API',
+                'recommendation': 'Weather values are time-sensitive; refresh for the latest reading.',
+                'validated_claims': []
+            },
+            'timestamp': weather_result.get('timestamp') or datetime.now().isoformat(),
+            'token_usage': {
+                'input_tokens': 0,
+                'output_tokens': 0,
+                'total_tokens': 0,
+                'total_cost': 0.0,
+            },
+            'weather': {
+                'location': weather_result.get('place'),
+                'current': weather_result.get('weather'),
+            },
+        }
+
     def _crawl_and_extract_documents(self, query: str, results: List[Dict], status_callback=None) -> tuple[List[Dict], List[Dict]]:
         if not results:
             return [], []
@@ -270,7 +350,7 @@ class DuckDuckGoSearchAgent:
             try:
                 if status_callback:
                     status_callback("Downloading and reading linked documents...")
-                documents = self._run_async(self.downloader.find_and_download_documents(crawled_pages))
+                documents = self._run_async(self.downloader.find_and_download_documents(crawled_pages, query_context=query))
                 document_sources = self._documents_to_results(query, documents)
             except Exception as exc:
                 print(f"Document extraction failed: {exc}")
