@@ -5847,3 +5847,344 @@ ORDER BY
 2026-05-18 15:35:50,523 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-18 15:36:00,181 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
 2026-05-18 15:36:02,803 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:41:31,118 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:41:31,135 | INFO | IntentExtractor: analysis_type=comparison  locations=['Palm Deira']  metrics=['rate_per_sq_ft']
+2026-05-18 15:41:54,055 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:41:54,056 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale']}
+2026-05-18 15:42:00,220 | INFO | No semantic transaction project/location entities resolved.
+2026-05-18 15:42:04,154 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:08,801 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:15,897 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-18 15:42:17,822 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:17,823 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-18 15:42:21,969 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:21,970 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2) AS rate_per_sq_ft,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  AND transaction_category IN ('Sale')
+  AND location_name ILIKE '%Palm Deira%'
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude
+ORDER BY
+  rate_per_sq_ft DESC
+2026-05-18 15:42:23,661 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-18 15:42:27,962 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:27,963 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.WRONG_COLUMN  missing=['Palm Deira']  suspect=location_name
+2026-05-18 15:42:33,396 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:33,397 | INFO | [iter=0] REWRITE — action=replace_column  missing_fix=['Palm Deira']  new_col=sub_locality
+2026-05-18 15:42:33,397 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-18 15:42:33,397 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-18 15:42:37,878 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:37,879 | INFO | [iter=1] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2) AS rate_per_sq_ft,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  AND transaction_category IN ('Sale')
+  AND sub_locality ILIKE '%Palm Deira%'
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude
+ORDER BY
+  rate_per_sq_ft DESC
+2026-05-18 15:42:38,823 | INFO | [iter=1] OBSERVE — rows=0  error=none
+2026-05-18 15:42:44,288 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:44,288 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['Palm Deira']  suspect=sub_locality
+2026-05-18 15:42:51,699 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:42:51,700 | INFO | [iter=1] REWRITE — action=broaden_with_or  missing_fix=['Palm Deira']  new_col=micro_market
+2026-05-18 15:42:51,700 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-18 15:42:51,700 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-18 15:43:01,701 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:01,703 | INFO | [iter=2] REVIEW rejected  confidence=96  missing=[]  reason=Location entity completeness is satisfied: the sole locality 'Palm Deira' appears in the WHERE clause via ILIKE conditions. All required project-level columns (name, latitude, longitude) are selected and grouped. The metric expression is correctly formed with NULLIF on the denominator and the specified rate_per_sq_ft formula. However, the instructions require that every non-empty entities.space_filters value and every column/value in semantic_resolved_filters appears in WHERE, and also that category_filters values be respected. While 'Sale' from semantic_resolved_filters is used correctly via IN ('Sale'), the raw intent/category filter value 'sale' is not explicitly represented. To align strictly with the specification, the WHERE clause should reflect both by keeping IN ('Sale') for the exact DB value and adding a case-insensitive ILIKE condition for 'sale'. Therefore, the original query is not fully compliant and is rejected with a minimally adjusted corrected SQL.
+2026-05-18 15:43:01,704 | INFO | [iter=2] REVIEW — applying reviewer's corrected SQL
+2026-05-18 15:43:01,704 | INFO | [iter=2] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2) AS rate_per_sq_ft,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  -- semantic_resolved_filters exact DB values
+  AND transaction_category IN ('Sale')
+  -- reflect raw intent.filters/category_filters value as well (case-insensitive)
+  AND transaction_category ILIKE 'sale'
+  AND (
+    micro_market ILIKE '%Palm Deira%'
+    OR project_name ILIKE '%Palm Deira%'
+  )
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude
+ORDER BY
+  rate_per_sq_ft DESC;
+2026-05-18 15:43:03,582 | INFO | [iter=2] OBSERVE — rows=0  error=none
+2026-05-18 15:43:06,966 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:06,967 | INFO | [iter=2] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['Palm Deira']  suspect=micro_market
+2026-05-18 15:43:13,302 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:13,304 | INFO | [iter=2] REWRITE — action=broaden_with_or  missing_fix=['Palm Deira']  new_col=village_name
+2026-05-18 15:43:13,304 | INFO | [iter=3] REWRITE — applying reflected SQL
+2026-05-18 15:43:13,304 | INFO | [iter=3] REVIEW — pre-execution gate
+2026-05-18 15:43:30,075 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:30,079 | INFO | [iter=3] REVIEW rejected  confidence=97  missing=[]  reason=All required entities and semantic_resolved_filters are present and correctly applied. The query structure matches a comparison analysis, metrics are computed per guidelines, and project geo fields are included. The only concern is redundant and potentially over-strict filtering on transaction_category using both IN ('Sale') and ILIKE 'sale'; simplifying to just the semantic_resolved_filters IN clause aligns with the specification and reduces risk of unintended row exclusion.
+2026-05-18 15:43:30,080 | INFO | [iter=3] REVIEW — applying reviewer's corrected SQL
+2026-05-18 15:43:30,080 | INFO | [iter=3] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2) AS rate_per_sq_ft,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  -- semantic_resolved_filters exact DB values
+  AND transaction_category IN ('Sale')
+  AND (
+    village_name ILIKE '%Palm Deira%'
+    OR village_name_marathi ILIKE '%Palm Deira%'
+    OR micro_market ILIKE '%Palm Deira%'
+    OR project_name ILIKE '%Palm Deira%'
+    OR location_name ILIKE '%Palm Deira%'
+    OR sub_locality ILIKE '%Palm Deira%'
+  )
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude
+ORDER BY
+  rate_per_sq_ft DESC;
+2026-05-18 15:43:32,703 | INFO | [iter=3] OBSERVE — rows=30  error=none
+2026-05-18 15:43:37,193 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:37,194 | INFO | [iter=3] REFLECT — verdict=ObserveVerdict.IRRELEVANT  missing=['Palm Deira (as a clearly identified locality in a specific location column)']  suspect=project_name OR generic text columns in the OR condition
+2026-05-18 15:43:43,796 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:43,797 | INFO | [iter=3] REWRITE — action=broaden_with_or  missing_fix=['Palm Deira']  new_col=None
+2026-05-18 15:43:43,797 | INFO | [iter=4] REWRITE — applying reflected SQL
+2026-05-18 15:43:43,797 | INFO | [iter=4] REVIEW — pre-execution gate
+2026-05-18 15:43:48,498 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:48,499 | INFO | [iter=4] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2) AS rate_per_sq_ft,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  AND transaction_category IN ('Sale')
+  AND (
+    location_name ILIKE '%Palm Deira%'
+    OR micro_market ILIKE '%Palm Deira%'
+    OR village_name ILIKE '%Palm Deira%'
+    OR sub_locality ILIKE '%Palm Deira%'
+  )
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude
+ORDER BY
+  rate_per_sq_ft DESC;
+2026-05-18 15:43:50,320 | INFO | [iter=4] OBSERVE — rows=30  error=none
+2026-05-18 15:43:54,052 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 15:43:54,053 | INFO | [iter=4] DONE — verdict=GOOD
+2026-05-18 16:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 16:30:00 IST)" (scheduled at 2026-05-18 16:00:00+05:30)
+2026-05-18 16:00:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 16:30:00 IST)" executed successfully
+2026-05-18 16:30:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 17:00:00 IST)" (scheduled at 2026-05-18 16:30:00+05:30)
+2026-05-18 16:30:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 17:00:00 IST)" executed successfully
+2026-05-18 16:37:58,911 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:03,276 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:03,373 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-18 16:38:03,373 | INFO | Found 4 DB amenities near (18.540328, 73.9466658)
+2026-05-18 16:38:05,831 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:10,135 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:21,120 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:26,083 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:29,176 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:33,369 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:36,890 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:41,411 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:38:41,422 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-18 16:38:41,423 | INFO | [LLM Fetch] Pass 1/1
+2026-05-18 16:39:07,512 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-18 16:39:07,655 | INFO | [JSON Parse] Fallback extracted 12 individual objects
+2026-05-18 16:39:07,656 | INFO | [LLM Fetch] Received 12 raw comparables | tokens=2821
+2026-05-18 16:39:07,658 | INFO | [Multi-pass] Total raw comparables: 12
+2026-05-18 16:39:07,658 | INFO | [Dedup] 12/12 unique comparables
+2026-05-18 16:39:07,660 | INFO | [Hard Filter] 12/12 passed type check (allowed cross-types included)
+2026-05-18 16:39:07,660 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-18 16:39:07,661 | INFO | [Geocode] Starting for 12 comparables
+2026-05-18 16:39:07,973 | INFO | [Geocode] OK 'Godrej Infinity' -> (18.540328, 73.9466658) | Certainty: Sure
+2026-05-18 16:39:09,461 | INFO | [Geocode] OK 'Kohinoor Sapphire' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:10,903 | INFO | [Geocode] OK 'Kumar Palmcrest' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:12,432 | INFO | [Geocode] OK 'Kohinoor Tinsel Town' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:13,478 | INFO | [Geocode] OK 'Kumar Princetown Royal' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:14,983 | INFO | [Geocode] OK 'Kohinoor Westview' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:16,016 | INFO | [Geocode] OK 'Kumar Princetown Royal Phase II' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:18,010 | INFO | [Geocode] OK 'Kohinoor Sapphire Phase II' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:19,084 | INFO | [Geocode] OK 'Kumar Palmcrest Phase II' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:20,877 | INFO | [Geocode] OK 'Kohinoor Tinsel Town Phase II' -> (18.5322658, 73.9383844) | Certainty: Sure
+2026-05-18 16:39:23,790 | WARNING | [DROP] stage=geocode | project='Kumar Princetown Royal Phase III' | reason=geocode_returned_empty | detail={"location": "Keshav Nagar, Pune", "country": "India"}
+2026-05-18 16:39:27,903 | WARNING | [DROP] stage=geocode | project='Kohinoor Westview Phase II' | reason=geocode_returned_empty | detail={"location": "Keshav Nagar, Pune", "country": "India"}
+2026-05-18 16:39:28,104 | WARNING | [DROP] stage=distance_calc | project='Kumar Princetown Royal Phase III' | reason=no_valid_coordinates
+2026-05-18 16:39:28,104 | WARNING | [DROP] stage=distance_calc | project='Kohinoor Westview Phase II' | reason=no_valid_coordinates
+2026-05-18 16:39:28,104 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-18 16:39:28,104 | INFO | [URL Filter] 10 comparables after URL cleanup
+2026-05-18 16:39:28,104 | INFO | [Agent Done] Final comparables: 10 | Total tokens: 2821
+2026-05-18 16:39:39,689 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=1
+2026-05-18 16:39:39,689 | INFO | [Pipeline] Total projects: 2
+2026-05-18 16:39:39,689 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'Kohinoor Sapphire' → Residential
+2026-05-18 16:39:39,690 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-18 16:39:39,690 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.540328, 73.9466658'
+2026-05-18 16:39:39,690 | INFO | [Search] Creating new undetected browser
+2026-05-18 16:39:40,329 | INFO | patching driver executable C:\Users\akash\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-18 16:39:44,712 | INFO | setting properties for headless
+2026-05-18 16:39:44,717 | INFO | [DDG] Searching: buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.540328, 73.9466658
+2026-05-18 16:39:58,824 | INFO | [DDG] Found 5 URLs
+2026-05-18 16:39:58,824 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.540328, 73.9466658'
+2026-05-18 16:39:58,824 | INFO | [URL Search] Result: 'Godrej Infinity' -> 5 URLs.
+2026-05-18 16:39:59,824 | INFO | [URLs] Godrej Infinity -> 5 urls
+2026-05-18 16:39:59,825 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-18 16:39:59,825 | INFO | [Scrape] project='Godrej Infinity' url='https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-18 16:39:59,826 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-18 16:39:59,826 | INFO | [Scrape] URL #2 Starting: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-18 16:39:59,826 | INFO | [Scrape] URL #3 Starting: https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid
+2026-05-18 16:39:59,827 | INFO | [Scrape] project='Godrej Infinity' url='https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-18 16:39:59,827 | INFO | [Scrape] project='Godrej Infinity' url='https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid'
+2026-05-18 16:39:59,827 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-18 16:39:59,828 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-18 16:39:59,828 | INFO | [Scrape] URL #5 Starting: https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm
+2026-05-18 16:39:59,828 | INFO | [Scrape] Trying requests for https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid
+2026-05-18 16:39:59,829 | INFO | [Scrape] project='Godrej Infinity' url='https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-18 16:39:59,830 | INFO | [Scrape] project='Godrej Infinity' url='https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm'
+2026-05-18 16:39:59,831 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-18 16:39:59,832 | INFO | [Scrape] Trying requests for https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm
+2026-05-18 16:40:00,472 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-18 16:40:01,064 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-18 16:40:01,149 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-18 16:40:01,149 | INFO | [Scrape] URL 'https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid' is difficult to scrape, using Selenium Pool.
+2026-05-18 16:40:01,149 | INFO | [Driver Pool] Creating new browser for thread 25960
+2026-05-18 16:40:01,798 | INFO | [Scrape] OK via Requests (200 OK) for https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm
+2026-05-18 16:40:02,612 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-18 16:40:03,440 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:03,441 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-18 16:40:03,441 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-18 16:40:03,441 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-18 16:40:06,701 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:06,706 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-18 16:40:06,707 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-18 16:40:06,707 | INFO | [Scrape] URL #4 -> 2 listings | https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-18 16:40:07,801 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:07,806 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-18 16:40:07,806 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-18 16:40:07,806 | INFO | [Scrape] URL #2 -> 2 listings | https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-18 16:40:09,405 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid
+2026-05-18 16:40:10,911 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:10,916 | INFO | [Extract] 'Godrej Infinity' -> 3 raw listings from 'https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm'
+2026-05-18 16:40:10,916 | INFO | [Extract Filter] 'Godrej Infinity' -> 3/3 passed type + name filter
+2026-05-18 16:40:10,916 | INFO | [Scrape] URL #5 -> 3 listings | https://www.realestateindia.com/pune-property/godrej-infinity-for-sale-in-keshav-nagar-pune-6429-ffpp.htm
+2026-05-18 16:40:19,611 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:19,615 | INFO | [Extract] 'Godrej Infinity' -> 3 raw listings from 'https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid'
+2026-05-18 16:40:19,615 | INFO | [Extract Filter] 'Godrej Infinity' -> 3/3 passed type + name filter
+2026-05-18 16:40:19,615 | INFO | [Scrape] URL #3 -> 3 listings | https://www.99acres.com/flats-for-resale-in-godrej-infinity-keshav-nagar-pune-169672-npffid
+2026-05-18 16:40:19,616 | INFO | [Project Done] 'Godrej Infinity' -> 10 listings
+2026-05-18 16:40:19,617 | INFO | 
+============================================================
+[Pipeline] Project: 'Kohinoor Sapphire' | type=apartment | category=Residential
+============================================================
+2026-05-18 16:40:19,617 | INFO | [URL Search] Query: 'buy apartment in Kohinoor Sapphire, Keshav Nagar, Pune, India, coordinates: 18.5322658, 73.9383844'
+2026-05-18 16:40:19,617 | INFO | [DDG] Searching: buy apartment in Kohinoor Sapphire, Keshav Nagar, Pune, India, coordinates: 18.5322658, 73.9383844
+2026-05-18 16:40:44,202 | INFO | [DDG] Found 5 URLs
+2026-05-18 16:40:44,203 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Kohinoor Sapphire, Keshav Nagar, Pune, India, coordinates: 18.5322658, 73.9383844'
+2026-05-18 16:40:44,203 | INFO | [URL Search] Result: 'Kohinoor Sapphire' -> 5 URLs.
+2026-05-18 16:40:45,203 | INFO | [URLs] Kohinoor Sapphire -> 5 urls
+2026-05-18 16:40:45,204 | INFO | [Scrape] URL #1 Starting: https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade
+2026-05-18 16:40:45,205 | INFO | [Scrape] project='Kohinoor Sapphire' url='https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade'
+2026-05-18 16:40:45,205 | INFO | [Scrape] Trying requests for https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade
+2026-05-18 16:40:45,205 | INFO | [Scrape] URL #2 Starting: https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933
+2026-05-18 16:40:45,206 | INFO | [Scrape] project='Kohinoor Sapphire' url='https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933'
+2026-05-18 16:40:45,206 | INFO | [Scrape] URL #3 Starting: https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371
+2026-05-18 16:40:45,206 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933
+2026-05-18 16:40:45,206 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl
+2026-05-18 16:40:45,207 | INFO | [Scrape] project='Kohinoor Sapphire' url='https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371'
+2026-05-18 16:40:45,208 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project
+2026-05-18 16:40:45,209 | INFO | [Scrape] project='Kohinoor Sapphire' url='https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl'
+2026-05-18 16:40:45,209 | INFO | [Scrape] Trying requests for https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371
+2026-05-18 16:40:45,210 | INFO | [Scrape] project='Kohinoor Sapphire' url='https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project'
+2026-05-18 16:40:45,211 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project
+2026-05-18 16:40:45,211 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl
+2026-05-18 16:40:45,763 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-18 16:40:45,763 | INFO | [Scrape] URL 'https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371' is difficult to scrape, using Selenium Pool.
+2026-05-18 16:40:45,763 | INFO | [Driver Pool] Creating new browser for thread 23664
+2026-05-18 16:40:45,766 | INFO | [Scrape] Requests returned status 406. Falling back to Selenium.
+2026-05-18 16:40:45,766 | INFO | [Scrape] URL 'https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade' is difficult to scrape, using Selenium Pool.
+2026-05-18 16:40:46,097 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project
+2026-05-18 16:40:46,267 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl
+2026-05-18 16:40:46,997 | INFO | [Driver Pool] Creating new browser for thread 5952
+2026-05-18 16:40:47,295 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933
+2026-05-18 16:40:48,697 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:48,698 | INFO | [Extract] 'Kohinoor Sapphire' -> 0 raw listings from 'https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933'
+2026-05-18 16:40:48,699 | INFO | [Extract Filter] 'Kohinoor Sapphire' -> 0/0 passed type + name filter
+2026-05-18 16:40:48,699 | INFO | [Scrape] URL #2 -> 0 listings | https://www.magicbricks.com/kohinoor-sapphire-tathawade-pune-pdpid-4d4235313236343933
+2026-05-18 16:40:52,457 | INFO | [Scrape] OK via Selenium (Text Mode) for https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade
+2026-05-18 16:40:53,027 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:53,041 | INFO | [Extract] 'Kohinoor Sapphire' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project'
+2026-05-18 16:40:53,042 | INFO | [Extract Filter] 'Kohinoor Sapphire' -> 2/2 passed type + name filter
+2026-05-18 16:40:53,042 | INFO | [Scrape] URL #5 -> 2 listings | https://www.squareyards.com/pune-residential-property/kohinoor-sapphire/29756/project
+2026-05-18 16:40:53,342 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:53,343 | INFO | [Extract] 'Kohinoor Sapphire' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl'
+2026-05-18 16:40:53,343 | INFO | [Extract Filter] 'Kohinoor Sapphire' -> 2/2 passed type + name filter
+2026-05-18 16:40:53,344 | INFO | [Scrape] URL #4 -> 2 listings | https://www.nobroker.in/flats-for-sale-in-kohinoor-sapphire-tathawade-pune-prjtl
+2026-05-18 16:40:53,777 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:40:53,780 | INFO | [Extract] 'Kohinoor Sapphire' -> 0 raw listings from 'https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade'
+2026-05-18 16:40:53,781 | INFO | [Extract Filter] 'Kohinoor Sapphire' -> 0/0 passed type + name filter
+2026-05-18 16:40:53,781 | INFO | [Scrape] URL #1 -> 0 listings | https://housing.com/in/buy/projects/page/252223-kohinoor-sapphire-pune-by-kohinoor-group-in-tathawade
+2026-05-18 16:40:53,782 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371
+2026-05-18 16:41:02,628 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-18 16:41:02,648 | INFO | [Extract] 'Kohinoor Sapphire' -> 3 raw listings from 'https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371'
+2026-05-18 16:41:02,648 | INFO | [Extract Filter] 'Kohinoor Sapphire' -> 3/3 passed type + name filter
+2026-05-18 16:41:02,649 | INFO | [Scrape] URL #3 -> 3 listings | https://www.99acres.com/kohinoor-sapphire-tathawade-pune-west-npxid-r340371
+2026-05-18 16:41:02,650 | INFO | [Project Done] 'Kohinoor Sapphire' -> 7 listings
+2026-05-18 16:41:02,650 | WARNING | [DROP] stage=final_validation | project='Godrej Infinity' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "1.05 Cr", "area_sqft": null}
+2026-05-18 16:41:02,651 | WARNING | [DROP] stage=final_validation | project='Godrej Infinity' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "92 Lac", "area_sqft": null}
+2026-05-18 16:41:02,652 | INFO | [Pipeline Done] final_listings=15 | projects=2 | tokens=12813
+2026-05-18 16:41:05,636 | INFO | [Driver Pool] Closed driver for thread 25960
+2026-05-18 16:41:07,850 | INFO | [Driver Pool] Closed driver for thread 23664
+2026-05-18 16:41:10,016 | INFO | [Driver Pool] Closed driver for thread 5952
+2026-05-18 17:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 17:30:00 IST)" (scheduled at 2026-05-18 17:00:00+05:30)
+2026-05-18 17:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-18 17:30:00 IST)" executed successfully
+2026-05-18 17:02:19,322 | INFO | Scheduler has been shut down
+2026-05-18 17:02:19,326 | INFO | ensuring close
+2026-05-18 17:02:32,378 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-18 17:02:32,379 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-18 17:02:32,379 | INFO | Scheduler started
+2026-05-18 17:03:33,138 | INFO | Scheduler has been shut down
+2026-05-18 17:03:42,641 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-18 17:03:42,641 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-18 17:03:42,641 | INFO | Scheduler started
+2026-05-18 17:28:28,397 | INFO | Scheduler has been shut down
+2026-05-18 17:28:39,437 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-18 17:28:39,437 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-18 17:28:39,437 | INFO | Scheduler started
+2026-05-18 17:28:40,210 | INFO | Scheduler has been shut down
