@@ -22,6 +22,7 @@ CATEGORY UPDATE:
             data and stamped on every listing produced for that project.
 """
 
+from tools.valuation.builtup_density_tool import USER_AGENT
 import os
 import re
 import json
@@ -37,6 +38,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+# pyrefly: ignore [missing-import]
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -908,16 +910,19 @@ def listing_pipeline(
     subject_ptype    = subject.get("property_type", property_type)
     subject_category = subject.get("project_category") or PROJECT_CATEGORY_DEFAULT.get(subject_ptype, "Unknown")
 
-    projects = [{
-        "project_name":     subject["project_name"],
-        "location":         subject.get("location_name", ""),
-        "country":          subject.get("country", "India"),
-        "lat":              subject.get("lat"),
-        "lng":              subject.get("lng"),
-        "property_type":    subject_ptype,
-        "project_category": subject_category,   # ← subject's category
-        "is_subject":       True,
-    }]
+    projects = []
+    
+    if subject_ptype.lower() != "plot":
+        projects.append({
+            "project_name":     subject["project_name"],
+            "location":         subject.get("location_name", ""),
+            "country":          subject.get("country", "India"),
+            "lat":              subject.get("lat"),
+            "lng":              subject.get("lng"),
+            "property_type":    subject_ptype,
+            "project_category": subject_category,   # ← subject's category
+            "is_subject":       True,
+        })
 
     for c in comparables:
         name = (c.get("project_name") or "").strip()

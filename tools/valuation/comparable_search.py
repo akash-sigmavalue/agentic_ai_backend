@@ -235,7 +235,15 @@ JSON Keys for each object:
 - "possession_status" (String: "Ready" or "Under Construction")
 - "source_url"        (String, direct listing URL)
 - "reason"            (String, short explanation of why it is comparable)
-- "location_certainty_score" (Number, 1.0 if project and location are explicit, <1.0 if ambiguous or inferred)
+- "location_certainty" (String: "Sure" or "Not Sure")
+  Rules — output "Sure" ONLY if ALL of the following are true:
+    1. The project name is explicitly stated (not inferred or paraphrased)
+    2. No guesswork was needed — project + location appear together on the same page
+  Output "Not Sure" if ANY of the following apply:
+    - Location is a broad zone, district, or city (e.g. "Rishikesh", "North Delhi")
+    - Project name is generic (e.g. "Residential Land", "Plot", "New Project")
+    - Location was inferred from nearby landmarks or approximate descriptions
+    - Coordinates or map pin are absent or inconsistent with stated location
 """
 
     user_prompt = f"""
@@ -529,12 +537,11 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             c["map_search_lng"] = res.get("lng")
             c["geocode_source"] = res.get("source")
 
-            # Initialize score if missing
-            if "location_certainty_score" not in c:
-                c["location_certainty_score"] = 1.0
+            # Initialize certainty if missing
+            if "location_certainty" not in c:
+                c["location_certainty"] = "Not Sure"
 
             if not c["map_search_lat"] or not c["map_search_lng"]:
-                c["location_certainty_score"] = 0.0
                 log_drop(
                     stage="geocode",
                     project_name=c.get("project_name", ""),
@@ -544,18 +551,13 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                         "country":  c.get("country", ""),
                     }
                 )
-            else:
-                # Refine score based on geocode quality
-                source = res.get("source", "")
-                if "nominatim" in source:
-                    c["location_certainty_score"] = min(c["location_certainty_score"], 0.7)
-                elif "geocoding_api" in source: # Usually means fallback to general locality
-                    c["location_certainty_score"] = min(c["location_certainty_score"], 0.85)
-                
+            
+
+            if c["map_search_lat"] and c["map_search_lng"]:
                 logger.info(
                     f"[Geocode] OK '{c['project_name']}' -> "
                     f"({c['map_search_lat']}, {c['map_search_lng']}) | "
-                    f"Certainty: {c['location_certainty_score']}"
+                    f"Certainty: {c['location_certainty']}"
                 )
 
         except Exception as e:

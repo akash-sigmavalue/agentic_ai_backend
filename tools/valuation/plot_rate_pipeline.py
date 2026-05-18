@@ -225,34 +225,43 @@ def calculate_plot_rates(
         for seq_id, (orig_idx, lst) in enumerate(processable):
             ov = overrides.get(str(orig_idx)) or overrides.get(orig_idx) or {}
             
-            # 1. Determine FSI (Priority: Per-listing > Global > LLM-Best)
-            f_low  = ov.get("fsi_low")  or ov.get("fsi")
-            f_high = ov.get("fsi_high") or ov.get("fsi")
-            f_best = ov.get("fsi_best") or ov.get("fsi")
-            
-            if f_low is None:
-                if fsi_override is not None:
-                    f_low, f_high, f_best = fsi_override, fsi_override, fsi_override
-                elif lst.get("plot_fsi_range"):
-                    f_low  = lst["plot_fsi_range"].get("low")
-                    f_high = lst["plot_fsi_range"].get("high")
-                    f_best = lst["plot_fsi_range"].get("best")
-            
-            # 2. Determine CC (Priority: Per-listing > Global > LLM-Best)
-            c_low  = ov.get("cc_low")  or ov.get("construction_cost")
-            c_high = ov.get("cc_high") or ov.get("construction_cost")
-            c_best = ov.get("cc_best") or ov.get("construction_cost")
-            
-            if c_low is None:
-                if cc_override is not None:
-                    c_low, c_high, c_best = cc_override, cc_override, cc_override
-                elif lst.get("plot_construction_cost_range"):
-                    c_low  = lst["plot_construction_cost_range"].get("low")
-                    c_high = lst["plot_construction_cost_range"].get("high")
-                    c_best = lst["plot_construction_cost_range"].get("best")
+            # Helper to parse empty strings cleanly
+            def parse_val(v):
+                if v is None or str(v).strip() == "": return None
+                try: return float(v)
+                except ValueError: return None
 
-            f_low, f_high, f_best = [float(x) if x is not None else 1.0 for x in [f_low, f_high, f_best]]
-            c_low, c_high, c_best = [float(x) if x is not None else 0.0 for x in [c_low, c_high, c_best]]
+            # 1. Determine FSI
+            f_low  = parse_val(ov.get("fsi_low") or ov.get("fsi"))
+            f_high = parse_val(ov.get("fsi_high") or ov.get("fsi"))
+            
+            if fsi_override is not None:
+                if f_low is None: f_low = float(fsi_override)
+                if f_high is None: f_high = float(fsi_override)
+                
+            if lst.get("plot_fsi_range"):
+                if f_low is None: f_low = lst["plot_fsi_range"].get("low")
+                if f_high is None: f_high = lst["plot_fsi_range"].get("high")
+
+            f_low = f_low if f_low is not None else 1.0
+            f_high = f_high if f_high is not None else 1.0
+            f_best = (f_low + f_high) / 2.0  # Recalculate midpoint so headline rate changes
+            
+            # 2. Determine Construction Cost
+            c_low  = parse_val(ov.get("cc_low") or ov.get("construction_cost"))
+            c_high = parse_val(ov.get("cc_high") or ov.get("construction_cost"))
+            
+            if cc_override is not None:
+                if c_low is None: c_low = float(cc_override)
+                if c_high is None: c_high = float(cc_override)
+                
+            if lst.get("plot_construction_cost_range"):
+                if c_low is None: c_low = lst["plot_construction_cost_range"].get("low")
+                if c_high is None: c_high = lst["plot_construction_cost_range"].get("high")
+
+            c_low = c_low if c_low is not None else 0.0
+            c_high = c_high if c_high is not None else 0.0
+            c_best = (c_low + c_high) / 2.0  # Recalculate midpoint
 
             # Determine if this row was actually overridden
             is_overridden = bool(ov) or (fsi_override is not None) or (cc_override is not None)
