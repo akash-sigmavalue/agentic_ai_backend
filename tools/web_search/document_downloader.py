@@ -116,6 +116,14 @@ class DocumentDownloader:
                     "filename": filename,
                     "filepath": str(filepath),
                     "source_url": source_url,
+                    "reference_urls": self._reference_urls(url, source_url),
+                    "extraction_metadata": {
+                        "document_url": url,
+                        "source_page_url": source_url,
+                        "reference_urls": self._reference_urls(url, source_url),
+                        "content_type": filepath.suffix.lower().lstrip(".") or "document",
+                        "size": len(data),
+                    },
                     "size": len(data),
                     "content": text[: config.MAX_CONTENT_LENGTH],
                     "content_type": filepath.suffix.lower().lstrip(".") or "document",
@@ -196,6 +204,12 @@ class DocumentDownloader:
         doc_info = dict(cached)
         if source_url:
             doc_info["source_url"] = source_url
+        doc_info["reference_urls"] = self._reference_urls(doc_info.get("url", url), doc_info.get("source_url", ""))
+        extraction_metadata = dict(doc_info.get("extraction_metadata") or {})
+        extraction_metadata.setdefault("document_url", doc_info.get("url", url))
+        extraction_metadata.setdefault("source_page_url", doc_info.get("source_url", ""))
+        extraction_metadata["reference_urls"] = doc_info["reference_urls"]
+        doc_info["extraction_metadata"] = extraction_metadata
         print(f"Document cache hit for: {url}")
         return doc_info
 
@@ -251,3 +265,6 @@ class DocumentDownloader:
             if self._is_document_url(url):
                 urls.append(url)
         return list(dict.fromkeys(urls))
+
+    def _reference_urls(self, document_url: str, source_url: str = "") -> List[str]:
+        return list(dict.fromkeys(url for url in [document_url, source_url] if url))

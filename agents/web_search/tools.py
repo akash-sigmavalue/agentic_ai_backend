@@ -76,6 +76,13 @@ class ResponseFormatter:
             url = result.get('url', '#')
             output.append(f"- [{title}]({url})")
 
+        reference_urls = self._collect_reference_urls(results)
+        if reference_urls:
+            output.append("")
+            output.append("## Extraction Reference URLs")
+            for i, url in enumerate(reference_urls[:20], 1):
+                output.append(f"{i}. {url}")
+
         if len(results) > 10:
             output.append(f"\n*Plus {len(results) - 10} more results*")
 
@@ -111,6 +118,13 @@ class ResponseFormatter:
             output.append(f"   URL: {result.get('url', '#')}")
             output.append("")
 
+        reference_urls = self._collect_reference_urls(results)
+        if reference_urls:
+            output.append("EXTRACTION REFERENCE URLS:")
+            for i, url in enumerate(reference_urls[:20], 1):
+                output.append(f"{i}. {url}")
+            output.append("")
+
         return "\n".join(output)
 
     def format_json(self, query: str, results: List[Dict], analysis: str = None,
@@ -134,11 +148,14 @@ class ResponseFormatter:
                     'matched_entities': r.get('matched_entities', []),
                     'relevance_score': r.get('relevance_score'),
                     'llm_relevance_score': r.get('llm_relevance_score'),
-                    'llm_relevance_reason': r.get('llm_relevance_reason')
+                    'llm_relevance_reason': r.get('llm_relevance_reason'),
+                    'reference_urls': r.get('reference_urls', []),
+                    'extraction_metadata': r.get('extraction_metadata')
                 }
                 for i, r in enumerate(results)
             ]
         }
+        output['reference_urls'] = self._collect_reference_urls(results)
 
         if discovery:
             output['discovery'] = discovery
@@ -150,6 +167,18 @@ class ResponseFormatter:
             output['token_usage'] = token_usage
 
         return json.dumps(output, indent=2, ensure_ascii=False)
+
+    def _collect_reference_urls(self, results: List[Dict]) -> List[str]:
+        urls = []
+        for result in results or []:
+            urls.extend(result.get('reference_urls') or [])
+            if result.get('url'):
+                urls.append(result['url'])
+            document = result.get('document') or {}
+            if document.get('source_url'):
+                urls.append(document['source_url'])
+            urls.extend(document.get('reference_urls') or [])
+        return list(dict.fromkeys(url for url in urls if url))
 
     def format_streaming(self, query: str, result: Dict, is_last: bool = False) -> str:
         """Format for streaming response"""

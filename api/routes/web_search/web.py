@@ -193,8 +193,22 @@ async def root():
                                                 <div class="source">
                                                     <a href="${source.url}" target="_blank" rel="noreferrer">${source.title}</a>
                                                     <div class="url">${source.url}</div>
+                                                    ${(source.reference_urls || []).length ? `
+                                                        <div class="url">Extraction refs: ${
+                                                            source.reference_urls.map((url) => `<a href="${url}" target="_blank" rel="noreferrer">${url}</a>`).join(" | ")
+                                                        }</div>
+                                                    ` : ""}
                                                 </div>
                                             `).join("")
+                                        }${
+                                            (data.result.reference_urls || []).length ? `
+                                                <div class="source">
+                                                    <strong>Extraction Reference URLs</strong>
+                                                    ${(data.result.reference_urls || []).slice(0, 20).map((url) => `
+                                                        <div class="url"><a href="${url}" target="_blank" rel="noreferrer">${url}</a></div>
+                                                    `).join("")}
+                                                </div>
+                                            ` : ""
                                         }</div>`;
                                     }
                                 } else if (data.type === "error") {

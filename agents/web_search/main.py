@@ -137,6 +137,11 @@ class DuckDuckGoSearchAgent:
                             result['published_date'] = content.get('published_date')
                             result['time_ago'] = content.get('time_ago', 'Date unknown')
                             result['source_trust'] = content.get('source_trust', 0.5)
+                            result['reference_urls'] = self._reference_urls_for_result(result, content)
+                            result['extraction_metadata'] = content.get('extraction_metadata') or {
+                                'source_url': result.get('url'),
+                                'reference_urls': result['reference_urls'],
+                            }
                             result['exact_ready_reckoner_rows'] = content.get('exact_ready_reckoner_rows', [])
                             result['exact_evidence_matches'] = content.get('exact_evidence_matches', [])
                             result['extracted_data'] = content.get('extracted_data')
@@ -206,6 +211,19 @@ class DuckDuckGoSearchAgent:
             'discovery_token_usage': discovery.get("token_usage"),
             'results_count': len(results_dict),
             'results': results_dict,
+            'reference_urls': self._collect_reference_urls(results_dict),
+            'extraction_metadata': {
+                'reference_urls': self._collect_reference_urls(results_dict),
+                'sources_extracted': [
+                    {
+                        'title': result.get('title'),
+                        'url': result.get('url'),
+                        'reference_urls': result.get('reference_urls') or self._reference_urls_for_result(result),
+                        'source': result.get('source'),
+                    }
+                    for result in results_dict
+                ],
+            },
             'analysis': analysis,
             'accuracy': output_metadata,
             'timestamp': datetime.now().isoformat()
@@ -303,6 +321,19 @@ class DuckDuckGoSearchAgent:
             },
             'results_count': len(weather_result['results']),
             'results': weather_result['results'],
+            'reference_urls': self._collect_reference_urls(weather_result['results']),
+            'extraction_metadata': {
+                'reference_urls': self._collect_reference_urls(weather_result['results']),
+                'sources_extracted': [
+                    {
+                        'title': result.get('title'),
+                        'url': result.get('url'),
+                        'reference_urls': result.get('reference_urls') or self._reference_urls_for_result(result),
+                        'source': result.get('source'),
+                    }
+                    for result in weather_result['results']
+                ],
+            },
             'analysis': analysis,
             'accuracy': {
                 'accuracy_score': 100,
@@ -394,6 +425,13 @@ class DuckDuckGoSearchAgent:
                 'title': page.get('title') or f"Crawled page {index}",
                 'snippet': content[:400],
                 'content': content,
+                'reference_urls': self._reference_urls_for_result(page),
+                'extraction_metadata': {
+                    'source_url': page.get('url'),
+                    'reference_urls': self._reference_urls_for_result(page),
+                    'document_links': page.get('document_links', []),
+                    'source': 'deep-crawl',
+                },
                 'rank': 100 + index,
                 'source': 'deep-crawl',
                 'search_query': query,
@@ -418,6 +456,13 @@ class DuckDuckGoSearchAgent:
                 'title': doc.get('filename') or f"Document {index}",
                 'snippet': content[:400],
                 'content': content,
+                'reference_urls': doc.get('reference_urls') or self._reference_urls_for_result(doc),
+                'extraction_metadata': doc.get('extraction_metadata') or {
+                    'document_url': doc.get('url'),
+                    'source_page_url': doc.get('source_url'),
+                    'reference_urls': doc.get('reference_urls') or self._reference_urls_for_result(doc),
+                    'source': 'document-extraction',
+                },
                 'rank': 200 + index,
                 'source': 'document-extraction',
                 'search_query': query,
@@ -432,6 +477,7 @@ class DuckDuckGoSearchAgent:
                     'filename': doc.get('filename'),
                     'filepath': doc.get('filepath'),
                     'source_url': doc.get('source_url'),
+                    'reference_urls': doc.get('reference_urls') or self._reference_urls_for_result(doc),
                     'size': doc.get('size'),
                     'content_type': doc.get('content_type'),
                 },
@@ -453,7 +499,7 @@ class DuckDuckGoSearchAgent:
     def extract_from_url(self, url: str, query: str) -> Dict:
         """Extract exact data from a given URL"""
         self.stats['queries'] += 1
-        content_results = self.processor.process_batch([url])
+        content_results = self.processor.process_batch([url], query=query)
 
         if not content_results or not content_results[0]:
             return {'url': url, 'success': False, 'error': 'Could not fetch content'}
@@ -464,5 +510,31 @@ class DuckDuckGoSearchAgent:
             'success': True,
             'title': content.get('title'),
             'content': content.get('content'),
-            'metadata': content.get('metadata')
+            'metadata': content.get('metadata'),
+            'reference_urls': content.get('reference_urls') or [url],
+            'extraction_metadata': content.get('extraction_metadata') or {
+                'source_url': url,
+                'reference_urls': content.get('reference_urls') or [url],
+            },
         }
+
+    def _reference_urls_for_result(self, result: Dict, content: Dict = None) -> List[str]:
+        urls = []
+        for item in (content, result):
+            if not item:
+                continue
+            urls.extend(item.get('reference_urls') or [])
+            for key in ('url', 'source_url'):
+                if item.get(key):
+                    urls.append(item[key])
+            document = item.get('document') or {}
+            if document.get('source_url'):
+                urls.append(document['source_url'])
+            urls.extend(document.get('reference_urls') or [])
+        return list(dict.fromkeys(url for url in urls if url))
+
+    def _collect_reference_urls(self, results: List[Dict]) -> List[str]:
+        urls = []
+        for result in results or []:
+            urls.extend(self._reference_urls_for_result(result))
+        return list(dict.fromkeys(urls))
