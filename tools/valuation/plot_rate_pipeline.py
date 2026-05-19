@@ -52,6 +52,13 @@ INPUT per item:
   location       - locality / city
   country        - country name
 
+If property_category is "plot" / "land" / "residential land":
+  - plot_area_sqft is the RAW LAND AREA (no construction exists)
+  - built_up_sqft will be null — do NOT use it
+  - total_price is the LAND-ONLY price (zero construction cost included)
+  - Estimate FSI and construction cost based on location norms
+    so the caller can derive the implied saleable built-up rate
+
 STEPS for EACH item:
   1. Identify Local Currency: Code (e.g. INR) and Symbol (e.g. ₹) from the country.
   2. Estimate FSI/FAR: Typical range (low/high) and best estimate for this property type and location. 
@@ -80,7 +87,8 @@ OUTPUT — strict JSON, no markdown fences:
 }
 
 RULES:
-- If total_price or built_up_sqft is null/0, return null for all numeric fields.
+- For built-up properties: if total_price or built_up_sqft is null/0, return null for all numeric fields.
+- For plot properties: if total_price or plot_area_sqft is null/0, return null for all numeric fields.
 - Focus on providing MINIMIZED, high-confidence ranges.
 - Return ONLY the JSON object.
 """
@@ -199,6 +207,8 @@ def calculate_plot_rates(
     processable: List[Tuple[int, Dict]] = []   # (original index, listing)
     skipped_count = 0
 
+    subject_is_plot = property_type.strip().lower() == "plot"
+
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
         area  = lst.get("final_super_builtup_area")
@@ -210,14 +220,26 @@ def calculate_plot_rates(
             skipped_count += 1
             continue
 
-        if ptype in ["plot", "residential land", "land"]:
-            # Already a plot - use direct rate, skip LLM
-            _stamp_direct_plot_fields(cleaned[orig_idx])
-        else:
-            # Apartment, Villa, etc. - queue for LLM reverse-engineering
-            processable.append((orig_idx, lst))
+        listing_is_plot = ptype in ["plot", "residential land", "land"]
 
-    print(f"   → {len(processable)} listings queued, {skipped_count} skipped (null price/area)")
+        if subject_is_plot:
+            if listing_is_plot:
+                # Already a plot - use direct rate, skip LLM
+                _stamp_direct_plot_fields(cleaned[orig_idx])
+            else:
+                # Apartment, Villa, etc. - queue for LLM reverse-engineering
+                processable.append((orig_idx, lst))
+        else:
+            # Subject is built-up (e.g. Villa)
+            if listing_is_plot:
+                # Plot/Land - queue for LLM estimation (to calculate derived built-up rate)
+                processable.append((orig_idx, lst))
+            else:
+                # Villa/Apartment - direct built-up rate (no plot-rate fields needed for valuation)
+                _stamp_null_plot_fields(cleaned[orig_idx])
+                skipped_count += 1
+
+    print(f"   → {len(processable)} listings queued, {skipped_count} skipped (null price/area or already built-up)")
 
     # ── Handle Overrides (Skip LLM) ───────────────────────────────────────
     if overrides is not None:
@@ -327,13 +349,15 @@ def calculate_plot_rates(
         area  = lst.get("final_super_builtup_area")
         category_raw = lst.get("property_category") or lst.get("project_category") or lst.get("property_type") or ""
         item_ptype = str(category_raw).strip().lower()
+        item_is_plot = item_ptype in ["plot", "residential land", "land"] 
 
         llm_items.append({
             "id":            seq_id,
             "property_category": item_ptype,
             "project_name":  lst.get("project_name", "Unknown"),
             "total_price":   price,
-            "built_up_sqft": area,
+            "plot_area_sqft": area if item_is_plot else None,  
+            "built_up_sqft":  None if item_is_plot else area,  
             "location":      location or subject.get("location", "Unknown"),
             "country":       country,
         })
@@ -481,16 +505,39 @@ def _stamp_plot_fields(listing: Dict, result: Dict, derived_by: str = "llm") -> 
     }
 
     # Perform Deterministic Calculation
-    calc = _calculate_residual_rate(
-        price=float(price or 0),
-        built_up=float(area or 0),
-        fsi_low=float(fsi_low or 0),
-        fsi_high=float(fsi_high or 0),
-        fsi_best=float(fsi_best or 0),
-        cost_low=float(cost_low or 0),
-        cost_high=float(cost_high or 0),
-        cost_best=float(cost_best or 0),
-    )
+    category_raw = listing.get("property_category") or listing.get("project_category") or listing.get("property_type") or ""
+    listing_is_plot = str(category_raw).strip().lower() in ["plot", "residential land", "land"]
+
+    if listing_is_plot:
+        # Calculating Derived Built-up Rate for a Plot comparable
+        price_num = float(price or 0)
+        area_num = float(area or 0)
+        if area_num > 0 and (fsi_low or 0) > 0 and (fsi_high or 0) > 0 and (fsi_best or 0) > 0:
+            land_rate = price_num / area_num
+            rate_low = (land_rate / float(fsi_high)) + float(cost_low or 0)
+            rate_high = (land_rate / float(fsi_low)) + float(cost_high or 0)
+            rate_best = (land_rate / float(fsi_best)) + float(cost_best or 0)
+            
+            calc = {
+                "rate_low": round(rate_low, 2),
+                "rate_high": round(rate_high, 2),
+                "rate_best": round(rate_best, 2),
+                "negative_value": False
+            }
+        else:
+            calc = {"negative_value": True}
+    else:
+        # Perform Deterministic Calculation (Residual Land Rate for Built-up comparable)
+        calc = _calculate_residual_rate(
+            price=float(price or 0),
+            built_up=float(area or 0),
+            fsi_low=float(fsi_low or 0),
+            fsi_high=float(fsi_high or 0),
+            fsi_best=float(fsi_best or 0),
+            cost_low=float(cost_low or 0),
+            cost_high=float(cost_high or 0),
+            cost_best=float(cost_best or 0),
+        )
 
     neg = calc.get("negative_value", False)
 

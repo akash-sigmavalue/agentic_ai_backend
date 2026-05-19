@@ -47,7 +47,7 @@ PROPERTY_TYPE_DISPLAY = {
 
 PROPERTY_TYPE_SEARCH_TERM = {
     "apartment":         "apartment",
-    "villa":             "villa",
+    "villa":             "villa or plot",
     "plot":              "plot or villa",
     "retail":            "shop",
     "commercial_office": "office space",
@@ -60,7 +60,7 @@ PROPERTY_TYPE_EXCLUSIONS = {
         "office", "retail", "showroom", "row house", "townhouse"
     ],
     "villa": [
-        "apartment", "flat", "condo", "plot", "land",
+        "apartment", "flat", "condo",
         "shop", "office", "retail", "showroom"
     ],
     "plot": [
@@ -372,7 +372,8 @@ def hard_filter_by_type(comps: list, required_type: str) -> list:
     valid = []
 
     ALLOW_CROSS = {
-        "plot": {"plot", "villa"}
+        "plot": {"plot", "villa"},
+        "villa": {"villa", "plot"}
     }
 
     for c in comps:
