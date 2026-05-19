@@ -18,7 +18,7 @@ MANDATORY_FIELDS_BY_TYPE = {
 }
 
 # Fields required by approach at Stage-1 time.
-# NOTE: Cost Approach phase-2 inputs (net_plot_area, rate_of_plot, UDS, age,
+# NOTE: Cost Approach phase-2 inputs (construction_rate_per_sqft, age,
 # building_life) are collected AFTER rate derivation — NOT here.
 APPROACH_REQUIREMENTS = {
     "market": [],
@@ -159,17 +159,23 @@ def calculate_strategy(entities: dict) -> dict:
 
     # 2. Identify missing mandatory fields
     missing_fields = []
-    property_type_missing = False
     
-    if not property_type:
+    query = (entities.get("_original_query") or "").lower()
+    has_explicit_selection = "property type:" in query
+    
+    # ALWAYS trigger Gate 1 property type selection unless the user has explicitly selected/confirmed it.
+    if not property_type or not (has_explicit_selection or entities.get("extraction_verified")):
         property_type_missing = True
         missing_fields.append("property_type")
     else:
+        property_type_missing = False
+
+    if property_type:
         # Check type-specific mandatory fields
         type_mandatory = MANDATORY_FIELDS_BY_TYPE.get(property_type, [])
         for field in type_mandatory:
             val = entities.get(field)
-            if val is None or val == "":
+            if (val is None or val == "") and field not in missing_fields:
                 missing_fields.append(field)
             
     # Check approach-specific requirements
@@ -205,7 +211,17 @@ def calculate_strategy(entities: dict) -> dict:
     user_inputs_required = []
     for field in missing_fields:
         if field in FIELD_SCHEMAS:
-            user_inputs_required.append(FIELD_SCHEMAS[field])
+            schema = dict(FIELD_SCHEMAS[field])
+            if field == "property_type" and property_type:
+                valid_options = {opt["value"] for opt in FIELD_SCHEMAS["property_type"]["options"]}
+                if property_type in valid_options:
+                    schema["default"] = property_type
+                else:
+                    if property_type == "building" and any(x in query for x in ["flat", "apartment", "g1201", "unit"]):
+                        schema["default"] = "apartment"
+                    else:
+                        schema["default"] = None
+            user_inputs_required.append(schema)
         else:
             # Fallback for text/number fields
             user_inputs_required.append({

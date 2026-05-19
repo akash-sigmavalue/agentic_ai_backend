@@ -9,20 +9,27 @@ APPLICABLE PROPERTY TYPES:  apartment, villa, retail, commercial_office
 NOT APPLICABLE:              plot  (no building exists — nothing to depreciate)
 
 FORMULA:
-  Cost Value = Property Price - (Construction Cost × Depreciation)
+  Construction Cost = construction_rate_per_sqft × area_sqft
 
-  Where:
-    Property Price    = derived_rate_per_sqft × area_sqft
-    Construction Cost = Property Price - (UDS × rate_of_plot_per_sqft)
-    Depreciation      = age_of_property / total_life_of_building
+    Where area_sqft is:
+      - Salable / carpet area  → apartment, retail, commercial_office
+      - Built-up area          → villa
 
-  ──────────────────────────────────────────────────────────
-  NOTE ON UDS:
-    UDS (Undivided Share of Land) is only applicable for
-    apartment / retail / commercial_office property types.
-    For villas, the net_plot_area itself IS the land, so
-    UDS is not separately required (it equals net_plot_area).
-  ──────────────────────────────────────────────────────────
+  Depreciation  = age_of_property / total_life_of_building   (straight-line, capped at 1.0)
+
+  Property Price = derived_rate_per_sqft × area_sqft         (market value from comparable pipeline)
+
+  Cost Value = Property Price − (Construction Cost × Depreciation)
+
+  ──────────────────────────────────────────────────────────────────────────────
+  RATIONALE:
+    This simplified replacement-cost approach eliminates the need for UDS,
+    land rate, and net plot area — data that is often unavailable or uncertain.
+    Instead, the user provides a standard construction rate per sqft (e.g.
+    from CPWD schedules, bank panel rates, or PWD circulars), which is widely
+    published and easy to verify.  This is the methodology used by HDFC/SBI
+    valuers, DVO officers, and RICS-certified professionals.
+  ──────────────────────────────────────────────────────────────────────────────
 """
 
 import json
@@ -35,8 +42,13 @@ logger = logging.getLogger(__name__)
 # Property types where Cost Approach is valid (building exists)
 COST_APPLICABLE_TYPES = {"apartment", "villa", "retail", "commercial_office"}
 
-# Property types that require a separate UDS field
-UDS_REQUIRED_TYPES = {"apartment", "retail", "commercial_office"}
+# Area label shown in the formula audit per type
+AREA_LABEL = {
+    "apartment": "Salable / Carpet Area",
+    "retail": "Salable Area",
+    "commercial_office": "Salable Area",
+    "villa": "Built-up Area",
+}
 
 # Default total life of a building (years) — user can override
 DEFAULT_BUILDING_LIFE = 60
@@ -170,7 +182,7 @@ class CostExecutionAgent:
 
         # ── Inform frontend that cost-specific inputs will be needed after rate ─
         # Determine which inputs are needed based on property type
-        uds_required = property_type in UDS_REQUIRED_TYPES
+        uds_required = False
 
         yield sse_callback(
             "cost_inputs_required",
@@ -199,29 +211,26 @@ class CostExecutionAgent:
         derived_rate_per_sqft: float,
         area_sqft: float,
         property_type: str,
-        net_plot_area_sqft: float,
-        rate_of_plot_per_sqft: float,
+        construction_rate_per_sqft: float,
         age_of_property: float,
         total_life_of_building: float = DEFAULT_BUILDING_LIFE,
-        uds_sqft: float | None = None,
     ) -> dict:
         """
-        Apply the Cost Approach formula and return a structured result dict.
+        Apply the simplified replacement-cost formula and return a structured result dict.
 
         Args:
-            derived_rate_per_sqft:   Market-derived rate for subject property (₹/sqft)
-            area_sqft:               Carpet / built-up area of the subject (sqft)
-            property_type:           One of apartment | villa | retail | commercial_office
-            net_plot_area_sqft:      Net plot area in sqft
-            rate_of_plot_per_sqft:   Land rate per sqft (₹/sqft)
-            age_of_property:         Age of the building in years
-            total_life_of_building:  Expected total life of the building (default 69 years)
-            uds_sqft:                Undivided Share of Land in sqft
-                                     (required for apartment / retail / commercial_office;
-                                      for villa, net_plot_area_sqft is used instead)
+            derived_rate_per_sqft:      Market-derived rate for subject property (₹/sqft)
+            area_sqft:                  Salable/carpet area (apartment/retail/office) OR
+                                        built-up area (villa) of the subject in sqft
+            property_type:              One of apartment | villa | retail | commercial_office
+            construction_rate_per_sqft: Current construction cost per sqft (₹/sqft)
+                                        — sourced from CPWD schedules, bank panel rates,
+                                          or PWD circulars
+            age_of_property:            Completed age of the building in years
+            total_life_of_building:     Expected total economic life (default 60 years)
 
         Returns:
-            dict with all intermediate values + final cost value
+            dict with all intermediate values + final cost approach value
         """
         property_type = (property_type or "").strip().lower()
 
@@ -232,66 +241,58 @@ class CostExecutionAgent:
                 "error": f"Cost Approach is not applicable for property type '{property_type}'.",
             }
 
-        # ── Step 1: Property Price (total market value of the unit) ────────────
-        property_price = derived_rate_per_sqft * area_sqft
-
-        # ── Step 2: Land cost attributed to this unit ──────────────────────────
-        # For apartment / retail / commercial_office → use UDS (shared land portion)
-        # For villa                                  → the whole plot is the land
-        if property_type == "villa":
-            effective_land_sqft = net_plot_area_sqft
-        else:
-            if uds_sqft is None:
-                return {
-                    "success": False,
-                    "error": (
-                        f"UDS (Undivided Share of Land) is mandatory for "
-                        f"'{property_type}' properties. Please provide uds_sqft."
-                    ),
-                }
-            effective_land_sqft = uds_sqft
-
-        land_cost = effective_land_sqft * rate_of_plot_per_sqft
-
-        # ── Step 3: Construction Cost ──────────────────────────────────────────
-        # Construction Cost = Property Price − Land Cost
-        construction_cost = property_price - land_cost
-
-        # ── Step 4: Depreciation ───────────────────────────────────────────────
-        # Depreciation = Age / Total Life  (straight-line, capped at 1.0 / 100%)
         if total_life_of_building <= 0:
             return {
                 "success": False,
                 "error": "total_life_of_building must be greater than 0.",
             }
+
+        if construction_rate_per_sqft <= 0:
+            return {
+                "success": False,
+                "error": "construction_rate_per_sqft must be greater than 0.",
+            }
+
+        area_label = AREA_LABEL.get(property_type, "Area")
+
+        # ── Step 1: Market / Property Price ────────────────────────────────────
+        # The total market value of the unit derived from the comparable pipeline
+        property_price = derived_rate_per_sqft * area_sqft
+
+        # ── Step 2: Construction Cost ──────────────────────────────────────────
+        # Full replacement cost of the building component (ignores land)
+        construction_cost = construction_rate_per_sqft * area_sqft
+
+        # ── Step 3: Depreciation Rate ──────────────────────────────────────────
+        # Straight-line depreciation, capped at 100%
         depreciation_rate = min(age_of_property / total_life_of_building, 1.0)
 
-        # ── Step 5: Depreciated Construction Cost ─────────────────────────────
+        # ── Step 4: Depreciated Construction Cost ─────────────────────────────
+        # How much of the construction value has been "consumed" by age
         depreciated_construction = construction_cost * depreciation_rate
 
-        # ── Step 6: Final Cost Approach Value ─────────────────────────────────
-        # Cost Value = Property Price − (Construction Cost × Depreciation)
+        # ── Step 5: Final Cost Approach Value ─────────────────────────────────
+        # Cost Value = Market Price − (Construction Cost × Depreciation%)
+        # This deducts the aged/consumed portion of the building from its market value
         cost_value = property_price - depreciated_construction
 
-        # ── Derived per-sqft rates ─────────────────────────────────────────────
+        # ── Derived per-sqft rate ──────────────────────────────────────────────
         cost_rate_per_sqft = round(cost_value / area_sqft, 2) if area_sqft > 0 else 0
 
         return {
             "success": True,
             "property_type": property_type,
+            "area_label": area_label,
             "inputs": {
                 "derived_rate_per_sqft": round(derived_rate_per_sqft, 2),
                 "area_sqft": round(area_sqft, 2),
-                "net_plot_area_sqft": round(net_plot_area_sqft, 2),
-                "rate_of_plot_per_sqft": round(rate_of_plot_per_sqft, 2),
-                "uds_sqft": round(uds_sqft, 2) if uds_sqft is not None else None,
-                "effective_land_sqft": round(effective_land_sqft, 2),
+                "area_label": area_label,
+                "construction_rate_per_sqft": round(construction_rate_per_sqft, 2),
                 "age_of_property": age_of_property,
                 "total_life_of_building": total_life_of_building,
             },
             "calculations": {
                 "property_price": round(property_price, 2),
-                "land_cost": round(land_cost, 2),
                 "construction_cost": round(construction_cost, 2),
                 "depreciation_rate_pct": round(depreciation_rate * 100, 4),
                 "depreciated_construction_cost": round(depreciated_construction, 2),
@@ -301,19 +302,25 @@ class CostExecutionAgent:
                 "cost_rate_per_sqft": cost_rate_per_sqft,
             },
             "formula_audit": {
-                "step_1": f"Property Price = {derived_rate_per_sqft} × {area_sqft} = {round(property_price, 2)}",
+                "step_1": (
+                    f"Property Price (Market) = {derived_rate_per_sqft} ₹/sqft × "
+                    f"{area_sqft} sqft ({area_label}) = ₹{round(property_price, 2)}"
+                ),
                 "step_2": (
-                    f"Land Cost = {effective_land_sqft} (UDS/Plot) × {rate_of_plot_per_sqft} = {round(land_cost, 2)}"
+                    f"Construction Cost = {construction_rate_per_sqft} ₹/sqft × "
+                    f"{area_sqft} sqft = ₹{round(construction_cost, 2)}"
                 ),
-                "step_3": f"Construction Cost = {round(property_price, 2)} − {round(land_cost, 2)} = {round(construction_cost, 2)}",
-                "step_4": f"Depreciation = {age_of_property} / {total_life_of_building} = {round(depreciation_rate * 100, 2)}%",
+                "step_3": (
+                    f"Depreciation = {age_of_property} yrs / {total_life_of_building} yrs "
+                    f"= {round(depreciation_rate * 100, 2)}%"
+                ),
+                "step_4": (
+                    f"Depreciated Construction = ₹{round(construction_cost, 2)} × "
+                    f"{round(depreciation_rate * 100, 2)}% = ₹{round(depreciated_construction, 2)}"
+                ),
                 "step_5": (
-                    f"Depreciated Construction = {round(construction_cost, 2)} × {round(depreciation_rate, 4)} "
-                    f"= {round(depreciated_construction, 2)}"
-                ),
-                "step_6": (
-                    f"Cost Value = {round(property_price, 2)} − {round(depreciated_construction, 2)} "
-                    f"= {round(cost_value, 2)}"
+                    f"Cost Value = ₹{round(property_price, 2)} − ₹{round(depreciated_construction, 2)} "
+                    f"= ₹{round(cost_value, 2)}"
                 ),
             },
         }
@@ -326,51 +333,43 @@ def _build_cost_input_schema(property_type: str) -> list[dict]:
     """
     Return a list of rich UI input descriptors for the cost-specific fields.
     The frontend renders these as form inputs after rate derivation.
-    """
-    uds_required = property_type in UDS_REQUIRED_TYPES
 
-    fields = [
+    New simplified approach — only 3 inputs required:
+      1. construction_rate_per_sqft
+      2. age_of_property
+      3. total_life_of_building  (optional, default = 60)
+    """
+    area_hint = (
+        "salable / carpet area"
+        if property_type in {"apartment", "retail", "commercial_office"}
+        else "built-up area"
+    )
+
+    return [
         {
-            "field": "net_plot_area_sqft",
-            "label": "Net Plot Area",
-            "type": "number",
-            "unit": "sqft",
-            "required": True,
-            "placeholder": "e.g. 1200",
-            "help": "Total plot / site area in square feet.",
-            "default": None,
-        },
-        {
-            "field": "rate_of_plot_per_sqft",
-            "label": "Rate of Plot",
+            "field": "construction_rate_per_sqft",
+            "label": "Construction Rate",
             "type": "number",
             "unit": "₹ / sqft",
             "required": True,
-            "placeholder": "e.g. 8500",
-            "help": "Current market rate of the land per square foot.",
+            "placeholder": "e.g. 2500",
+            "help": (
+                f"Current construction cost per sqft for this property type. "
+                f"Applies to the {area_hint}. "
+                "Refer to CPWD schedules, bank panel rates, or PWD circulars for guidance."
+            ),
             "default": None,
         },
-    ]
-
-    # UDS is only shown for flat / shop / office
-    if uds_required:
-        fields.append(
-            {
-                "field": "uds_sqft",
-                "label": "UDS (Undivided Share of Land)",
-                "type": "number",
-                "unit": "sqft",
-                "required": True,
-                "placeholder": "e.g. 95",
-                "help": (
-                    "Undivided Share of Land allotted to this unit as per the "
-                    "sale deed / building records (applicable for flats, shops, offices)."
-                ),
-                "default": None,
-            }
-        )
-
-    fields += [
+        {
+            "field": "age_of_property",
+            "label": "Age of Property",
+            "type": "number",
+            "unit": "years",
+            "required": True,
+            "placeholder": "e.g. 8",
+            "help": "Completed age of the building in years.",
+            "default": None,
+        },
         {
             "field": "total_life_of_building",
             "label": "Total Life of Building",
@@ -384,16 +383,4 @@ def _build_cost_input_schema(property_type: str) -> list[dict]:
             ),
             "default": DEFAULT_BUILDING_LIFE,
         },
-        {
-            "field": "age_of_property",
-            "label": "Age of Property",
-            "type": "number",
-            "unit": "years",
-            "required": True,
-            "placeholder": "e.g. 8",
-            "help": "Completed age of the building in years.",
-            "default": None,
-        },
     ]
-
-    return fields

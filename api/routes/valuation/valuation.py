@@ -419,6 +419,11 @@ class CostCalculationRequest(BaseModel):
 
     Applicable only for: apartment, villa, retail, commercial_office
     NOT applicable for:  plot
+
+    Simplified replacement-cost approach — only 3 user inputs required:
+      - construction_rate_per_sqft  (from CPWD schedules / bank panel rates)
+      - age_of_property
+      - total_life_of_building      (optional, default = 60 yrs)
     """
 
     # ── Rate derivation output (from Phase 1 / LLM factoring) ─────────────────
@@ -426,32 +431,30 @@ class CostCalculationRequest(BaseModel):
         ..., description="Market-derived rate per sqft for the subject property"
     )
     area_sqft: float = Field(
-        ..., description="Carpet / built-up area of the subject property in sqft"
+        ...,
+        description=(
+            "Salable / carpet area for apartment / retail / commercial_office; "
+            "built-up area for villa — in sqft"
+        ),
     )
     property_type: str = Field(
         ..., description="Canonical property type: apartment | villa | retail | commercial_office"
     )
 
     # ── Cost-specific user inputs ─────────────────────────────────────────────
-    net_plot_area_sqft: float = Field(
-        ..., description="Total net plot / site area in sqft"
-    )
-    rate_of_plot_per_sqft: float = Field(
-        ..., description="Current land rate per sqft (₹/sqft or local currency)"
-    )
-    uds_sqft: float | None = Field(
-        default=None,
+    construction_rate_per_sqft: float = Field(
+        ...,
         description=(
-            "Undivided Share of Land in sqft — required for apartment / retail / "
-            "commercial_office. Not needed for villa (net_plot_area is used instead)."
+            "Construction cost per sqft (₹/sqft) from CPWD schedules, "
+            "bank panel rates, or PWD circulars"
         ),
+    )
+    age_of_property: float = Field(
+        ..., description="Completed age of the building in years"
     )
     total_life_of_building: float = Field(
         default=60,
         description="Expected total economic life of the building in years (default 60)",
-    )
-    age_of_property: float = Field(
-        ..., description="Completed age of the building in years"
     )
 
 
@@ -470,11 +473,9 @@ def _cost_calculation_stream_generator(req: CostCalculationRequest):
             derived_rate_per_sqft=req.derived_rate_per_sqft,
             area_sqft=req.area_sqft,
             property_type=req.property_type,
-            net_plot_area_sqft=req.net_plot_area_sqft,
-            rate_of_plot_per_sqft=req.rate_of_plot_per_sqft,
+            construction_rate_per_sqft=req.construction_rate_per_sqft,
             age_of_property=req.age_of_property,
             total_life_of_building=req.total_life_of_building,
-            uds_sqft=req.uds_sqft,
         )
 
         if not result.get("success"):
