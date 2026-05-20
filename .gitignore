@@ -23,8 +23,9 @@ __pycache__/
 *.swp
 *.swo
 
-# Databases
+# Local database/cache
+*.db
 *.sqlite3
-*.log
+data/cache/
+run_logs/
 
-.gitignore

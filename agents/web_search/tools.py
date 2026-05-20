@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Response formatting - converts results to user-friendly format
 Token usage: 0 (no LLM)

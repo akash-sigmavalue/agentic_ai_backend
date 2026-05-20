@@ -1,0 +1,9 @@
+2026-05-20 15:38:23,918 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 15:38:23,918 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 15:38:23,918 | INFO | Scheduler started
+2026-05-20 15:40:00,757 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 15:40:03,962 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 15:40:53,224 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:40:54,263 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-20 15:41:22,489 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:41:25,320 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from agents.shared.schema_helpers import as_dict, as_list

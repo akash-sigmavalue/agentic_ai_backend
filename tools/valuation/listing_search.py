@@ -17,10 +17,12 @@ YIELD FIXES (this revision):
   YIELD-06  Extraction parallelism: extract runs in parallel (not sequentially)
             -- reduces total wall-clock time significantly
 
-PREVIOUS BUG FIXES (retained from prior revision):
-  BUG-01..11  See prior revision for full list.
+CATEGORY UPDATE:
+  CAT-01    project_category and property_type are now read from comparable
+            data and stamped on every listing produced for that project.
 """
 
+from tools.valuation.builtup_density_tool import USER_AGENT
 import os
 import re
 import json
@@ -29,15 +31,21 @@ import threading
 import logging
 import requests
 import urllib.parse
-from typing import Optional, List
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from bs4 import BeautifulSoup
+from typing import Optional, List
 from openai import OpenAI
 from dotenv import load_dotenv
-from tools.valuation.road_infrastructure_tool import get_road_category
-from tools.valuation.amenity_analytics_tool import get_nearby_amenities, get_amenity_counts
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+# pyrefly: ignore [missing-import]
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import random
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
@@ -55,10 +63,8 @@ logger = logging.getLogger("listing_tool")
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
 # YIELD-02: Sites that are difficult to scrape with simple requests.
-# We now use Selenium to bypass these blocks.
-
 BLOCKED_URL_PATTERNS = [
-    "magicbricks.com/propertyDetails/", # Still skip individual detail pages
+    "magicbricks.com/propertyDetails/",  # Still skip individual detail pages
 ]
 
 # YIELD-01: URLs matching these patterns contain multiple listings per page
@@ -85,18 +91,23 @@ HEADERS = {
 # ── Property types ────────────────────────────────────────────────────────
 PROPERTY_TYPE_ALIASES = {
     "apartment":         {"apartment", "flat", "condo", "condominium", "penthouse"},
-    "villa":             {"villa", "bungalow", "row house", "townhouse"},
-    "plot":              {"plot", "land", "site"},
+    "villa":             {"villa", "bungalow", "row house", "townhouse", "independent house", "independent villa", "house"},
+    "plot":              {"plot", "land", "site", "residential plot", "na plot"},
+    "villa":             {"villa", "bungalow", "row house", "townhouse", "independent house", "independent villa", "house"},
+    "plot":              {"plot", "land", "site", "residential plot", "na plot"},
     "retail":            {"shop", "retail", "showroom"},
     "commercial_office": {"office", "workspace", "coworking"},
+    "mixed_use":         {"mixed use", "mixed-use", "residential+commercial", "residential + commercial"},
+    "mixed_use":         {"mixed use", "mixed-use", "residential+commercial", "residential + commercial"},
 }
 
 PROPERTY_TYPE_DISPLAY = {
     "apartment":         "apartment (flat / condo / penthouse)",
     "villa":             "villa (bungalow / row house / townhouse)",
-    "plot":              "plot (land / site)",
+    "plot":              "plot (land / site) or villa / bungalow / independent house",
     "retail":            "shop (retail space / showroom)",
     "commercial_office": "office space (workspace / coworking)",
+    "mixed_use":         "mixed-use (residential + commercial)",
 }
 
 PROPERTY_TYPE_SEARCH_TERM = {
@@ -105,19 +116,31 @@ PROPERTY_TYPE_SEARCH_TERM = {
     "plot":              "plot",
     "retail":            "shop",
     "commercial_office": "office space",
+    "mixed_use":         "mixed-use development",
 }
 
 PROPERTY_TYPE_EXCLUSIONS = {
     "apartment":         ["villa", "bungalow", "plot", "land", "shop", "office", "retail", "showroom", "row house", "townhouse"],
     "villa":             ["apartment", "flat", "condo", "plot", "land", "shop", "office", "retail", "showroom"],
-    "plot":              ["apartment", "flat", "villa", "bungalow", "shop", "office", "built-up", "constructed"],
+    "plot":              ["apartment", "flat", "shop", "office", "built-up", "constructed"],
     "retail":            ["apartment", "flat", "villa", "bungalow", "plot", "land", "office", "residential", "condo"],
     "commercial_office": ["apartment", "flat", "villa", "bungalow", "plot", "land", "shop", "retail", "showroom", "residential"],
+    "mixed_use":         ["purely residential", "purely commercial", "plot", "land"],
+}
+
+# ── Project category defaults (fallback if not provided by comparable) ────
+PROJECT_CATEGORY_DEFAULT = {
+    "apartment":         "Residential",
+    "villa":             "Villa",
+    "plot":              "Plot",
+    "retail":            "Commercial",
+    "commercial_office": "Commercial",
+    "mixed_use":         "Residential + Commercial",
 }
 
 LISTING_SIGNALS = [
     "bhk", "sqft", "sq.ft", "lac", "lakh", "cr", "crore",
-     "sale", "lease", "floor","total_floors", "carpet", "₹", "bedroom",
+    "sale", "lease", "floor", "total_floors", "carpet", "₹", "bedroom",
     "bath", "parking", "possession", "ready", "under construction",
     "furnished", "semi", "unfurnished", "price", "area", "office",
     "shop", "villa", "plot", "flat", "apartment",
@@ -162,7 +185,6 @@ def is_matching_project(extracted_name: str, target_name: str) -> bool:
     """
     True when extracted_name genuinely matches target_name.
     Requires substring containment OR >50% meaningful-token overlap.
-    Prevents "Sobha Marina" matching target "Sobha Hartland 2".
     """
     if not extracted_name or not target_name:
         return False
@@ -194,55 +216,196 @@ def safe_filename(url: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '_', url)[:100]
 
 
+# ── CAT-01: Derive project_category from comparable data ──────────────────
+def derive_project_category(
+    comp: dict,
+    property_type: str,
+) -> str:
+    """
+    Read project_category from the comparable object (set by
+    comparable_selection_agent → stamp_project_category).
+    Falls back to PROJECT_CATEGORY_DEFAULT if missing.
+    """
+    cat = comp.get("project_category", "")
+    if cat and cat not in ("", "Unknown", "unknown"):
+        return cat
+    return PROJECT_CATEGORY_DEFAULT.get(property_type, "Unknown")
 
-# ── Driver Pool for Parallel Scraping ───────────────────────────────────
+
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+]
+
+# hilton add this code for docker .................. 
+
+import os
+import shutil
+
+def get_chrome_binary_path():
+    candidates = [
+        os.getenv("CHROME_BIN"),
+
+        # Linux / Docker
+        shutil.which("google-chrome"),
+        shutil.which("google-chrome-stable"),
+        shutil.which("chromium"),
+        shutil.which("chromium-browser"),
+
+        # Windows local
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+
+    for path in candidates:
+        if path and isinstance(path, str) and os.path.exists(path):
+            return path
+
+    raise RuntimeError(
+        "Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN."
+    )
+
+# hilton add this code for docker .................. 
+
+def make_uc_driver(headless: bool = True):
+    """
+    Create an undetected Chrome driver.
+    Works in Docker, Ubuntu, and Windows local.
+    """
+    chrome_bin = get_chrome_binary_path()
+    logger.info(f"[Browser] Using Chrome binary: {chrome_bin}")
+
+    options = uc.ChromeOptions()
+    options.binary_location = chrome_bin
+
+    if headless:
+        options.add_argument("--headless=new")
+
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-setuid-sandbox")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1366,768")
+    options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
+    options.add_argument("--lang=en-US,en;q=0.9")
+
+    driver = uc.Chrome(options=options, use_subprocess=True)
+
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+            Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3]});
+            Object.defineProperty(navigator, 'languages', {get: () => ['en-US','en']});
+            window.chrome = { runtime: {} };
+        """
+    })
+
+    return driver
+
+# hilton add this code for docker .................. 
+
+
+# ── Driver Pool for Parallel Scraping ────────────────────────────────────
 _driver_pool: dict[int, webdriver.Chrome] = {}
 _driver_lock = threading.Lock()
-USER_AGENT               = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/124.0.0.0 Safari/537.36"
-)
+_uc_search_driver = None
+_uc_search_lock = threading.Lock()
+
+# hilton add this code for docker .................. 
+
+def is_driver_alive(driver) -> bool:
+    try:
+        _ = driver.current_url
+        return True
+    except Exception:
+        return False
+
+
+def _get_uc_search_driver() -> uc.Chrome:
+    global _uc_search_driver
+
+    with _uc_search_lock:
+        if _uc_search_driver is None or not is_driver_alive(_uc_search_driver):
+            logger.info("[Search] Creating new undetected browser")
+
+            try:
+                if _uc_search_driver:
+                    _uc_search_driver.quit()
+            except Exception:
+                pass
+
+            _uc_search_driver = make_uc_driver(headless=True)
+
+    return _uc_search_driver
+
+
+
+# hilton add this code for docker .................. 
 
 def _get_thread_driver() -> webdriver.Chrome:
-    """Return (or create) a Chrome driver bound to the current thread for reuse."""
+    """
+    Return or create a Chrome driver bound to the current thread.
+    Works in Docker, Ubuntu, and Windows local.
+    """
     tid = threading.get_ident()
+
     with _driver_lock:
         if tid not in _driver_pool:
             logger.info(f"[Driver Pool] Creating new browser for thread {tid}")
+
+            chrome_bin = get_chrome_binary_path()
+            logger.info(f"[Driver Pool] Using Chrome binary: {chrome_bin}")
+
             options = Options()
-            options.add_argument("--headless=new") # Production usually uses headless
+            options.binary_location = chrome_bin
+
+            options.add_argument("--headless=new")
             options.add_argument("--disable-blink-features=AutomationControlled")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument("--disable-gpu")
-            options.add_argument(f"user-agent={USER_AGENT}")
-            
-            # Asset Blocking & Eager Loading for Speed
-            options.page_load_strategy = 'eager'
+            options.add_argument("--disable-setuid-sandbox")
+            options.add_argument(f"--user-agent={USER_AGENT}")
+
+            options.page_load_strategy = "eager"
+
             prefs = {
                 "profile.managed_default_content_settings.images": 2,
                 "profile.managed_default_content_settings.stylesheet": 2,
-                "profile.managed_default_content_settings.fonts": 2
+                "profile.managed_default_content_settings.fonts": 2,
             }
+
             options.add_experimental_option("prefs", prefs)
-            
+
             driver = webdriver.Chrome(options=options)
             _driver_pool[tid] = driver
+
     return _driver_pool[tid]
 
 
+# hilton add this code for docker .................. 
+
+def close_all_drivers():
+    """Gracefully quit all Selenium drivers in the pool."""
+    with _driver_lock:
+        for tid, driver in list(_driver_pool.items()):
+            try:
+                driver.quit()
+                logger.info(f"[Driver Pool] Closed driver for thread {tid}")
+            except Exception as e:
+                logger.warning(f"[Driver Pool] Error closing driver for thread {tid}: {e}")
+        _driver_pool.clear()
+
 def is_html_useful(html: str) -> bool:
     """Decides if the HTML content is substantial enough for extraction."""
-    if not html or len(html) < 2000:
+    if not html or len(html) < 10000:
         return False
-    
-    # Check for heavy script sites that might need visible text capture instead
     soup = BeautifulSoup(html, "html.parser")
     scripts = soup.find_all("script")
-    if len(scripts) > 60: # Threshold from R&D
+    if len(scripts) > 60:
         return False
-    
     return True
 
 
@@ -252,7 +415,6 @@ def score_url(url: str) -> int:
     for pat in PREFERRED_URL_PATTERNS:
         if pat in url:
             score += 1
-    # Individual MagicBricks detail pages: 1 listing each, expire fast
     if "magicbricks.com/propertyDetails/" in url:
         score -= 2
     if "99acres.com/search" in url or "99acres.com/property-for-sale" in url:
@@ -260,29 +422,155 @@ def score_url(url: str) -> int:
     return score
 
 
+# ── Multi-engine search with fallback chain ──────────────────────────────
+_SEARCH_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+}
+
+
 def search_duckduckgo(query: str, num_results: int = 15) -> List[str]:
-    """
-    Directly scrapes DuckDuckGo HTML results as implemented in R&D notebook.
-    """
+    """Browser-based DuckDuckGo search using undetected-chromedriver."""
     try:
-        url = "https://html.duckduckgo.com/html/"
-        params = {"q": query}
+        driver = _get_uc_search_driver()
+        logger.info(f"[DDG] Searching: {query}")
+        driver.get("https://duckduckgo.com/")
+        time.sleep(random.uniform(1.5, 2.5))
 
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        try:
+            box = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.NAME, "q"))
+            )
+            box.clear()
+            for ch in query:
+                box.send_keys(ch)
+                time.sleep(random.uniform(0.04, 0.12))
+            box.send_keys(Keys.RETURN)
+        except TimeoutException:
+            logger.warning("[DDG] Search box not found")
+            return []
 
-        res = requests.post(url, data=params, headers=headers)
-        soup = BeautifulSoup(res.text, "html.parser")
+        time.sleep(random.uniform(2.0, 3.5))
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        results = []
 
-        links = []
-        for a in soup.select("a.result__a"):
-            links.append(a.get("href"))
-        return links[:num_results]
-    
+        # Primary DDG result selectors
+        for article in soup.select("article[data-testid='result']"):
+            title_el = article.select_one("h2 a") or article.select_one("a[data-testid='result-title-a']")
+            if not title_el: continue
+            href = title_el.get("href", "")
+            if href.startswith("http") and "duckduckgo.com" not in href:
+                results.append(href)
+            if len(results) >= num_results: break
+
+        # Fallback for older layouts or simpler parsing
+        if not results:
+            for a in soup.select("a[href^='http']"):
+                href = a.get("href", "")
+                if "duckduckgo.com" in href or not href: continue
+                text = a.get_text(strip=True)
+                if len(text) > 15:
+                    results.append(href)
+                if len(results) >= num_results: break
+
+        logger.info(f"[DDG] Found {len(results)} URLs")
+        return results
     except Exception as e:
-        logger.error(f"[DuckDuckGo] Search failed for '{query}': {e}")
+        logger.error(f"[DDG] Search failed: {e}")
         return []
+
+
+def search_bing(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Bing search using undetected-chromedriver."""
+    try:
+        driver = _get_uc_search_driver()
+        logger.info(f"[Bing] Searching: {query}")
+        url = f"https://www.bing.com/search?q={urllib.parse.quote_plus(query)}&count={num_results}"
+        driver.get(url)
+        time.sleep(random.uniform(2.0, 3.5))
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        links = []
+        for li in soup.select("li.b_algo"):
+            title_el = li.select_one("h2 a")
+            if not title_el: continue
+            href = title_el.get("href", "")
+            if href.startswith("http"):
+                links.append(href)
+            if len(links) >= num_results: break
+
+        logger.info(f"[Bing] Found {len(links)} URLs")
+        return links
+    except Exception as e:
+        logger.error(f"[Bing] Search failed: {e}")
+        return []
+
+
+def search_google(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Google search using undetected-chromedriver."""
+    try:
+        driver = _get_uc_search_driver()
+        logger.info(f"[Google] Searching: {query}")
+        url = f"https://www.google.com/search?q={urllib.parse.quote_plus(query)}&hl=en&num={num_results}"
+        driver.get(url)
+        time.sleep(random.uniform(2.5, 4.0))
+
+        # Handle cookie consent if it pops up
+        try:
+            accept = driver.find_element(By.XPATH, '//button[contains(.,"Accept") or contains(.,"I agree")]')
+            accept.click()
+            time.sleep(1)
+        except NoSuchElementException:
+            pass
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+        links = []
+        for div in soup.select("div.g"):
+            link_el = div.select_one("a[href]")
+            if not link_el: continue
+            href = link_el.get("href", "")
+            if href.startswith("http") and "google.com" not in href:
+                links.append(href)
+            if len(links) >= num_results: break
+
+        logger.info(f"[Google] Found {len(links)} URLs")
+        return links
+    except Exception as e:
+        logger.error(f"[Google] Search failed: {e}")
+        return []
+
+
+def search_web_with_fallback(query: str, num_results: int = 15) -> List[str]:
+    """
+    Multi-engine search with automatic fallback:
+      1. DuckDuckGo HTML (primary)
+      2. Bing              (fallback if DDG returns 0 or is blocked)
+      3. Google            (last resort)
+    Returns the first non-empty result set.
+    """
+    engines = [
+        ("DDG",    search_duckduckgo),
+        ("Bing",   search_bing),
+        ("Google", search_google),
+    ]
+    for name, fn in engines:
+        results = fn(query, num_results)
+        if results:
+            logger.info(f"[Search] Engine '{name}' succeeded with {len(results)} URLs for '{query}'")
+            return results
+        logger.warning(f"[Search] Engine '{name}' returned 0 results for '{query}' — trying next fallback")
+        time.sleep(0.5)
+    logger.error(f"[Search] All search engines failed for '{query}'")
+    return []
 
 
 def search_urls_for_projects_batch(
@@ -291,71 +579,71 @@ def search_urls_for_projects_batch(
     property_type: str,
     num_results:   int = 7,
 ) -> tuple:
-    """
-    Updated to use DuckDuckGo scraping logic instead of OpenAI web_search.
-    Generates a targeted query for each project and scrapes results.
-    """
+    """Uses DuckDuckGo scraping to find listing URLs for each project."""
     final_map = {}
     search_term = PROPERTY_TYPE_SEARCH_TERM.get(property_type, property_type)
-    
-    # Process each project with a targeted query
+
     for p in projects:
         pname = p["project_name"]
         loc = p.get("location", "")
         country = p.get("country", "India")
-        
-        # Build a high-intent query
+        per_project_type = p.get("property_type", property_type)
+        search_term = PROPERTY_TYPE_SEARCH_TERM.get(per_project_type, per_project_type)
+
         lat = p.get("lat")
         lng = p.get("lng")
-        if lat and lng and lat != 0 and lng != 0:
+        is_general = p.get("is_general_search", False)
+
+        if is_general:
+            # User requested specific "buy plot" query for general plot search
+            if per_project_type == "plot":
+                query = f"buy plot in {loc}, {country}"
+            else:
+                query = f"buy {search_term} in {loc}, {country}"
+        elif lat and lng and lat != 0 and lng != 0:
             query = f"buy {search_term} in {pname}, {loc}, {country}, coordinates: {lat}, {lng}"
         else:
             query = f"buy {search_term} in {pname}, {loc}, {country}"
 
-        logger.info(f"[URL Search DDG] Query: '{query}'")
-        
-        urls = search_duckduckgo(query, num_results=num_results)
-        
-        # Score and sort URLs (YIELD-01)
+        logger.info(f"[URL Search] Query: '{query}'")
+
+        urls = search_web_with_fallback(query, num_results=num_results)
         valid_urls = sorted(urls, key=score_url, reverse=True)
         final_map[pname] = valid_urls
-        logger.info(f"[URL Search DDG] Result: '{pname}' -> {len(valid_urls)} URLs.")
+        logger.info(f"[URL Search] Result: '{pname}' -> {len(valid_urls)} URLs.")
         time.sleep(1)
 
-    # Return empty usage as we didn't use OpenAI search tokens
     usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     return final_map, usage
 
 
-# ── YIELD-03: Scraper — capture all listing rows, not just first ──────────
-def fetch_page_text(url: str, project_name: str = "", char_limit: int = 2000, run_logger: Optional[any] = None) -> str:
-    """
-    Refactored to use Selenium for robust scraping, matching R&D logic.
-    Switches between HTML extraction and Visible Text based on usefulness.
-    Now saves raw content to disk if run_logger is provided.
-    """
+# ── Scraper ───────────────────────────────────────────────────────────────
+def fetch_page_text(
+    url: str,
+    project_name: str = "",
+    char_limit: int = 2000,
+    run_logger: Optional[any] = None,
+) -> str:
+    """Uses Selenium for robust scraping."""
     if is_blocked_url(url):
         log_drop("scrape", project_name, "blocked_url_pattern", extra={"url": url})
         return ""
 
     logger.info(f"[Scrape] project='{project_name}' url='{url}'")
-    
-    # Filename for logging
     fname = safe_filename(url)
-    
-    # 1. Try Requests First (as requested)
+
     use_selenium = False
     try:
         logger.info(f"[Scrape] Trying requests for {url}")
         resp = requests.get(url, headers=HEADERS, timeout=15)
-        
+
         if resp.status_code == 200:
             soup = BeautifulSoup(resp.text, "html.parser")
             html = resp.text
             for tag in soup(["script", "style", "noscript", "header", "footer", "nav", "aside"]):
                 tag.decompose()
             text = soup.get_text(separator="\n", strip=True)
-            
+
             if run_logger:
                 run_logger.save_text("listing_search/scrapes/raw", f"{fname}_req", text)
                 run_logger.save_raw("listing_search/scrapes/html", f"{fname}_req_html.html", html)
@@ -375,57 +663,61 @@ def fetch_page_text(url: str, project_name: str = "", char_limit: int = 2000, ru
         use_selenium = True
 
     if use_selenium:
-        driver = None
         try:
             logger.info(f"[Scrape] URL '{url}' is difficult to scrape, using Selenium Pool.")
             driver = _get_thread_driver()
             driver.set_page_load_timeout(30)
             driver.get(url)
-            time.sleep(4) # Allow dynamic content to load
-            
+            time.sleep(4)
+
             html = driver.page_source
             if is_html_useful(html):
-                # Clean HTML approach
                 soup = BeautifulSoup(html, "html.parser")
                 for tag in soup(["script", "style", "noscript", "header", "footer", "nav", "aside"]):
                     tag.decompose()
                 text = soup.get_text(separator="\n", strip=True)
-                
+
                 if run_logger:
-                    run_logger.save_raw("listing_search/scrapes/html", f"{fname}_sel_html.html", html) # Save raw HTML
+                    run_logger.save_raw("listing_search/scrapes/html", f"{fname}_sel_html.html", html)
                     run_logger.save_text("listing_search/scrapes/raw", f"{fname}_sel_clean", text)
 
                 logger.info(f"[Scrape] OK via Selenium (HTML Mode) for {url}")
             else:
-                # Visible text approach
                 text = driver.find_element("tag name", "body").text
-                
+
                 if run_logger:
                     run_logger.save_text("listing_search/scrapes/raw", f"{fname}_sel_text", text)
-                    run_logger.save_raw("listing_search/scrapes/html", f"{fname}_sel_html.html", html) # Save raw HTML
+                    run_logger.save_raw("listing_search/scrapes/html", f"{fname}_sel_html.html", html)
 
                 logger.info(f"[Scrape] OK via Selenium (Text Mode) for {url}")
-                
-            return text[:char_limit]                
+
+            return text[:char_limit]
         except Exception as e:
             log_drop("scrape", project_name, f"selenium_exception: {e}", extra={"url": url})
             return ""
-    
+
     return ""
 
 
 # ── Extraction prompt ─────────────────────────────────────────────────────
-def build_extract_prompt(property_type: str, project_name: str, text: str) -> str:
+def build_extract_prompt(property_type: str, project_name: str, text: str, is_general: bool = False) -> str:
     display_name  = PROPERTY_TYPE_DISPLAY.get(property_type, property_type)
     search_term   = PROPERTY_TYPE_SEARCH_TERM.get(property_type, property_type)
     valid_terms   = ", ".join(PROPERTY_TYPE_ALIASES.get(property_type, {property_type}))
     exclusion_str = ", ".join(PROPERTY_TYPE_EXCLUSIONS.get(property_type, []))
 
+    if is_general:
+        target_instruction = "extract EVERY distinct property listing found in the text"
+        name_instruction = "Extract the actual project name if mentioned, otherwise use null"
+    else:
+        target_instruction = f"extract EVERY distinct property listing for project: \"{project_name}\""
+        name_instruction = f"exactly \"{project_name}\""
+
     return f"""You are a real estate listing data extractor.
-Read the text and extract EVERY distinct property listing for project: "{project_name}".
+Read the text and {target_instruction}.
 
 STRICT RULES:
-1. Extract ONLY listings for project: "{project_name}". IGNORE nearby projects.
+1. {"IGNORE projects that are not relevant to the search area." if is_general else f"Extract ONLY listings for project: \"{project_name}\". IGNORE nearby projects."}
 2. Property type MUST be: {display_name} (valid terms: {valid_terms}). 
 3. DO NOT extract: {exclusion_str}.
 4. CRITICAL: COPY values EXACTLY as they appear. No calculations, no unit conversions (e.g., leave "1.2 Cr" as "1.2 Cr").
@@ -434,7 +726,7 @@ STRICT RULES:
 
 Return ONLY a JSON array of objects with these keys:
 - currency (e.g. "₹", "INR", "USD")
-- project_name (exactly "{project_name}")
+- project_name ({name_instruction})
 - property_type (exactly "{property_type}")
 - listing_type ("Sale" or "Rental")
 - location (address/locality)
@@ -465,20 +757,20 @@ def extract_listings_from_text(
     page_text:     str,
     project_name:  str,
     property_type: str,
+    is_general:    bool = False,
 ) -> tuple:
-
     if not page_text:
         log_drop("extract", project_name, "empty_page_text", extra={"url": url})
         return [], {}
 
     try:
-        user_prompt = build_extract_prompt(property_type, project_name, page_text)
+        user_prompt   = build_extract_prompt(property_type, project_name, page_text, is_general=is_general)
         system_prompt = "You are a precise data extraction agent. Return only a JSON array of objects."
         response = _client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user",   "content": user_prompt},
             ],
             max_tokens=2000,
         )
@@ -489,9 +781,8 @@ def extract_listings_from_text(
             "prompt_tokens":     input_tok,
             "completion_tokens": output_tok,
             "total_tokens":      input_tok + output_tok,
-            "model":             "gpt-4o-mini"
+            "model":             "gpt-4o-mini",
         }
-
 
         json_chunk = extract_json_array(response.choices[0].message.content.strip())
         if not json_chunk:
@@ -503,19 +794,8 @@ def extract_listings_from_text(
 
         verified = []
         for item in listings:
-            # Property type guard
-            # if normalize_property_type(item.get("property_type", "")) != property_type:
-            #     log_drop(
-            #         "extract_type_filter",
-            #         item.get("project_name", project_name),
-            #         "property_type_mismatch",
-            #         extra={"got": item.get("property_type"), "expected": property_type, "url": url},
-            #     )
-            #     continue
-
-            # Project name guard (BUG-01/03 fix)
             extracted_proj = (item.get("project_name") or "").strip()
-            if extracted_proj and not is_matching_project(extracted_proj, project_name):
+            if not is_general and extracted_proj and not is_matching_project(extracted_proj, project_name):
                 log_drop(
                     "extract_project_name_filter",
                     extracted_proj,
@@ -524,8 +804,9 @@ def extract_listings_from_text(
                 )
                 continue
 
-            item["source_url"]    = url
-            item["project_name"]  = project_name
+            item["source_url"]   = url
+            if not is_general:
+                item["project_name"] = project_name
             item["property_type"] = property_type
             verified.append(item)
 
@@ -546,7 +827,6 @@ def batch_llm_fallback(
     listing_type:    str,
     property_type:   str,
 ) -> tuple:
-
     if not failed_projects:
         return {}, {}
 
@@ -564,7 +844,6 @@ def batch_llm_fallback(
         for p in failed_projects
     ])
 
-    # Two-prompt strategy: detailed first, simple retry if no JSON returned
     prompts = [
         (
             f"Provide current {listing_type} listings for {search_term} "
@@ -576,7 +855,6 @@ def batch_llm_fallback(
             f"area_sqft, area_raw, area_type, rate_per_sqft_raw, possession_status, "
             f"furnishing, floor, total_floors, parking, facing, developer, rera_id"
         ),
-        # Simpler retry
         (
             f"Based on your knowledge, give me current {listing_type} prices for {search_term} in these projects:\n"
             f"{project_list}\n\n"
@@ -600,11 +878,9 @@ def batch_llm_fallback(
             cumulative["prompt_tokens"]     += input_tok
             cumulative["completion_tokens"] += output_tok
             cumulative["total_tokens"]      += input_tok + output_tok
-            cumulative["model"]             = "gpt-4o-mini"
-
+            cumulative["model"]              = "gpt-4o-mini"
 
             json_chunk = extract_json_array(response.output_text.strip())
-
             if not json_chunk:
                 logger.warning(f"[Fallback] Attempt {attempt} — no JSON, retrying...")
                 time.sleep(1)
@@ -617,9 +893,12 @@ def batch_llm_fallback(
 
             for lst in all_listings:
                 if normalize_property_type(lst.get("property_type", "")) != property_type:
-                    log_drop("fallback_type_filter", lst.get("project_name", "unknown"),
-                             "property_type_mismatch",
-                             extra={"got": lst.get("property_type"), "expected": property_type})
+                    log_drop(
+                        "fallback_type_filter",
+                        lst.get("project_name", "unknown"),
+                        "property_type_mismatch",
+                        extra={"got": lst.get("property_type"), "expected": property_type},
+                    )
                     continue
 
                 lst["property_type"] = property_type
@@ -628,16 +907,20 @@ def batch_llm_fallback(
                 matched  = False
                 for p in failed_projects:
                     if is_matching_project(ext_name, p["project_name"]):
-                        lst["project_name"] = p["project_name"]
-                        lst["is_fallback"] = True
+                        lst["project_name"]      = p["project_name"]
+                        lst["is_fallback"]        = True
+                        # CAT-01: stamp category from the project meta
+                        lst["project_category"]  = p.get("project_category", "Unknown")
                         grouped[p["project_name"]].append(lst)
                         matched = True
                         break
 
                 if not matched:
-                    log_drop("fallback_project_match", ext_name,
-                             "could_not_match_to_any_requested_project",
-                             extra={"requested": [p["project_name"] for p in failed_projects]})
+                    log_drop(
+                        "fallback_project_match", ext_name,
+                        "could_not_match_to_any_requested_project",
+                        extra={"requested": [p["project_name"] for p in failed_projects]},
+                    )
 
             for proj_name, listings in grouped.items():
                 logger.info(f"[Fallback] '{proj_name}' -> {len(listings)} listings")
@@ -699,30 +982,70 @@ def listing_pipeline(
         f"comparables={len(comparables)}"
     )
 
-    logger.info(f"[Pipeline] Subject: {subject}")
+    # ── CAT-01: Build project list — carry project_category from comparable ──
+    # Subject's category: derive from its own property_type
+    subject_ptype    = subject.get("property_type", property_type)
+    subject_category = subject.get("project_category") or PROJECT_CATEGORY_DEFAULT.get(subject_ptype, "Unknown")
 
-    projects = [{
-        "project_name": subject["project_name"],
-        "location":     subject.get("location_name", ""),
-        "country":      subject.get("country", "India"),
-        "lat":          subject.get("lat"),
-        "lng":          subject.get("lng"),
-        "is_subject":   True,
-    }]
+    projects = []
+    
+    if subject_ptype.lower() != "plot":
+        projects.append({
+            "project_name":     subject["project_name"],
+            "location":         subject.get("location_name", ""),
+            "country":          subject.get("country", "India"),
+            "lat":              subject.get("lat"),
+            "lng":              subject.get("lng"),
+            "property_type":    subject_ptype,
+            "project_category": subject_category,   # ← subject's category
+            "is_subject":       True,
+        })
+
     for c in comparables:
         name = (c.get("project_name") or "").strip()
-        if name:
+        if not name:
+            continue
+
+        comp_ptype = (
+            normalize_property_type(c.get("property_type", ""))
+            or normalize_property_type(property_type)
+            or property_type
+        )
+        comp_category = derive_project_category(c, comp_ptype)
+
+        projects.append({
+            "project_name":     name,
+            "location":         c.get("location") or subject.get("location_name", ""),
+            "country":          c.get("country")  or subject.get("country", "India"),
+            "lat":              c.get("map_search_lat") or c.get("lat"),
+            "lng":              c.get("map_search_lng") or c.get("lng"),
+            "property_type":    comp_ptype,
+            "project_category": comp_category,  # ← comparable's category
+            "is_subject":       False,
+        })
+
+    # ── CAT-02: Add General Locality Search for Plots ──
+    # If the subject is a plot, we also search for general land data in the area.
+    if property_type == "plot":
+        loc = subject.get("location_name") or subject.get("locality", "")
+        if loc:
             projects.append({
-                "project_name": name,
-                "location":     c.get("location") or subject.get("location_name", ""),
-                "country":      c.get("country") or subject.get("country", "India"),
-                "lat":          c.get("map_search_lat") or c.get("lat"),
-                "lng":          c.get("map_search_lng") or c.get("lng"),
-                "is_subject":   False,
+                "project_name":     loc,
+                "location":         loc,
+                "country":          subject.get("country", "India"),
+                "lat":              subject.get("lat"),
+                "lng":              subject.get("lng"),
+                "property_type":    "plot",
+                "project_category": "Plot",
+                "is_subject":       False,
+                "is_general_search": True,
             })
 
     logger.info(f"[Pipeline] Total projects: {len(projects)}")
-    logger.info(f"[Pipeline] Projects: {projects}")
+    logger.info(
+        f"[Pipeline] Categories: "
+        + ", ".join(f"'{p['project_name']}' → {p['project_category']}" for p in projects)
+    )
 
     if on_progress:
         on_progress("__pipeline__", "started", {
@@ -731,43 +1054,31 @@ def listing_pipeline(
             "search_term":    search_term,
         })
 
-    # Hybrid Pipeline: Sequential Projects -> Parallel URLs
     all_listings = []
-    
+
     for p in projects:
-        pname = p["project_name"]
-        logger.info(f"\n{'='*60}\n[Pipeline] Processing Project: {pname} (Parallel URLs)\n{'='*60}")
-        
+        pname     = p["project_name"]
+        p_ptype   = p["property_type"]
+        p_cat     = p["project_category"]
+
+        logger.info(
+            f"\n{'='*60}\n[Pipeline] Project: '{pname}' | "
+            f"type={p_ptype} | category={p_cat}\n{'='*60}"
+        )
+
         if on_progress:
             on_progress(pname, "started", {"message": f"Searching and scraping {pname}..."})
 
-        # Fetch road category and amenities (Local CSV or OSM)
-        road_type = get_road_category(p.get("lat"), p.get("lng"))
-        # We pass location as city_name; get_nearby_amenities uses fuzzy matching
-        amenities = get_nearby_amenities(p.get("lat"), p.get("lng"), city_name=p.get("location"))
-        
-        print(f"\n>>> FETCHING AMENITY COUNTS FOR PROJECT: {pname} <<<")
-        amenity_counts = get_amenity_counts(amenities)
-        
-        # Summary counts for factorial table
-        amenity_summary = {
-            "counts": amenity_counts,
-            "total": len(amenities)
-        }
-        
-        logger.info(f"[Pipeline] Road Category for {pname}: {road_type}")
-        logger.info(f"[Pipeline] Amenities for {pname}: {amenity_summary}")
-
-        # A. URL search (Sequential search is fine as it's one query)
+        # A. URL search
         if custom_urls and pname in custom_urls:
             urls = custom_urls[pname]
         else:
             p_urls_map, p_usage = search_urls_for_projects_batch(
-                [p], listing_type, property_type, num_results=max_urls_per_project
+                [p], listing_type, p_ptype, num_results=max_urls_per_project
             )
             urls = p_urls_map.get(pname, [])
-            
-            logger.info(f"------------------- urls for {pname} --- {len(urls)} ---- {urls}")
+
+            logger.info(f"[URLs] {pname} -> {len(urls)} urls")
 
             for k in cumulative_tokens:
                 cumulative_tokens[k] += p_usage.get(k, 0)
@@ -776,52 +1087,63 @@ def listing_pipeline(
             log_drop("url_search", pname, "zero_urls_returned")
             continue
 
-        # B. Scrape + Extract URLs in PARALLEL for this project
+        # B. Scrape + Extract URLs in PARALLEL
         p_listings_valid = []
-        
-        # B. Scrape + Extract URLs in PARALLEL for this project
-        p_listings_valid = []
-        
-        def process_url(idx, url, current_pname, is_subject, current_road_type, current_amenities, current_amenity_summary, p_lat, p_lng):
+
+        def process_url(idx, url, current_pname, is_subject, p_lat, p_lng, proj_ptype, proj_cat, is_general=False):
             logger.info(f"[Scrape] URL #{idx} Starting: {url}")
             text = fetch_page_text(url, project_name=current_pname, run_logger=run_logger)
-            if not text: 
+            if not text:
                 logger.info(f"[Scrape] URL #{idx} Failed (No text): {url}")
                 return [], {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-            
+
             listings, usage = extract_listings_from_text(
-                url, text, project_name=current_pname, property_type=property_type
+                url, text, project_name=current_pname, property_type=proj_ptype, is_general=is_general
             )
-            
-            # Local collection for this URL
+
             valid = []
             for lst in listings:
-                if is_matching_project(lst.get("project_name", ""), current_pname):
-                    lst["project_name"]  = current_pname
-                    lst["property_type"] = property_type
-                    lst["is_subject"]    = is_subject
-                    lst["road_type"]     = current_road_type
-                    lst["amenities"]     = current_amenities
-                    lst["amenity_summary"] = current_amenity_summary
-                    lst["lat"]           = p_lat
-                    lst["lng"]           = p_lng
-                    lst["price_norm"]    = normalise_price(lst.get("price"))
-                    
-                    # Compute Price per Sqft
+                if is_general or is_matching_project(lst.get("project_name", ""), current_pname):
+                    if not is_general:
+                        lst["project_name"] = current_pname
+                    elif not lst.get("project_name"):
+                        lst["project_name"] = current_pname
+                    lst["property_type"]    = proj_ptype
+                    lst["project_category"] = proj_cat      
+                    lst["is_subject"]       = is_subject
+                    lst["lat"]              = p_lat
+                    lst["lng"]              = p_lng
+                    lst["price_norm"]       = normalise_price(lst.get("price"))
+
+                    # Compute price per sqft
                     area = lst.get("area_sqft")
                     if lst["price_norm"] and area:
                         try:
                             area_num = float(area)
                             if area_num > 0:
                                 lst["price_per_sqft"] = round(lst["price_norm"] / area_num)
-                        except: pass
+                        except Exception:
+                            pass
                     valid.append(lst)
-            
-            logger.info(f"[Scrape] URL #{idx} Finished: {url} -> {len(valid)} listings found")
+
+            logger.info(f"[Scrape] URL #{idx} -> {len(valid)} listings | {url}")
             return valid, usage
 
         with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(process_url, i+1, url, pname, p["is_subject"], road_type, amenities, amenity_summary, p.get("lat"), p.get("lng")): url for i, url in enumerate(urls)}
+            futures = {
+                executor.submit(
+                    process_url,
+                    i + 1, url,
+                    pname,
+                    p["is_subject"],
+                    p.get("lat"),
+                    p.get("lng"),
+                    p_ptype,
+                    p_cat,           # ← pass category to thread
+                    p.get("is_general_search", False)
+                ): url
+                for i, url in enumerate(urls)
+            }
             for future in as_completed(futures):
                 try:
                     res_listings, usage = future.result()
@@ -833,11 +1155,11 @@ def listing_pipeline(
 
         if on_progress:
             on_progress(pname, "scraped", {"listings_found": len(p_listings_valid)})
-            
-        all_listings.extend(p_listings_valid)
-        logger.info(f"[Project Done] {pname} -> {len(p_listings_valid)} listings found on web.")
 
-    # Deduplicate across all projects
+        all_listings.extend(p_listings_valid)
+        logger.info(f"[Project Done] '{pname}' -> {len(p_listings_valid)} listings")
+
+    # ── Deduplicate ───────────────────────────────────────────────────────
     seen, deduped = set(), []
     for lst in all_listings:
         key = (
@@ -850,18 +1172,22 @@ def listing_pipeline(
             seen.add(key)
             deduped.append(lst)
         else:
-            log_drop("dedup", lst.get("project_name", ""), "duplicate_listing",
-                     extra={"bhk": lst.get("bhk"), "price": lst.get("price"),
-                            "area": lst.get("area_sqft")})
+            log_drop(
+                "dedup", lst.get("project_name", ""), "duplicate_listing",
+                extra={"bhk": lst.get("bhk"), "price": lst.get("price"),
+                       "area": lst.get("area_sqft")},
+            )
 
-    # Final validation filter
+    # ── Final validation ──────────────────────────────────────────────────
     final_listings = []
     for lst in deduped:
         missing = [f for f in ("price", "area_sqft") if not is_valid_data(lst.get(f))]
         if missing:
-            log_drop("final_validation", lst.get("project_name", ""),
-                     f"missing_mandatory_fields: {missing}",
-                     extra={"price": lst.get("price"), "area_sqft": lst.get("area_sqft")})
+            log_drop(
+                "final_validation", lst.get("project_name", ""),
+                f"missing_mandatory_fields: {missing}",
+                extra={"price": lst.get("price"), "area_sqft": lst.get("area_sqft")},
+            )
             continue
         final_listings.append(lst)
 
@@ -878,6 +1204,9 @@ def listing_pipeline(
         f"[Pipeline Done] final_listings={len(final_listings)} | "
         f"projects={len(projects)} | tokens={cumulative_tokens['total_tokens']}"
     )
+     
+    # After all scraping is done
+    close_all_drivers()
 
     return {
         "listings":           final_listings,

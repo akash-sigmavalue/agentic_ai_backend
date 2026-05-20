@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -48,7 +49,7 @@ def get_oauth_connection_by_email(db: Session, *, provider: str, system: str, em
     )
 
 
-def get_oauth_connections(db: Session, *, provider: str | None = None, system: str | None = None):
+def get_oauth_connections(db: Session, *, provider: Optional[str] = None, system: Optional[str] = None):
     query = db.query(models.OAuthConnection)
     if provider:
         query = query.filter(models.OAuthConnection.provider == provider)
@@ -79,12 +80,12 @@ def upsert_oauth_connection(
     user_id: int,
     provider: str,
     system: str,
-    email: str | None = None,
+    email: Optional[str] = None,
     access_token: str,
-    refresh_token: str | None = None,
-    token_type: str | None = None,
-    expires_at: datetime | None = None,
-    scope: str | None = None,
+    refresh_token: Optional[str] = None,
+    token_type: Optional[str] = None,
+    expires_at: Optional[datetime] = None,
+    scope: Optional[str] = None,
 ):
     db_connection = get_oauth_connection(db, user_id=user_id, provider=provider, system=system)
     if db_connection is None:
@@ -122,9 +123,9 @@ def update_oauth_watch_state(
     user_id: int,
     provider: str,
     system: str,
-    gmail_connector_id: str | None = None,
-    gmail_history_id: str | None = None,
-    gmail_watch_expiration: datetime | None = None,
+    gmail_connector_id: Optional[str] = None,
+    gmail_history_id: Optional[str] = None,
+    gmail_watch_expiration: Optional[datetime] = None,
 ):
     connection = get_oauth_connection(db, user_id=user_id, provider=provider, system=system)
     if connection is None:
@@ -160,7 +161,7 @@ def clear_oauth_watch_state(
     return connection
 
 
-def get_sender_preference(db: Session, *, user_id: int, sender_email: str) -> SenderPreference | None:
+def get_sender_preference(db: Session, *, user_id: int, sender_email: str) -> Optional[SenderPreference]:
     return (
         db.query(SenderPreference)
         .filter(
@@ -176,7 +177,7 @@ def upsert_sender_preference(
     *,
     user_id: int,
     sender_email: str,
-    tone: str | None = None,
+    tone: Optional[str] = None,
     auto_send_allowed: bool = False,
     trust_level: float = 0.0,
 ) -> SenderPreference:
@@ -210,7 +211,7 @@ def create_email_processing_log(
     message_id: str,
     thread_id: str,
     action_taken: str,
-    details: str | None = None,
+    details: Optional[str] = None,
 ) -> EmailProcessingLog:
     existing = db.query(EmailProcessingLog).filter(EmailProcessingLog.message_id == message_id).first()
     if existing is not None:
