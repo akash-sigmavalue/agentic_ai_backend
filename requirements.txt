@@ -52,3 +52,4 @@ pypdf
 langchain-community
 PyMuPDF
 undetected-chromedriver
+opendataloader_pdf

@@ -19724,3 +19724,9 @@ Stacktrace:
 2026-05-20 12:09:38,770 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-20 12:09:38,829 | INFO | [DB] Found 5 candidates in spatial bounding box
 2026-05-20 12:09:38,831 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-20 12:13:33,462 | INFO | Scheduler has been shut down
+2026-05-20 12:13:33,473 | INFO | ensuring close
+2026-05-20 12:13:43,270 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 12:13:43,270 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 12:13:43,270 | INFO | Scheduler started
+2026-05-20 12:14:57,849 | INFO | Scheduler has been shut down

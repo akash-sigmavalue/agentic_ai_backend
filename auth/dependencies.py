@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Annotated
 from types import SimpleNamespace
 from fastapi import Depends, HTTPException, status

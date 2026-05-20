@@ -41,6 +41,9 @@ from utils.data_retrieval.semantic_different_categories import (
     PROJECT_TABLE,
     resolve_intent_category_filters,
 )
+from utils.data_retrieval.semantic_project_location_name import (
+    resolve_intent_space_entities,
+)
 from agents.data_retrieval_project.constants import MAX_ITERATIONS, REVIEW_SAMPLE
 from agents.data_retrieval_project.helpers import (
     clean_sql,
@@ -128,6 +131,11 @@ class ProjectQueryBuilder:
         # Convert user wording ("under construction", "residential", "approved")
         # to exact values from project category columns before SQL generation.
         self._resolve_semantic_category_filters(intent)
+
+        # ── STEP 0B: SEMANTIC PROJECT/LOCATION/CITY RESOLUTION ────────────────
+        # Convert misspelled or aliased spatial names to exact DB values before
+        # probe/build so every downstream stage works with canonical names.
+        self._resolve_semantic_space_entities(intent)
 
         # ── STEP 0: PROBE ─────────────────────────────────────────────────────
         probe_data = self._probe(intent)
@@ -345,6 +353,27 @@ class ProjectQueryBuilder:
         except Exception as exc:
             intent.setdefault("semantic_resolved_filters", {})
             logger.warning("Semantic project category resolution failed: %s", exc)
+
+    def _resolve_semantic_space_entities(self, intent: dict) -> None:
+        """Enrich intent with exact DB values for project/location/city names."""
+        if self.db_executor is None:
+            intent.setdefault("semantic_resolved_entities", {})
+            return
+
+        try:
+            resolved = resolve_intent_space_entities(
+                intent=intent,
+                table_name=PROJECT_TABLE,
+                db_executor=self.db_executor,
+            )
+            if resolved:
+                print(f"[ReAct] SEMANTIC project/location entities: {resolved}")
+                logger.info("Semantic project/location entities resolved: %s", resolved)
+            else:
+                logger.info("No semantic project/location entities resolved.")
+        except Exception as exc:
+            intent.setdefault("semantic_resolved_entities", {})
+            logger.warning("Semantic project/location resolution failed: %s", exc)
 
     # ══════════════════════════════════════════════════════════════════════════
     # Private — LLM calls

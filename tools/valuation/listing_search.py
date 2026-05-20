@@ -238,24 +238,61 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
 ]
 
+# hilton add this code for docker .................. 
+
+import os
+import shutil
+
+def get_chrome_binary_path():
+    candidates = [
+        os.getenv("CHROME_BIN"),
+
+        # Linux / Docker
+        shutil.which("google-chrome"),
+        shutil.which("google-chrome-stable"),
+        shutil.which("chromium"),
+        shutil.which("chromium-browser"),
+
+        # Windows local
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    ]
+
+    for path in candidates:
+        if path and isinstance(path, str) and os.path.exists(path):
+            return path
+
+    raise RuntimeError(
+        "Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN."
+    )
+
+# hilton add this code for docker .................. 
 
 def make_uc_driver(headless: bool = True):
     """
     Create an undetected Chrome driver.
-    Patches ChromeDriver to remove automation fingerprints.
+    Works in Docker, Ubuntu, and Windows local.
     """
+    chrome_bin = get_chrome_binary_path()
+    logger.info(f"[Browser] Using Chrome binary: {chrome_bin}")
+
     options = uc.ChromeOptions()
+    options.binary_location = chrome_bin
+
     if headless:
         options.add_argument("--headless=new")
+
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-setuid-sandbox")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1366,768")
     options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
     options.add_argument("--lang=en-US,en;q=0.9")
 
     driver = uc.Chrome(options=options, use_subprocess=True)
-    # Stealth patches
+
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
             Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
@@ -264,7 +301,10 @@ def make_uc_driver(headless: bool = True):
             window.chrome = { runtime: {} };
         """
     })
+
     return driver
+
+# hilton add this code for docker .................. 
 
 
 # ── Driver Pool for Parallel Scraping ────────────────────────────────────
@@ -273,42 +313,79 @@ _driver_lock = threading.Lock()
 _uc_search_driver = None
 _uc_search_lock = threading.Lock()
 
+# hilton add this code for docker .................. 
+
+def is_driver_alive(driver) -> bool:
+    try:
+        _ = driver.current_url
+        return True
+    except Exception:
+        return False
+
 
 def _get_uc_search_driver() -> uc.Chrome:
-    """Singleton-like undetected driver for search operations."""
     global _uc_search_driver
+
     with _uc_search_lock:
-        if _uc_search_driver is None:
+        if _uc_search_driver is None or not is_driver_alive(_uc_search_driver):
             logger.info("[Search] Creating new undetected browser")
+
+            try:
+                if _uc_search_driver:
+                    _uc_search_driver.quit()
+            except Exception:
+                pass
+
             _uc_search_driver = make_uc_driver(headless=True)
+
     return _uc_search_driver
 
 
+
+# hilton add this code for docker .................. 
+
 def _get_thread_driver() -> webdriver.Chrome:
-    """Return (or create) a Chrome driver bound to the current thread for reuse."""
+    """
+    Return or create a Chrome driver bound to the current thread.
+    Works in Docker, Ubuntu, and Windows local.
+    """
     tid = threading.get_ident()
+
     with _driver_lock:
         if tid not in _driver_pool:
             logger.info(f"[Driver Pool] Creating new browser for thread {tid}")
+
+            chrome_bin = get_chrome_binary_path()
+            logger.info(f"[Driver Pool] Using Chrome binary: {chrome_bin}")
+
             options = Options()
+            options.binary_location = chrome_bin
+
             options.add_argument("--headless=new")
             options.add_argument("--disable-blink-features=AutomationControlled")
             options.add_argument("--no-sandbox")
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument("--disable-gpu")
-            options.add_argument(f"user-agent={USER_AGENT}")
+            options.add_argument("--disable-setuid-sandbox")
+            options.add_argument(f"--user-agent={USER_AGENT}")
 
-            options.page_load_strategy = 'eager'
+            options.page_load_strategy = "eager"
+
             prefs = {
                 "profile.managed_default_content_settings.images": 2,
                 "profile.managed_default_content_settings.stylesheet": 2,
                 "profile.managed_default_content_settings.fonts": 2,
             }
+
             options.add_experimental_option("prefs", prefs)
 
             driver = webdriver.Chrome(options=options)
             _driver_pool[tid] = driver
+
     return _driver_pool[tid]
+
+
+# hilton add this code for docker .................. 
 
 def close_all_drivers():
     """Gracefully quit all Selenium drivers in the pool."""

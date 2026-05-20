@@ -47,7 +47,13 @@ from typing import Any, Callable
 
 from openai import OpenAI
 
-from utils.data_retrieval.semantic_different_categories import resolve_intent_category_filters
+from utils.data_retrieval.semantic_different_categories import (
+    TRANSACTION_TABLE,
+    resolve_intent_category_filters,
+)
+from utils.data_retrieval.semantic_project_location_name import (
+    resolve_intent_space_entities,
+)
 from agents.data_retrieval_transaction.constants import MAX_ITERATIONS, REVIEW_SAMPLE
 from agents.data_retrieval_transaction.helpers import (
     clean_sql,
@@ -157,6 +163,11 @@ class TransactionQueryBuilder:
         # Convert user wording ("2BHK", "residential", "mrkt") to exact DB
         # values for category-like columns before SQL generation.
         self._resolve_semantic_category_filters(intent)
+
+        # ── STEP 0B: SEMANTIC PROJECT/LOCATION/CITY RESOLUTION ────────────────
+        # Convert misspelled or aliased spatial names to exact DB values before
+        # probe/build so every downstream stage works with canonical names.
+        self._resolve_semantic_space_entities(intent)
 
         # ── STEP 0: PROBE ─────────────────────────────────────────────────────
         # Identify which columns actually contain the entities to avoid empty results.
@@ -377,6 +388,27 @@ class TransactionQueryBuilder:
             # continue with the raw intent if this auxiliary step fails.
             intent.setdefault("semantic_resolved_filters", {})
             logger.warning("Semantic category resolution failed: %s", exc)
+
+    def _resolve_semantic_space_entities(self, intent: dict) -> None:
+        """Enrich intent with exact DB values for project/location/city names."""
+        if self.db_executor is None:
+            intent.setdefault("semantic_resolved_entities", {})
+            return
+
+        try:
+            resolved = resolve_intent_space_entities(
+                intent=intent,
+                table_name=TRANSACTION_TABLE,
+                db_executor=self.db_executor,
+            )
+            if resolved:
+                print(f"[ReAct] SEMANTIC transaction project/location entities: {resolved}")
+                logger.info("Semantic transaction project/location entities resolved: %s", resolved)
+            else:
+                logger.info("No semantic transaction project/location entities resolved.")
+        except Exception as exc:
+            intent.setdefault("semantic_resolved_entities", {})
+            logger.warning("Semantic transaction project/location resolution failed: %s", exc)
 
     # ══════════════════════════════════════════════════════════════════════════
     # Private — LLM calls

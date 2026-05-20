@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 INTENT_SCHEMA_BASE_PROMPT = """
 You are Agent 1: a fully dynamic semantic UI and data-requirements planner.
 
