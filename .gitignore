@@ -24,3 +24,5 @@ __pycache__/
 
 # Databases
 *.sqlite3
+comparable_agent.log
+run_logs

@@ -123,8 +123,8 @@ def _cleaning_stream_generator(req: CleaningRequest):
             on_progress=on_progress,
         )
 
-        # Only calculate plot rates if the subject property is a plot
-        if req.property_type.strip().lower() == "plot":
+        # Calculate plot rates if the subject property is a plot or a villa
+        if req.property_type.strip().lower() in ("plot", "villa"):
             location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
             country = req.subject.get("country") or "India"
             result = calculate_plot_rates(
@@ -152,8 +152,8 @@ def _cleaning_stream_generator(req: CleaningRequest):
             "final_super_builtup_area",
             "stat_flag",
         ]
-        # Only include plot derived columns if the subject is a plot
-        if req.property_type.strip().lower() == "plot":
+        # Include plot derived columns if the subject is a plot or a villa
+        if req.property_type.strip().lower() in ("plot", "villa"):
             columns.extend(
                 [
                     "plot_derived_rate_per_sqft",
