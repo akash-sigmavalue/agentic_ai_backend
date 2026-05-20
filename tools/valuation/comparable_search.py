@@ -593,6 +593,72 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
 
     logger.info(f"[Distance] {len(clean)} comparables with valid coordinates")
 
+    # ── Step 6b: Remove Subject Project ───────────────────────────────────
+    filtered_no_subject = []
+    subj_name = (subject.get("project_name") or "").lower().strip()
+    subj_lat = subject.get("lat")
+    subj_lng = subject.get("lng")
+
+    def clean_name(s: str) -> str:
+        s = s.lower().strip()
+        s = re.sub(r'[^a-z0-9]', '', s)
+        for suffix in ["society", "apartment", "apartments", "condo", "condominium", "residency", "villas", "heights", "project"]:
+            if s.endswith(suffix):
+                s = s[:-len(suffix)]
+        return s
+
+    subj_name_clean = clean_name(subj_name)
+
+    for c in clean:
+        c_name = (c.get("project_name") or "").lower().strip()
+        c_name_clean = clean_name(c_name)
+        c_lat = c.get("map_search_lat")
+        c_lng = c.get("map_search_lng")
+
+        # 1. Coordinate check (closeness/exact match)
+        coords_match = False
+        if subj_lat is not None and subj_lng is not None and c_lat is not None and c_lng is not None:
+            try:
+                lat_diff = abs(float(subj_lat) - float(c_lat))
+                lng_diff = abs(float(subj_lng) - float(c_lng))
+                # 1e-4 is approx 11 meters, very close (same tower/complex)
+                if lat_diff < 1e-4 and lng_diff < 1e-4:
+                    coords_match = True
+            except (ValueError, TypeError):
+                pass
+
+        # 2. Name check
+        name_match = False
+        if subj_name_clean and c_name_clean:
+            if subj_name_clean == c_name_clean or subj_name_clean in c_name_clean or c_name_clean in subj_name_clean:
+                name_match = True
+
+        # Drop if it is the subject project itself (name AND lat-long are the same, or exact zero distance match)
+        is_subject = False
+        if name_match and coords_match:
+            is_subject = True
+            reason = "name_and_latlong_both_match"
+        elif coords_match and c.get("distance_from_subject_km", 999) < 0.02:
+            is_subject = True
+            reason = "exact_coordinate_and_zero_distance_match"
+
+        if is_subject:
+            log_drop(
+                stage="subject_filter",
+                project_name=c.get("project_name", ""),
+                reason=f"is_subject_property ({reason})",
+                extra={
+                    "subject_name": subj_name,
+                    "comp_name": c_name,
+                    "distance_km": c.get("distance_from_subject_km")
+                }
+            )
+        else:
+            filtered_no_subject.append(c)
+
+    clean = filtered_no_subject
+    logger.info(f"[Subject Filter] {len(clean)} comparables remain after removing subject project")
+
     # ── Step 7: Remove bad URLs ───────────────────────────────────────────
     url_clean = []
     for c in clean:

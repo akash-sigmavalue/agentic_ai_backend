@@ -64,41 +64,96 @@ MARKET_WORKFLOW = [
 ]
 
 COST_WORKFLOW = [
+    # ── Phase 1: Rate Derivation (identical to Market Approach pipeline) ──────
     {
         "step_number": 1,
-        "step_id": "land_valuation",
-        "title": "Land Valuation",
-        "objective": "Estimate land value using market comparables or residual method",
+        "step_id": "comparable_identification",
+        "title": "Comparable Project Identification",
+        "objective": "Identify 8-12 comparable projects within 1 km of the subject property",
         "executor": "llm",
-        "expected_output": "Land rate per sqft and total land value",
+        "expected_output": "List of comparable projects with rates, distances, similarity scores",
         "user_action_needed": False,
+        "phase": 1,
     },
     {
         "step_number": 2,
-        "step_id": "replacement_cost",
-        "title": "Building Replacement Cost",
-        "objective": "Estimate full replacement cost using CPWD plinth area rates",
+        "step_id": "radius_filter",
+        "title": "1 km Radius Filter",
+        "objective": "Filter comparables to within 1 km using Haversine formula",
         "executor": "llm",
-        "expected_output": "Replacement cost new with location and quality factors",
+        "expected_output": "Filtered list of comparables within 1 km",
         "user_action_needed": False,
+        "phase": 1,
     },
     {
         "step_number": 3,
-        "step_id": "depreciation",
-        "title": "Depreciation Calculation",
-        "objective": "Apply physical, functional, and external depreciation",
+        "step_id": "rate_data_fetch",
+        "title": "Transaction / Listing Data Fetch",
+        "objective": "Fetch per-sqft rate for each filtered comparable",
         "executor": "llm",
-        "expected_output": "Depreciated replacement cost with breakdown",
+        "expected_output": "Rate data with source and confidence per comparable",
         "user_action_needed": False,
+        "phase": 1,
     },
     {
         "step_number": 4,
-        "step_id": "final_cost_value",
-        "title": "Final Property Value (Cost Approach)",
-        "objective": "Combine land value + depreciated building value",
+        "step_id": "outlier_removal",
+        "title": "Statistical Outlier Removal",
+        "objective": "Remove rate outliers using IQR method",
         "executor": "llm",
-        "expected_output": "Total cost-approach value with confidence and range",
+        "expected_output": "Clean comparable set with median and mean rates",
         "user_action_needed": False,
+        "phase": 1,
+    },
+    {
+        "step_number": 5,
+        "step_id": "factorial_table",
+        "title": "Spatial Comparison & Factorial",
+        "objective": "Build factorial grid comparing each comparable to the subject",
+        "executor": "llm",
+        "expected_output": "Factorial table with per-comparable adjusted rates",
+        "user_action_needed": False,
+        "phase": 1,
+    },
+    {
+        "step_number": 6,
+        "step_id": "rate_derivation",
+        "title": "Subject Property Rate Derivation",
+        "objective": "Derive final per-sqft market rate for the subject property via weighted averaging",
+        "executor": "llm",
+        "expected_output": "Derived rate per sqft, total property price, confidence",
+        "user_action_needed": False,
+        "phase": 1,
+    },
+    # ── Phase 2: Cost Approach Calculation ────────────────────────────────────
+    {
+        "step_number": 7,
+        "step_id": "cost_inputs_collection",
+        "title": "Cost Approach Inputs",
+        "objective": (
+            "Collect cost-specific inputs from the user: "
+            "net plot area, rate of plot per sqft, UDS (for flat/shop/office), "
+            "total building life (default 69 yrs), age of property."
+        ),
+        "executor": "user",
+        "expected_output": "Validated cost input values",
+        "user_action_needed": True,
+        "phase": 2,
+    },
+    {
+        "step_number": 8,
+        "step_id": "cost_formula_calculation",
+        "title": "Cost Approach Value Calculation",
+        "objective": (
+            "Apply the Cost Approach formula: "
+            "Cost Value = Property Price − (Construction Cost × Depreciation). "
+            "Construction Cost = Property Price − (UDS × Plot Rate). "
+            "Depreciation = Age / Total Life."
+        ),
+        "executor": "system",
+        "expected_output": "Final cost-approach value with step-by-step formula audit",
+        "user_action_needed": False,
+        "phase": 2,
     },
 ]
 

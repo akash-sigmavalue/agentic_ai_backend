@@ -7,20 +7,22 @@ Deterministic logic for approach selection and input validation.
 MANDATORY_FIELDS_BY_TYPE = {
     # project_name is mandatory for built/named properties (apartment, villa, retail, office)
     # It is intentionally EXCLUDED for plot — plots don't belong to named projects.
-    "apartment": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "age_years"],
+    "apartment": ["project_name", "location_name", "country", "property_type", "salable_area_sqft", "age_years"],
     "villa": ["project_name", "location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "age_years"],
     "plot": ["location_name", "country", "property_type", "plot_area_sqft", "land_type"],
-    "retail": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "frontage"],
-    "commercial_office": ["project_name", "location_name", "country", "property_type", "carpet_area_sqft", "occupancy_status"],
+    "retail": ["project_name", "location_name", "country", "property_type", "salable_area_sqft", "frontage"],
+    "commercial_office": ["project_name", "location_name", "country", "property_type", "salable_area_sqft", "occupancy_status"],
     "industrial": ["location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "clear_height"],
     "agricultural": ["location_name", "country", "property_type", "plot_area_sqft", "water_availability"],
     "building": ["location_name", "country", "property_type", "plot_area_sqft", "builtup_area_sqft", "age_years", "occupancy_status"],
 }
 
-# Fields required by approach (Additional to property type mandatory fields)
+# Fields required by approach at Stage-1 time.
+# NOTE: Cost Approach phase-2 inputs (construction_rate_per_sqft, age,
+# building_life) are collected AFTER rate derivation — NOT here.
 APPROACH_REQUIREMENTS = {
     "market": [],
-    "cost": ["plot_area_sqft", "land_ownership", "construction_quality"],
+    "cost": [],       # cost-specific inputs are collected post rate-derivation
 }
 
 # Friendly names for fields used in clarification questions
@@ -30,6 +32,7 @@ FIELD_LABELS = {
     "country": "country",
     "property_type": "property type",
     "carpet_area_sqft": "carpet area",
+    "salable_area_sqft": "salable area",
     "builtup_area_sqft": "built-up area",
     "plot_area_sqft": "plot area",
     "age_years": "age of the building",
@@ -109,44 +112,70 @@ FIELD_SCHEMAS = {
 }
 
 
+# Property types where Cost Approach is valid (building exists to depreciate)
+_COST_APPLICABLE_TYPES = {"apartment", "villa", "retail", "commercial_office"}
+
+
 def calculate_strategy(entities: dict) -> dict:
     """
     Deterministic logic to decide:
-    1. Recommended approach (Locked to COST for now)
+    1. Recommended approach (Market or Cost, based on user request & property type)
     2. Missing mandatory fields (Separated by property_type vs others)
     3. Clarification questions
     """
     property_type = entities.get("property_type")
     user_requested = entities.get("user_requested_approach")
-    
-    # 1. Recommended Approach selection (LOCKED TO MARKET FOR NOW)
+    pt_lower = (property_type or "").strip().lower()
+
+    # 1. Recommended Approach selection
     if user_requested == "cost":
-        # Even if user requests cost, if we "lock" it, we might want to stay market, 
-        # but usually we follow user if they explicit. However, user said "apply lock for now".
-        # I'll let market be the primary.
-        recommended = "market"
-        justification = "The Market Approach is currently the only available methodology. Cost Approach is coming soon."
-    elif user_requested:
+        if pt_lower == "plot":
+            # Cost Approach is NOT applicable for plots — override to market
+            recommended = "market"
+            justification = (
+                "Cost Approach is not applicable for plot properties (no building to depreciate). "
+                "Switching to the Market Approach automatically."
+            )
+        elif pt_lower in _COST_APPLICABLE_TYPES:
+            recommended = "cost"
+            justification = (
+                f"Cost Approach selected as requested. "
+                f"Applicable for {pt_lower} properties."
+            )
+        else:
+            # Unknown / unsupported type — default to market
+            recommended = "market"
+            justification = (
+                f"Cost Approach is not supported for '{pt_lower}'. "
+                "Defaulting to the Market Approach."
+            )
+    elif user_requested and user_requested != "cost":
         recommended = user_requested
         justification = f"The {user_requested.title()} Approach was selected based on your specific request."
     else:
         recommended = "market"
-        type_str = property_type if property_type else "property"
+        type_str = pt_lower if pt_lower else "property"
         justification = f"The Market Approach is the recommended methodology for {type_str}s based on comparable data."
 
     # 2. Identify missing mandatory fields
     missing_fields = []
-    property_type_missing = False
     
-    if not property_type:
+    query = (entities.get("_original_query") or "").lower()
+    has_explicit_selection = "property type:" in query
+    
+    # ALWAYS trigger Gate 1 property type selection unless the user has explicitly selected/confirmed it.
+    if not property_type or not (has_explicit_selection or entities.get("extraction_verified")):
         property_type_missing = True
         missing_fields.append("property_type")
     else:
+        property_type_missing = False
+
+    if property_type:
         # Check type-specific mandatory fields
         type_mandatory = MANDATORY_FIELDS_BY_TYPE.get(property_type, [])
         for field in type_mandatory:
             val = entities.get(field)
-            if val is None or val == "":
+            if (val is None or val == "") and field not in missing_fields:
                 missing_fields.append(field)
             
     # Check approach-specific requirements
@@ -175,14 +204,24 @@ def calculate_strategy(entities: dict) -> dict:
 
     # 4. Handle approach choice logic
     present_choice = False
-    if not user_requested and not property_type_missing:
+    if not user_requested and not property_type_missing and pt_lower != "plot":
         present_choice = True
         
     # 5. Build rich schemas for missing fields UI
     user_inputs_required = []
     for field in missing_fields:
         if field in FIELD_SCHEMAS:
-            user_inputs_required.append(FIELD_SCHEMAS[field])
+            schema = dict(FIELD_SCHEMAS[field])
+            if field == "property_type" and property_type:
+                valid_options = {opt["value"] for opt in FIELD_SCHEMAS["property_type"]["options"]}
+                if property_type in valid_options:
+                    schema["default"] = property_type
+                else:
+                    if property_type == "building" and any(x in query for x in ["flat", "apartment", "g1201", "unit"]):
+                        schema["default"] = "apartment"
+                    else:
+                        schema["default"] = None
+            user_inputs_required.append(schema)
         else:
             # Fallback for text/number fields
             user_inputs_required.append({
@@ -196,9 +235,13 @@ def calculate_strategy(entities: dict) -> dict:
     return {
         "recommended_approach": recommended,
         "approach_justification": justification,
-        "alternative_approach": "market" if recommended == "cost" else "cost",
+        "alternative_approach": None if pt_lower == "plot" else ("market" if recommended == "cost" else "cost"),
         "present_choice_to_user": present_choice,
-        "user_choice_question": f"I recommend the {recommended.title()} Approach for this valuation. Would you like to proceed with this, or switch to the {('Market' if recommended == 'cost' else 'Cost')} Approach?",
+        "user_choice_question": (
+            f"I recommend the {recommended.title()} Approach for this valuation."
+            if pt_lower == "plot" else
+            f"I recommend the {recommended.title()} Approach for this valuation. Would you like to proceed with this, or switch to the {('Market' if recommended == 'cost' else 'Cost')} Approach?"
+        ),
         "property_type_missing": property_type_missing,
         "pt_clarification": pt_clarification,
         "missing_mandatory": missing_fields,
