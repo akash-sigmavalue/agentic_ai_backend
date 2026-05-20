@@ -198,9 +198,17 @@ def process_batch(batch: List[Dict], sys_prompt: str, metrics: Dict) -> List[Dic
     logger.error("Batch failed completely.")
     return []
 
-def apply_area_conversion(df: pd.DataFrame, is_apartment: bool) -> pd.DataFrame:
+def apply_area_conversion(df: pd.DataFrame, property_type: str) -> pd.DataFrame:
     """Computes and applies the data-driven carpet to super-builtup conversion factor."""
-    if df.empty or not is_apartment:
+    prop_type = str(property_type).strip().lower()
+    # Normalize aliases
+    if prop_type in ["office", "commercial office"]:
+        prop_type = "commercial_office"
+    elif prop_type in ["shop", "retail shop"]:
+        prop_type = "retail"
+
+    eligible_types = ["apartment", "commercial_office", "retail"]
+    if df.empty or prop_type not in eligible_types:
         df["final_super_builtup_area"] = df["cleaned_area_sqft"]
         df["area_type_converted"] = False
         df["conversion_factor_used"] = 1.0
@@ -242,16 +250,27 @@ def apply_area_conversion(df: pd.DataFrame, is_apartment: bool) -> pd.DataFrame:
     df["area_type_converted"] = False
     df["conversion_factor_used"] = 1.0
     
+    # Universal fallback loaders
+    fallback_carpet = 1.25
+    fallback_builtup = 1.10
+    
+    if prop_type == "commercial_office":
+        fallback_carpet = 1.33
+        fallback_builtup = 1.15
+    elif prop_type == "retail":
+        fallback_carpet = 1.35
+        fallback_builtup = 1.15
+
     for idx, row in df.iterrows():
         area_type = row.get("cleaned_area_type", "unknown")
         
         if area_type in ["carpet", "unknown", "built_up", "builtup"]:
             proj = row["cleaned_match_project"]
-            base_factor = factors.get(proj, 1.25) # Default 1.25 fallback for carpet
+            base_factor = factors.get(proj, fallback_carpet) # Default fallback for carpet
             
             # If it's already built-up, it only needs a smaller jump to reach SBUA
             if area_type in ["built_up", "builtup"]:
-                factor = builtup_factors.get(proj, 1.10) # Data-driven or 1.10 fallback
+                factor = builtup_factors.get(proj, fallback_builtup) # Data-driven or fallback
             else:
                 factor = base_factor
                 
@@ -386,7 +405,7 @@ def data_cleaning_pipeline(
     if on_progress: 
         print(f"📐 [Data Cleaning] Applying data-driven area conversions...")
         on_progress("area_conversion", "Applying data-driven area conversions")
-    df_merged = apply_area_conversion(df_merged, is_apartment)
+    df_merged = apply_area_conversion(df_merged, property_type)
     
     # 5. Statistical Prescreening
     if on_progress: 
