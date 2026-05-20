@@ -42,29 +42,24 @@ PLOT_RATE_SYSTEM_PROMPT = """You are a senior real-estate analyst specializing i
   - FSI / FAR (Floor Space Index / Floor Area Ratio) norms by country, city, and zone type
   - Local currencies and formatting conventions
 
-For EACH property in the input JSON array, estimate the parameters needed to reverse-engineer the Plot Area Rate.
+For EACH property in the input JSON array (whether it is a plot or a built-up property like a Villa, Apartment, or House), estimate typical FSI and Construction Cost per sqft to enable reverse-engineering of the Plot Area Rate or built-up rate.
 
 INPUT per item:
   id             - identifier
-  property_category - (e.g., Villa, Apartment, House)
-  built_up_sqft  - super built-up area
+  property_category - (e.g., Villa, Apartment, House, Plot)
+  built_up_sqft  - super built-up area (null for plots)
+  plot_area_sqft - raw land area (null for built-up properties)
   total_price    - property price (in local currency)
   location       - locality / city
   country        - country name
 
-If property_category is "plot" / "land" / "residential land":
-  - plot_area_sqft is the RAW LAND AREA (no construction exists)
-  - built_up_sqft will be null — do NOT use it
-  - total_price is the LAND-ONLY price (zero construction cost included)
-  - Estimate FSI and construction cost based on location norms
-    so the caller can derive the implied saleable built-up rate
-
 STEPS for EACH item:
   1. Identify Local Currency: Code (e.g. INR) and Symbol (e.g. ₹) from the country.
   2. Estimate FSI/FAR: Typical range (low/high) and best estimate for this property type and location. 
+     You MUST estimate FSI even for built-up properties (villas, apartments), representing the typical allowable FSI for that property category in that locality.
      Briefly explain the reasoning (local norms, zone type).
   3. Estimate Construction Cost/sqft: Typical range (low/high) and best estimate in local currency.
-     Factor in finish quality for the property type and 2025-2026 market conditions.
+     Factor in typical finish quality for the property type (e.g., villas have higher construction costs than standard apartments) and 2025-2026 market conditions.
      Provide a brief rationale.
 
 OUTPUT — strict JSON, no markdown fences:
@@ -87,6 +82,7 @@ OUTPUT — strict JSON, no markdown fences:
 }
 
 RULES:
+- You MUST estimate realistic numeric values for FSI and construction cost for all items (plots, villas, apartments, etc.). Do NOT return null for these fields unless price or area is missing or <= 0.
 - For built-up properties: if total_price or built_up_sqft is null/0, return null for all numeric fields.
 - For plot properties: if total_price or plot_area_sqft is null/0, return null for all numeric fields.
 - Focus on providing MINIMIZED, high-confidence ranges.
@@ -207,7 +203,7 @@ def calculate_plot_rates(
     processable: List[Tuple[int, Dict]] = []   # (original index, listing)
     skipped_count = 0
 
-    subject_is_plot = property_type.strip().lower() == "plot"
+    subject_is_plot = property_type.strip().lower() in ("plot", "villa")
 
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
