@@ -89,7 +89,7 @@ def status() -> dict:
 
 print("upper............")
 @router.post("/documents")
-async def upload_document(file: UploadFile = File(...)) -> dict:
+async def upload_documents(files: list[UploadFile] = File(...)) -> dict:
     print("uiehwfuihewufhwe.............")
     require_openai_key()
     (
@@ -100,50 +100,64 @@ async def upload_document(file: UploadFile = File(...)) -> dict:
         load_documents,
     ) = _load_document_tools()
 
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Uploaded file must have a name.")
+    if not files:
+        raise HTTPException(status_code=400, detail="No files uploaded.")
 
-    suffix = os.path.splitext(file.filename)[1]
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp.write(await file.read())
-        tmp_path = tmp.name
+    all_documents = []
+    runtime.page_images = {}
+    document_names = []
 
-    try:
-        documents = load_documents(tmp_path, file.filename)
-        for document in documents:
-            document.metadata["source"] = file.filename
+    for file in files:
+        if not file.filename:
+            continue
 
-        image_docs = extract_images_from_pdf(tmp_path) if suffix.lower() == ".pdf" else []
-        runtime.page_images = {}
-        for image_doc in image_docs:
-            image_doc.metadata["source"] = file.filename
-            page = image_doc.metadata.get("page")
-            if isinstance(page, int):
-                runtime.page_images.setdefault(page, []).append(image_doc)
+        document_names.append(file.filename)
+        suffix = os.path.splitext(file.filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            tmp.write(await file.read())
+            tmp_path = tmp.name
 
-        if not documents:
-            raise HTTPException(status_code=400, detail="No text could be extracted from the document.")
+        try:
+            documents = load_documents(tmp_path, file.filename)
+            for document in documents:
+                document.metadata["source"] = file.filename
+            all_documents.extend(documents)
 
-        chunks = hybrid_chunking(documents)
+            if suffix.lower() == ".pdf":
+                image_docs = extract_images_from_pdf(tmp_path)
+                for image_doc in image_docs:
+                    image_doc.metadata["source"] = file.filename
+                    page = image_doc.metadata.get("page")
+                    if isinstance(page, int):
+                        runtime.page_images.setdefault((file.filename, page), []).append(image_doc)
+        finally:
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass
 
-        if not chunks:
-            raise HTTPException(status_code=400, detail="Document did not produce any text chunks.")
+    if not all_documents:
+        raise HTTPException(status_code=400, detail="No text could be extracted from any of the documents.")
 
-        create_faiss_retriever(chunks)
-        runtime.ensemble_retriever = create_hybrid_retriever(chunks)
+    chunks = hybrid_chunking(all_documents)
 
-        runtime.document_name = file.filename
-        runtime.chunk_count = len(chunks)
+    if not chunks:
+        raise HTTPException(status_code=400, detail="Documents did not produce any text chunks.")
 
-        return {
-            "document_name": runtime.document_name,
-            "pages_or_sections": len(documents),
-            "chunk_count": runtime.chunk_count,
-            "message": "Document indexed with FAISS + BM25 hybrid retrieval",
-            "token_usage": token_usage(),
-        }
-    finally:
-        os.unlink(tmp_path)
+    create_faiss_retriever(chunks)
+    runtime.ensemble_retriever = create_hybrid_retriever(chunks)
+
+    runtime.document_name = ", ".join(document_names)
+    runtime.document_names = document_names
+    runtime.chunk_count = len(chunks)
+
+    return {
+        "document_name": runtime.document_name,
+        "pages_or_sections": len(all_documents),
+        "chunk_count": runtime.chunk_count,
+        "message": "Documents indexed with FAISS + BM25 hybrid retrieval",
+        "token_usage": token_usage(),
+    }
 print("lower............")
 
 @router.post("/ask", response_model=AskResponse)
@@ -174,6 +188,7 @@ def ask(request: AskRequest) -> AskResponse:
         token_usage=final_state.get("token_usage") or {"input": 0, "output": 0},
         verified=bool(final_state.get("verified")),
         retrieval_timing=final_state.get("retrieval_timing"),
+        suggested_questions=final_state.get("suggested_questions") or [],
     )
 
 
@@ -231,6 +246,7 @@ async def ask_stream(request: AskRequest):
                     "token_usage": state.get("token_usage") or {"input": 0, "output": 0},
                     "verified": False,
                     "retrieval_timing": state.get("retrieval_timing"),
+                    "suggested_questions": [],
                 })
                 return
 
@@ -274,6 +290,7 @@ async def ask_stream(request: AskRequest):
                 "token_usage": state.get("token_usage") or {"input": 0, "output": 0},
                 "verified": False,
                 "retrieval_timing": state.get("retrieval_timing"),
+                "suggested_questions": state.get("suggested_questions") or [],
             })
         except Exception as exc:
             yield _sse({"type": "error", "content": str(exc)})

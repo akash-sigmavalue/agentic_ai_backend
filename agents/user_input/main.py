@@ -113,7 +113,7 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
             doc_type = "table"
 
         if page != "unknown" and doc_type != "image" and index < IMAGE_TOP_PAGES:
-            top_pages.add(page)
+            top_pages.add((source, page))
 
         block = {
             "source": str(source),
@@ -137,16 +137,16 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
 
     # Add images (your existing logic)
     image_keys_added = set()
-    for page_key in top_pages:
+    for source, page_key in top_pages:
         try:
             page_key = int(page_key)
-            for image_doc in runtime.page_images.get(page_key, []):
+            for image_doc in runtime.page_images.get((source, page_key), []):
                 meta = image_doc.metadata or {}
-                image_key = (page_key, meta.get("image_index", 0))
+                image_key = (source, page_key, meta.get("image_index", 0))
                 if image_key in image_keys_added:
                     continue
                 context_blocks.append({
-                    "source": str(meta.get("source", runtime.document_name or "document")),
+                    "source": str(meta.get("source", source)),
                     "page": str(page_key),
                     "type": "image",
                     "image_base64": meta.get("image_base64"),
@@ -292,7 +292,40 @@ def generate_node(state: GraphState) -> GraphState:
     runtime.total_llm_input_tokens += usage["input"]
     runtime.total_llm_output_tokens += usage["output"]
 
-    return {**state, "answer": response.content, "token_usage": usage}
+    suggested_questions = []
+    try:
+        suggested_prompt = f"""Based on the following question and answer, generate exactly 4 relevant, specific follow-up questions that a user might want to ask next.
+Return them as a JSON list of strings. Do not include markdown formatting or backticks around the JSON.
+
+Question: {state['question']}
+Answer: {response.content}
+
+JSON format:
+[
+  "Question 1?",
+  "Question 2?",
+  "Question 3?",
+  "Question 4?"
+]
+"""
+        suggested_response = llm.invoke(suggested_prompt)
+        suggested_questions = _safe_json_loads(suggested_response.content)
+        if not isinstance(suggested_questions, list):
+            suggested_questions = []
+            for line in suggested_response.content.splitlines():
+                line = line.strip().strip('"').strip('-').strip('*').strip()
+                if line.endswith("?"):
+                    suggested_questions.append(line)
+            suggested_questions = suggested_questions[:4]
+    except Exception:
+        pass
+
+    return {
+        **state,
+        "answer": response.content,
+        "token_usage": usage,
+        "suggested_questions": suggested_questions,
+    }
 
 
 def check_answer_node(state: GraphState) -> GraphState:

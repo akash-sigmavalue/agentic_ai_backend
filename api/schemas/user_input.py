@@ -13,6 +13,7 @@ class AskResponse(BaseModel):
     token_usage: dict[str, int]
     verified: bool = False
     retrieval_timing: dict[str, float] | None = None
+    suggested_questions: list[str] = []
 
 
 class GraphState(TypedDict, total=False):
