@@ -30,9 +30,9 @@ def _sse(event_type: str, content: Any, **kwargs: Any) -> str:
 
 
 @router.get("/ask_stream_valuation")
-async def ask_stream(question: str):
+async def ask_stream(question: str, comparable_source: str = "web"):
     return StreamingResponse(
-        valuation_agent.execute_stream(question),
+        valuation_agent.execute_stream(question, comparable_source=comparable_source),
         media_type="text/event-stream",
     )
 

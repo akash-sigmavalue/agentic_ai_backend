@@ -81,10 +81,11 @@ class PropertyValuationAgent:
 
 
 
-    def execute_stream(self, question: str):
+    def execute_stream(self, question: str, comparable_source: str = "web"):
         """Main streaming generator — yields SSE events for every stage."""
         metrics = AgentMetrics()
         state = create_state(question)
+        state["comparable_source"] = comparable_source
         yield _sse("start", f"Processing valuation request: {question}")
 
         # ══════════════════════════════════════════════════════════════════════
@@ -226,7 +227,8 @@ class PropertyValuationAgent:
                 approach = "market"
 
             if approach == "market":
-                yield from self.market_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger)
+                comp_source = state.get("comparable_source", "web")
+                yield from self.market_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger, comparable_source=comp_source)
                 
                 # NOTE: Stage 3 tokens are already added within comparable_selection_agent if metrics was passed.
                 # But we still emit the final usage here.
