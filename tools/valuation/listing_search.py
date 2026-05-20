@@ -103,7 +103,7 @@ PROPERTY_TYPE_ALIASES = {
 
 PROPERTY_TYPE_DISPLAY = {
     "apartment":         "apartment (flat / condo / penthouse)",
-    "villa":             "villa (bungalow / row house / townhouse)",
+    "villa":             "villa (bungalow / row house / townhouse) or residential plot",
     "plot":              "plot (land / site) or villa / bungalow / independent house",
     "retail":            "shop (retail space / showroom)",
     "commercial_office": "office space (workspace / coworking)",
@@ -112,7 +112,7 @@ PROPERTY_TYPE_DISPLAY = {
 
 PROPERTY_TYPE_SEARCH_TERM = {
     "apartment":         "apartment",
-    "villa":             "villa",
+    "villa":             "villa or plot",
     "plot":              "plot",
     "retail":            "shop",
     "commercial_office": "office space",
@@ -121,7 +121,7 @@ PROPERTY_TYPE_SEARCH_TERM = {
 
 PROPERTY_TYPE_EXCLUSIONS = {
     "apartment":         ["villa", "bungalow", "plot", "land", "shop", "office", "retail", "showroom", "row house", "townhouse"],
-    "villa":             ["apartment", "flat", "condo", "plot", "land", "shop", "office", "retail", "showroom"],
+    "villa":             ["apartment", "flat", "condo", "shop", "office", "retail", "showroom"],
     "plot":              ["apartment", "flat", "shop", "office", "built-up", "constructed"],
     "retail":            ["apartment", "flat", "villa", "bungalow", "plot", "land", "office", "residential", "condo"],
     "commercial_office": ["apartment", "flat", "villa", "bungalow", "plot", "land", "shop", "retail", "showroom", "residential"],

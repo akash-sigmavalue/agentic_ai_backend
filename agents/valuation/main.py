@@ -220,6 +220,11 @@ class PropertyValuationAgent:
         # STAGE 3: Approach Execution
         # ══════════════════════════════════════════════════════════════════════
         try:
+            pt_lower = (entities.get("property_type") or "").strip().lower()
+            if pt_lower == "plot" and approach == "cost":
+                yield _sse("stage", "Cost Approach is locked for Plot properties. Switching to Market Approach.")
+                approach = "market"
+
             if approach == "market":
                 yield from self.market_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger)
                 

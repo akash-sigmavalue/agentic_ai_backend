@@ -58,6 +58,7 @@ Return a JSON object with exactly this structure:
     "extraction_verified": <boolean>,
     "property_type": "<apartment|villa|plot|retail|commercial_office|industrial|agricultural|building or null>",
     "carpet_area_sqft": <number or null>,
+    "salable_area_sqft": <number or null>,
     "builtup_area_sqft": <number or null>,
     "plot_area_sqft": <number or null>,
 
@@ -131,7 +132,7 @@ location_name:
   - If `location_name` is STILL completely unknown and cannot be guessed, leave it as null.
 
 area values:
-  - NEVER guess carpet_area_sqft, plot_area_sqft, or builtup_area_sqft — keep null if not stated.
+  - NEVER guess carpet_area_sqft, plot_area_sqft, builtup_area_sqft, or salable_area_sqft — keep null if not stated.
   - Convert sqm -> sqft (multiply by 10.764).
 
 user_requested_approach:
@@ -211,9 +212,10 @@ class IntentExtractor:
             "extraction_verified": False,
             "property_type": None,
             "carpet_area_sqft": None,
+            "salable_area_sqft": None,
             "user_requested_approach": None,
-            "missing_mandatory": ["location_name", "carpet_area_sqft", "age_years"],
-            "clarification_needed": "I could not understand the property details. Please provide at least the location, carpet area, and age of the property.",
+            "missing_mandatory": ["location_name", "salable_area_sqft", "age_years"],
+            "clarification_needed": "I could not understand the property details. Please provide at least the location, salable area, and age of the property.",
         }
 
     def merge_clarification(self, existing_entities: dict, user_response: str) -> dict:
