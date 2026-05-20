@@ -69,6 +69,22 @@ SPACE_FIELD_PATTERNS = {
     ],
 }
 
+LATITUDE_PATTERN = re.compile(
+    r"\b(?:lat|latitude|latitute)\s*(?:is|=|:|-)?\s*(-?\d+(?:\.\d+)?)\b",
+    re.IGNORECASE,
+)
+
+LONGITUDE_PATTERN = re.compile(
+    r"\b(?:lon|long|lng|longitude)\s*(?:is|=|:|-)?\s*(-?\d+(?:\.\d+)?)\b",
+    re.IGNORECASE,
+)
+
+RADIUS_PATTERN = re.compile(
+    r"\b(?:(?:within|under|inside)\s*)?(\d+(?:\.\d+)?)\s*(?:km|kilometer|kilometers|kms)\s*(?:radius)?\b|"
+    r"\bradius\s*(?:of|is|=|:|-)?\s*(\d+(?:\.\d+)?)\s*(?:km|kilometer|kilometers|kms)\b",
+    re.IGNORECASE,
+)
+
 
 def _clean_space_value(value: str) -> str:
     cleaned = re.sub(r"\s+", " ", (value or "").strip(" ,.;:-"))
@@ -128,6 +144,47 @@ def extract_space_filters(text: str, field_order: tuple[str, ...]) -> tuple[dict
             break
 
     return filters, primary_field
+
+
+def extract_coordinate_radius_filters(text: str) -> dict[str, float]:
+    """
+    Extract coordinate-based spatial context from a user query.
+
+    This is intentionally separate from space_filters because latitude,
+    longitude, and radius are not text geography filters; together they define
+    a concrete search area.
+    """
+    candidate = _extract_clarification_answer_text(text or "")
+    lat_match = LATITUDE_PATTERN.search(candidate)
+    lon_match = LONGITUDE_PATTERN.search(candidate)
+    if not lat_match or not lon_match:
+        return {}
+
+    try:
+        latitude = float(lat_match.group(1))
+        longitude = float(lon_match.group(1))
+    except ValueError:
+        return {}
+
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        return {}
+
+    filters: dict[str, float] = {
+        "latitude": latitude,
+        "longitude": longitude,
+    }
+
+    radius_match = RADIUS_PATTERN.search(candidate)
+    if radius_match:
+        raw_radius = radius_match.group(1) or radius_match.group(2)
+        try:
+            radius_km = float(raw_radius)
+        except (TypeError, ValueError):
+            radius_km = 0
+        if radius_km > 0:
+            filters["radius_km"] = radius_km
+
+    return filters
 
 
 SPACE_INFERENCE_PROMPT = """

@@ -1,0 +1,245 @@
+2026-05-20 13:45:26,592 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:45:26,592 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:45:26,592 | INFO | Scheduler started
+2026-05-20 13:46:03,699 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:46:03,720 | INFO | IntentExtractor: analysis_type=lookup  locations=['Pune']  metrics=[]
+2026-05-20 13:53:26,586 | INFO | Scheduler has been shut down
+2026-05-20 13:53:37,156 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:53:37,156 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:53:37,157 | INFO | Scheduler started
+2026-05-20 13:53:37,575 | INFO | Scheduler has been shut down
+2026-05-20 13:53:47,278 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:53:47,279 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:53:47,279 | INFO | Scheduler started
+2026-05-20 13:53:47,488 | INFO | Scheduler has been shut down
+2026-05-20 13:53:56,231 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:53:56,232 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:53:56,232 | INFO | Scheduler started
+2026-05-20 13:54:10,650 | INFO | Scheduler has been shut down
+2026-05-20 13:54:19,668 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:54:19,668 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:54:19,668 | INFO | Scheduler started
+2026-05-20 13:54:29,498 | INFO | Scheduler has been shut down
+2026-05-20 13:54:38,337 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 13:54:38,338 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 13:54:38,338 | INFO | Scheduler started
+2026-05-20 13:57:55,983 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:57:56,002 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-20 13:58:31,654 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:58:32,822 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:58:32,823 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-20 13:59:16,503 | INFO | No semantic transaction project/location entities resolved.
+2026-05-20 13:59:19,281 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:59:22,411 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:59:27,231 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-20 13:59:29,555 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:59:29,556 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-20 13:59:32,765 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:59:32,766 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) AS distance
+FROM transactions
+WHERE
+  project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND agreement_price >= 1
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND city_name ILIKE '%Pune%'
+  AND 6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) <= 2.0
+ORDER BY distance ASC
+2026-05-20 13:59:34,008 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-20 13:59:37,253 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 13:59:37,253 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-20 14:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-20 14:00:00 IST)" (scheduled at 2026-05-20 14:00:00+05:30)
+2026-05-20 14:00:00,019 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-20 14:30:00 IST)" executed successfully
+2026-05-20 14:00:56,842 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:00:56,854 | INFO | IntentExtractor: analysis_type=lookup  locations=['Pune']  metrics=[]
+2026-05-20 14:01:00,323 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:01,392 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:01,393 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-20 14:01:01,393 | INFO | No semantic transaction project/location entities resolved.
+2026-05-20 14:01:03,793 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:22,679 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-20 14:01:25,755 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:25,756 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-20 14:01:34,090 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:34,093 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=[]  reason=Entity completeness is satisfied: the only location entity is Pune and it is present in the WHERE clause; category filters transaction_category=Sale and property_type=Flat are implemented via exact IN(...) using semantic_resolved_filters values. Spatial filter correctly uses project_latitude/project_longitude and a 2 km radius. The main issues are redundancy and looseness in the city filter logic: city_name ILIKE '%Pune%' is duplicated and mixed with OR conditions on location_name/village_name, whereas the intent and space_filters specify city_name='Pune'. Adjusting to city_name IN ('Pune') removes redundancy and aligns with semantic_resolved_filters without changing the core behavior. Other checklist points (no phantom columns, distance metric logic, inclusion of project/location coordinates) are satisfied.
+2026-05-20 14:01:34,093 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-20 14:01:34,093 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) AS distance
+FROM transactions
+WHERE
+  project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND city_name IN ('Pune')
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+  AND 6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) <= 2.0
+GROUP BY
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category,
+  distance
+ORDER BY
+  distance ASC;
+2026-05-20 14:01:35,148 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-20 14:01:38,854 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:01:38,855 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-20 14:05:51,972 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:05:51,974 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-20 14:06:11,469 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:12,424 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:12,424 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-20 14:06:12,425 | INFO | No semantic transaction project/location entities resolved.
+2026-05-20 14:06:14,170 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:17,283 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-20 14:06:19,360 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:19,361 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-20 14:06:23,723 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:23,724 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_id,
+  COUNT(*) AS transaction_count,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) AS distance
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND city_name ILIKE '%Pune%'
+  AND 6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(project_latitude))
+    ))
+  ) <= 2.0
+GROUP BY
+  project_name,
+  project_id,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+ORDER BY
+  distance ASC
+2026-05-20 14:06:24,940 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-20 14:06:28,503 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 14:06:28,504 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-20 15:38:53,824 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-20 15:38:53,825 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-20 15:38:53,825 | INFO | Scheduler started
+2026-05-20 15:42:47,041 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:42:47,070 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-20 15:43:07,248 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:08,335 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:08,335 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-20 15:43:13,134 | INFO | No semantic transaction project/location entities resolved.
+2026-05-20 15:43:15,927 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:18,050 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:22,663 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-20 15:43:26,368 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:26,369 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-20 15:43:31,472 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:31,473 | INFO | [iter=0] EXECUTE — SELECT
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category AS property_category,
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(t.project_latitude)) *
+      cos(radians(t.project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(t.project_latitude))
+    ))
+  ) AS distance
+FROM transactions t
+WHERE
+  t.agreement_price >= 1
+  AND t.city_name ILIKE '%Pune%'
+  AND t.transaction_category IN ('Sale')
+  AND t.property_type IN ('Flat')
+  AND t.project_latitude IS NOT NULL
+  AND t.project_longitude IS NOT NULL
+  AND 6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.53951)) * cos(radians(t.project_latitude)) *
+      cos(radians(t.project_longitude) - radians(73.94637)) +
+      sin(radians(18.53951)) * sin(radians(t.project_latitude))
+    ))
+  ) <= 2.0
+GROUP BY
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category
+ORDER BY
+  distance ASC
+2026-05-20 15:43:32,691 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-20 15:43:36,841 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-20 15:43:36,842 | INFO | [iter=0] DONE — verdict=GOOD

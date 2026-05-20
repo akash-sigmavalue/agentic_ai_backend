@@ -31,6 +31,11 @@ EXTRACTION RULES
     number, project, location/locality, micromarket, city, state, or country,
     capture it in entities.space_filters using the closest matching project
     schema field.
+    If the user mentions latitude and longitude, capture them in
+    entities.spatial_filters.latitude and entities.spatial_filters.longitude.
+    If a radius is mentioned, capture it in entities.spatial_filters.radius_km.
+    Latitude + longitude is a valid space context and must not trigger
+    clarification only because a named project/locality/city is absent.
 
 2.  Infer analysis_type:
     - "compare X and Y / X vs Y"   → "comparison"
@@ -66,8 +71,9 @@ EXTRACTION RULES
 
 7.  If the query does not specify any unit, building/tower, parcel/survey/CTS/
     khasra/plot number, project, location/locality, micromarket, city, state,
-    or country, set route to "clarify", needs_clarification to true, and ask
-    which space should be used.
+    country, or latitude/longitude coordinate context, set route to "clarify",
+    needs_clarification to true, and ask which space should be used.
+    Do not ask for project/locality/city when latitude and longitude are present.
 
 =============================================================
 SCHEMA  (for understanding available dimensions)
@@ -115,6 +121,11 @@ OUTPUT FORMAT  (strict JSON — no markdown, no preamble)
       "city_name": null,
       "state_name": null,
       "country_name": null
+    }},
+    "spatial_filters": {{
+      "latitude": null,
+      "longitude": null,
+      "radius_km": null
     }},
     "category_filters": {{
       "project_type": "residential",
@@ -206,6 +217,33 @@ For comparison queries with multiple locations, use OR:
   — 2 locations  → 2 OR branches
   — 5 locations  → 5 OR branches
   — Never AND across location values (that returns 0 rows always)
+
+Coordinate-radius context in intent.entities.spatial_filters is also complete
+entity context. Do not reject or rewrite a query merely because no named
+project/locality/city is present when latitude and longitude are present.
+
+=============================================================
+COORDINATE / RADIUS SEARCH
+=============================================================
+If intent.entities.spatial_filters contains latitude and longitude:
+- Treat those coordinates as the user's space.
+- Use project_latitude and project_longitude for project searches.
+- If radius_km is present, filter rows whose calculated distance is <= radius_km.
+- Always return the calculated distance in kilometers as distance when the user
+  asks for distance or a radius search.
+- Use this PostgreSQL expression for distance_km:
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(<latitude>)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(<longitude>)) +
+      sin(radians(<latitude>)) * sin(radians(project_latitude))
+    ))
+  )
+- Add project_latitude IS NOT NULL and project_longitude IS NOT NULL.
+- Order radius lookup results by distance ASC unless the user asked otherwise.
+- If the user says "consider city space" with coordinates, interpret that as
+  a city-level spatial search area, not as a request for a city-name
+  clarification.
 
 =============================================================
 COLUMN SELECTION — SEMANTIC LEVEL MATCHING
@@ -345,6 +383,9 @@ REVIEW CHECKLIST  (in priority order)
     They must be equal.
     Missing even one entity = immediate rejection with corrected SQL.
     Also verify every non-empty entities.space_filters value appears in WHERE.
+    Coordinate-radius context in entities.spatial_filters does not require a
+    text entity branch; verify the SQL uses project_latitude/project_longitude
+    distance logic instead.
     Also verify every column/value in intent.semantic_resolved_filters appears
     in WHERE. These values are exact DB values and should be used with IN (...).
 

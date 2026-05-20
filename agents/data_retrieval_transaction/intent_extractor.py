@@ -105,7 +105,12 @@ class IntentExtractor:
             )
 
         merge_space_filters(intent, user_query)
-        if not intent_has_space_context(intent):
+        if intent_has_space_context(intent):
+            intent["route"] = "internal_db"
+            intent["needs_clarification"] = False
+            intent["clarification_reason"] = ""
+            intent["clarification_questions"] = []
+        else:
             mark_space_clarification_required(intent)
 
         locations = (intent.get("entities") or {}).get("locations") or []

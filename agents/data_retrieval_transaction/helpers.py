@@ -9,7 +9,10 @@ import logging
 import re
 from typing import Any
 
-from utils.data_retrieval.space_detection import extract_space_filters
+from utils.data_retrieval.space_detection import (
+    extract_coordinate_radius_filters,
+    extract_space_filters,
+)
 from agents.data_retrieval_transaction.constants import SPACE_FILTER_FIELD_ORDER, SPACE_OPTION_TO_FIELD
 
 logger = logging.getLogger(__name__)
@@ -101,6 +104,14 @@ def merge_space_filters(intent: dict, user_query: str) -> None:
     if merged:
         entities["space_filters"] = merged
 
+    coordinate_filters = extract_coordinate_radius_filters(user_query)
+    if coordinate_filters:
+        spatial_filters = entities.get("spatial_filters")
+        if not isinstance(spatial_filters, dict):
+            spatial_filters = {}
+        spatial_filters.update(coordinate_filters)
+        entities["spatial_filters"] = spatial_filters
+
 
 def contains_space_value(value: Any) -> bool:
     """
@@ -144,6 +155,8 @@ def intent_has_space_context(intent: dict) -> bool:
     Tolerates older extractor outputs with different field arrangements.
     """
     entities = intent.get("entities") or {}
+    if has_coordinate_space_context(entities.get("spatial_filters")):
+        return True
     if contains_named_entity(entities.get("locations")):
         return True
     if contains_named_entity(entities.get("projects")):
@@ -169,6 +182,17 @@ def intent_has_space_context(intent: dict) -> bool:
                     return True
 
     return False
+
+
+def has_coordinate_space_context(value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    try:
+        lat = float(value.get("latitude"))
+        lon = float(value.get("longitude"))
+    except (TypeError, ValueError):
+        return False
+    return -90 <= lat <= 90 and -180 <= lon <= 180
 
 
 # ══════════════════════════════════════════════════════════════════════════════
