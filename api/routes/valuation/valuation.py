@@ -15,6 +15,7 @@ from tools.valuation.data_cleaning import data_cleaning_pipeline
 from tools.valuation.plot_rate_pipeline import calculate_plot_rates
 from tools.valuation.factorial_table import compute_factorial_table
 from tools.valuation.listing_search import listing_pipeline
+from tools.valuation.db_transaction_search import fetch_db_transactions
 from tools.valuation.llm_factoring_engine import run_llm_factoring
 from utils.valuation.logging import RunLogger
 
@@ -94,6 +95,59 @@ def _listing_stream_generator(req: ListingRequest):
 @router.post("/listing_stream")
 async def listing_stream(req: ListingRequest):
     return StreamingResponse(_listing_stream_generator(req), media_type="text/event-stream")
+
+
+# ── Transaction stream (for Internal DB comparables) ──────────────────────────
+class TransactionRequest(BaseModel):
+    project_id: str                 # numeric ID or project name
+    property_type: str              # canonical: apartment | villa | plot | ...
+    project_name: str = ""          # display name (for progress messages)
+
+
+def _transaction_stream_generator(req: TransactionRequest):
+    yield _sse(
+        "transaction_start",
+        {
+            "message": f"Fetching transactions for '{req.project_name or req.project_id}' from Internal DB...",
+            "project_id": req.project_id,
+            "property_type": req.property_type,
+        },
+    )
+    try:
+        result = fetch_db_transactions(
+            project_id=req.project_id,
+            property_type=req.property_type,
+        )
+
+        if result["status"] == "success":
+            yield _sse(
+                "transaction_results",
+                {
+                    "transactions": result["transactions"],
+                    "total": len(result["transactions"]),
+                    "project_id": req.project_id,
+                    "project_name": req.project_name or req.project_id,
+                },
+            )
+        else:
+            yield _sse(
+                "transaction_no_results",
+                {
+                    "project_id": req.project_id,
+                    "project_name": req.project_name or req.project_id,
+                    "message": result.get("error", "No transactions found."),
+                },
+            )
+    except Exception as exc:
+        logger.exception("Transaction stream failed")
+        yield _sse("error", f"Transaction fetch failed: {exc}")
+
+    yield _sse("transaction_done", "Transaction fetch completed.")
+
+
+@router.post("/transaction_stream")
+async def transaction_stream(req: TransactionRequest):
+    return StreamingResponse(_transaction_stream_generator(req), media_type="text/event-stream")
 
 
 class CleaningRequest(BaseModel):

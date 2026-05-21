@@ -61,9 +61,9 @@ SPACE_FIELD_PATTERNS = {
     "sub_locality": [
         r"\bsub\s*locality\s*(?:is|:|-)\s*([A-Za-z0-9][A-Za-z0-9&/\-\. ]{0,80})",
     ],
-    "pincode": [
-        r"\b(\d{6})\b",
-    ],
+    # "pincode": [
+    #     r"\b(\d{6})\b",
+    # ],
     "village_name": [
         r"\bvillage\s*(?:is|:|-)\s*([A-Za-z0-9][A-Za-z0-9&/\-\. ]{0,80})",
     ],

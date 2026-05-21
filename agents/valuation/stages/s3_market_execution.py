@@ -5,8 +5,11 @@ Supports three comparable sources: "web" (LLM), "db" (internal DB), or "both".
 """
 
 import json
+import logging
 from tools.valuation.comparable_search import comparable_selection_agent
 from tools.valuation.db_comparable_search import fetch_db_comparables
+
+logger = logging.getLogger(__name__)
 
 
 class MarketExecutionAgent:
@@ -92,8 +95,14 @@ class MarketExecutionAgent:
             if db_result["status"] == "success":
                 db_comps = db_result["comparables"]
                 all_comparables.extend(db_comps)
+                # Capture subject project from DB (if found) for listing fetch
+                subject_db_project = db_result.get("subject_project")
+                if subject_db_project:
+                    state.setdefault("market_data", {})["subject_db_project"] = subject_db_project
+                    logger.info("[Stage3b] Subject project found in DB: %s (id=%s)", subject_db_project.get("project_name"), subject_db_project.get("project_id"))
                 yield sse_callback("stage", f"Stage 3b done: {len(db_comps)} comparables from internal DB.")
             else:
+                subject_db_project = None
                 # No results or error — signal the UI
                 yield sse_callback(
                     "db_comparable_status",
@@ -103,18 +112,21 @@ class MarketExecutionAgent:
                     },
                 )
                 yield sse_callback("stage", f"Stage 3b: {db_result.get('error', 'No projects found in DB')}")
+        else:
+            subject_db_project = None
 
         # Note: no deduplication — web and DB results are kept separately
         # so the SOURCE column and source filter remain meaningful.
 
         # ── Emit final results ────────────────────────────────────────────
         yield sse_callback("comparable_results", {
-            "comparables": all_comparables,
-            "final_radius_km": None,
-            "iterations": None,
-            "total_found": len(all_comparables),
-            "iterations_log": [],
-            "comparable_source": comparable_source,
+            "comparables":        all_comparables,
+            "final_radius_km":    None,
+            "iterations":         None,
+            "total_found":        len(all_comparables),
+            "iterations_log":     [],
+            "comparable_source":  comparable_source,
+            "subject_db_project": subject_db_project,  # subject's DB entry for listing fetch
         })
 
         # Update state

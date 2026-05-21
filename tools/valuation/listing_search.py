@@ -31,6 +31,7 @@ import threading
 import logging
 import requests
 import urllib.parse
+import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 from typing import Optional, List
@@ -243,6 +244,17 @@ USER_AGENTS = [
 import os
 import shutil
 
+
+def _chrome_version_from_binary(chrome_path: str) -> str:
+    output = subprocess.check_output(
+        [chrome_path, "--version"],
+        text=True,
+        stderr=subprocess.STDOUT,
+    ).strip()
+    if not output:
+        raise RuntimeError(f"Chrome version command returned no output: {chrome_path}")
+    return output
+
 def get_chrome_binary_path():
     candidates = [
         os.getenv("CHROME_BIN"),
@@ -268,6 +280,67 @@ def get_chrome_binary_path():
 
 # hilton add this code for docker .................. 
 
+def get_chrome_major_version(chrome_path: str) -> int:
+    output = _chrome_version_from_binary(chrome_path)
+    match = re.search(r"(\d+)\.", output)
+    if match:
+        return int(match.group(1))
+
+    install_dir = os.path.dirname(chrome_path)
+    try:
+        version_dirs = [
+            name
+            for name in os.listdir(install_dir)
+            if os.path.isdir(os.path.join(install_dir, name)) and re.match(r"^\d+\.", name)
+        ]
+    except OSError:
+        version_dirs = []
+
+    if version_dirs:
+        version_dirs.sort(key=lambda value: [int(part) for part in value.split(".") if part.isdigit()])
+        return int(version_dirs[-1].split(".", 1)[0])
+
+    raise RuntimeError(f"Could not detect Chrome version from: {output}")
+
+
+def _cached_uc_driver_path() -> Optional[str]:
+    candidates = [
+        os.path.join(os.getenv("APPDATA", ""), "undetected_chromedriver", "undetected_chromedriver.exe"),
+        os.path.join(os.path.expanduser("~"), ".local", "share", "undetected_chromedriver", "undetected_chromedriver"),
+    ]
+    for path in candidates:
+        if path and os.path.exists(path):
+            return path
+    return None
+
+
+def _ensure_uc_driver_cache_matches(chrome_major: int) -> None:
+    driver_path = _cached_uc_driver_path()
+    if not driver_path:
+        return
+
+    try:
+        output = subprocess.check_output(
+            [driver_path, "--version"],
+            text=True,
+            stderr=subprocess.STDOUT,
+        )
+        match = re.search(r"ChromeDriver\s+(\d+)\.", output)
+        if match and int(match.group(1)) == chrome_major:
+            return
+
+        logger.warning(
+            "[Browser] Removing stale undetected_chromedriver cache: %s | chrome_major=%s | driver_version=%s",
+            driver_path,
+            chrome_major,
+            output.strip(),
+        )
+        os.remove(driver_path)
+    except Exception as exc:
+        logger.warning("[Browser] Could not verify cached undetected_chromedriver: %s", exc)
+
+# hilton add this code for docker .................. 
+
 def make_uc_driver(headless: bool = True):
     """
     Create an undetected Chrome driver.
@@ -275,6 +348,10 @@ def make_uc_driver(headless: bool = True):
     """
     chrome_bin = get_chrome_binary_path()
     logger.info(f"[Browser] Using Chrome binary: {chrome_bin}")
+
+    chrome_major = get_chrome_major_version(chrome_bin)
+    logger.info("[Browser] Detected Chrome major version: %s", chrome_major)
+    _ensure_uc_driver_cache_matches(chrome_major)
 
     options = uc.ChromeOptions()
     options.binary_location = chrome_bin
@@ -291,7 +368,12 @@ def make_uc_driver(headless: bool = True):
     options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
     options.add_argument("--lang=en-US,en;q=0.9")
 
-    driver = uc.Chrome(options=options, use_subprocess=True)
+    driver = uc.Chrome(
+        options=options,
+        browser_executable_path=chrome_bin,
+        use_subprocess=True,
+        version_main=chrome_major,
+    )
 
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
@@ -713,11 +795,17 @@ def build_extract_prompt(property_type: str, project_name: str, text: str, is_ge
         target_instruction = f"extract EVERY distinct property listing for project: \"{project_name}\""
         name_instruction = f"exactly \"{project_name}\""
 
+    project_scope_rule = (
+        "IGNORE projects that are not relevant to the search area."
+        if is_general
+        else f"Extract ONLY listings for project: \"{project_name}\". IGNORE nearby projects."
+    )
+
     return f"""You are a real estate listing data extractor.
 Read the text and {target_instruction}.
 
 STRICT RULES:
-1. {"IGNORE projects that are not relevant to the search area." if is_general else f"Extract ONLY listings for project: \"{project_name}\". IGNORE nearby projects."}
+1. {project_scope_rule}
 2. Property type MUST be: {display_name} (valid terms: {valid_terms}). 
 3. DO NOT extract: {exclusion_str}.
 4. CRITICAL: COPY values EXACTLY as they appear. No calculations, no unit conversions (e.g., leave "1.2 Cr" as "1.2 Cr").

@@ -14,6 +14,7 @@ import re
 import logging
 import os
 import requests
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,19 @@ def _is_fuzzy_match(s1, s2):
         if jaccard >= 0.5:
             return True
     return False
+
+
+def _is_subject_project(comp_name: str, distance_km: float | None, subject_name: str | None) -> bool:
+    if not subject_name:
+        return False
+    if not _is_fuzzy_match(comp_name, subject_name):
+        return False
+    if distance_km is None:
+        return True
+    try:
+        return float(distance_km) <= 0.15
+    except (ValueError, TypeError):
+        return True
 
 
 def _print_db_result(result: dict, subject_project_name: str = None) -> None:
@@ -122,6 +136,7 @@ def _print_db_result(result: dict, subject_project_name: str = None) -> None:
         print("  (no comparables returned)")
 
     print(f"{sep}\n")
+    sys.stdout.flush()
 
 # ── Property type mapping ─────────────────────────────────────────────────
 # Maps canonical valuation type keys → the exact term the DB agent expects
@@ -139,7 +154,10 @@ _PROP_TYPE_TO_DB_TERM = {
 
 def _normalize_property_type_for_db(raw: str) -> str:
     """Map user / valuation canonical type to the DB agent's expected term."""
-    return _PROP_TYPE_TO_DB_TERM.get(raw.strip().lower(), raw.strip().capitalize())
+    cleaned = raw.strip().lower()
+    if cleaned in ("villa", "plot"):
+        return "either Villa or Plot"
+    return _PROP_TYPE_TO_DB_TERM.get(cleaned, raw.strip().capitalize())
 
 
 def _extract_json_array(text: str):
@@ -179,7 +197,7 @@ def _is_db_failure(text: str) -> bool:
 def _build_query(lat: float, lng: float, property_type: str) -> str:
     db_term = _normalize_property_type_for_db(property_type)
     return (
-        f"I need all unique projects within 2 km radius of this "
+        f"I need all unique projects within 3 km radius of this "
         f"Latitute is {lat} and Longitude {lng} "
         f"and property type is {db_term}. And expected columns should be "
         f"Project_id, Project_name, lat, long, Location, Country, "
@@ -360,17 +378,31 @@ def fetch_db_comparables(
 
     logger.info(f"[DB Comparables] Stream done. result_rows={len(result_rows) if result_rows else None} | accumulated_len={len(accumulated)}")
 
-    # ── Prefer result_set rows ───────────────────────────────────────────
+    # ── Prefer result_set rows ───────────────────────────────────────
     if result_rows:
-        comparables = [_row_to_comparable(r) for r in result_rows]
+        all_comps = [_row_to_comparable(r) for r in result_rows]
+        # Print terminal table with subject included (for debugging)
+        _print_db_result({"comparables": all_comps, "count": len(all_comps), "status": "success", "error": None}, subject_project_name)
+        # Extract subject project before filtering it out
+        subject_project = None
+        if subject_project_name:
+            for c in all_comps:
+                if _is_subject_project(c["project_name"], c["distance_from_subject_km"], subject_project_name):
+                    subject_project = c
+                    break
+        # Filter subject out of the comparable list (don't show on UI)
+        comparables = [
+            c for c in all_comps
+            if not _is_subject_project(c["project_name"], c["distance_from_subject_km"], subject_project_name)
+        ] if subject_project_name else all_comps
         logger.info(f"[DB Comparables] Found {len(comparables)} comparables from DB (via result_set)")
         out = {
-            "comparables": comparables,
-            "count":       len(comparables),
-            "status":      "success",
-            "error":       None,
+            "comparables":      comparables,
+            "count":            len(comparables),
+            "status":           "success",
+            "error":            None,
+            "subject_project":  subject_project,   # subject's DB entry (for listing fetch)
         }
-        _print_db_result(out, subject_project_name)
         return out
 
     # ── Fallback: parse JSON from accumulated report_chunk text ──────────
@@ -397,13 +429,26 @@ def fetch_db_comparables(
         _print_db_result(out, subject_project_name)
         return out
 
-    comparables = [_row_to_comparable(r) for r in rows]
+    all_comps = [_row_to_comparable(r) for r in rows]
+    # Print terminal table with subject included (for debugging)
+    _print_db_result({"comparables": all_comps, "count": len(all_comps), "status": "success", "error": None}, subject_project_name)
+    # Extract subject project before filtering
+    subject_project = None
+    if subject_project_name:
+        for c in all_comps:
+            if _is_subject_project(c["project_name"], c["distance_from_subject_km"], subject_project_name):
+                subject_project = c
+                break
+    comparables = [
+        c for c in all_comps
+        if not _is_subject_project(c["project_name"], c["distance_from_subject_km"], subject_project_name)
+    ] if subject_project_name else all_comps
     logger.info(f"[DB Comparables] Found {len(comparables)} comparables from DB (via report_chunk fallback)")
     out = {
-        "comparables": comparables,
-        "count":       len(comparables),
-        "status":      "success",
-        "error":       None,
+        "comparables":      comparables,
+        "count":            len(comparables),
+        "status":           "success",
+        "error":            None,
+        "subject_project":  subject_project,
     }
-    _print_db_result(out, subject_project_name)
     return out
