@@ -151,11 +151,12 @@ async def transaction_stream(req: TransactionRequest):
 
 
 class CleaningRequest(BaseModel):
-    listings: list[dict[str, Any]]
+    listings: list[dict[str, Any]]          # web listings only
     subject: dict[str, Any]
     comparables: list[dict[str, Any]]
     property_type: str
     listing_type: str = "sale"
+    db_transactions: list[dict[str, Any]] = []  # raw DB transactions — skip cleaning
 
 
 def _cleaning_stream_generator(req: CleaningRequest):
@@ -174,6 +175,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
             subject=req.subject,
             comparables=req.comparables,
             property_type=req.property_type,
+            db_transactions=req.db_transactions,
             on_progress=on_progress,
         )
 
@@ -219,13 +221,21 @@ def _cleaning_stream_generator(req: CleaningRequest):
             )
 
         run_logger.save_step("data_cleaning", "results", result["audit_stats"])
+
+        cleaned_merged = result["cleaned_listings"]
+        web_count = sum(1 for row in cleaned_merged if row.get("source") == "Web")
+        db_count = sum(1 for row in cleaned_merged if row.get("source") == "Internal DB")
+
         yield _sse(
             "cleaning_results",
             {
-                "cleaned_listings": result["cleaned_listings"],
-                "review_listings": result["review_listings"],
-                "audit_stats": result["audit_stats"],
-                "columns": columns,
+                "cleaned_listings":  cleaned_merged,
+                "review_listings":   result["review_listings"],
+                "dropped_listings":  result["dropped_listings"],
+                "audit_stats":       result["audit_stats"],
+                "columns":           columns,
+                "web_count":         web_count,
+                "db_count":          db_count,
             },
         )
     except Exception as exc:

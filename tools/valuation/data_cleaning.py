@@ -317,6 +317,7 @@ def data_cleaning_pipeline(
     subject: Dict,
     comparables: List[Dict],
     property_type: str,
+    db_transactions: List[Dict] = None,
     on_progress=None
 ) -> Dict:
     metrics = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
@@ -402,6 +403,43 @@ def data_cleaning_pipeline(
         df_merged["cleaned_price_value"] = df_merged["cleaned_price_value"].fillna(df_merged.get("price_parsed_py", np.nan))
     if "cleaned_area_sqft" in df_merged.columns:
         df_merged["cleaned_area_sqft"] = df_merged["cleaned_area_sqft"].fillna(df_merged.get("area_parsed_py", np.nan))
+
+    # 3.5 Merge DB Transactions
+    if not df_merged.empty:
+        df_merged["source"] = "Web"
+    else:
+        df_merged["source"] = pd.Series(dtype='str')
+        
+    if db_transactions:
+        if on_progress:
+            on_progress("merge_db", f"Merging {len(db_transactions)} Internal DB transactions into pipeline...")
+        db_rows = []
+        for t in db_transactions:
+            db_rows.append({
+                "cleaned_match_project":           t.get("project_name"),
+                "cleaned_relevant_for_valuation":  True,
+                "cleaned_price_value":             t.get("agreement_price"),
+                "cleaned_area_sqft":               t.get("area_sqft"),
+                "cleaned_area_type":               t.get("area_type", "carpet"),
+                "cleaned_config":                  t.get("unit_configuration"),
+                "cleaned_possession_status":       None,
+                "cleaned_listing_type":            t.get("transaction_category"),
+                "cleaned_floor":                   t.get("floor_number"),
+                "cleaned_total_floors":            None,
+                "cleaned_currency":                t.get("currency"),
+                "price_per_sqft":                  t.get("price_per_sqft"),
+                "location":                        t.get("location_name"),
+                "country":                         t.get("country_name"),
+                "is_subject":                      t.get("is_subject", False),
+                "source":                          "Internal DB",
+                "project_name":                    t.get("project_name"),
+                "net_carpet_area_sq_m":            t.get("net_carpet_area_sq_m"),
+            })
+        df_db = pd.DataFrame(db_rows)
+        if not df_merged.empty:
+            df_merged = pd.concat([df_merged, df_db], ignore_index=True)
+        else:
+            df_merged = df_db
 
     # 4. Apply Area Conversion
     if on_progress: 
