@@ -5,6 +5,7 @@ ENV/
 env.bak/
 venv.bak/
 
+
 # Environment variables
 .env
 .env.local
@@ -24,3 +25,4 @@ __pycache__/
 
 # Databases
 *.sqlite3
+/data/web_documents

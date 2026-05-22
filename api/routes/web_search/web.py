@@ -184,7 +184,7 @@ async def root():
                                         answer.textContent = `Agent Error: ${data.result.error || "No results found"}`;
                                         return;
                                     }
-                                    if (data.result.analysis && !fullText) {
+                                    if (data.result.analysis) {
                                         answer.innerHTML = markdown(data.result.analysis);
                                     }
                                     if (data.result.results?.length) {

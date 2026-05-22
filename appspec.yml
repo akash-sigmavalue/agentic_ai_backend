@@ -1,0 +1,17 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /opt/agentic-ai/deployments/backend
+
+hooks:
+  AfterInstall:
+    - location: scripts/backend_after_install.sh
+      timeout: 900
+      runas: ubuntu
+
+  ValidateService:
+    - location: scripts/backend_validate.sh
+      timeout: 120
+      runas: ubuntu

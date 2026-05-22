@@ -35,22 +35,25 @@ PROPERTY_TYPE_ALIASES = {
     "plot":              {"plot", "land", "site"},
     "retail":            {"shop", "retail", "showroom"},
     "commercial_office": {"office", "workspace", "coworking"},
+    "mixed_use":         {"mixed use", "mixed-use", "residential+commercial", "residential + commercial"},
 }
 
 PROPERTY_TYPE_DISPLAY = {
     "apartment":         "apartment (flat / condo / penthouse)",
-    "villa":             "villa (bungalow / row house / townhouse)",
-    "plot":              "plot (land / site)",
+    "villa":             "villa (bungalow / row house / townhouse) or residential plot",
+    "plot":              "plot (land / site) or villa / bungalow / independent house",
     "retail":            "shop (retail space / showroom)",
     "commercial_office": "office space (workspace / coworking)",
+    "mixed_use":         "mixed-use (residential + commercial)",
 }
 
 PROPERTY_TYPE_SEARCH_TERM = {
     "apartment":         "apartment",
     "villa":             "villa",
-    "plot":              "plot",
+    "plot":              "plot or villa",
     "retail":            "shop",
     "commercial_office": "office space",
+    "mixed_use":         "mixed-use development",
 }
 
 PROPERTY_TYPE_EXCLUSIONS = {
@@ -63,7 +66,7 @@ PROPERTY_TYPE_EXCLUSIONS = {
         "shop", "office", "retail", "showroom"
     ],
     "plot": [
-        "apartment", "flat", "villa", "bungalow",
+        "apartment", "flat",
         "shop", "office", "built-up", "constructed"
     ],
     "retail": [
@@ -74,9 +77,36 @@ PROPERTY_TYPE_EXCLUSIONS = {
         "apartment", "flat", "villa", "bungalow", "plot",
         "land", "shop", "retail", "showroom", "residential"
     ],
+    "mixed_use": [
+        "purely residential", "purely commercial", "plot", "land"
+    ],
 }
 
 VALID_PROPERTY_TYPES = set(PROPERTY_TYPE_ALIASES.keys())
+
+# ── Project Category Mapping ───────────────────────────────────────────────
+# Maps internal property_type key → default project_category label
+PROJECT_CATEGORY_DEFAULT = {
+    "apartment":         "Residential",
+    "villa":             "Villa",
+    "plot":              "Plot",
+    "retail":            "Commercial",
+    "commercial_office": "Commercial",
+    "mixed_use":         "Residential + Commercial",
+}
+
+# Normalize whatever the LLM returns for project_category
+CATEGORY_NORMALIZE = {
+    "residential":              "Residential",
+    "commercial":               "Commercial",
+    "residential + commercial": "Residential + Commercial",
+    "residential+commercial":   "Residential + Commercial",
+    "mixed use":                "Residential + Commercial",
+    "mixed-use":                "Residential + Commercial",
+    "villa":                    "Villa",
+    "plot":                     "Plot",
+    "independent house":        "Independent House",
+}
 
 
 # ── Drop logger ───────────────────────────────────────────────────────────
@@ -101,6 +131,21 @@ def normalize_property_type(raw: str) -> str | None:
         if raw == k or raw in v:
             return k
     return None
+
+
+def normalize_project_category(raw: str, fallback_ptype: str = "") -> str:
+    """
+    Normalize the LLM-returned project_category to a clean standard label.
+    Falls back to the default for the property type if raw is empty/unknown.
+    """
+    if raw:
+        cleaned = raw.strip().lower()
+        if cleaned in CATEGORY_NORMALIZE:
+            return CATEGORY_NORMALIZE[cleaned]
+        # Return title-cased version as best effort
+        return raw.strip().title()
+    # Fallback: derive from property_type
+    return PROJECT_CATEGORY_DEFAULT.get(fallback_ptype, "Unknown")
 
 
 def calculate_distance(lat1, lon1, lat2, lon2):
@@ -128,6 +173,9 @@ def build_prompt(subject: dict) -> tuple[str, str]:
     exclusions   = PROPERTY_TYPE_EXCLUSIONS.get(ptype, [])
     exclusion_str = ", ".join(exclusions)
 
+    # Subject's own category label for reference
+    subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
+
     system_prompt = f"""
 You are an expert real estate valuation analyst.
 
@@ -147,6 +195,20 @@ IMPORTANT RULES:
 - Do NOT label a wrong property as "{search_term}" just to fill the list
 - It is BETTER to return 5 correct results than 15 mixed results
 - MANDATORY: Use the `web_search_preview` tool to find current real-world projects and coordinates. Do NOT rely solely on internal knowledge.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROPERTY CATEGORY RULES (fill "project_category" field):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Use exactly ONE of these labels for "project_category":
+- "Residential"              → apartment / flat / condo / penthouse
+- "Villa"                    → villa / bungalow / row house / townhouse
+- "Independent House"        → standalone independent house / duplex
+- "Plot"                     → plot / land / site
+- "Commercial"               → shop / retail / showroom / office / coworking
+- "Residential + Commercial" → building with BOTH residential + commercial floors (mixed-use)
+
+Subject project category : "{subject_category}"
+Comparable projects should ideally match or be closely related to this category.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 VALUATION LOGIC:
@@ -170,10 +232,20 @@ JSON Keys for each object:
 - "location"          (String)
 - "country"           (String, e.g. "{country}")
 - "property_type"     (String, MUST be exactly "{ptype}")
+- "project_category"  (String, MUST be one of: "Residential", "Villa", "Independent House", "Plot", "Commercial", "Residential + Commercial")
 - "age_years"         (String or Number)
 - "possession_status" (String: "Ready" or "Under Construction")
 - "source_url"        (String, direct listing URL)
 - "reason"            (String, short explanation of why it is comparable)
+- "location_certainty" (String: "Sure" or "Not Sure")
+  Rules — output "Sure" ONLY if ALL of the following are true:
+    1. The project name is explicitly stated (not inferred or paraphrased)
+    2. No guesswork was needed — project + location appear together on the same page
+  Output "Not Sure" if ANY of the following apply:
+    - Location is a broad zone, district, or city (e.g. "Rishikesh", "North Delhi")
+    - Project name is generic (e.g. "Residential Land", "Plot", "New Project")
+    - Location was inferred from nearby landmarks or approximate descriptions
+    - Coordinates or map pin are absent or inconsistent with stated location
 """
 
     user_prompt = f"""
@@ -187,6 +259,7 @@ Remember:
 - ONLY {display_name} projects
 - Do NOT include: {exclusion_str}
 - Geographic proximity is key
+- Fill "project_category" for EVERY comparable using the exact labels defined
 - Return only genuinely similar {search_term} projects
 """
     return system_prompt, user_prompt
@@ -211,10 +284,10 @@ def fetch_comparables(subject: dict) -> tuple[list, dict]:
             "completion_tokens": getattr(response.usage, "output_tokens", 0),
             "total_tokens":      getattr(response.usage, "total_tokens", 0),
             "model":             model_name,
-            "tool_calls":        1 # web_search_preview
+            "tool_calls":        2  # web_search_preview
         }
         logger.info(f"[LLM Fetch] Received {len(comps)} raw comparables | tokens={usage['total_tokens']}")
-        
+
         if not comps and raw:
             logger.warning(f"[LLM Fetch] Zero results! Raw snippet: {raw[:300]}...")
 
@@ -223,7 +296,6 @@ def fetch_comparables(subject: dict) -> tuple[list, dict]:
     except Exception as e:
         logger.error(f"[LLM Fetch] Failed: {e}")
         return [], {"model": model_name, "tool_calls": 0}
-
 
 
 def parse_json_safely(raw: str) -> list:
@@ -239,7 +311,6 @@ def parse_json_safely(raw: str) -> list:
 
     def clean_json_str(s: str) -> str:
         s = s.strip()
-        # Remove trailing commas in arrays/objects: [1, 2,] -> [1, 2]
         s = re.sub(r',\s*([\]\}])', r'\1', s)
         return s
 
@@ -267,18 +338,16 @@ def parse_json_safely(raw: str) -> list:
             elif raw[i] == "]":
                 depth -= 1
                 if depth == 0:
-                    potential_json = raw[start : i + 1]
+                    potential_json = raw[start: i + 1]
                     try:
                         data = json.loads(clean_json_str(potential_json))
                         return data if isinstance(data, list) else []
                     except Exception:
-                        pass # try fallback
+                        pass
 
     # 3. Last Resort Fallback: Extract individual objects
-    # This is useful if the LLM produced a malformed array but valid objects
     try:
         objects = []
-        # Find everything between { and }
         potential_objs = re.findall(r"\{[^{}]*\}", raw, re.DOTALL)
         for obj_str in potential_objs:
             try:
@@ -300,14 +369,25 @@ def parse_json_safely(raw: str) -> list:
 def hard_filter_by_type(comps: list, required_type: str) -> list:
     """
     Layer 1 defense — programmatic type check.
-    Never trust AI label alone.
+    Allows certain cross-type matches (e.g., Plot vs Villa).
     """
-    valid   = []
+    valid = []
+
+    ALLOW_CROSS = {
+        "plot": {"plot", "villa"}
+    }
+
     for c in comps:
         raw_type   = c.get("property_type", "")
         normalized = normalize_property_type(raw_type)
-        if normalized == required_type:
-            c["property_type"] = normalized
+
+        is_allowed = (normalized == required_type) or (
+            required_type in ALLOW_CROSS and normalized in ALLOW_CROSS[required_type]
+        )
+
+        if is_allowed:
+            if normalized:
+                c["property_type"] = normalized
             valid.append(c)
         else:
             log_drop(
@@ -320,14 +400,37 @@ def hard_filter_by_type(comps: list, required_type: str) -> list:
                     "location": c.get("location", ""),
                 }
             )
-    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check")
+    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check (allowed cross-types included)")
     return valid
 
 
-# ── LLM Verification ──────────────────────────────────────────────────────
-# comparable_selection_agent.py
+# ── Normalize project_category on all comparables ─────────────────────────
+def stamp_project_category(comps: list) -> list:
+    """
+    Normalize the 'project_category' field returned by the LLM.
+    If the LLM didn't return one (or returned garbage), fall back to
+    the default derived from property_type.
+    Logs a warning whenever the fallback is used.
+    """
+    for c in comps:
+        raw_cat   = c.get("project_category", "")
+        ptype_key = c.get("property_type", "")
+        normalized = normalize_project_category(raw_cat, fallback_ptype=ptype_key)
 
+        if not raw_cat:
+            logger.warning(
+                f"[Category] Missing project_category for '{c.get('project_name')}' "
+                f"— using fallback '{normalized}'"
+            )
+        elif normalized != raw_cat.strip():
+            logger.info(
+                f"[Category] Normalized '{raw_cat}' → '{normalized}' "
+                f"for '{c.get('project_name')}'"
+            )
 
+        c["project_category"] = normalized
+
+    return comps
 
 
 # ── Scoring ───────────────────────────────────────────────────────────────
@@ -353,14 +456,21 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     all_comps   = []
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
+    # Derive subject's own category label
+    subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
+
     logger.info(
         f"[Agent Start] project='{subject.get('project_name')}' "
-        f"type='{ptype}' search_term='{PROPERTY_TYPE_SEARCH_TERM[ptype]}' "
+        f"type='{ptype}' category='{subject_category}' "
+        f"search_term='{PROPERTY_TYPE_SEARCH_TERM[ptype]}' "
         f"location='{subject.get('location_name')}'"
     )
 
     if run_logger:
-        run_logger.save_step("comparable_agent", "input_subject", subject)
+        run_logger.save_step("comparable_agent", "input_subject", {
+            **subject,
+            "subject_category": subject_category,
+        })
 
     # ── Step 1: Multi-pass LLM fetch ──────────────────────────────────────
     for i in range(1):
@@ -369,8 +479,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         all_comps.extend(comps)
         for k in ["prompt_tokens", "completion_tokens", "total_tokens"]:
             total_usage[k] += usage.get(k, 0)
-        
-        # Track in metrics if provided
+
         if metrics:
             metrics.add_tokens(usage, model_name=usage.get("model", "gpt-4o-mini"))
             if usage.get("tool_calls"):
@@ -382,7 +491,6 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         if run_logger:
             run_logger.save_step("comparable_agent", f"pass_{i+1}_raw", comps)
 
-
     logger.info(f"[Multi-pass] Total raw comparables: {len(all_comps)}")
 
     # ── Step 2: Deduplicate ───────────────────────────────────────────────
@@ -390,18 +498,10 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     for c in all_comps:
         name = c.get("project_name", "").lower().strip()
         if not name:
-            log_drop(
-                stage="dedup",
-                project_name="(empty)",
-                reason="missing_project_name",
-            )
+            log_drop(stage="dedup", project_name="(empty)", reason="missing_project_name")
             continue
         if name in seen:
-            log_drop(
-                stage="dedup",
-                project_name=c.get("project_name", ""),
-                reason="duplicate",
-            )
+            log_drop(stage="dedup", project_name=c.get("project_name", ""), reason="duplicate")
             continue
         seen.add(name)
         deduped.append(c)
@@ -414,6 +514,18 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     # ── Step 3: Hard filter (Layer 1) ─────────────────────────────────────
     type_filtered = hard_filter_by_type(deduped, ptype)
 
+    # ── Step 3b: Normalize project_category ───────────────────────────────
+    # LLM fills this during web search; we just clean/normalize here.
+    type_filtered = stamp_project_category(type_filtered)
+
+    logger.info(
+        f"[Category] Subject category: '{subject_category}' | "
+        f"Comparable categories: { {c['project_category'] for c in type_filtered} }"
+    )
+
+    if run_logger:
+        run_logger.save_step("comparable_agent", "after_category_stamp", type_filtered)
+
     # ── Step 5: Geocode ───────────────────────────────────────────────────
     logger.info(f"[Geocode] Starting for {len(type_filtered)} comparables")
     for c in type_filtered:
@@ -425,6 +537,11 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             )
             c["map_search_lat"] = res.get("lat")
             c["map_search_lng"] = res.get("lng")
+            c["geocode_source"] = res.get("source")
+
+            # Initialize certainty if missing
+            if "location_certainty" not in c:
+                c["location_certainty"] = "Not Sure"
 
             if not c["map_search_lat"] or not c["map_search_lng"]:
                 log_drop(
@@ -436,10 +553,13 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                         "country":  c.get("country", ""),
                     }
                 )
-            else:
+            
+
+            if c["map_search_lat"] and c["map_search_lng"]:
                 logger.info(
                     f"[Geocode] OK '{c['project_name']}' -> "
-                    f"({c['map_search_lat']}, {c['map_search_lng']})"
+                    f"({c['map_search_lat']}, {c['map_search_lng']}) | "
+                    f"Certainty: {c['location_certainty']}"
                 )
 
         except Exception as e:
@@ -490,7 +610,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
 
     logger.info(f"[URL Filter] {len(url_clean)} comparables after URL cleanup")
 
-    # ── Step 8: Rank + 5km filter ─────────────────────────────────────────
+    # ── Step 8: Rank + 15km filter ────────────────────────────────────────
     ranked = sorted(url_clean, key=lambda x: score_comp(x, subject), reverse=True)
 
     nearby = []
@@ -515,7 +635,8 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         run_logger.save_step("comparable_agent", "final_comps", nearby)
 
     return {
-        "comparables":  nearby,
-        "count":        len(nearby),
-        "_token_usage": total_usage,
+        "comparables":        nearby,
+        "count":              len(nearby),
+        "subject_category":   subject_category,   # ← NEW: subject's category label
+        "_token_usage":       total_usage,
     }

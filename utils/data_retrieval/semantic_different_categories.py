@@ -71,6 +71,22 @@ def _parse_json(text: str, default: Any) -> Any:
     return default
 
 
+def _ilike_match(pattern: str, text: str) -> bool:
+    """
+    PostgreSQL ILIKE-like matching:
+    Returns True if pattern is found as case-insensitive substring in text.
+    
+    Examples:
+      _ilike_match("residential", "Residential") → True
+      _ilike_match("residential", "Residential / Commercial") → True
+      _ilike_match("commercial", "Residential+Commercial") → True
+      _ilike_match("industrial", "Hospitality") → False
+    """
+    pattern_lower = str(pattern or "").strip().lower()
+    text_lower = str(text or "").strip().lower()
+    return pattern_lower in text_lower
+
+
 def _ensure_safe_table(table_name: str) -> str:
     if table_name not in _ALLOWED_TABLES:
         raise ValueError(f"Unsupported semantic table: {table_name}")
@@ -165,6 +181,13 @@ def resolve_query(
 ) -> dict[str, list[str]]:
     """
     Resolve one user phrase against distinct DB values for one or more columns.
+    
+    Uses two-stage resolution:
+    1. Exact semantic matching via OpenAI (for synonyms, abbreviations, etc.)
+    2. Substring matching (ILIKE) for potential composite values or partial matches
+    
+    This ensures composite values like "Residential / Commercial" are included
+    when user searches for "residential", regardless of delimiter format.
     """
     query_value = str(query_value or "").strip()
     if not query_value:
@@ -196,12 +219,30 @@ Rules:
     parsed = _parse_json(content, default={})
 
     resolved: dict[str, list[str]] = {}
+    
     for col, values in distinct_values.items():
         allowed = {str(value) for value in values}
         matches = parsed.get(col) if isinstance(parsed, dict) else []
         if not isinstance(matches, list):
             matches = []
-        resolved[col] = [str(value) for value in matches if str(value) in allowed]
+        
+        # Start with exact semantic matches from OpenAI
+        result = [str(value) for value in matches if str(value) in allowed]
+        result_set = set(result)
+        
+        # Add ILIKE matches: substring matching for composite or partial matches
+        # This handles any delimiter format (/, +, -, &, etc.)
+        for value_str in allowed:
+            if value_str in result_set:
+                continue  # Already included as exact match
+            
+            # Check if user query appears anywhere in the distinct value (case-insensitive)
+            if _ilike_match(query_value, value_str):
+                result.append(value_str)
+                result_set.add(value_str)
+        
+        resolved[col] = result
+    
     return resolved
 
 

@@ -106,14 +106,21 @@ class DuckDuckGoSearchAgent:
                 'source': r.get('source'),
                 'search_query': r.get('search_query'),
                 'matched_entities': r.get('matched_entities', []),
-                'relevance_score': r.get('relevance_score', 0.0)
+                'relevance_score': r.get('relevance_score', 0.0),
+                'trust_score': r.get('trust_score', 0.5),
+                'verification_status': r.get('verification_status', 'unverified'),
             }
             for r in search_results
         ]
 
         # Fetch full content if requested
         if fetch_content:
-            urls = [r['url'] for r in search_results[:min(max_results, len(search_results))]]
+            extraction_sources = sorted(
+                search_results[:min(max_results, len(search_results))],
+                key=lambda item: item.get('trust_score', 0.5),
+                reverse=True,
+            )
+            urls = [r['url'] for r in extraction_sources]
             if status_callback: status_callback(f'Reading full content from {len(urls)} top sources...')
             content_results = self.processor.process_batch(urls, query=query, status_callback=status_callback)
 
@@ -137,11 +144,16 @@ class DuckDuckGoSearchAgent:
                             result['published_date'] = content.get('published_date')
                             result['time_ago'] = content.get('time_ago', 'Date unknown')
                             result['source_trust'] = content.get('source_trust', 0.5)
+                            result['trust_score'] = max(result.get('trust_score', 0.5), result['source_trust'])
                             result['reference_urls'] = self._reference_urls_for_result(result, content)
                             result['extraction_metadata'] = content.get('extraction_metadata') or {
                                 'source_url': result.get('url'),
                                 'reference_urls': result['reference_urls'],
                             }
+                            result['extraction_metadata']['source_url'] = result.get('url')
+                            result['extraction_metadata']['reference_urls'] = result['reference_urls']
+                            result['extraction_metadata']['verification_status'] = result.get('verification_status', 'unverified')
+                            result['extraction_metadata']['trust_score'] = result.get('trust_score', result.get('source_trust', 0.5))
                             result['exact_ready_reckoner_rows'] = content.get('exact_ready_reckoner_rows', [])
                             result['exact_evidence_matches'] = content.get('exact_evidence_matches', [])
                             result['extracted_data'] = content.get('extracted_data')
@@ -163,6 +175,8 @@ class DuckDuckGoSearchAgent:
                         known_urls.add(extra.get('url'))
                         results_dict.append(extra)
 
+        source_traceability = self._build_source_traceability(results_dict)
+
         # Analyze if needed
         analysis = None
         token_before = self.analyzer.get_token_report()
@@ -178,7 +192,8 @@ class DuckDuckGoSearchAgent:
                 self.validator,
                 intent=intent,
                 stream_callback=stream_callback,
-                debug_llm_payloads=debug_llm_payloads
+                debug_llm_payloads=debug_llm_payloads,
+                source_traceability=source_traceability,
             )
             analysis = trusted_response['answer']
             output_metadata = {
@@ -212,14 +227,18 @@ class DuckDuckGoSearchAgent:
             'results_count': len(results_dict),
             'results': results_dict,
             'reference_urls': self._collect_reference_urls(results_dict),
+            'source_traceability': source_traceability,
             'extraction_metadata': {
                 'reference_urls': self._collect_reference_urls(results_dict),
+                'source_traceability': source_traceability,
                 'sources_extracted': [
                     {
                         'title': result.get('title'),
                         'url': result.get('url'),
                         'reference_urls': result.get('reference_urls') or self._reference_urls_for_result(result),
                         'source': result.get('source'),
+                        'trust_score': result.get('trust_score', result.get('source_trust')),
+                        'verification_status': result.get('verification_status'),
                     }
                     for result in results_dict
                 ],
@@ -538,3 +557,69 @@ class DuckDuckGoSearchAgent:
         for result in results or []:
             urls.extend(self._reference_urls_for_result(result))
         return list(dict.fromkeys(urls))
+
+    def _build_source_traceability(self, results: List[Dict]) -> Dict[str, List[Dict]]:
+        primary_sources = []
+        additional_sources = []
+        crawled_sources = []
+        document_sources = []
+        evidence_lines = []
+
+        for index, result in enumerate(results or [], 1):
+            source_type = result.get('source') or 'web'
+            url = result.get('url')
+            if not url:
+                continue
+
+            trust_score = result.get('trust_score', result.get('source_trust', 0.5))
+            source_info = {
+                'index': index,
+                'title': result.get('title'),
+                'url': url,
+                'source': source_type,
+                'trust_score': trust_score,
+                'verification_status': result.get('verification_status', 'unverified'),
+                'reference_urls': result.get('reference_urls') or self._reference_urls_for_result(result),
+            }
+
+            if source_type == 'deep-crawl':
+                crawled_sources.append(source_info)
+            elif source_type == 'document-extraction':
+                source_info['document'] = result.get('document')
+                document_sources.append(source_info)
+            elif source_info['verification_status'] == 'verified_indicator':
+                primary_sources.append(source_info)
+            else:
+                additional_sources.append(source_info)
+
+            for row in result.get('exact_ready_reckoner_rows', []) or []:
+                text = row.get('row_text')
+                if text:
+                    evidence_lines.append({
+                        'source_index': index,
+                        'source_url': url,
+                        'source_title': result.get('title'),
+                        'type': 'exact_ready_reckoner_row',
+                        'text': text,
+                    })
+            for match in result.get('exact_evidence_matches', []) or []:
+                text = match.get('text')
+                if text:
+                    evidence_lines.append({
+                        'source_index': index,
+                        'source_url': url,
+                        'source_title': result.get('title'),
+                        'type': 'exact_evidence_match',
+                        'text': text,
+                    })
+
+        primary_sources.sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
+        additional_sources.sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
+
+        return {
+            'top_verified_sources': primary_sources,
+            'additional_sources': additional_sources,
+            'crawled_source_urls': crawled_sources,
+            'document_source_urls': document_sources,
+            'extracted_evidence': evidence_lines,
+        }

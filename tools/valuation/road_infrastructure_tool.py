@@ -5,7 +5,7 @@ logger = logging.getLogger("road_infrastructure_tool")
 
 OSM_CATEGORIES = {
     'D': ['trunk', 'motorway', 'motorway_link', 'trunk_link'],
-    'C': ['primary', 'primary_link', 'trunk_link'],
+    'C': ['primary', 'primary_link'],
     'B': ['secondary', 'secondary_link'],
     'A': ['tertiary', 'residential', 'unclassified', 'service', 'living_street', 'pedestrian', 'road']
 }

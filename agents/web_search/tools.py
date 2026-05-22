@@ -149,6 +149,8 @@ class ResponseFormatter:
                     'relevance_score': r.get('relevance_score'),
                     'llm_relevance_score': r.get('llm_relevance_score'),
                     'llm_relevance_reason': r.get('llm_relevance_reason'),
+                    'trust_score': r.get('trust_score', r.get('source_trust')),
+                    'verification_status': r.get('verification_status'),
                     'reference_urls': r.get('reference_urls', []),
                     'extraction_metadata': r.get('extraction_metadata')
                 }
@@ -156,6 +158,7 @@ class ResponseFormatter:
             ]
         }
         output['reference_urls'] = self._collect_reference_urls(results)
+        output['source_traceability'] = self._build_source_traceability(results)
 
         if discovery:
             output['discovery'] = discovery
@@ -179,6 +182,61 @@ class ResponseFormatter:
                 urls.append(document['source_url'])
             urls.extend(document.get('reference_urls') or [])
         return list(dict.fromkeys(url for url in urls if url))
+
+    def _build_source_traceability(self, results: List[Dict]) -> Dict[str, List[Dict]]:
+        traceability = {
+            'top_verified_sources': [],
+            'additional_sources': [],
+            'crawled_source_urls': [],
+            'document_source_urls': [],
+            'extracted_evidence': [],
+        }
+        for index, result in enumerate(results or [], 1):
+            url = result.get('url')
+            if not url:
+                continue
+            source_type = result.get('source') or 'web'
+            info = {
+                'index': index,
+                'title': result.get('title'),
+                'url': url,
+                'source': source_type,
+                'trust_score': result.get('trust_score', result.get('source_trust')),
+                'verification_status': result.get('verification_status', 'unverified'),
+                'reference_urls': result.get('reference_urls', []),
+            }
+            if source_type == 'deep-crawl':
+                traceability['crawled_source_urls'].append(info)
+            elif source_type == 'document-extraction':
+                info['document'] = result.get('document')
+                traceability['document_source_urls'].append(info)
+            elif info['verification_status'] == 'verified_indicator':
+                traceability['top_verified_sources'].append(info)
+            else:
+                traceability['additional_sources'].append(info)
+
+            for row in result.get('exact_ready_reckoner_rows', []) or []:
+                if row.get('row_text'):
+                    traceability['extracted_evidence'].append({
+                        'source_index': index,
+                        'source_url': url,
+                        'source_title': result.get('title'),
+                        'type': 'exact_ready_reckoner_row',
+                        'text': row.get('row_text'),
+                    })
+            for match in result.get('exact_evidence_matches', []) or []:
+                if match.get('text'):
+                    traceability['extracted_evidence'].append({
+                        'source_index': index,
+                        'source_url': url,
+                        'source_title': result.get('title'),
+                        'type': 'exact_evidence_match',
+                        'text': match.get('text'),
+                    })
+
+        traceability['top_verified_sources'].sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
+        traceability['additional_sources'].sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
+        return traceability
 
     def format_streaming(self, query: str, result: Dict, is_last: bool = False) -> str:
         """Format for streaming response"""

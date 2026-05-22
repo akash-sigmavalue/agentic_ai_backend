@@ -44,6 +44,51 @@ class TransactionDomainAgent:
             "row_count": db_result.get("row_count", 0),
         }
 
+    def _format_algorithm_output(self, intent: dict, sql: str | None, db_result: dict) -> str:
+        entities = intent.get("entities") or {}
+        metrics = [
+            metric.get("alias") or metric.get("name")
+            for metric in (intent.get("metrics") or [])
+            if metric.get("alias") or metric.get("name")
+        ]
+        locations = [loc.get("value") for loc in (entities.get("locations") or []) if loc.get("value")]
+        space_filters = {
+            key: value
+            for key, value in (entities.get("space_filters") or {}).items()
+            if value not in (None, "", [])
+        }
+        category_filters = {
+            key: value
+            for key, value in (entities.get("category_filters") or {}).items()
+            if value not in (None, "", [])
+        }
+        group_by = intent.get("group_by") or []
+        order_by = intent.get("order_by") or []
+        row_count = db_result.get("row_count", 0)
+
+        return "\n".join(
+            [
+                "Interpreted intent:",
+                f"- Analysis type: {intent.get('analysis_type') or 'lookup'}",
+                f"- Metrics: {', '.join(metrics) if metrics else 'schema-backed lookup fields'}",
+                f"- Entities: {', '.join(locations) if locations else 'none explicitly detected'}",
+                "",
+                "Algorithm followed:",
+                "1. Read the user query against the available transaction schema.",
+                "2. Selected only schema-backed columns for entities, filters, and metrics.",
+                f"3. Applied space filters: {json.dumps(space_filters, default=str) if space_filters else 'none'}.",
+                f"4. Applied category filters: {json.dumps(category_filters, default=str) if category_filters else 'none'}.",
+                f"5. Used grouping: {json.dumps(group_by, default=str) if group_by else 'none'} and ordering: {json.dumps(order_by, default=str) if order_by else 'none'}.",
+                "6. Generated and reviewed a safe SELECT query before execution.",
+                f"7. Executed the query and returned {row_count} matching row(s).",
+                "",
+                "SQL used:",
+                sql or "No SQL was generated.",
+                "",
+                "Result:",
+            ]
+        )
+
     def execute_events(self, question: str):
         try:
             yield self._event("stage", f"{self.display_name} · Stage 1: Extracting intent and entities...")
@@ -177,6 +222,9 @@ class TransactionDomainAgent:
                 agent=self.domain_key,
             )
             yield self._event("result_set", self._build_result_payload(db_result), agent=self.domain_key)
+            algorithm_output = self._format_algorithm_output(intent, sql, db_result)
+            report_chunks.append(algorithm_output)
+            yield self._event("report_chunk", algorithm_output + "\n", agent=self.domain_key)
             raw_output = json.dumps(db_result["data"], indent=2, default=str)
             report_chunks.append(raw_output)
             yield self._event("report_chunk", raw_output + "\n", agent=self.domain_key)
