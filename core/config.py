@@ -40,6 +40,14 @@ class Settings(BaseSettings):
     SPATIAL_ANALYSIS_EXCEL_PATH: Optional[str] = None
     COLUMN_MAPPING_PATH: Optional[str] = None
     
+    #portfolio relate
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    MAX_PREVIEW_ROWS: int = 6
+    DEBUG_MAPPING_AGENT: bool = True
+    MAPPING_AGENT_REVIEW_ENABLED: bool = True
+    MAPPING_AGENT_REPAIR_ROUNDS: int = 2
+    UPLOAD_DIR: str = "storage/uploads"
+    TEMP_DIR: str = "storage/temp"
 
     model_config = SettingsConfigDict(
         env_file=".env",

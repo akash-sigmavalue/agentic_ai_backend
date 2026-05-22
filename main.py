@@ -48,6 +48,9 @@ from database.db import Base as ConnectorBase, Base, engine, SessionLocal, get_d
 from database.db import engine as connector_engine
 from database.connector.schema_migration import ensure_additive_schema
 
+#portfolio related imports
+from api.routes.portfolio import dashboard, health, portfolio_flat, records, sections, uploads
+from database.portfolio.db import init_db as init_portfolio_db
 
 if sys.platform == "win32":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -101,6 +104,13 @@ def _include_routes(app: FastAPI) -> None:
     app.include_router(web_search_web.router, prefix="/web-search")
     app.include_router(_build_workflow_router())
 
+    # Portfolio related routes
+    app.include_router(health.router, prefix="/portfolio")
+    app.include_router(sections.router, prefix="/portfolio")
+    app.include_router(records.router, prefix="/portfolio")
+    app.include_router(uploads.router, prefix="/portfolio")
+    app.include_router(dashboard.router, prefix="/portfolio")
+    app.include_router(portfolio_flat.router, prefix="/portfolio")
 
 def _build_workflow_router() -> APIRouter:
     router = APIRouter(prefix="/v1", tags=["workflow"])
@@ -162,6 +172,7 @@ def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
     ConnectorBase.metadata.create_all(bind=connector_engine)
     ensure_additive_schema(connector_engine)
+    init_portfolio_db()
     if not scheduler.running:
         scheduler.add_job(
             _renew_gmail_watch_job,
@@ -183,7 +194,7 @@ def read_root():
     return {
         "message": f"Welcome to the {settings.PROJECT_NAME} API",
         "docs": "/docs",
-        "agents": ["data_retrieval", "valuation", "geospatial", "connector", "ui_creation"],
+        "agents": ["data_retrieval", "valuation", "geospatial", "connector", "ui_creation", "portfolio"],
     }
 
 
