@@ -12,6 +12,9 @@ from langchain_core.documents import Document
 from core.user_input.config import OCR_AVAILABLE, POPPLER_PATH, convert_from_path, pytesseract
 from database.user_input_runtime import runtime
 from utils.user_input.helpers import is_table_like
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage
+from core.user_input.config import OPENAI_API_KEY
 
 
 def extract_images_from_pdf(file_path):
@@ -113,6 +116,80 @@ def load_pdf_with_opendataloader(file_path: str) -> List[Document]:
 def load_documents(file_path: str, filename: str) -> List[Document]:
     extension = os.path.splitext(filename)[1].lower()
 
+    if extension in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]:
+        runtime.loader_type = "image"
+        with open(file_path, "rb") as f:
+            image_bytes = f.read()
+        encoded = base64.b64encode(image_bytes).decode("utf-8")
+        mime_type = f"image/{extension.replace('.', '')}"
+        if mime_type == "image/jpg":
+            mime_type = "image/jpeg"
+
+        runtime.page_images[(filename, 1)] = [
+            Document(
+                page_content="[IMAGE]",
+                metadata={
+                    "source": filename,
+                    "page": 1,
+                    "image_base64": encoded,
+                    "image_mime": mime_type,
+                    "image_index": 0,
+                    "type": "image",
+                }
+            )
+        ]
+
+        description = ""
+        try:
+            if OPENAI_API_KEY:
+                llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=OPENAI_API_KEY)
+                message = HumanMessage(
+                    content=[
+                        {
+                            "type": "text",
+                            "text": (
+                                "You are an expert technical document transcriber.\n"
+                                "Transcribe all text, numbers, and labels from this image with absolute precision.\n"
+                                "Pay extreme attention to:\n"
+                                "1. Exact numbers and decimal points. Do NOT add, remove, or shift decimal points.\n"
+                                "2. Exact units of measurement (e.g., 'mm', 'm', 'cm'). Do NOT convert units (e.g., do NOT change '150 mm' to '1.50 m').\n"
+                                "3. Verify every label carefully before transcribing.\n"
+                                "Format your output in clean Markdown."
+                            )
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": f"data:{mime_type};base64,{encoded}"}
+                        }
+                    ]
+                )
+                res = llm.invoke([message])
+                description = res.content.strip()
+        except Exception as exc:
+            print(f"VLM image description failed, falling back: {exc}")
+
+        if not description and OCR_AVAILABLE:
+            try:
+                from PIL import Image
+                description = pytesseract.image_to_string(Image.open(file_path))
+            except Exception as exc:
+                print(f"OCR fallback failed: {exc}")
+
+        if not description:
+            description = f"[Uploaded image: {filename}. Could not extract text content automatically.]"
+
+        return [
+            Document(
+                page_content=description,
+                metadata={
+                    "page": 1,
+                    "source": filename,
+                    "type": "text",
+                    "chunk_type": "image_description",
+                }
+            )
+        ]
+
     if extension == ".pdf":
         # Priority 1: OpenDataLoader (richest structured extraction — markdown, sections, tables, bbox)
         try:
@@ -152,4 +229,4 @@ def load_documents(file_path: str, filename: str) -> List[Document]:
         runtime.loader_type = "docx"
         return Docx2txtLoader(file_path).load()
 
-    raise HTTPException(status_code=400, detail="Only PDF and DOCX files are supported.")
+    raise HTTPException(status_code=400, detail="Only PDF, DOCX, and image files (.png, .jpg, .jpeg, .webp, .bmp) are supported.")

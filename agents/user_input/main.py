@@ -4,6 +4,7 @@ from typing import List, Dict
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
+from langchain_core.messages import HumanMessage
 
 from agents.user_input.prompts import (
     # ANSWER_VERIFICATION_PROMPT,
@@ -285,7 +286,34 @@ def generate_node(state: GraphState) -> GraphState:
     )
 
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1, api_key=OPENAI_API_KEY)
-    response = llm.invoke(prompt)
+
+    # Check if context contains any image blocks
+    has_images = any(c.get("type") == "image" and c.get("image_base64") for c in state["context"])
+
+    if has_images:
+        
+        
+        # Add visual verification guidance for the LLM when images are retrieved
+        visual_prompt = (
+            f"{prompt}\n\n"
+            "NOTE ON VISUAL CONTEXT: You have been provided with the original base64 images of the document pages "
+            "as visual context alongside the transcribed text context. If you notice any discrepancy in numbers, "
+            "decimal positions, or units of measurement (e.g. 'mm' vs 'm') between the transcribed text context "
+            "and the actual visual content on the image, you MUST trust the exact numbers and units shown on the image."
+        )
+        content = [{"type": "text", "text": visual_prompt}]
+        for c in state["context"]:
+            if c.get("type") == "image" and c.get("image_base64"):
+                content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:{c.get('image_mime', 'image/png')};base64,{c['image_base64']}"
+                    }
+                })
+        
+        response = llm.invoke([HumanMessage(content=content)])
+    else:
+        response = llm.invoke(prompt)
 
     usage = _get_llm_token_usage(response, prompt, "gpt-4o-mini")
 
