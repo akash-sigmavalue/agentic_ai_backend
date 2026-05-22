@@ -161,15 +161,22 @@ def get_nearby_amenities(lat, lng, radius=1000, city_name=None):
     }
     
     try:
-        response = requests.post(url, data={'data': query}, headers=headers, timeout=20)
-        if response.status_code == 429:
-            logger.warning("Overpass API rate limit hit (429).")
-            return []
-        if response.status_code != 200:
-            logger.warning(f"Overpass Amenity API error: {response.status_code} - {response.text[:200]}")
-            return []
-            
-        data = response.json()
+        from tools.valuation.overpass_cache import get_cached_overpass_request, set_cached_overpass_request
+        cached = get_cached_overpass_request(query)
+        if cached is not None:
+            data = cached
+        else:
+            response = requests.post(url, data={'data': query}, headers=headers, timeout=10)
+            if response.status_code == 429:
+                logger.warning("Overpass API rate limit hit (429).")
+                return []
+            if response.status_code != 200:
+                logger.warning(f"Overpass Amenity API error: {response.status_code} - {response.text[:200]}")
+                return []
+                
+            data = response.json()
+            set_cached_overpass_request(query, data)
+
         elements = data.get('elements', [])
         
         results = []

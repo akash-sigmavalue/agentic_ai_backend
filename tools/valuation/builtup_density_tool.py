@@ -24,6 +24,7 @@ import requests
 from pyproj import Transformer
 from shapely.geometry import LineString, Polygon, Point
 from shapely.validation import make_valid
+from tools.valuation.overpass_cache import get_cached_overpass_request, set_cached_overpass_request
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +35,7 @@ OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
 ]
-TIMEOUT = 90
+TIMEOUT = 15
 RETRY = 3
 USER_AGENT = "BuiltUpDensityTool/1.0"
 
@@ -151,6 +152,10 @@ out geom;
 
 
 def overpass_query(query: str) -> Dict:
+    cached = get_cached_overpass_request(query)
+    if cached is not None:
+        return cached
+
     headers = {"User-Agent": USER_AGENT}
     for _ in range(RETRY):
         for url in OVERPASS_ENDPOINTS:
@@ -162,7 +167,9 @@ def overpass_query(query: str) -> Dict:
                     time.sleep(2)
                     continue
                 r.raise_for_status()
-                return r.json()
+                res = r.json()
+                set_cached_overpass_request(query, res)
+                return res
             except Exception:
                 time.sleep(1)
     raise RuntimeError("Overpass API failed after all retries.")

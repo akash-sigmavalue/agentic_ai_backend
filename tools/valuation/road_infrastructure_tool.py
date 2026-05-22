@@ -28,19 +28,30 @@ def get_road_category(lat, lng, radius=200):
     out tags;
     """
     
-    url = "https://overpass-api.de/api/interpreter"
-    headers = {
-        'User-Agent': 'PropValIndiaBot/1.0',
-        'Accept': 'application/json'
-    }
+    from tools.valuation.overpass_cache import get_cached_overpass_request, set_cached_overpass_request
     
-    try:
-        response = requests.post(url, data={'data': query}, headers=headers, timeout=20)
-        if response.status_code != 200:
-            logger.warning(f"Overpass API error: {response.status_code}")
+    cached = get_cached_overpass_request(query)
+    if cached is not None:
+        data = cached
+    else:
+        url = "https://overpass-api.de/api/interpreter"
+        headers = {
+            'User-Agent': 'PropValIndiaBot/1.0',
+            'Accept': 'application/json'
+        }
+        try:
+            response = requests.post(url, data={'data': query}, headers=headers, timeout=10)
+            if response.status_code != 200:
+                logger.warning(f"Overpass API error: {response.status_code}")
+                return None
+                
+            data = response.json()
+            set_cached_overpass_request(query, data)
+        except Exception as e:
+            logger.error(f"OSM Road Category lookup failed: {e}")
             return None
-            
-        data = response.json()
+
+    try:
         highways = [element.get('tags', {}).get('highway') for element in data.get('elements', [])]
         
         found_categories = set()
@@ -58,5 +69,5 @@ def get_road_category(lat, lng, radius=200):
         return "A" if highways else None # Default to A if some highway found but not in our list, else None
 
     except Exception as e:
-        logger.error(f"OSM Road Category lookup failed: {e}")
+        logger.error(f"OSM Road parsing failed: {e}")
         return None

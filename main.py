@@ -11,6 +11,27 @@ import io
 import logging
 import os
 import sys
+import platform
+
+# Mock platform functions to prevent hangs on Windows system queries
+def _mock_machine():
+    return "AMD64"
+
+def _mock_uname():
+    from collections import namedtuple
+    uname_result = namedtuple('uname_result', ['system', 'node', 'release', 'version', 'machine', 'processor'])
+    return uname_result(
+        system="Windows",
+        node="localhost",
+        release="10",
+        version="10.0.19045",
+        machine="AMD64",
+        processor="Intel64 Family 6 Model 158 Stepping 10, GenuineIntel"
+    )
+
+platform.machine = _mock_machine
+platform.uname = _mock_uname
+
 from typing import Any
 
 from apscheduler.schedulers.background import BackgroundScheduler

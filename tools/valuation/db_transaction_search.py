@@ -9,11 +9,20 @@ Used when a user selects a comparable project that has source = 'Internal DB'.
 Returns a list of transaction dicts, each stamped with source = 'Internal DB'.
 """
 
+import sys
 import json
 import re
 import time
 import logging
 import requests
+
+# Reconfigure stdout to use UTF-8 (essential on Windows to print unicode characters like ₹)
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 logger = logging.getLogger(__name__)
 
@@ -38,22 +47,138 @@ def _normalize_property_type(raw: str) -> str:
 
 
 def _extract_json_array(text: str):
-    """Bracket-balanced JSON array extractor."""
-    start = text.find("[")
+    # Try finding "Result:" first to isolate the SQL output array
+    result_idx = text.lower().find("result:")
+    candidate_text = text[result_idx:] if result_idx != -1 else text
+
+    # Bracket-balanced JSON array extractor.
+    start = candidate_text.find("[")
     if start == -1:
         return None
     depth = 0
-    for i, ch in enumerate(text[start:], start):
+    for i, ch in enumerate(candidate_text[start:], start):
         if ch == "[":
             depth += 1
         elif ch == "]":
             depth -= 1
             if depth == 0:
                 try:
-                    return json.loads(text[start: i + 1])
+                    val = json.loads(candidate_text[start: i + 1])
+                    if isinstance(val, list):
+                        return val
                 except Exception:
-                    return None
+                    pass
     return None
+
+
+def print_table(transactions):
+    if not transactions:
+        print("No transactions found.")
+        return
+    
+    headers = [
+        "PROJECT",
+        "TYPE",
+        "PROPERTY CATEGORY",
+        "LIST TYPE",
+        "CURRENCY",
+        "PRICE",
+        "PRICE/SQFT",
+        "AREA",
+        "AREA TYPE",
+        "FLOOR",
+        "LOCATION",
+        "SOURCE",
+        "NET CARPET AREA (SQM)",
+        "COUNTRY",
+        "DATE"
+    ]
+    
+    def get_field(item, keys_list, default="-"):
+        for k in keys_list:
+            for item_key in item.keys():
+                if item_key.strip().lower() == k.lower():
+                    val = item[item_key]
+                    if val is not None and str(val).strip() != "":
+                        return str(val)
+        return default
+
+    rows = []
+    for item in transactions:
+        project = get_field(item, ["project_name", "project", "name"])
+        prop_type_raw = get_field(item, ["property_type_raw", "type_raw", "raw_type", "type"])
+        property_type = get_field(item, ["property_type", "property_category", "category"])
+        list_type = get_field(item, ["transaction_category", "list_type", "transaction_type"])
+        price = get_field(item, ["agreement_price", "price", "amount"])
+        area_sqm = get_field(item, ["net_carpet_area_sq_m", "area_sqm", "carpet_area", "net_carpet_area"])
+        floor = get_field(item, ["floor_number", "floor"])
+        location = get_field(item, ["location_name", "location"])
+        country = get_field(item, ["country_name", "country"])
+        date = get_field(item, ["transaction_date", "date"])
+        
+        # 1. Deterministic currency
+        country_lower = country.strip().lower()
+        if "india" in country_lower:
+            currency = "₹"
+        elif "dubai" in country_lower or "uae" in country_lower:
+            currency = "AED"
+        else:
+            currency = ""
+            
+        # 2. Deterministic area calculation (NET CARPET AREA * 10.764)
+        try:
+            area_sqm_val = float(area_sqm)
+            area = f"{(area_sqm_val * 10.764):.2f}"
+        except (ValueError, TypeError):
+            area = "-"
+
+        # 3. Deterministic price/sqft calculation (PRICE / (NET CARPET AREA * 10.764))
+        try:
+            price_val = float(price)
+            area_sqm_val = float(area_sqm)
+            if area_sqm_val > 0:
+                price_sqft = f"{(price_val / (area_sqm_val * 10.764)):.2f}"
+            else:
+                price_sqft = "-"
+        except (ValueError, TypeError):
+            price_sqft = "-"
+            
+        # 4. Deterministic area type
+        area_type = "Carpet Area"
+        
+        # 5. Deterministic source
+        source = "Internal DB"
+        
+        row = [
+            project, prop_type_raw, property_type, list_type,
+            currency, price, price_sqft, area, area_type, floor,
+            location, source, area_sqm, country, date
+        ]
+        rows.append(row)
+        
+    # Calculate column widths
+    col_widths = [len(h) for h in headers]
+    for row in rows:
+        for i, val in enumerate(row):
+            col_widths[i] = max(col_widths[i], len(val))
+            
+    # Format and print table
+    sep = "+" + "+".join("-" * (w + 2) for w in col_widths) + "+"
+    
+    print(sep)
+    header_row = "|" + "|".join(f" {headers[i].ljust(col_widths[i])} " for i in range(len(headers))) + "|"
+    print(header_row)
+    print(sep)
+    
+    for row in rows:
+        row_str = "|" + "|".join(f" {row[i].ljust(col_widths[i])} " for i in range(len(row))) + "|"
+        try:
+            print(row_str)
+        except Exception:
+            # Fallback for encoding errors in certain terminal setups
+            print(row_str.encode('ascii', errors='replace').decode('ascii'))
+        
+    print(sep)
 
 
 def fetch_db_transactions(
@@ -83,10 +208,11 @@ def fetch_db_transactions(
 
     query = (
         f"I need all transactions where {project_filter} "
-        f"and property_type is {db_property_type}. "
+        f"and property_type is {db_property_type}, ordered by transaction_date descending "
+        f"to get the most recent transactions first. "
         f"And expected columns should be project_name, property_type_raw, property_type, "
         f"transaction_category, unit_configuration, agreement_price, net_carpet_area_sq_m, "
-        f"floor_number, location_name, country_name."
+        f"floor_number, location_name, country_name, transaction_date."
     )
 
     url = f"{agent_base_url}/ask_stream_data_retrieval"
@@ -200,6 +326,10 @@ def fetch_db_transactions(
                 "error": "No transactions found for this project.",
             }
 
+    # Print the table of retrieved transactions in the terminal (showing date)
+    print(f"\n--- [Internal DB] Transaction table for project_id={project_id} (ordered by date desc) ---")
+    print_table(raw_transactions)
+
     # ── Derive computed columns + stamp source ─────────────────────────────
     enriched = []
     for t in raw_transactions:
@@ -257,3 +387,4 @@ def fetch_db_transactions(
         f"-> {len(enriched)} transactions"
     )
     return {"status": "success", "transactions": enriched}
+

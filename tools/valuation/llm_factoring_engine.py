@@ -266,12 +266,14 @@ def _enrich_project_row(
         "role":         "SUBJECT" if row.get("is_subject") else "COMPARABLE",
         "listing_count": row.get("listing_count", 0),
         "distance_km":   row.get("dist_km") or 0.0,
+        "rate_derived_from": row.get("rate_derived_from", "listing"),
         "rates": {
             "avg_rate":    row.get("avg_rate"),
             "median_rate": row.get("median_rate"),
             "p90_rate":    row.get("p90_rate"),
             "ci_90_lower": row.get("ci_90_lower"),
             "ci_90_upper": row.get("ci_90_upper"),
+            "rate_derived_from": row.get("rate_derived_from", "listing"),
         },
     }
 
@@ -712,6 +714,7 @@ output_schema = {
             "listing_count": "<int>",
             "avg_rate": "<number | null>",
             "distance_km": "<number | null>",
+            "rate_derived_from": "<string — mixed | internal_db | listing>",
             "scores": {
                 "road_type": "<float 1-10 | null>",
                 "cbd_score": "<float 1-10 | null>",
@@ -791,6 +794,7 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency
     lines.append("## SUBJECT PROPERTY")
     lines.append(f"- Name            : {subject_data['name']}")
     lines.append(f"- Property Type   : {subject_data['property_type']}")
+    lines.append(f"- Rate Derived From: {subject_data.get('rate_derived_from', 'listing')}")
     lines.append(
         f"- Market Rate Range: {currency}{subject_data['rate_range']['low']:,} - "
         f"{currency}{subject_data['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
@@ -808,6 +812,7 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency
     for i, comp in enumerate(comparables_data, 1):
         lines.append(f"\n### Comparable {i}: {comp['name']}")
         lines.append(f"- Property Type   : {comp['property_type']}")
+        lines.append(f"- Rate Derived From: {comp.get('rate_derived_from', 'listing')}")
         lines.append(
             f"- Market Rate Range: {currency}{comp['rate_range']['low']:,} - "
             f"{currency}{comp['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
@@ -848,6 +853,7 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
         "rate_range": _project_rate_range(subject_proj),
         "calculation_rate": _project_calculation_rate(subject_proj),
         "map_report_factors": _format_map_report_factors(subject_proj),
+        "rate_derived_from": subject_proj.get("rate_derived_from", "listing"),
     }
 
     expert_comparables = []
@@ -859,6 +865,7 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
             "calculation_rate": _project_calculation_rate(comp),
             "distance_to_subject": f"{comp['distance_km']} km",
             "map_report_factors": _format_map_report_factors(comp),
+            "rate_derived_from": comp.get("rate_derived_from", "listing"),
         })
 
     # Build the exact prompt from property_valuation.py
