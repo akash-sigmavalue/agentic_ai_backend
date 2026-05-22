@@ -36,12 +36,11 @@ _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
 
 # ── Radius Defaults (metres) ──────────────────────────────────────────────────
-# These are the same defaults used in factorial_table.py and can be overridden.
 DEFAULT_RADII = {
-    "road_m":     200,    # Overpass radius for highest road category lookup
-    "amenity_m":  1000,   # DB / Overpass radius for amenity count
-    "density_m":  500,    # Built-up density analysis circle
-    "cbd_km":     None,   # CBD: straight-line km (reported from identify_cbds)
+    "road_m":     200,
+    "amenity_m":  1000,
+    "density_m":  500,
+    "cbd_km":     None,
 }
 
 
@@ -131,6 +130,7 @@ AMENITY_CONTEXT: Dict[str, str] = {
     "IT_Office":     "IT parks, tech campuses, co-working — employment catchment premium for residential within 5 km.",
 }
 
+
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _cbd_zone(dist_km: Optional[float]) -> str:
@@ -211,11 +211,6 @@ def _format_neighborhood_amenities(project: Dict[str, Any]) -> str:
 
 
 def _format_map_report_factors(project: Dict[str, Any]) -> str:
-    """
-    Format the full below-map factor evidence for the LLM.
-    Keep this structured so the model can reason from counts, nearest distances,
-    category meaning, sample radii, and CBD hub details instead of one-line labels.
-    """
     evidence = {
         "road": project.get("road") or {},
         "builtup_density": project.get("builtup_density") or {},
@@ -256,16 +251,13 @@ def _enrich_project_row(
     row: Dict[str, Any],
     radii: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """
-    Convert a raw factorial_table row into a rich, LLM-ready project dict.
-    Attaches semantic labels, descriptions, and the radius used for each factor.
-    """
     project: Dict[str, Any] = {
-        "project_name": row.get("project_name", "Unknown"),
-        "is_subject":   row.get("is_subject", False),
-        "role":         "SUBJECT" if row.get("is_subject") else "COMPARABLE",
+        "project_name":  row.get("project_name", "Unknown"),
+        "is_subject":    row.get("is_subject", False),
+        "role":          "SUBJECT" if row.get("is_subject") else "COMPARABLE",
         "listing_count": row.get("listing_count", 0),
         "distance_km":   row.get("dist_km") or 0.0,
+        "rate_derived_from": row.get("rate_derived_from", "listing"),
         "rates": {
             "avg_rate":    row.get("avg_rate"),
             "median_rate": row.get("median_rate"),
@@ -279,51 +271,51 @@ def _enrich_project_row(
     road_cat = row.get("road_type")
     road_info = ROAD_CONTEXT.get(road_cat) if road_cat else None
     project["road"] = {
-        "category":       road_cat or "Unknown",
-        "label":          road_info["label"] if road_info else "Data unavailable",
-        "premium_tier":   road_info["premium_tier"] if road_info else "Unknown",
-        "description":    road_info["description"] if road_info else "No road data.",
+        "category":        road_cat or "Unknown",
+        "label":           road_info["label"] if road_info else "Data unavailable",
+        "premium_tier":    road_info["premium_tier"] if road_info else "Unknown",
+        "description":     road_info["description"] if road_info else "No road data.",
         "sample_radius_m": radii.get("road_m", DEFAULT_RADII["road_m"]),
     }
 
     # ── CBD Factor ───────────────────────────────────────────────────────────
     cbd_data: List[Dict] = row.get("cbd_data") or []
     cbd_list = []
-    for cbd in cbd_data[:4]:  # top 4 nearest
+    for cbd in cbd_data[:4]:
         d_km = cbd.get("distance_km")
         zone = _cbd_zone(d_km)
         cbd_list.append({
-            "name":        cbd.get("name", ""),
-            "short_name":  cbd.get("short_name", ""),
-            "type":        cbd.get("type", "commercial_hub"),
-            "distance_km": d_km,
-            "zone":        zone,
+            "name":         cbd.get("name", ""),
+            "short_name":   cbd.get("short_name", ""),
+            "type":         cbd.get("type", "commercial_hub"),
+            "distance_km":  d_km,
+            "zone":         zone,
             "zone_context": CBD_ZONE_CONTEXT.get(zone, ""),
         })
     nearest_cbd_km = cbd_list[0]["distance_km"] if cbd_list else None
     project["cbd"] = {
-        "nearest_km":    nearest_cbd_km,
-        "nearest_zone":  _cbd_zone(nearest_cbd_km),
-        "hubs":          cbd_list,
-        "measurement": "straight-line (haversine) distance to geocoded CBD centroid",
+        "nearest_km":   nearest_cbd_km,
+        "nearest_zone": _cbd_zone(nearest_cbd_km),
+        "hubs":         cbd_list,
+        "measurement":  "straight-line (haversine) distance to geocoded CBD centroid",
     }
 
     # ── Built-Up Density Factor ──────────────────────────────────────────────
     bd = row.get("builtup_density") or {}
-    congestion = bd.get("congestion") or {}
-    metrics    = bd.get("metrics") or {}
+    congestion    = bd.get("congestion") or {}
+    metrics       = bd.get("metrics") or {}
     density_class = metrics.get("density_class") or congestion.get("level", "Unknown")
-    bcr_pct = round((metrics.get("building_coverage_ratio") or 0) * 100, 1)
+    bcr_pct       = round((metrics.get("building_coverage_ratio") or 0) * 100, 1)
     open_space_pct = round((metrics.get("true_open_space_ratio") or 0) * 100, 1)
     project["builtup_density"] = {
-        "density_class":       density_class,
-        "description":         DENSITY_CONTEXT.get(density_class, "No density data."),
-        "bcr_pct":             bcr_pct,
-        "congestion_score":    congestion.get("score"),
-        "congestion_level":    congestion.get("level"),
+        "density_class":        density_class,
+        "description":          DENSITY_CONTEXT.get(density_class, "No density data."),
+        "bcr_pct":              bcr_pct,
+        "congestion_score":     congestion.get("score"),
+        "congestion_level":     congestion.get("level"),
         "open_space_ratio_pct": open_space_pct,
-        "detected_buildings":  metrics.get("detected_buildings"),
-        "sample_radius_m":     radii.get("density_m", DEFAULT_RADII["density_m"]),
+        "detected_buildings":   metrics.get("detected_buildings"),
+        "sample_radius_m":      radii.get("density_m", DEFAULT_RADII["density_m"]),
     }
 
     # ── Amenity Factor ────────────────────────────────────────────────────────
@@ -340,7 +332,6 @@ def _enrich_project_row(
         except Exception:
             counts_raw = {}
 
-    # Map raw DB category keys (e.g. "hospitals") to typed categories
     _cat_map = {
         "hospitals": "Healthcare", "clinics": "Healthcare",
         "schools": "Education", "colleges": "Education",
@@ -376,25 +367,19 @@ def _enrich_project_row(
         for amenity in amenities_raw:
             if not isinstance(amenity, dict):
                 continue
-
             raw_key = amenity.get("category") or amenity.get("type") or amenity.get("mapped_type")
             if not raw_key:
                 continue
-
             raw_key = str(raw_key)
             nearby_amenities.append({
-                "name": amenity.get("name"),
-                "category": raw_key,
+                "name":        amenity.get("name"),
+                "category":    raw_key,
                 "mapped_type": amenity.get("mapped_type"),
-                "distance_m": amenity.get("distance_m"),
+                "distance_m":  amenity.get("distance_m"),
             })
             detail = amenity_details.setdefault(
                 raw_key,
-                {
-                    "count": int(counts_raw.get(raw_key, 0) or 0),
-                    "nearest_distance_m": None,
-                    "nearest_name": None,
-                },
+                {"count": int(counts_raw.get(raw_key, 0) or 0), "nearest_distance_m": None, "nearest_name": None},
             )
             distance_m = amenity.get("distance_m")
             try:
@@ -412,19 +397,15 @@ def _enrich_project_row(
     for raw_key, cnt in counts_raw.items():
         detail = amenity_details.setdefault(
             raw_key,
-            {
-                "count": 0,
-                "nearest_distance_m": None,
-                "nearest_name": None,
-            },
+            {"count": 0, "nearest_distance_m": None, "nearest_name": None},
         )
         detail["count"] = max(int(cnt or 0), int(detail.get("count") or 0))
 
     project["amenities"] = {
-        "total":         amenity_summary.get("total", sum(category_totals.values())),
-        "by_category":   amenities_enriched,
-        "details":       amenity_details,
-        "nearby":        nearby_amenities,
+        "total":           amenity_summary.get("total", sum(category_totals.values())),
+        "by_category":     amenities_enriched,
+        "details":         amenity_details,
+        "nearby":          nearby_amenities,
         "sample_radius_m": radii.get("amenity_m", DEFAULT_RADII["amenity_m"]),
     }
 
@@ -439,28 +420,14 @@ def build_factoring_payload(
     comparables: List[Dict[str, Any]],
     radii: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """
-    Build the complete LLM-ready payload from factorial_data.
-
-    Parameters
-    ----------
-    factorial_data : dict  — output of compute_factorial_table()
-    subject        : dict  — original subject project dict
-    comparables    : list  — original comparable project dicts
-    radii          : dict  — {road_m, amenity_m, density_m} override defaults
-
-    Returns
-    -------
-    dict with keys: currency, area_unit, property_type, projects (enriched list)
-    """
     if radii is None:
         radii = {}
     effective_radii = {**DEFAULT_RADII, **{k: v for k, v in radii.items() if v is not None}}
 
     table: List[Dict] = factorial_data.get("table") or []
-    currency  = factorial_data.get("currency", "INR")
-    area_unit = factorial_data.get("area_unit", "sqft")
-    area_type = factorial_data.get("area_type", "Built-up Area")
+    currency      = factorial_data.get("currency", "INR")
+    area_unit     = factorial_data.get("area_unit", "sqft")
+    area_type     = factorial_data.get("area_type", "Built-up Area")
     property_type = (
         subject.get("property_type")
         or (comparables[0].get("property_type") if comparables else None)
@@ -551,6 +518,8 @@ AGGREGATE PRINCIPLE:
   - Conservative when evidence is weak.
   - Avoid compounding same-direction adjustments without clear justification.
   - When in doubt, adjust less.
+  - CRITICAL GUARDRAIL 1: If the subject project itself has sufficient direct listings data (Subject listing count >= 10 in the CONFIDENCE EVALUATION INPUTS), the total cumulative net percentage adjustment / Correction Factor MUST NOT exceed ±10% under any circumstance.
+  - CRITICAL GUARDRAIL 2: Under any other circumstance, the total cumulative overall net percentage adjustment / Correction Factor MUST NOT exceed ±20% under any circumstance.
 
 ═══════════════════════════════════════════════════════════════
 SECTION B: FACTOR SCORING — STAGE 1 ReAct LOOP
@@ -573,7 +542,7 @@ B2. ROAD TYPE (OSM Category based)
     or slightly negative for villa.
 
 B3. BUILTUP DENSITY
-   - This is NOT a simple floor-space ratio. It measures how intensely developed
+  - This is NOT a simple floor-space ratio. It measures how intensely developed
     the surrounding micro-market is: concentration of buildings, active projects,
     population activity, road fabric, and overall urban texture within the sample radius.
   - PRIMARY signal: congestion_score (0–10). Higher = denser, more active micro-market.
@@ -679,22 +648,59 @@ DERIVED RATE: [CURRENCY]X/[UNIT]
 DERIVED RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
 CONFIDENCE: High / Medium / Low
 KEY DRIVERS: [top 2 factors that drove the adjustment]
-UNCERTAINTIES: [what was inferred vs evidenced]
+UNCERTAINTIES: [what was inferred vs evidenced — MUST state which confidence rule(s) triggered]
+
+═══════════════════════════════════════════════════════════════
+CONFIDENCE SCORING RULES (MANDATORY — evaluate before assigning)
+═══════════════════════════════════════════════════════════════
+
+You will be provided with a "CONFIDENCE EVALUATION INPUTS" section in the
+user prompt. Use those exact numbers to evaluate the rules below.
+You MUST state in the UNCERTAINTIES field which specific rule(s) triggered
+your confidence level.
+
+──────────────────────────────────────────────────────────────
+HIGH — ALL of the following must be true:
+──────────────────────────────────────────────────────────────
+  ✓ Subject has 5 or more direct listings (rate_source = listing, not micromarket)
+  ✓ 3 or more comparable projects with actual listing data (not micromarket-derived)
+  ✓ Total valid listings across subject + all comparables combined ≥ 20
+  ✓ All 4 factors (road, CBD, density, amenity) have real evidence for subject
+      (no missing congestion_score, no missing CBD data, no unknown road type)
+  ✓ Total net adjustment is within ±10%
+  ✓ No project (subject or comparable) is micromarket-derived
+
+──────────────────────────────────────────────────────────────
+MEDIUM — HIGH criteria not met, but NONE of the LOW triggers apply:
+──────────────────────────────────────────────────────────────
+  • Subject has 1–2 direct listings
+  • OR subject is micromarket-derived but has strong comp listing support (≥ 5 comp listings)
+  • OR only 2 comparable projects with listing data
+  • OR 1–2 factors are inferred or partially missing
+  • OR total net adjustment is between ±10% and ±15%
+
+──────────────────────────────────────────────────────────────
+LOW — ANY single one of these triggers LOW immediately:
+──────────────────────────────────────────────────────────────
+  ✗ Subject has ZERO direct listings (subject rate_source = micromarket)
+  ✗ Only 1 comparable project total
+  ✗ 3 or more factors are missing or heavily inferred for the subject
+  ✗ Total net adjustment exceeds ±15%
+  ✗ Fewer than 5 total valid listings across subject + all comparables combined
 
 ### CRITICAL JSON REQUIREMENT:
-In the JSON block's `factor_breakdown` section, you MUST include the Subject Property as the first entry in each factor's `projects` list. 
+In the JSON block's `factor_breakdown` section, you MUST include the Subject
+Property as the first entry in each factor's `projects` list.
 For the Subject Property:
 - Set `role` to "SUBJECT"
 - Set `adjustment` to 0
 - Set `value` and `interpretation` to reflect its actual data.
-  * For `neighborhood_amenity`: `value` should be the count of amenities (e.g. "12 amenities").
-  * For `road_type`: `value` should be the category (e.g. "Category D").
-  * For `builtup_density`: `value` should be the congestion score or density class (e.g. "Score: 7.5").
-  * For `cbd_score`: `value` should be the distance to the nearest CBD hub (e.g. "3.2 km").
+  * For `neighborhood_amenity`: `value` = amenity count (e.g. "12 amenities").
+  * For `road_type`: `value` = category (e.g. "Category D").
+  * For `builtup_density`: `value` = congestion score or density class (e.g. "Score: 7.5").
+  * For `cbd_score`: `value` = distance to nearest CBD hub (e.g. "3.2 km").
 """
 
-
-# ── LLM Call ─────────────────────────────────────────────────────────────────
 
 # ── Output Schema ─────────────────────────────────────────────────────────────
 
@@ -721,7 +727,7 @@ output_schema = {
         }
     ],
     "valuation_details": {
-        "base_rate": "<number — midpoint of the subject market rate range used only for single-rate math>",
+        "base_rate": "<number>",
         "base_rate_range": {"low": "<number>", "high": "<number>"},
         "attribute_weights": {
             "neighborhood_amenity": "<float>",
@@ -764,35 +770,61 @@ output_schema = {
     "subject_final_rate": "<number>",
     "subject_rate_range": {"low": "<number>", "high": "<number>"},
     "confidence": "High | Medium | Low",
+    "confidence_triggers": "<string — list each specific rule that determined the confidence level>",
     "reasoning_audit": {
         "stage_1_scoring_thought": "<string>",
         "stage_2_adjustment_thought": "<string>",
         "final_reflection": "<string>",
-        "key_drivers": "<string — top factors driving the rate>",
-        "uncertainties": "<string — data gaps or inferences made>"
+        "key_drivers": "<string>",
+        "uncertainties": "<string>"
     },
-    "reconciliation_note": "<string — narrative explanation of the global benchmark derivation>",
+    "reconciliation_note": "<string>",
     "project_reports": [
         {
             "project_name": "<string>",
-            "report_markdown": "<detailed appraisal report for this project>"
+            "report_markdown": "<string>"
         }
     ]
 }
 
-def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency: str = "₹", area_unit: str = "sqft") -> str:
-    """
-    1:1 Mirror of build_user_prompt from property_valuation.py.
-    Builds the user message from structured subject + comparable dicts.
-    """
+
+# ── User Prompt Builder ───────────────────────────────────────────────────────
+
+def build_user_prompt(
+    subject_data: dict,
+    comparables_data: list,
+    currency: str = "₹",
+    area_unit: str = "sqft",
+) -> str:
     lines = ["# VALUATION REQUEST\n"]
 
-    # Subject
+    # ── Confidence Evaluation Inputs (explicit numbers for rule evaluation) ──
+    subject_listing_count  = subject_data.get("listing_count", 0)
+    subject_rate_source    = subject_data.get("rate_derived_from", "listing")
+    comp_listing_total     = sum(c.get("listing_count", 0) for c in comparables_data)
+    n_comps                = len(comparables_data)
+    micromarket_comp_count = sum(
+        1 for c in comparables_data if c.get("rate_derived_from") == "micromarket"
+    )
+    total_listings_combined = subject_listing_count + comp_listing_total
+
+    lines.append("## CONFIDENCE EVALUATION INPUTS")
+    lines.append(f"- Subject listing count              : {subject_listing_count}")
+    lines.append(f"- Subject rate source                : {subject_rate_source}  (listing = direct data; micromarket = inferred from area average)")
+    lines.append(f"- Total comparable projects          : {n_comps}")
+    lines.append(f"- Total listings across comps        : {comp_listing_total}")
+    lines.append(f"- Total listings combined (subj+comp): {total_listings_combined}")
+    lines.append(f"- Micromarket-derived comp projects  : {micromarket_comp_count}")
+    lines.append("")
+
+    # ── Subject ──────────────────────────────────────────────────────────────
     lines.append("## SUBJECT PROPERTY")
-    lines.append(f"- Name            : {subject_data['name']}")
-    lines.append(f"- Property Type   : {subject_data['property_type']}")
+    lines.append(f"- Name                : {subject_data['name']}")
+    lines.append(f"- Property Type       : {subject_data['property_type']}")
+    lines.append(f"- Listing Count       : {subject_listing_count}")
+    lines.append(f"- Rate Source         : {subject_rate_source}")
     lines.append(
-        f"- Market Rate Range: {currency}{subject_data['rate_range']['low']:,} - "
+        f"- Market Rate Range   : {currency}{subject_data['rate_range']['low']:,} - "
         f"{currency}{subject_data['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
     )
     lines.append(f"- Calculation Midpoint: {currency}{subject_data['calculation_rate']:,}/{area_unit}")
@@ -803,17 +835,19 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency
         lines.append("```")
     lines.append("")
 
-    # Comparables
+    # ── Comparables ──────────────────────────────────────────────────────────
     lines.append("## COMPARABLE PROPERTIES")
     for i, comp in enumerate(comparables_data, 1):
         lines.append(f"\n### Comparable {i}: {comp['name']}")
-        lines.append(f"- Property Type   : {comp['property_type']}")
+        lines.append(f"- Property Type       : {comp['property_type']}")
+        lines.append(f"- Listing Count       : {comp.get('listing_count', 0)}")
+        lines.append(f"- Rate Source         : {comp.get('rate_derived_from', 'listing')}")
         lines.append(
-            f"- Market Rate Range: {currency}{comp['rate_range']['low']:,} - "
+            f"- Market Rate Range   : {currency}{comp['rate_range']['low']:,} - "
             f"{currency}{comp['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
         )
         lines.append(f"- Calculation Midpoint: {currency}{comp['calculation_rate']:,}/{area_unit}")
-        lines.append(f"- Distance to Subject: {comp.get('distance_to_subject', 'Unknown')}")
+        lines.append(f"- Distance to Subject : {comp.get('distance_to_subject', 'Unknown')}")
         if comp.get("map_report_factors"):
             lines.append("- Below-Map Report Factor Evidence:")
             lines.append("```json")
@@ -828,48 +862,142 @@ def build_user_prompt(subject_data: dict, comparables_data: list[dict], currency
         "a single number is required by the formula or JSON schema. "
         f"All monetary values are in {currency} and area is in {area_unit}. "
         "The Below-Map Report Factor Evidence JSON is the sole source of truth "
-        "for all location factors: road_type, neighborhood_amenity, builtup_density, and cbd_score."
+        "for all location factors: road_type, neighborhood_amenity, builtup_density, and cbd_score. "
+        "Use the CONFIDENCE EVALUATION INPUTS section to evaluate the confidence rules "
+        "defined in the system prompt and assign the correct confidence level. "
+        "You MUST populate the `confidence_triggers` field in the JSON output explaining "
+        "which specific rules were met or triggered."
     )
 
     return "\n".join(lines)
 
 
+def enforce_adjustment_cap(result: Dict[str, Any], subject_listing_count: int) -> Dict[str, Any]:
+    """
+    If the subject project has >=10 direct listings, the total cumulative net
+    adjustment (Correction Factor) must not exceed +/-10%.
+    Otherwise, under any other circumstance, the total overall net
+    adjustment must not exceed +/-20%.
+    This safeguard caps the adjustment and scales the nested factors proportionally.
+    """
+    val_details = result.get("valuation_details", {})
+    total_adj = val_details.get("total_net_adjustment")
+    
+    if total_adj is not None:
+        total_adj = float(total_adj)
+        
+        # Determine appropriate cap based on listing data sufficiency
+        if subject_listing_count >= 10:
+            cap_limit = 10.0
+            reason_str = f"sufficient direct listings (subject_listing_count={subject_listing_count} >= 10)"
+        else:
+            cap_limit = 20.0
+            reason_str = "global maximum correction limit"
+            
+        # Check if magnitude of adjustment exceeds the cap limit
+        if abs(total_adj) > cap_limit:
+            capped_adj = cap_limit if total_adj > 0 else -cap_limit
+            logger.info(
+                f"[Adjustment Guard] Capping Total Correction Factor from {total_adj}% to {capped_adj}% "
+                f"due to {reason_str}."
+            )
+            
+            # Update total net adjustment
+            val_details["total_net_adjustment"] = capped_adj
+            
+            # Proportionally scale individual factor net impacts
+            net_impacts = val_details.get("net_impacts", {})
+            factor_sum = sum(abs(float(v)) for v in net_impacts.values())
+            if factor_sum != 0:
+                scale = abs(capped_adj) / factor_sum
+                for f in net_impacts:
+                    net_impacts[f] = round(float(net_impacts[f]) * scale, 2)
+                    
+            # Also scale the adjustments inside factor_breakdown
+            breakdown = val_details.get("factor_breakdown", {})
+            for factor_name, factor_data in breakdown.items():
+                if isinstance(factor_data, dict):
+                    factor_data["net_impact"] = net_impacts.get(factor_name, 0.0)
+                    # Scale project adjustments inside this factor breakdown proportionally
+                    projects = factor_data.get("projects", [])
+                    for p in projects:
+                        if "adjustment" in p and p["adjustment"] is not None:
+                            try:
+                                p["adjustment"] = round(float(p["adjustment"]) * scale, 2)
+                            except Exception:
+                                pass
+                    
+            # Recalculate derived rate
+            base_rate = val_details.get("base_rate")
+            if base_rate is not None:
+                derived_rate = round(float(base_rate) * (1 + capped_adj / 100))
+                val_details["derived_rate"] = derived_rate
+                result["subject_final_rate"] = derived_rate
+                
+            # Recalculate derived rate range
+            base_range = val_details.get("base_rate_range", {})
+            if base_range:
+                low = base_range.get("low")
+                high = base_range.get("high")
+                if low is not None and high is not None:
+                    derived_range = {
+                        "low": round(float(low) * (1 + capped_adj / 100)),
+                        "high": round(float(high) * (1 + capped_adj / 100))
+                    }
+                    val_details["derived_rate_range"] = derived_range
+                    result["subject_rate_range"] = derived_range
+                    
+            # Stamp the reason on reconciliation note
+            note = result.get("reconciliation_note", "")
+            result["reconciliation_note"] = (
+                f"[Adjustment Guard Applied] Total correction factor capped at {capped_adj}% "
+                f"due to {reason_str}. Original adjustment was {total_adj}%. "
+                f"{note}"
+            )
+            
+    return result
+
+
+# ── LLM Call ─────────────────────────────────────────────────────────────────
+
 def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Dict[str, Any]:
-    """
-    Expert core engine — adapted for dual Markdown/JSON output.
-    """
-    subject_proj = next(p for p in payload["projects"] if p["is_subject"])
+    subject_proj      = next(p for p in payload["projects"] if p["is_subject"])
     comparables_projs = [p for p in payload["projects"] if not p["is_subject"]]
 
-    # Convert internal payload to expert-format dicts
     expert_subject = {
-        "name": subject_proj["project_name"],
-        "property_type": payload["property_type"],
-        "rate_range": _project_rate_range(subject_proj),
-        "calculation_rate": _project_calculation_rate(subject_proj),
+        "name":              subject_proj["project_name"],
+        "property_type":     payload["property_type"],
+        "rate_range":        _project_rate_range(subject_proj),
+        "calculation_rate":  _project_calculation_rate(subject_proj),
         "map_report_factors": _format_map_report_factors(subject_proj),
+        "listing_count":     subject_proj.get("listing_count", 0),
+        "rate_derived_from": subject_proj.get("rate_derived_from", "listing"),
     }
 
     expert_comparables = []
     for comp in comparables_projs:
         expert_comparables.append({
-            "name": comp["project_name"],
-            "property_type": payload["property_type"],
-            "rate_range": _project_rate_range(comp),
-            "calculation_rate": _project_calculation_rate(comp),
+            "name":               comp["project_name"],
+            "property_type":      payload["property_type"],
+            "rate_range":         _project_rate_range(comp),
+            "calculation_rate":   _project_calculation_rate(comp),
             "distance_to_subject": f"{comp['distance_km']} km",
             "map_report_factors": _format_map_report_factors(comp),
+            "listing_count":      comp.get("listing_count", 0),
+            "rate_derived_from":  comp.get("rate_derived_from", "listing"),
         })
 
-    # Build the exact prompt from property_valuation.py
-    user_prompt_expert = build_user_prompt(
-        expert_subject, expert_comparables, 
+    user_prompt = build_user_prompt(
+        expert_subject,
+        expert_comparables,
         currency=payload.get("currency", "₹"),
-        area_unit=payload.get("area_unit", "sqft")
+        area_unit=payload.get("area_unit", "sqft"),
     )
-    
-    # Append the hidden system instructions for JSON parsing
-    user_prompt = user_prompt_expert + f"\n\nAfter your reasoning, provide a final JSON block matching the schema below for system integration:\n```json\n{json.dumps(output_schema, indent=2)}\n```"
+
+    user_prompt += (
+        f"\n\nAfter your reasoning, provide a final JSON block matching the schema "
+        f"below for system integration:\n```json\n{json.dumps(output_schema, indent=2)}\n```"
+    )
 
     print("\n" + "=" * 100, flush=True)
     print("[LLM Factoring] PROMPT SENT TO LLM FOR RATE DERIVATION", flush=True)
@@ -889,37 +1017,36 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
             model=model,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
+                {"role": "user",   "content": user_prompt},
             ],
             temperature=0.1,
         )
         content = response.choices[0].message.content
-        usage = response.usage
+        usage   = response.usage
 
-        # Parse logic: The content contains Markdown + JSON block
         json_match = re.search(r"```json\s*(\{.*?\})\s*```", content, re.DOTALL)
         if json_match:
             result = json.loads(json_match.group(1))
-            # Store the raw markdown report for the frontend
             result["raw_markdown_report"] = content.split("```json")[0].strip()
         else:
-            # Fallback for direct JSON
             try:
                 result = json.loads(content)
                 result["raw_markdown_report"] = "Expert report generated."
-            except:
+            except Exception:
                 print(f"Failed to parse LLM response: {content}")
                 return {"error": "Failed to parse expert report."}
 
-        # Attach token usage for frontend display
         result["_token_usage"] = {
-            "model": model,
-            "prompt_tokens": usage.prompt_tokens,
-            "completion_tokens": usage.completion_tokens,
-            "total_tokens": usage.total_tokens,
+            "model":              model,
+            "prompt_tokens":      usage.prompt_tokens,
+            "completion_tokens":  usage.completion_tokens,
+            "total_tokens":       usage.total_tokens,
         }
 
-        # Validate subject rate
+        # Apply guardrail capping for subject project having >=10 listings
+        subject_listing_count = expert_subject.get("listing_count", 0)
+        result = enforce_adjustment_cap(result, subject_listing_count)
+
         if "subject_final_rate" in result and "derived_rate" in result.get("valuation_details", {}):
             result["subject_final_rate"] = result["valuation_details"]["derived_rate"]
 
@@ -957,7 +1084,6 @@ def run_llm_factoring(
     -------
     dict — factoring result with factor_table, subject_final_rate, project_reports
     """
-    # logger.info(f"[LLM Factoring] Building payload for {len(factorial_data.get('table', []))} projects...")
     payload = build_factoring_payload(factorial_data, subject, comparables, radii)
 
     n_comps = sum(1 for p in payload["projects"] if not p["is_subject"])
@@ -968,10 +1094,10 @@ def run_llm_factoring(
     result = llm_factorial_analysis(payload, model=model)
     result["_payload_summary"] = {
         "property_type": payload["property_type"],
-        "currency": payload["currency"],
-        "area_unit": payload["area_unit"],
-        "radii_used": payload["radii_used"],
-        "n_projects": len(payload["projects"]),
+        "currency":      payload["currency"],
+        "area_unit":     payload["area_unit"],
+        "radii_used":    payload["radii_used"],
+        "n_projects":    len(payload["projects"]),
         "n_comparables": n_comps,
     }
     logger.info(

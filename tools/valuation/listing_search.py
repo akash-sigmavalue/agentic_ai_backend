@@ -256,6 +256,7 @@ def get_chrome_binary_path():
         # Windows local
         r"C:\Program Files\Google\Chrome\Application\chrome.exe",
         r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"),
     ]
 
     for path in candidates:
@@ -265,6 +266,23 @@ def get_chrome_binary_path():
     raise RuntimeError(
         "Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN."
     )
+
+def get_chrome_major_version():
+    """Dynamically get installed Chrome major version on Windows/Linux."""
+    if os.name == "nt":
+        import winreg
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Google\Chrome\BLBeacon")
+            version, _ = winreg.QueryValueEx(key, "version")
+            return int(version.split(".")[0])
+        except Exception:
+            try:
+                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"Software\Google\Chrome\BLBeacon")
+                version, _ = winreg.QueryValueEx(key, "version")
+                return int(version.split(".")[0])
+            except Exception:
+                pass
+    return None
 
 # hilton add this code for docker .................. 
 
@@ -279,7 +297,11 @@ def make_uc_driver(headless: bool = True):
     options = uc.ChromeOptions()
     options.binary_location = chrome_bin
 
-    if headless:
+    # On Windows, run in non-headless mode by default to bypass bot protection / CAPTCHAs
+    is_windows = os.name == "nt"
+    actual_headless = headless and not is_windows
+
+    if actual_headless:
         options.add_argument("--headless=new")
 
     options.add_argument("--no-sandbox")
@@ -291,7 +313,10 @@ def make_uc_driver(headless: bool = True):
     options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
     options.add_argument("--lang=en-US,en;q=0.9")
 
-    driver = uc.Chrome(options=options, use_subprocess=True)
+    major_version = get_chrome_major_version()
+    logger.info(f"[Browser] Detected Chrome major version: {major_version}")
+
+    driver = uc.Chrome(options=options, use_subprocess=True, version_main=major_version)
 
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
