@@ -29322,3 +29322,193 @@ ORDER BY
 2026-05-22 12:45:39,688 | WARNING | [DROP] stage=url_search | project='Bansall Amara' | reason=zero_urls_returned
 2026-05-22 12:45:39,698 | INFO | [Pipeline Done] final_listings=0 | projects=4 | tokens=0
 2026-05-22 12:50:05,453 | INFO | Scheduler has been shut down
+2026-05-22 12:50:20,613 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 12:50:20,613 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 12:50:20,614 | INFO | Scheduler started
+2026-05-22 12:50:29,439 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:50:36,001 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:50:36,084 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-22 12:50:36,085 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-22 12:50:41,602 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:50:48,022 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:53:55,077 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:54:02,795 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:54:54,872 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:01,715 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:06,612 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:13,475 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:17,369 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:25,626 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:55:25,638 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar'
+2026-05-22 12:55:25,640 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 12:55:44,118 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 12:55:44,286 | INFO | [LLM Fetch] Received 10 raw comparables | tokens=2723
+2026-05-22 12:55:44,288 | INFO | [Multi-pass] Total raw comparables: 10
+2026-05-22 12:55:44,288 | INFO | [Dedup] 10/10 unique comparables
+2026-05-22 12:55:44,299 | INFO | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-22 12:55:44,300 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 12:55:44,302 | INFO | [Geocode] Starting for 10 comparables
+2026-05-22 12:55:45,232 | INFO | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | Certainty: Sure
+2026-05-22 12:55:46,398 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 12:55:47,415 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 12:55:48,422 | INFO | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 12:55:49,854 | INFO | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-22 12:55:50,823 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 12:55:51,780 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 12:55:52,902 | INFO | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 12:55:54,331 | INFO | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | Certainty: Sure
+2026-05-22 12:55:55,791 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-22 12:55:55,991 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-22 12:55:55,992 | WARNING | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-22 12:55:55,992 | INFO | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-22 12:55:55,992 | INFO | [URL Filter] 9 comparables after URL cleanup
+2026-05-22 12:55:55,993 | INFO | [Agent Done] Final comparables: 9 | Total tokens: 2723
+2026-05-22 12:55:55,996 | INFO | [DB Comparables] Query: I need all unique projects within 2 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-22 12:56:07,303 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:07,339 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=['total_transaction_count']
+2026-05-22 12:56:10,748 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:12,503 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:12,508 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-22 12:56:12,509 | INFO | No semantic transaction project/location entities resolved.
+2026-05-22 12:56:12,510 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 12:56:15,190 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:15,192 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 12:56:19,506 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:19,510 | INFO | [iter=0] EXECUTE — WITH distance_calculation AS (
+  SELECT
+    project_id,
+    project_name,
+    project_latitude,
+    project_longitude,
+    location_name,
+    country_name,
+    property_type,
+    transaction_category,
+    agreement_price,
+    net_carpet_area_sq_m,
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    ) AS distance_km
+  FROM transactions
+  WHERE
+    project_latitude IS NOT NULL
+    AND project_longitude IS NOT NULL
+    AND agreement_price >= 1
+)
+SELECT
+  project_id,
+  project_name,
+  project_latitude AS lat,
+  project_longitude AS long,
+  location_name AS location,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  ROUND(distance_km::numeric, 2) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM distance_calculation
+WHERE
+  distance_km <= 2.0
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category,
+  distance_km
+ORDER BY
+  distance_km ASC
+2026-05-22 12:56:22,614 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-22 12:56:25,376 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 12:56:25,381 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-22 12:56:25,388 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-22 12:56:25,391 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=10700
+2026-05-22 12:56:25,393 | INFO | [DB Comparables] Found 30 comparables from DB (via result_set)
+2026-05-22 12:56:48,528 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=3
+2026-05-22 12:56:48,529 | INFO | [Pipeline] Total projects: 4
+2026-05-22 12:56:48,529 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'Bansall Amara' → Residential, 'Mantra Mesmer' → Residential, 'Vertical Oriana' → Residential
+2026-05-22 12:56:48,529 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-22 12:56:48,530 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 12:56:48,530 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:48,555 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:48,556 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 12:56:49,057 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:49,074 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:49,074 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 12:56:49,576 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:49,590 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:49,591 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 12:56:50,091 | ERROR | [Search] All search engines failed for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 12:56:50,092 | INFO | [URL Search] Result: 'Godrej Infinity' -> 0 URLs.
+2026-05-22 12:56:51,093 | INFO | [URLs] Godrej Infinity -> 0 urls
+2026-05-22 12:56:51,093 | WARNING | [DROP] stage=url_search | project='Godrej Infinity' | reason=zero_urls_returned
+2026-05-22 12:56:51,093 | INFO | 
+============================================================
+[Pipeline] Project: 'Bansall Amara' | type=apartment | category=Residential
+============================================================
+2026-05-22 12:56:51,094 | INFO | [URL Search] Query: 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639'
+2026-05-22 12:56:51,094 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:51,110 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:51,110 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 12:56:51,611 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:51,629 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:51,629 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 12:56:52,130 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:52,187 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:52,187 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 12:56:52,688 | ERROR | [Search] All search engines failed for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639'
+2026-05-22 12:56:52,689 | INFO | [URL Search] Result: 'Bansall Amara' -> 0 URLs.
+2026-05-22 12:56:53,690 | INFO | [URLs] Bansall Amara -> 0 urls
+2026-05-22 12:56:53,691 | WARNING | [DROP] stage=url_search | project='Bansall Amara' | reason=zero_urls_returned
+2026-05-22 12:56:53,691 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-22 12:56:53,691 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 12:56:53,691 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:53,704 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:53,705 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 12:56:54,205 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:54,221 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:54,221 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 12:56:54,722 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:54,742 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:54,743 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 12:56:55,243 | ERROR | [Search] All search engines failed for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 12:56:55,244 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 0 URLs.
+2026-05-22 12:56:56,244 | INFO | [URLs] Mantra Mesmer -> 0 urls
+2026-05-22 12:56:56,245 | WARNING | [DROP] stage=url_search | project='Mantra Mesmer' | reason=zero_urls_returned
+2026-05-22 12:56:56,245 | INFO | 
+============================================================
+[Pipeline] Project: 'Vertical Oriana' | type=apartment | category=Residential
+============================================================
+2026-05-22 12:56:56,246 | INFO | [URL Search] Query: 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 12:56:56,246 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:56,263 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:56,263 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 12:56:56,764 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:56,791 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:56,792 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 12:56:57,293 | INFO | [Search] Creating new undetected browser
+2026-05-22 12:56:57,307 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 12:56:57,308 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 12:56:57,808 | ERROR | [Search] All search engines failed for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 12:56:57,808 | INFO | [URL Search] Result: 'Vertical Oriana' -> 0 URLs.
+2026-05-22 12:56:58,809 | INFO | [URLs] Vertical Oriana -> 0 urls
+2026-05-22 12:56:58,810 | WARNING | [DROP] stage=url_search | project='Vertical Oriana' | reason=zero_urls_returned
+2026-05-22 12:56:58,820 | INFO | [Pipeline Done] final_listings=0 | projects=4 | tokens=0
+2026-05-22 13:00:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 13:00:00 IST)" (scheduled at 2026-05-22 13:00:00+05:30)
+2026-05-22 13:00:00,034 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 13:30:00 IST)" executed successfully
+2026-05-22 13:00:08,628 | INFO | Scheduler has been shut down
