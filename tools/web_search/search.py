@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 """
 LLM-based Web Search Implementation using OpenAI Responses API
 Uses GPT-4o's built-in web search tool for accurate results
 """
 
 import time
+import json
+import urllib.request
+import urllib.parse
 from typing import List, Optional
 from dataclasses import dataclass
 from core.web_search.config import config
 import random
 import re
+from html.parser import HTMLParser
 from datetime import datetime, timedelta
 from urllib.parse import parse_qs, unquote, urlparse
 from utils.web_search.timestamps import parse_date
@@ -31,6 +37,26 @@ class SearchResult:
     has_date: bool = False
     domain_authority: float = 0.0
     is_recent: bool = False
+
+
+class HTMLStripper(HTMLParser):
+    """Small HTML text extractor used by the no-key search providers."""
+
+    def __init__(self):
+        super().__init__()
+        self.text_parts = []
+
+    def handle_data(self, data):
+        self.text_parts.append(data)
+
+    def get_text(self) -> str:
+        return "".join(self.text_parts)
+
+
+def strip_html(html: str) -> str:
+    stripper = HTMLStripper()
+    stripper.feed(html or "")
+    return stripper.get_text()
 
 
 class DuckDuckGoSearcher:
@@ -69,10 +95,16 @@ class DuckDuckGoSearcher:
         print(f"Searching exact web sources: '{query}'")
 
         all_results = []
-        all_results.extend(self._search_duckduckgo_html(query, max_results))
+        all_results.extend(self._search_bing(query, max_results))
 
         if len(self._dedupe_results(all_results)) < max_results:
-            all_results.extend(self._search_bing(query, max_results))
+            all_results.extend(self._search_searxng(query, max_results))
+
+        if len(self._dedupe_results(all_results)) < max_results:
+            all_results.extend(self._search_wikipedia(query, min(3, max_results)))
+
+        if len(self._dedupe_results(all_results)) < max_results:
+            all_results.extend(self._search_duckduckgo_html(query, max_results))
 
         if len(self._dedupe_results(all_results)) < max_results:
             ddgs = self._get_ddgs()
@@ -101,6 +133,20 @@ class DuckDuckGoSearcher:
         if referer:
             headers["Referer"] = referer
         return headers
+
+    def _make_request(self, url: str, extra_headers: dict = None, timeout: int = 12) -> str:
+        """Make a lightweight urllib request and return decoded text."""
+        headers = self._headers()
+        if extra_headers:
+            headers.update(extra_headers)
+
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            charset = "utf-8"
+            content_type = resp.headers.get("Content-Type", "")
+            if "charset=" in content_type:
+                charset = content_type.split("charset=")[-1].strip().split(";")[0]
+            return resp.read().decode(charset, errors="replace")
 
     def _search_ddgs_package(self, ddgs, query: str, max_results: int) -> List[SearchResult]:
         search_results = []
@@ -137,41 +183,46 @@ class DuckDuckGoSearcher:
         return search_results
 
     def _search_duckduckgo_html(self, query: str, max_results: int = 10) -> List[SearchResult]:
-        import requests
-        from bs4 import BeautifulSoup
-        import urllib.parse
-
         search_results = []
-        try:
-            import urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            session = requests.Session()
-            session.get("https://duckduckgo.com/", headers=self._headers(), timeout=6, verify=False)
-            time.sleep(random.uniform(0.2, 0.5))
 
+        try:
+            self._make_request("https://duckduckgo.com/", timeout=6)
+            time.sleep(random.uniform(0.3, 0.7))
+        except Exception:
+            pass
+
+        try:
             params = urllib.parse.urlencode({"q": query, "kl": "us-en", "kp": "-1", "kaf": "1"})
             url = f"https://html.duckduckgo.com/html/?{params}"
-            response = session.get(
+            html = self._make_request(
                 url,
-                headers=self._headers("https://duckduckgo.com/"),
+                extra_headers={
+                    "Referer": "https://duckduckgo.com/",
+                    "Origin": "https://duckduckgo.com",
+                },
                 timeout=10,
-                verify=False,
             )
-            soup = BeautifulSoup(response.text, "html.parser")
 
-            for rank, block in enumerate(soup.select(".result"), 1):
+            blocks = re.findall(
+                r'<div[^>]+class="[^"]*result[^"]*"[^>]*>(.*?)</div>\s*</div>\s*</div>',
+                html,
+                re.DOTALL,
+            )
+
+            for rank, block in enumerate(blocks, 1):
                 if len(search_results) >= max_results:
                     break
-                link_tag = block.select_one(".result__a")
-                if not link_tag:
+                url_match = re.search(r'class="result__a"[^>]+href="([^"]+)"[^>]*>(.*?)</a>', block, re.DOTALL)
+                snippet_match = re.search(r'class="result__snippet"[^>]*>(.*?)</a>', block, re.DOTALL)
+                if not url_match:
                     continue
-                title = link_tag.get_text(" ", strip=True)
-                href = link_tag.get("href", "")
-                parsed = urlparse(href)
-                uddg = parse_qs(parsed.query).get("uddg", [""])[0]
-                real_url = unquote(uddg) if uddg else href
-                snippet_tag = block.select_one(".result__snippet")
-                snippet = snippet_tag.get_text(" ", strip=True) if snippet_tag else ""
+
+                href = url_match.group(1)
+                title = strip_html(url_match.group(2)).strip()
+                snippet = strip_html(snippet_match.group(1)).strip() if snippet_match else ""
+                uddg = re.search(r"uddg=([^&]+)", href)
+                real_url = urllib.parse.unquote(uddg.group(1)) if uddg else href
+
                 if real_url.startswith("http") and title:
                     search_results.append(SearchResult(
                         url=real_url,
@@ -187,16 +238,12 @@ class DuckDuckGoSearcher:
         return search_results
 
     def _search_searxng(self, query: str, max_results: int = 10) -> List[SearchResult]:
-        import requests
-        import urllib.parse
-
         instances = self.searxng_instances[:]
         random.shuffle(instances)
+        last_error = None
         for instance in instances:
             search_results = []
             try:
-                import urllib3
-                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
                 params = urllib.parse.urlencode({
                     "q": query,
                     "format": "json",
@@ -205,13 +252,15 @@ class DuckDuckGoSearcher:
                     "safesearch": "0",
                 })
                 url = f"{instance}/search?{params}"
-                response = requests.get(
+                raw = self._make_request(
                     url,
-                    headers={**self._headers(instance), "Accept": "application/json, text/javascript, */*"},
+                    extra_headers={
+                        "Referer": instance,
+                        "Accept": "application/json, text/javascript, */*",
+                    },
                     timeout=8,
-                    verify=False,
                 )
-                data = response.json()
+                data = json.loads(raw)
                 for rank, item in enumerate(data.get("results", [])[:max_results], 1):
                     url_val = item.get("url", "")
                     title = item.get("title", "")
@@ -227,10 +276,55 @@ class DuckDuckGoSearcher:
                 if search_results:
                     print(f"   SearXNG: {len(search_results)} results")
                     return search_results
-            except Exception:
+            except Exception as ex:
+                last_error = ex
                 continue
-        print("   [!] SearXNG returned no results")
+        if last_error:
+            print(f"   [!] SearXNG returned no results: {last_error}")
+        else:
+            print("   [!] SearXNG returned no results")
         return []
+
+    def _search_wikipedia(self, query: str, max_results: int = 3) -> List[SearchResult]:
+        search_results = []
+        try:
+            params = urllib.parse.urlencode({
+                "action": "opensearch",
+                "search": query,
+                "limit": max_results,
+                "format": "json",
+                "namespace": "0",
+            })
+            url = f"https://en.wikipedia.org/w/api.php?{params}"
+            raw = self._make_request(
+                url,
+                extra_headers={
+                    "Referer": "https://en.wikipedia.org/",
+                    "Accept": "application/json, text/javascript, */*",
+                },
+                timeout=8,
+            )
+            data = json.loads(raw)
+            titles = data[1] if len(data) > 1 else []
+            descriptions = data[2] if len(data) > 2 else []
+            urls = data[3] if len(data) > 3 else []
+
+            for rank, page_url in enumerate(urls[:max_results], 1):
+                title = titles[rank - 1] if rank - 1 < len(titles) else "Wikipedia"
+                snippet = descriptions[rank - 1] if rank - 1 < len(descriptions) else ""
+                if page_url and title:
+                    search_results.append(SearchResult(
+                        url=page_url,
+                        title=f"Wikipedia: {title}",
+                        snippet=re.sub(r"\s+", " ", snippet)[:250],
+                        source="wikipedia",
+                        rank=rank,
+                    ))
+            if search_results:
+                print(f"   Wikipedia: {len(search_results)} results")
+        except Exception as ex:
+            print(f"   [x] Wikipedia failed: {ex}")
+        return search_results
 
     def _dedupe_results(self, results: List[SearchResult]) -> List[SearchResult]:
         seen = set()
@@ -312,6 +406,65 @@ class DuckDuckGoSearcher:
                         break
         except Exception as ex:
             print(f"   ✗ Bing fallback failed: {ex}")
+        return search_results
+
+
+    def _search_bing(self, query: str, max_results: int = 5) -> List[SearchResult]:
+        """Scrape Bing results using the lightweight PySearch urllib parser."""
+        import base64
+
+        search_results = []
+        try:
+            params = urllib.parse.urlencode({"q": query, "count": max_results, "setmkt": "en-IN", "setlang": "en"})
+            url = f"https://www.bing.com/search?{params}"
+            html = self._make_request(url, extra_headers={"Referer": "https://www.bing.com/"}, timeout=10)
+            blocks = re.findall(r'<li class="b_algo".*?</li>', html, re.DOTALL)
+
+            for rank, block in enumerate(blocks, 1):
+                if len(search_results) >= max_results:
+                    break
+
+                title_match = re.search(
+                    r'<h2[^>]*>\s*<a[^>]+href="([^"#][^"]*)"[^>]*>(.*?)</a>',
+                    block,
+                    re.DOTALL,
+                )
+                snippet_match = re.search(r'<p[^>]*>(.*?)</p>', block, re.DOTALL)
+                if not title_match:
+                    continue
+
+                link = title_match.group(1).strip()
+                title = strip_html(title_match.group(2)).strip()
+                snippet = strip_html(snippet_match.group(1)).strip() if snippet_match else ""
+
+                if "bing.com/ck" in link:
+                    match = re.search(r"u=a1([^&]+)", link)
+                    if match:
+                        try:
+                            b64_str = match.group(1)
+                            b64_str += "=" * (-len(b64_str) % 4)
+                            decoded = base64.b64decode(b64_str).decode("utf-8", errors="ignore")
+                            if decoded.startswith("http"):
+                                link = decoded
+                        except Exception:
+                            pass
+
+                bad_domains = [".cn/", ".cn", "baidu.com", "weibo.com"]
+                if any(bad in link.lower() for bad in bad_domains):
+                    continue
+
+                if link.startswith("http") and "bing.com" not in link and title:
+                    search_results.append(SearchResult(
+                        url=link,
+                        title=title,
+                        snippet=re.sub(r"\s+", " ", snippet)[:250],
+                        source="bing",
+                        rank=rank,
+                    ))
+            if search_results:
+                print(f"   Bing: {len(search_results)} results")
+        except Exception as ex:
+            print(f"   [x] Bing failed: {ex}")
         return search_results
 
 

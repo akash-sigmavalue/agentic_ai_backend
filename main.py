@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """FastAPI application entry point.
 
 This module owns application setup: app metadata, middleware, router

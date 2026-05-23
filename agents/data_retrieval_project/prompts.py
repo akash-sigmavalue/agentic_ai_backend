@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Project Query Builder Prompts
 =============================
@@ -16,6 +18,12 @@ This intent drives SQL generation — it must capture EVERYTHING the user asked 
 =============================================================
 EXTRACTION RULES
 =============================================================
+0.  Planning rule:
+    First analyze the user's query against the provided schema. Identify the
+    requested intent, metrics, entities, filters, groupings, ordering, and any
+    ambiguity before filling the JSON. Use only schema-backed columns and
+    concepts. This planning must guide the structured intent.
+
 1.  Capture EVERY entity the user mentions without exception.
     If the user says "compare Baner and Hinjewadi", both must appear
     in entities.locations. Never silently drop any entity.
@@ -156,6 +164,17 @@ Generate ONE correct, efficient, executable PostgreSQL SELECT query.
 =============================================================
 NON-NEGOTIABLE RULES
 =============================================================
+0.  Planning rule:
+    Before writing SQL, create an internal step-by-step algorithm:
+    a. Interpret the user intent from the structured intent.
+    b. Select only schema-backed tables and columns needed for the query.
+    c. Map each entity/filter to the best matching schema column.
+    d. Decide metric expressions, grouping, ordering, limits, and data-quality
+       filters.
+    e. Verify entity completeness and column validity.
+    Then follow that algorithm exactly when generating the SQL. Do not output
+    the algorithm in this stage; return only the SQL as required below.
+
 1.  Schema is the only source of truth for column and table names.
     Never invent a column or table not in the schema.
 
@@ -214,6 +233,31 @@ If a user specifies a location like "Baner", it could be in `location_name`, `su
   (location_name ILIKE '%Baner%' OR sub_locality ILIKE '%Baner%' OR micro_market ILIKE '%Baner%')
 
 Verify every chosen column exists in the schema before using it. Prefer projects as the base/anchor table.
+
+=============================================================
+PROJECT / LOCATION RESPONSE COLUMNS  (always include)
+=============================================================
+If the question is about any project or location, always return the matching
+name column and coordinates in the SELECT output.
+
+- Project-level query or entities.projects present:
+  SELECT project_name, project_latitude, project_longitude
+
+- Location/locality/city query or entities.locations / location space_filters present:
+  SELECT location_name, location_latitude, location_longitude
+
+- If the filter uses registered_project_name, still include project_name,
+  project_latitude, and project_longitude when those columns exist.
+
+- If the filter uses sub_locality, micro_market, or city_name, still include
+  location_name, location_latitude, and location_longitude when those columns
+  exist in the schema.
+
+- For aggregate, comparison, trend, ranking, or distribution queries, every
+  non-aggregated returned name/coordinate column must also appear in GROUP BY.
+
+- For trend queries involving projects or locations, keep the time dimension,
+  but also include the relevant project/location name and coordinates.
 
 =============================================================
 SEMANTIC RESOLVED FILTERS  (exact DB values)
@@ -317,11 +361,18 @@ REVIEW CHECKLIST  (in priority order)
 
 5.  No phantom columns (not in schema).
 
-6.  Semantic column match (developer → organization_individual_name).
+6.  Project/location response columns:
+    If the question is about projects or locations, the SELECT must include the
+    relevant name plus latitude and longitude:
+    project_name + project_latitude + project_longitude for projects;
+    location_name + location_latitude + location_longitude for locations.
+    In aggregate queries these non-aggregated columns must also be in GROUP BY.
 
-7.  GROUP BY consistent with SELECT.
+7.  Semantic column match (developer → organization_individual_name).
 
-8.  Risk of 0 rows due to overly strict filters.
+8.  GROUP BY consistent with SELECT.
+
+9.  Risk of 0 rows due to overly strict filters.
 
 =============================================================
 SCHEMA
@@ -482,6 +533,12 @@ REFLECTION RULES
     Also preserve every column/value in intent.semantic_resolved_filters.
     These are exact database values from semantic matching; use them with
     IN (...) and do not replace them with guessed variants.
+
+    If the query is about projects or locations, preserve/add the relevant
+    output identity columns and coordinates:
+      project_name, project_latitude, project_longitude
+      location_name, location_latitude, location_longitude
+    Add these columns to GROUP BY whenever the corrected SQL aggregates.
 
 4.  Column fallback — reason from the filter VALUE's semantic level:
 

@@ -2,6 +2,7 @@ import base64
 import json
 import os
 from typing import List
+import opendataloader_pdf
 
 import fitz
 from fastapi import HTTPException
@@ -61,7 +62,6 @@ def load_pdf_with_ocr(file_path: str) -> List[Document]:
 
 
 def load_pdf_with_opendataloader(file_path: str) -> List[Document]:
-    import opendataloader_pdf
 
     result = opendataloader_pdf.convert(file_path, format="markdown,json")
 
@@ -114,6 +114,17 @@ def load_documents(file_path: str, filename: str) -> List[Document]:
     extension = os.path.splitext(filename)[1].lower()
 
     if extension == ".pdf":
+        # Priority 1: OpenDataLoader (richest structured extraction — markdown, sections, tables, bbox)
+        try:
+            docs = load_pdf_with_opendataloader(file_path)
+            total_text = " ".join(doc.page_content for doc in docs)
+            if len(total_text.strip()) > 500:
+                runtime.loader_type = "opendataloader"
+                return docs
+        except Exception as exc:
+            print(f"OpenDataLoader failed, falling back to PyPDFLoader: {exc}")
+
+        # Priority 2: PyPDFLoader (fast text extraction fallback)
         try:
             from langchain_community.document_loaders import PyPDFLoader
 
@@ -131,18 +142,9 @@ def load_documents(file_path: str, filename: str) -> List[Document]:
                 return docs
 
         except Exception as exc:
-            print(f"PyPDFLoader failed: {exc}")
+            print(f"PyPDFLoader failed, falling back to OCR: {exc}")
 
-        try:
-            docs = load_pdf_with_opendataloader(file_path)
-            total_text = " ".join(doc.page_content for doc in docs)
-            if len(total_text.strip()) > 500:
-                runtime.loader_type = "opendataloader"
-                return docs
-
-        except Exception as exc:
-            print(f"OpenDataLoader failed, skipped safely: {exc}")
-
+        # Priority 3: OCR (last resort for scanned/image-based PDFs)
         runtime.loader_type = "ocr"
         return load_pdf_with_ocr(file_path)
 

@@ -103,7 +103,11 @@ class LightweightAnalyzer:
             prompt = self._build_accuracy_prompt(query, results, validation, intent)
 
             # Get LLM answer
-            if stream_callback:
+            if not self.client:
+                answer = self.build_source_based_answer(query, results)
+                if stream_callback:
+                    stream_callback(answer)
+            elif stream_callback:
                 answer = self._get_llm_answer_with_confidence_stream(
                     prompt,
                     stream_callback,
@@ -112,8 +116,13 @@ class LightweightAnalyzer:
             else:
                 answer = self._get_llm_answer_with_confidence(prompt, debug_llm_payloads=debug_llm_payloads)
 
-            # Post-process for real estate queries
-            if intent == "construction_status" or "project" in query.lower():
+            if not str(answer or "").strip() or str(answer).startswith("Error generating answer:"):
+                answer = self.build_source_based_answer(query, results)
+                if stream_callback:
+                    stream_callback(answer)
+
+            # Post-process only for launch/construction project discovery, not every listing query.
+            if self._is_new_project_query(query, intent) and hasattr(self, "validate_real_estate_content"):
                 answer = self.validate_real_estate_content(answer, query)
 
             return {
@@ -126,8 +135,11 @@ class LightweightAnalyzer:
             }
         except Exception as e:
             print(f"Error in generate_trusted_answer: {e}")
+            fallback = self.build_source_based_answer(query, results)
+            if stream_callback and fallback:
+                stream_callback(fallback)
             return {
-                'answer': f"An error occurred during analysis: {str(e)}",
+                'answer': fallback or f"An error occurred during analysis: {str(e)}",
                 'accuracy_score': 0,
                 'validated_claims': [],
                 'sources_agreed': 0,
@@ -135,25 +147,189 @@ class LightweightAnalyzer:
                 'confidence_level': "🔴 Error"
             }
 
+    def build_source_based_answer(self, query: str, results: List[Dict]) -> str:
+        """Build a deterministic answer from the most relevant retrieved sources."""
+        if not results:
+            return (
+                "I could not find reliable source results for this query right now. "
+                "Please try again with a more specific location, year, identifier, or source type."
+            )
+
+        exact_lines = []
+        for idx, result in enumerate(results[:10], 1):
+            for row in result.get("exact_ready_reckoner_rows", []) or []:
+                text = row.get("row_text")
+                if text:
+                    exact_lines.append((idx, text, result))
+            for match in result.get("exact_evidence_matches", []) or []:
+                text = match.get("text")
+                if text:
+                    exact_lines.append((idx, text, result))
+
+        answer = [f"## Source-Based Answer\n\nI found the most relevant available sources for: **{query}**."]
+
+        if exact_lines:
+            answer.append("\n\n## Exact Matches")
+            for idx, text, result in exact_lines[:8]:
+                answer.append(f"\n- [{idx}] {text}")
+
+        if self._is_existing_property_query(query):
+            answer.append("\n\n## Matching Existing Projects / Listings")
+            answer.append("\n| Source / Listing Page | Area / Match Signal | Details Found |")
+            answer.append("\n|---|---|---|")
+            for idx, result in enumerate(results[:10], 1):
+                title = self._clean_text(result.get("title") or "Untitled source")
+                snippet = self._clean_text(result.get("content") or result.get("snippet") or "")
+                area_signal = self._match_signal_for_query(query, f"{title} {snippet} {result.get('url', '')}")
+                details = snippet[:260] if snippet else "The source title matched the query, but detailed page text was not available."
+                answer.append(f"\n| [{idx}] {title} | {area_signal} | {details} |")
+        else:
+            answer.append("\n\n## Key Findings From Sources")
+            for idx, result in enumerate(results[:10], 1):
+                title = self._clean_text(result.get("title") or "Untitled source")
+                snippet = self._clean_text(result.get("content") or result.get("snippet") or "")
+                if not snippet:
+                    snippet = "No detailed extract was available; use the URL to verify the source directly."
+                answer.append(f"\n### [{idx}] {title}\n{snippet[:600]}")
+
+        answer.append("\n\n## Confidence Insight")
+        if exact_lines:
+            answer.append("\nThe answer includes exact evidence lines extracted from retrieved source content. Verify final decisions against the linked pages because live web listings, prices, rates, and regulations can change.")
+        else:
+            answer.append("\nThis is a source-based fallback answer from retrieved titles/snippets/content. It avoids inventing missing details; verify specifics on the linked pages.")
+
+        answer.append("\n\n### Reference URLs")
+        for idx, result in enumerate(results[:10], 1):
+            title = self._clean_text(result.get("title") or result.get("url") or f"Source {idx}")
+            url = result.get("url") or ""
+            if url:
+                answer.append(f"\n{idx}. [{title}]({url})")
+
+        return "".join(answer)
+
+    def _clean_text(self, text: str) -> str:
+        return re.sub(r"\s+", " ", str(text or "")).strip()
+
+    def _match_signal_for_query(self, query: str, text: str) -> str:
+        query_lower = query.lower()
+        text_lower = text.lower()
+        signals = []
+        for label, terms in {
+            "Chicago": ["chicago"],
+            "water/sea view": ["sea view", "waterfront", "lake view", "lake-view", "water view", "river view"],
+            "existing/listing": ["existing", "for sale", "homes for sale", "real estate", "listing", "listings"],
+        }.items():
+            if any(term in query_lower for term in terms) and any(term in text_lower for term in terms):
+                signals.append(label)
+        return ", ".join(signals) or "Relevant source match"
+
+    def _is_new_project_query(self, query: str, intent: str = None) -> bool:
+        query_lower = query.lower()
+        if intent == "construction_status":
+            return False
+        new_signals = [
+            "new project", "new launch", "upcoming", "pre-launch", "pre launch",
+            "under construction", "announced", "launching", "future project",
+        ]
+        existing_signals = [
+            "existing", "available", "for sale", "resale", "ready to move",
+            "ready-to-move", "homes for sale", "listing", "listings",
+        ]
+        return (
+            "project" in query_lower
+            and any(signal in query_lower for signal in new_signals)
+            and not any(signal in query_lower for signal in existing_signals)
+        )
+
+    def _is_existing_property_query(self, query: str) -> bool:
+        query_lower = query.lower()
+        real_estate_terms = [
+            "real estate", "project", "property", "properties", "home", "homes",
+            "condo", "condos", "apartment", "apartments", "flat", "villa",
+            "listing", "listings",
+        ]
+        existing_terms = [
+            "existing", "available", "for sale", "resale", "ready to move",
+            "ready-to-move", "sea view", "waterfront", "lake view", "lake-view",
+            "river view", "view",
+        ]
+        return (
+            any(term in query_lower for term in real_estate_terms)
+            and any(term in query_lower for term in existing_terms)
+            and not self._is_new_project_query(query)
+        )
+
+    def _infer_location_from_query(self, query: str) -> str:
+        match = re.search(r"\b(?:in|at|near|around)\s+([A-Za-z][A-Za-z\s,.-]{2,80})", query)
+        if match:
+            location = re.split(r"\b(?:with|for|and|that|which|having)\b", match.group(1), maxsplit=1)[0]
+            return re.sub(r"\s+", " ", location).strip(" ,.-") or "the requested location"
+        return "the requested location"
+
     def _build_accuracy_prompt(self, query: str, results: List[Dict], validation: Dict, intent: str = None) -> str:
         source_context = []
+        exact_row_context = []
+        exact_evidence_context = []
         for i, r in enumerate(results[:10], 1):
             content = r.get('content') or r.get('snippet') or "No content available."
-            source_context.append(f"[{i}] {r.get('title')}\nURL: {r.get('url')}\nTrust Score: {r.get('source_trust', 0.5)*100:.0f}%\nContent: {content[:5000]}")
-
+            source_type = r.get('source') or "web"
+            document = r.get('document') or {}
+            doc_line = f"\nDocument: {document.get('filename')} from {document.get('source_url')}" if document else ""
+            source_context.append(f"[{i}] {r.get('title')}\nSource Type: {source_type}{doc_line}\nURL: {r.get('url')}\nTrust Score: {r.get('source_trust', 0.5)*100:.0f}%\nContent: {content[:5000]}")
+            for row in r.get('exact_ready_reckoner_rows', []) or []:
+                exact_row_context.append(f"[{i}] {row.get('row_text')} | URL: {r.get('url')}")
+            for match in r.get('exact_evidence_matches', []) or []:
+                exact_evidence_context.append(f"[{i}] {match.get('text')} | URL: {r.get('url')}")
         validated_str = "\n".join([f"- {c['claim']} (Verified by {c['source_count']} sources)" for c in validation.get('validated_claims', [])])
         sources_str = "\n\n".join(source_context)
 
-        if intent == "construction_status" or "project" in query.lower():
-            import re
+        if self._is_existing_property_query(query):
+            location = self._infer_location_from_query(query)
+
+            return f"""You are a real estate research analyst.
+
+User Query: {query}
+
+The user is asking for existing real estate projects/listings, not only new launches. Use the retrieved sources to produce a descriptive answer before listing URLs.
+
+CRITICAL INSTRUCTIONS:
+- Treat "sea view" in inland/lake cities as waterfront, lake-view, river-view, or water-view when sources use those terms.
+- Include existing properties/projects, communities, condos, apartments, and homes when they match the user's location and view requirement.
+- Do not answer with only a fallback sentence if source titles/snippets clearly show matching listings.
+- For each item, provide the name/title, area/neighborhood, property type if available, what makes it match the requested view, and key details available from the source.
+- If sources are listing-search pages rather than individual project pages, summarize what each source indicates and say individual availability should be verified on the linked page.
+- Do not invent prices, unit counts, builders, or amenities not present in the source context.
+
+LOCATION FOCUS:
+{location}
+
+EXACT EVIDENCE MATCHES:
+{chr(10).join(exact_evidence_context) if exact_evidence_context else "No exact constraint-level evidence was extracted."}
+
+SEARCH RESULTS CONTEXT:
+{"-"*20}
+{sources_str}
+{"-"*20}
+
+FORMAT:
+## Executive Summary
+Briefly explain what matching existing sea/water-view real estate was found.
+
+## Matching Existing Projects / Listings
+Use a table with columns: Name / Source Title, Area, Type, View Match, Details Found, Source.
+
+## Notes And Gaps
+Mention missing details or where the source only provides a listing collection.
+
+### Reference URLs
+Include clickable markdown links [Title](URL) for the first 10 provided sources.
+
+Answer:"""
+
+        if self._is_new_project_query(query, intent):
             year_match = re.search(r'20\d{2}', query)
             year = year_match.group(0) if year_match else '2026'
-            location = "Pune"
-            locations = ['Pune', 'Mumbai', 'Bangalore', 'Wakad', 'Baner', 'Hinjewadi', 'Kharadi']
-            for loc in locations:
-                if loc.lower() in query.lower():
-                    location = loc
-                    break
+            location = self._infer_location_from_query(query)
 
             return f"""You are a real estate market analyst.
 
@@ -223,7 +399,10 @@ Answer:"""
 
         return f"""You are a high-accuracy fact-checking search assistant.
 User Query: "{query}"
-
+EXACT ROW-LEVEL MATCHES:
+{chr(10).join(exact_row_context) if exact_row_context else "No exact survey/row-level match was extracted."}
+EXACT EVIDENCE MATCHES:
+{chr(10).join(exact_evidence_context) if exact_evidence_context else "No exact constraint-level evidence was extracted."}
 CROSS-SOURCE VALIDATION DATA:
 {validated_str or "No cross-source consensus found for specific numbers/facts."}
 
@@ -233,18 +412,23 @@ SEARCH RESULTS CONTEXT:
 {"-"*20}
 
 INSTRUCTIONS:
-1. Provide an EXTREMELY DETAILED and COMPREHENSIVE answer (aim for 90% extraction of all relevant facts).
-2. Structure your response with high-density information:
+0. If EXACT ROW-LEVEL MATCHES contains a row for the requested survey number, answer from that row first and do not replace it with general locality rates.
+1. If EXACT EVIDENCE MATCHES contains lines that directly answer the user query, answer from those lines first before using broader source context.
+2. Preserve the user's exact constraints: location, year, ID/code/number, product/model/version, person/company, legal section/rule, date range, and quoted phrases.
+3. If sources do not contain the requested specific constraint, say that clearly instead of giving a generic answer.
+4. Provide an EXTREMELY DETAILED and COMPREHENSIVE answer (aim for 90% extraction of all relevant facts).
+4a. For legal/regulatory applicability questions, extract the regulation's scope, applicable jurisdictions, non-applicable/excluded jurisdictions, exempted authorities, special planning areas, exceptions, and source wording that supports each item. Distinguish directly stated exclusions from inferred exclusions.
+5. Structure your response with high-density information:
    - ## 📝 Executive Summary
    - ## 🔍 Exhaustive Findings (Extract EVERY specific number, fee, date, and legal rule found)
    - ## ⚖️ Legal/Regulatory Context (Specific acts, sections, and official departments)
    - ## ⚠️ Penalties & Enforcement (If applicable, extract specific amounts and durations)
-3. Use internal citations [1], [2], etc., for EVERY factual claim.
-4. DO NOT SUMMARIZE. If a source provides a list of 5 changes, list all 5 with their exact values.
-5. If sources conflict, explicitly mention the contradiction.
-6. Use tables to present numerical data or comparisons.
-7. End with a "Confidence Insight" section.
-8. CRITICAL: At the very end, add a section "### Reference URLs" with clickable markdown links [Title](URL) for the first 10 provided sources. Do not stop at 5 when 10 sources are available.
+6. Use internal citations [1], [2], etc., for EVERY factual claim.
+7. DO NOT SUMMARIZE. If a source provides a list of 5 changes, list all 5 with their exact values.
+8. If sources conflict, explicitly mention the contradiction.
+9. Use tables to present numerical data or comparisons.
+10. End with a "Confidence Insight" section.
+11. CRITICAL: At the very end, add a section "### Reference URLs" with clickable markdown links [Title](URL) for the first 10 provided sources. Do not stop at 5 when 10 sources are available.
 
 Answer:"""
 

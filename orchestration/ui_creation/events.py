@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 def make_event(event_type: str, node: str, message: str, data: dict | None = None) -> dict:
     return {
         "event_type": event_type,

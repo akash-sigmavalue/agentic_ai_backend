@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Dict, Optional
 
 import faiss
 import numpy as np
@@ -22,299 +22,499 @@ from database.user_input_runtime import runtime
 from utils.user_input.helpers import is_table_like, is_toc_like, preprocess_for_bm25
 
 
-def create_faiss_retriever(chunks: List[Document]):
-    runtime.embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY)
-    chunk_texts = [chunk.page_content for chunk in chunks]
-    chunk_embeddings = runtime.embeddings.embed_documents(chunk_texts)
-    runtime.chunks = chunks
-
-    embeddings_array = np.array(chunk_embeddings).astype("float32")
-    dimension = len(embeddings_array[0])
-    index = faiss.IndexFlatIP(dimension)
-
-    faiss.normalize_L2(embeddings_array)
-    index.add(embeddings_array)
-
-    runtime.faiss_index = index
-    return index
+# ========================= CONFIG =========================
+class ChunkingConfig:
+    PRIMARY_CHUNK_SIZE = 1300
+    PRIMARY_CHUNK_OVERLAP = 250
+    SECTION_PATTERN = r"(?=\n(?:\d{1,3}\.\d+(?:\.\d+){0,5}\b|CHAPTER|SECTION|\d+\.\d+\*|\d+\.\d+\#))"
+    PAGE_MARKER_PATTERN = r"\[\[PAGE_BREAK:(\d+)\]\]"
+    
+    DOMAIN_KEYWORDS = {
+        "fsi", "setback", "marginal", "height", "parking", "tdr", "premium",
+        "residential", "commercial", "industrial", "congested", "non-congested"
+    }
 
 
-def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.6, bm25_weight: float = 0.4):
-    bm25_retriever = BM25Retriever.from_documents(chunks, preprocess_func=preprocess_for_bm25)
-    bm25_retriever.k = RETRIEVAL_BM25_K
-    runtime.bm25_retriever = bm25_retriever
-
-    def hybrid_search(query: str, k: int = HYBRID_CANDIDATE_K) -> List[Document]:
-        bm25_docs = bm25_retriever.invoke(query)
-
-        query_embedding = runtime.embeddings.embed_query(query)
-        query_array = np.array([query_embedding]).astype("float32")
-        faiss.normalize_L2(query_array)
-
-        distances, indices = runtime.faiss_index.search(query_array, RETRIEVAL_FAISS_K)
-
-        faiss_docs = []
-        for index, distance in zip(indices[0], distances[0]):
-            if index != -1 and index < len(runtime.chunks):
-                doc = runtime.chunks[index]
-                doc.metadata["faiss_score"] = float(distance)
-                doc.metadata["faiss_rank"] = len(faiss_docs) + 1
-                faiss_docs.append(doc)
-
-        scores = {}
-
-        for rank, doc in enumerate(bm25_docs):
-            doc_id = doc.page_content[:100]
-            scores[doc_id] = scores.get(doc_id, 0) + bm25_weight / (rank + 60)
-            doc.metadata["bm25_rank"] = rank + 1
-
-        for rank, doc in enumerate(faiss_docs):
-            doc_id = doc.page_content[:100]
-            scores[doc_id] = scores.get(doc_id, 0) + vector_weight / (rank + 60)
-
-        all_docs = bm25_docs + faiss_docs
-        unique_docs = {}
-        for doc in all_docs:
-            doc_id = doc.page_content[:100]
-            if doc_id not in unique_docs:
-                unique_docs[doc_id] = doc
-                unique_docs[doc_id].metadata["hybrid_score"] = scores[doc_id]
-
-        sorted_docs = sorted(unique_docs.values(), key=lambda item: item.metadata.get("hybrid_score", 0), reverse=True)
-        return sorted_docs[:k]
-
-    return hybrid_search
+# ========================= CHUNKING =========================
+def _page_sort_value(page) -> int:
+    try:
+        return int(page)
+    except (TypeError, ValueError):
+        return 0
 
 
-def section_roots_from_toc(docs: List[Document]) -> List[str]:
-    section_ids = []
+def _format_page_range(pages: List[int]) -> str:
+    if not pages:
+        return "unknown"
 
-    for doc in docs:
-        if not is_toc_like(doc.page_content):
+    unique_pages = sorted(set(pages))
+    if len(unique_pages) == 1:
+        return str(unique_pages[0])
+
+    ranges = []
+    start = previous = unique_pages[0]
+    for page in unique_pages[1:]:
+        if page == previous + 1:
+            previous = page
             continue
-
-        section_ids.extend(re.findall(r"\b(\d+(?:\.\d+){1,4})\b", doc.page_content))
-
-    roots = []
-    for section_id in section_ids:
-        parts = section_id.split(".")
-        root = ".".join(parts[:2]) if len(parts) > 2 else section_id
-        if root not in roots:
-            roots.append(root)
-
-    return roots
+        ranges.append(f"{start}-{previous}" if start != previous else str(start))
+        start = previous = page
+    ranges.append(f"{start}-{previous}" if start != previous else str(start))
+    return ", ".join(ranges)
 
 
-def expand_section_docs_from_toc(docs: List[Document], max_extra: int = 18) -> List[Document]:
-    roots = section_roots_from_toc(docs)
-    if not roots:
-        return []
+def merge_pages_for_structural_chunking(documents: List[Document], config: ChunkingConfig) -> List[Document]:
+    """Merge page-level PDF docs so structural sections can continue across page breaks."""
+    text_docs = [doc for doc in documents if doc.metadata.get("type") != "image"]
+    non_text_docs = [doc for doc in documents if doc.metadata.get("type") == "image"]
 
-    expanded_docs = []
-    seen = set()
+    page_numbers = [_page_sort_value(doc.metadata.get("page")) for doc in text_docs]
+    has_multiple_pages = len({page for page in page_numbers if page}) > 1
+    if not has_multiple_pages:
+        return documents
 
-    for chunk in runtime.chunks:
-        section = str(chunk.metadata.get("section") or "")
-        if not section:
-            continue
+    ordered_docs = sorted(
+        enumerate(text_docs),
+        key=lambda item: (_page_sort_value(item[1].metadata.get("page")), item[0]),
+    )
 
-        matches_root = any(section == root or section.startswith(f"{root}.") for root in roots)
-        if not matches_root or is_toc_like(chunk.page_content):
-            continue
+    merged_parts = []
+    merged_pages = []
+    base_metadata = text_docs[0].metadata.copy() if text_docs else {}
 
-        key = (chunk.metadata.get("page"), section, chunk.page_content[:120])
-        if key in seen:
-            continue
-
-        expanded_docs.append(chunk)
-        seen.add(key)
-
-        if len(expanded_docs) >= max_extra:
-            break
-
-    return expanded_docs
-
-
-def rerank_documents(question: str, docs: List[Document], max_docs: int = RERANK_TOP_K) -> List[Document]:
-    q_lower = question.lower()
-    q_words = set(re.findall(r"\w+", q_lower))
-
-    table_keywords = {"table", "rate", "area", "cost", "fsi", "calculation", "statement", "schedule"}
-    has_table_intent = any(keyword in q_words for keyword in table_keywords)
-
-    for doc in docs:
-        score = doc.metadata.get("hybrid_score", 0)
-        content_lower = doc.page_content.lower()
-        title_lower = str(doc.metadata.get("title", "")).lower()
-        section_lower = str(doc.metadata.get("section", "")).lower()
-
-        content_words = set(re.findall(r"\w+", content_lower))
-        if content_words:
-            overlap = len(q_words & content_words)
-            score += overlap * 0.05
-
-        if any(qw in title_lower or qw in section_lower for qw in q_words if len(qw) > 3):
-            score += 0.3
-
-        if has_table_intent and doc.metadata.get("is_table"):
-            score += 0.5
-
-        if doc.metadata.get("page") is not None:
-            score += 0.1
-        if doc.metadata.get("section") is not None:
-            score += 0.1
-
-        if is_toc_like(doc.page_content):
-            score -= 0.5
-
-        doc.metadata["rerank_score"] = score
-
-    reranked = sorted(docs, key=lambda item: item.metadata.get("rerank_score", 0), reverse=True)
-    return reranked[:max_docs]
-
-
-def expand_parent_sections(reranked_docs: List[Document]) -> List[Document]:
-    expanded = list(reranked_docs)
-    seen_ids = {doc.page_content[:100] for doc in expanded}
-
-    extra_added = 0
-
-    for doc in reranked_docs[:PARENT_EXPAND_TOP_K]:
-        if extra_added >= PARENT_EXPAND_MAX_EXTRA:
-            break
-
-        if len(doc.page_content) > 1500:
-            continue
-
-        section = doc.metadata.get("section")
-        parent_section = doc.metadata.get("parent_section")
-
-        target_sections = set()
-        if section:
-            target_sections.add(section)
-        if parent_section:
-            target_sections.add(parent_section)
-
-        if not target_sections:
-            continue
-
-        for chunk in runtime.chunks:
-            if extra_added >= PARENT_EXPAND_MAX_EXTRA:
-                break
-
-            chunk_sec = chunk.metadata.get("section")
-            chunk_parent = chunk.metadata.get("parent_section")
-
-            if chunk_sec in target_sections or chunk_parent in target_sections:
-                chunk_id = chunk.page_content[:100]
-                if chunk_id not in seen_ids:
-                    expanded.append(chunk)
-                    seen_ids.add(chunk_id)
-                    extra_added += 1
-
-    return expanded
-
-
-def compress_context(question: str, docs: List[Document]) -> List[Document]:
-    compressed_docs = []
-    q_words = set(re.findall(r"\w+", question.lower()))
-
-    total_chars = 0
-
-    for doc in docs:
-        if total_chars >= MAX_CONTEXT_CHARS:
-            break
-
-        if doc.metadata.get("is_table") or doc.metadata.get("type") == "image":
-            compressed_content = doc.page_content
+    for _, doc in ordered_docs:
+        page = _page_sort_value(doc.metadata.get("page"))
+        if page:
+            merged_pages.append(page)
+            merged_parts.append(f"[[PAGE_BREAK:{page}]]\n{doc.page_content.strip()}")
         else:
-            paragraphs = doc.page_content.split("\n\n")
-            kept_paragraphs = []
-            for paragraph in paragraphs:
-                paragraph_words = set(re.findall(r"\w+", paragraph.lower()))
-                if len(q_words & paragraph_words) > 0 or len(paragraph) < 50:
-                    kept_paragraphs.append(paragraph)
+            merged_parts.append(doc.page_content.strip())
 
-            compressed_content = "\n\n".join(kept_paragraphs)
-            if len(compressed_content) < len(doc.page_content) * 0.2:
-                compressed_content = doc.page_content
+    if not merged_parts:
+        return documents
 
-        new_doc = Document(page_content=compressed_content, metadata=doc.metadata.copy())
-        compressed_docs.append(new_doc)
-        total_chars += len(compressed_content)
+    merged_text = "\n\n".join(part for part in merged_parts if part)
+    base_metadata.update({
+        "page": min(merged_pages) if merged_pages else base_metadata.get("page"),
+        "pages": sorted(set(merged_pages)),
+        "page_range": _format_page_range(merged_pages),
+        "chunking_source": "merged_pages",
+    })
 
-    return compressed_docs
+    return [Document(page_content=merged_text, metadata=base_metadata), *non_text_docs]
 
 
-def structure_based_split(documents):
+def improved_hierarchical_split(documents: List[Document], config: Optional[ChunkingConfig] = None) -> List[Document]:
+    if config is None:
+        config = ChunkingConfig()
+    
     structured_chunks = []
-    section_pattern = r"\n(?=\d+\.\d+(?:\.\d+)*\s+[A-Z][A-Za-z ]{4,80})"
-
+    
+    main_heading = ""
+    
     for doc in documents:
         if doc.metadata.get("type") == "image":
             structured_chunks.append(doc)
             continue
 
         text = doc.page_content
-        page = doc.metadata.get("page", None)
-        sections = re.split(section_pattern, text)
+        page = doc.metadata.get("page")
+        active_page = _page_sort_value(page)
+        pending_page = None
 
-        for section in sections:
-            section = section.strip()
-            if not section:
+        raw_sections = re.split(config.SECTION_PATTERN, text)
+
+        current_section = None
+        current_parent = None
+
+        for section_text in raw_sections:
+            section_text = section_text.strip()
+
+            if pending_page:
+                active_page = pending_page
+                pending_page = None
+
+            trailing_markers = re.findall(
+                rf"(?:\s*{config.PAGE_MARKER_PATTERN})+\s*$",
+                section_text,
+            )
+            if trailing_markers:
+                pending_page = int(trailing_markers[-1])
+                section_text = re.sub(
+                    rf"(?:\s*{config.PAGE_MARKER_PATTERN})+\s*$",
+                    "",
+                    section_text,
+                ).strip()
+
+            marker_pages = [
+                int(page)
+                for page in re.findall(config.PAGE_MARKER_PATTERN, section_text)
+            ]
+            section_pages = ([active_page] if active_page else []) + marker_pages
+            section_text = re.sub(config.PAGE_MARKER_PATTERN, "", section_text).strip()
+            if marker_pages:
+                active_page = marker_pages[-1]
+
+            if len(section_text) < 40:
                 continue
 
-            match = re.match(r"(\d+(\.\d+)*)\s*(.*)", section)
-            section_id = match.group(1) if match else None
-            title = match.group(3)[:100] if match else None
+            section_match = re.match(r"(\d{1,3}(?:\.\d+){0,5})\b", section_text)
+            section_id = section_match.group(1) if section_match else None
 
-            parent_section = None
-            if section_id and "." in section_id:
-                parts = section_id.split(".")
-                parent_section = ".".join(parts[:-1])
+            if section_id:
+                if "." in section_id:
+                    parts = section_id.split(".")
+                    # If it's a top level like 14.2, update main_heading
+                    if len(parts) == 2:
+                        main_heading = section_text.split("\n")[0][:200].strip()
+                    
+                    current_parent = ".".join(parts[:-1])
+                    current_section = section_id
+                else:
+                    current_parent = None
+                    current_section = section_id
+                    main_heading = section_text.split("\n")[0][:200].strip()
 
-            structured_chunks.append(
-                Document(
-                    page_content=section,
-                    metadata={
-                        "page": page,
-                        "source": doc.metadata.get("source", runtime.document_name or "document"),
-                        "section": section_id,
-                        "parent_section": parent_section,
-                        "title": title,
-                        "chunk_type": "section",
-                        "is_table": is_table_like(section),
-                    },
-                )
+            # Prepend main heading if this is a sub-section
+            final_content = section_text
+            if main_heading and section_id and section_id.count(".") >= 2:
+                if main_heading not in section_text:
+                    final_content = f"{main_heading}\n\n{section_text}"
+
+            chunk_doc = Document(
+                page_content=final_content,
+                metadata={
+                    **doc.metadata,
+                    "section": current_section,
+                    "parent_section": current_parent,
+                    "original_section": current_section or doc.metadata.get("section"),
+                    "title": section_text.split("\n")[0][:150].strip(),
+                    "chunk_type": "section",
+                    "is_table": is_table_like(section_text),
+                    "has_notes": bool(re.search(r"\*|\#|\(\d+\)", section_text[:400])),
+                    "page": min(section_pages) if section_pages else page,
+                    "pages": sorted(set(section_pages)) if section_pages else doc.metadata.get("pages"),
+                    "page_range": _format_page_range(section_pages) if section_pages else doc.metadata.get("page_range"),
+                }
             )
+            structured_chunks.append(chunk_doc)
 
     return structured_chunks
 
 
-def hybrid_chunking(documents):
-    structured_docs = structure_based_split(documents)
-    final_chunks = []
+def hybrid_chunking(documents: List[Document], config: Optional[ChunkingConfig] = None) -> List[Document]:
+    if config is None:
+        config = ChunkingConfig()
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,
-        chunk_overlap=400,
-        separators=["\n\n", "\n", ". ", "; ", " ", ""],
+    documents = merge_pages_for_structural_chunking(documents, config)
+
+    # Get structural sections only
+    final_chunks = improved_hierarchical_split(documents, config)
+
+    # RECURSIVE CHUNKING IS NOW COMMENTED OUT AS REQUESTED
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=config.PRIMARY_CHUNK_SIZE,
+    #     chunk_overlap=config.PRIMARY_CHUNK_OVERLAP,
+    #     separators=["\n\n\n", "\n\n", "\n", ". ", " ", ""],
+    #     keep_separator=True
+    # )
+
+    # for doc in structured_docs:
+    #     if doc.metadata.get("type") == "image" or len(doc.page_content) <= config.PRIMARY_CHUNK_SIZE + 300:
+    #         final_chunks.append(doc)
+    #         continue
+
+    #     sub_chunks = text_splitter.split_documents([doc])
+    #     for i, sub in enumerate(sub_chunks):
+    #         sub.metadata = {**doc.metadata, **sub.metadata}
+    #         sub.metadata.update({
+    #             "chunk_type": "sub_chunk",
+    #             "sub_chunk_index": i,
+    #             "parent_chunk_id": doc.metadata.get("section")
+    #         })
+    #     final_chunks.extend(sub_chunks)
+
+    final_chunks = enrich_metadata(final_chunks, config)
+    return final_chunks
+
+
+def enrich_metadata(chunks: List[Document], config: ChunkingConfig) -> List[Document]:
+    for chunk in chunks:
+        content_lower = chunk.page_content.lower()
+        topics = [kw for kw in config.DOMAIN_KEYWORDS if kw in content_lower]
+        if topics:
+            chunk.metadata["topics"] = topics
+
+        if any(x in content_lower for x in ["congested", "core area", "gaothan"]):
+            chunk.metadata["area_type"] = "congested"
+        elif any(x in content_lower for x in ["non-congested", "outside congested"]):
+            chunk.metadata["area_type"] = "non_congested"
+
+        chunk.metadata["content_length"] = len(chunk.page_content)
+    return chunks
+
+
+# ========================= RETRIEVAL =========================
+def create_faiss_retriever(chunks: List[Document]):
+    runtime.embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY)
+    chunk_texts = [chunk.page_content for chunk in chunks]
+    embeddings = runtime.embeddings.embed_documents(chunk_texts)
+    
+    embeddings_array = np.array(embeddings).astype("float32")
+    faiss.normalize_L2(embeddings_array)
+    
+    index = faiss.IndexFlatIP(len(embeddings_array[0]))
+    index.add(embeddings_array)
+
+    runtime.chunks = chunks
+    runtime.faiss_index = index
+
+
+def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.6, bm25_weight: float = 0.4):
+    bm25_retriever = BM25Retriever.from_documents(chunks, preprocess_func=preprocess_for_bm25)
+    bm25_retriever.k = RETRIEVAL_BM25_K
+
+    def hybrid_search(query: str, k: int = HYBRID_CANDIDATE_K) -> List[Document]:
+        bm25_docs = bm25_retriever.invoke(query)
+        
+        query_emb = runtime.embeddings.embed_query(query)
+        query_array = np.array([query_emb]).astype("float32")
+        faiss.normalize_L2(query_array)
+        distances, indices = runtime.faiss_index.search(query_array, RETRIEVAL_FAISS_K)
+
+        faiss_docs = []
+        for idx, dist in zip(indices[0], distances[0]):
+            if idx != -1 and idx < len(runtime.chunks):
+                doc = runtime.chunks[idx]
+                doc.metadata["faiss_score"] = float(dist)
+                faiss_docs.append(doc)
+
+        # Reciprocal Rank Fusion
+        scores: Dict[str, float] = {}
+        all_docs = bm25_docs + faiss_docs
+
+        for rank, doc in enumerate(bm25_docs):
+            doc_id = id(doc) if hasattr(doc, '__hash__') else doc.page_content[:150]
+            scores[doc_id] = scores.get(doc_id, 0) + bm25_weight / (rank + 1)
+
+        for rank, doc in enumerate(faiss_docs):
+            doc_id = id(doc) if hasattr(doc, '__hash__') else doc.page_content[:150]
+            scores[doc_id] = scores.get(doc_id, 0) + vector_weight / (rank + 1)
+
+        unique_docs = {id(d) if hasattr(d, '__hash__') else d.page_content[:150]: d for d in all_docs}
+        for doc in unique_docs.values():
+            doc_id = id(doc) if hasattr(doc, '__hash__') else doc.page_content[:150]
+            doc.metadata["hybrid_score"] = scores.get(doc_id, 0)
+
+        sorted_docs = sorted(unique_docs.values(), key=lambda x: x.metadata.get("hybrid_score", 0), reverse=True)
+        return sorted_docs[:k]
+
+    return hybrid_search
+
+
+# ========================= POST PROCESSING =========================
+def rerank_documents(
+    question: str,
+    docs: List[Document],
+    max_docs: int = RERANK_TOP_K,
+    applicability_terms: Optional[List[str]] = None,
+    query_plan: Optional[Dict] = None,
+) -> List[Document]:
+    """Dynamic, LLM-free but intelligent reranker focused on relevance + applicability"""
+    q_lower = question.lower()
+    q_words = set(re.findall(r"\w+", q_lower))
+    query_plan = query_plan or {}
+    normalized_applicability_terms = [
+        term.strip().lower()
+        for term in (applicability_terms or [])
+        if isinstance(term, str) and term.strip()
+    ]
+    aggregation_value = query_plan.get("aggregation_required")
+    aggregation_required = aggregation_value is True or str(aggregation_value).strip().lower() in {"true", "yes", "1"}
+    plan_terms = []
+    for key in ("calculation_targets", "table_columns_to_retrieve"):
+        value = query_plan.get(key)
+        if isinstance(value, str):
+            plan_terms.append(value)
+        elif isinstance(value, list):
+            plan_terms.extend(item for item in value if isinstance(item, str))
+
+    retrieval_queries = query_plan.get("retrieval_queries") or []
+    if isinstance(retrieval_queries, str):
+        retrieval_queries = [retrieval_queries]
+    plan_text = " ".join([
+        *plan_terms,
+        *(item for item in retrieval_queries if isinstance(item, str)),
+    ]).lower()
+    needs_fsi_components = (
+        aggregation_required
+        or "fsi" in q_lower
+        or "fsi" in plan_text
+        or "development potential" in q_lower
+        or "building potential" in q_lower
+        or "building potential" in plan_text
     )
+    component_terms = [
+        term.lower()
+        for term in plan_terms
+        if isinstance(term, str) and term.strip()
+    ]
+    if needs_fsi_components:
+        component_terms.extend([
+            "basic fsi",
+            "base fsi",
+            "premium fsi",
+            "fsi on payment",
+            "payment of premium",
+            "tdr",
+            "tdr loading",
+            "maximum permissible tdr",
+            "maximum building potential",
+            "building potential",
+            "ancillary fsi",
+            "additional fsi",
+        ])
 
-    for doc in structured_docs:
-        if doc.metadata.get("type") == "image":
-            final_chunks.append(doc)
+    seen_component_terms = set()
+    component_terms = [
+        term for term in component_terms
+        if term and not (term in seen_component_terms or seen_component_terms.add(term))
+    ]
+
+    for doc in docs:
+        score = float(doc.metadata.get("hybrid_score", 0.0))
+        content = doc.page_content.lower()
+        metadata = doc.metadata or {}
+
+        section = str(metadata.get("section", "")).lower()
+        title = str(metadata.get("title", "")).lower()
+        searchable_text = " ".join([content, section, title])
+
+        # === Dynamic Relevance Scoring ===
+        overlap = len(q_words & set(re.findall(r"\w+", content)))
+        score += overlap * 0.07
+
+        # Boost documents that contain structural elements user might need
+        if metadata.get("is_table") or "table" in content:
+            score += 0.35
+
+        if re.search(r"\d+\.\d+", section) or "regulation" in content or "chapter" in content:
+            score += 0.25
+
+        if aggregation_required and (metadata.get("is_table") or "table" in content):
+            score += 0.6
+
+        if component_terms:
+            matched_components = [
+                term for term in component_terms
+                if re.search(rf"\b{re.escape(term)}\b", searchable_text)
+            ]
+            if matched_components:
+                score += min(2.0, 0.3 * len(matched_components))
+
+        if needs_fsi_components and any(
+            term in content
+            for term in ["maximum building potential", "building potential on plot", "maximum permissible tdr", "fsi on payment"]
+        ):
+            score += 0.75
+
+        # === Dynamic Applicability Awareness ===
+        # Look for conditions mentioned in query inside the chunk
+        condition_keywords = ["road width", "plot area", "sqm", "sq.m", "sq.m.", "meter", "m.", "width", "area", "zone", "congested"]
+        condition_match = sum(1 for kw in condition_keywords if kw in content and kw in q_lower)
+        score += condition_match * 0.4
+
+        if normalized_applicability_terms:
+            matching_terms = [
+                term
+                for term in normalized_applicability_terms
+                if re.search(rf"\b{re.escape(term)}\b", searchable_text)
+            ]
+            if matching_terms:
+                score += 2.5 + (0.35 * len(matching_terms))
+            else:
+                score -= 1.25
+
+        # Prefer chunks that mention "basic", "permissible", "standard" when user asks normal case
+        if any(word in q_lower for word in ["permissible", "allowed", "basic", "normal", "standard"]):
+            if any(word in content for word in ["basic", "permissible without", "without payment", "base fsi"]):
+                score += 0.5
+
+        # Slight penalty for very promotional / incentive language unless asked
+        incentive_words = ["premium", "incentive", "additional", "tod", "higher", "maximum"]
+        if (
+            not needs_fsi_components
+            and any(word in content for word in incentive_words)
+            and not any(word in q_lower for word in incentive_words)
+        ):
+            score -= 0.25
+
+        doc.metadata["rerank_score"] = max(0.0, score)
+
+    # Sort and return
+    return sorted(docs, key=lambda x: x.metadata.get("rerank_score", 0), reverse=True)[:max_docs]
+
+
+def smart_parent_expansion(docs: List[Document], max_extra: Optional[int] = None) -> List[Document]:
+    if max_extra is None:
+        max_extra = PARENT_EXPAND_MAX_EXTRA
+    
+    expanded = list(docs)
+    seen = {doc.page_content[:150] for doc in expanded}
+
+    for doc in docs[:PARENT_EXPAND_TOP_K]:
+        if len(expanded) >= len(docs) + max_extra:
+            break
+
+        section = doc.metadata.get("original_section") or doc.metadata.get("section") or ""
+        if not section:
             continue
 
-        if len(doc.page_content) > 2000:
-            sub_chunks = text_splitter.split_documents([doc])
-            for index, sub_chunk in enumerate(sub_chunks):
-                sub_chunk.metadata.update(doc.metadata)
-                sub_chunk.metadata["chunk_type"] = "sub_chunk"
-                sub_chunk.metadata["sub_chunk_index"] = index
-                sub_chunk.metadata["parent_section"] = doc.metadata.get("parent_section")
-            final_chunks.extend(sub_chunks)
-        else:
-            final_chunks.append(doc)
+        for candidate in runtime.chunks:
+            if len(expanded) >= len(docs) + max_extra:
+                break
 
-    return final_chunks
+            c_sec = candidate.metadata.get("section") or ""
+            if (c_sec == section or 
+                section.startswith(c_sec + ".") or 
+                c_sec.startswith(section + ".")):
+                
+                key = candidate.page_content[:150]
+                if key not in seen:
+                    expanded.append(candidate)
+                    seen.add(key)
+    return expanded
+
+
+def legal_aware_compressor(question: str, docs: List[Document]) -> List[Document]:
+    compressed = []
+    total_chars = 0
+
+    for doc in docs:
+        # if total_chars > MAX_CONTEXT_CHARS:
+        #     break
+
+        if doc.metadata.get("is_table") or doc.metadata.get("has_notes") or len(doc.page_content) < 700:
+            compressed.append(doc)
+            total_chars += len(doc.page_content)
+            continue
+
+        if re.search(r"\d+\.\d+", doc.page_content[:200]):
+            compressed.append(doc)
+        else:
+            compressed.append(Document(
+                page_content=doc.page_content,
+                metadata=doc.metadata.copy()
+            ))
+        total_chars += len(compressed[-1].page_content)
+
+    return compressed
+
+
+# Backward compatibility aliases (important!)
+def compress_context(question: str, docs: List[Document]) -> List[Document]:
+    return legal_aware_compressor(question, docs)
+
+
+def expand_parent_sections(reranked_docs: List[Document]) -> List[Document]:
+    return smart_parent_expansion(reranked_docs)

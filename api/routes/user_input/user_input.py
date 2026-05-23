@@ -4,18 +4,20 @@ import tempfile
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from langchain_openai import ChatOpenAI
 
 from agents.user_input.main import token_usage
 from api.schemas.user_input import AskRequest, AskResponse
-from core.user_input.config import OPENAI_API_KEY
 from core.user_input.security import require_openai_key
 from database.user_input_runtime import runtime
-from utils.user_input.helpers import count_tokens
 
 
 router = APIRouter()
 print("reach route .................")
+
+
+def _sse(payload: dict) -> str:
+    return f"data: {json.dumps(payload, default=str)}\n\n"
+
 
 def _missing_dependency_error(exc: ModuleNotFoundError) -> HTTPException:
     package_name = exc.name or "unknown"
@@ -157,12 +159,20 @@ def ask(request: AskRequest) -> AskResponse:
         raise HTTPException(status_code=400, detail="Upload and process a document first.")
 
     final_state = rag_graph.invoke(
-        {"question": question, "context": [], "answer": "", "retrieval_timing": None, "token_usage": None}
+        {
+            "question": question,
+            "query_plan": None,
+            "context": [],
+            "answer": "",
+            "retrieval_timing": None,
+            "token_usage": None,
+        }
     )
     return AskResponse(
         answer=final_state["answer"],
         chunks=final_state["context"],
         token_usage=final_state.get("token_usage") or {"input": 0, "output": 0},
+        verified=bool(final_state.get("verified")),
         retrieval_timing=final_state.get("retrieval_timing"),
     )
 
@@ -170,7 +180,6 @@ def ask(request: AskRequest) -> AskResponse:
 @router.post("/ask/stream")
 async def ask_stream(request: AskRequest):
     require_openai_key()
-    build_context_string, _, retrieve_node, _, RAG_PROMPT_TEMPLATE = _load_rag_graph()
 
     question = request.question.strip()
     if not question:
@@ -181,50 +190,93 @@ async def ask_stream(request: AskRequest):
 
     async def generate():
         import asyncio
-        from concurrent.futures import ThreadPoolExecutor
 
-        loop = asyncio.get_event_loop()
+        try:
+            from langchain_openai import ChatOpenAI
 
-        with ThreadPoolExecutor() as pool:
-            state = await loop.run_in_executor(
-                pool,
-                lambda: retrieve_node(
-                    {
-                        "question": question,
-                        "context": [],
-                        "answer": "",
-                        "retrieval_timing": None,
-                        "token_usage": None,
-                    }
-                ),
+            from agents.user_input.main import (
+                build_context_string,
+                generate_node,
+                retrieve_node,
+                understand_query_node,
             )
+            from agents.user_input.prompts import ANSWER_VERIFICATION_PROMPT
+            from core.user_input.config import OPENAI_API_KEY
+            from utils.user_input.helpers import count_tokens
 
-        context_blocks = state["context"]
-        retrieval_timing = state.get("retrieval_timing")
-        context_str = build_context_string(context_blocks)
-        prompt = RAG_PROMPT_TEMPLATE.format(context_str=context_str, question=question)
+            loop = asyncio.get_running_loop()
+            state = {
+                "question": question,
+                "query_plan": None,
+                "context": [],
+                "answer": "",
+                "retrieval_timing": None,
+                "token_usage": None,
+            }
 
-        llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0.2,
-            api_key=OPENAI_API_KEY,
-            streaming=True,
-        )
+            yield _sse({"type": "status", "stage": "understand_query", "content": "Understanding query"})
+            state = await loop.run_in_executor(None, lambda: understand_query_node(state))
 
-        full_response = ""
-        in_tokens = count_tokens(prompt, "gpt-4o-mini")
+            yield _sse({"type": "status", "stage": "retrieve", "content": "Retrieving document context"})
+            state = await loop.run_in_executor(None, lambda: retrieve_node(state))
 
-        async for chunk in llm.astream(prompt):
-            token = chunk.content
-            if token:
-                full_response += token
-                yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
+            context_blocks = state.get("context") or []
+            if not context_blocks:
+                answer = state.get("answer") or "No relevant content found in the document."
+                yield _sse({"type": "token", "content": answer})
+                yield _sse({
+                    "type": "done",
+                    "answer": answer,
+                    "chunks": [],
+                    "token_usage": state.get("token_usage") or {"input": 0, "output": 0},
+                    "verified": False,
+                    "retrieval_timing": state.get("retrieval_timing"),
+                })
+                return
 
-        out_tokens = count_tokens(full_response, "gpt-4o-mini")
-        runtime.total_llm_input_tokens += in_tokens
-        runtime.total_llm_output_tokens += out_tokens
+            yield _sse({"type": "status", "stage": "generate", "content": "Drafting answer"})
+            state = await loop.run_in_executor(None, lambda: generate_node(state))
 
-        yield f"data: {json.dumps({'type': 'done', 'chunks': context_blocks, 'token_usage': {'input': in_tokens, 'output': out_tokens}, 'retrieval_timing': retrieval_timing})}\n\n"
+            # yield _sse({"type": "status", "stage": "check_answer", "content": "Verifying answer"})
+            # context_str = build_context_string(context_blocks)
+            # draft_answer = state.get("answer", "")
+            # prompt = ANSWER_VERIFICATION_PROMPT.format(
+            #     question=question,
+            #     query_plan=json.dumps(state.get("query_plan", {}), ensure_ascii=False, indent=2),
+            #     context_str=context_str,
+            #     draft_answer=draft_answer,
+            # )
+
+            # llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=True, api_key=OPENAI_API_KEY)
+            # answer_parts = []
+            # async for chunk in llm.astream(prompt):
+            #     content = getattr(chunk, "content", "") or ""
+            #     if not content:
+            #         continue
+            #     answer_parts.append(content)
+            #     yield _sse({"type": "token", "content": content})
+
+            # answer = "".join(answer_parts).strip() or draft_answer
+            # checker_usage = {
+            #     "input": count_tokens(prompt, "gpt-4o-mini"),
+            #     "output": count_tokens(answer, "gpt-4o-mini"),
+            # }
+            # token_usage = state.get("token_usage") or {"input": 0, "output": 0}
+            # current_token_usage = {
+            #     "input": token_usage.get("input", 0) + checker_usage["input"],
+            #     "output": token_usage.get("output", 0) + checker_usage["output"],
+            # }
+
+            yield _sse({
+                "type": "done",
+                "answer": state.get("answer", ""),
+                "chunks": context_blocks,
+                "token_usage": state.get("token_usage") or {"input": 0, "output": 0},
+                "verified": False,
+                "retrieval_timing": state.get("retrieval_timing"),
+            })
+        except Exception as exc:
+            yield _sse({"type": "error", "content": str(exc)})
 
     return StreamingResponse(
         generate(),

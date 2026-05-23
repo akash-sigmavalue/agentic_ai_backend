@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 def build_database_grounding_prompt(
     allowed_columns: list[str],
     requested_type: str | None,
