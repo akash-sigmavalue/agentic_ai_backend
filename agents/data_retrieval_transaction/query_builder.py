@@ -12,12 +12,11 @@ New pipeline
   User Query (raw string)
        │
        ▼
-  [1] IntentExtractor      — NL → structured intent dict
-       │                     reads: user_query + schema
-       │                     writes: analysis_type, metrics, entities (ALL of them),
-       │                             filters, group_by, order_by, time_series
+  [1] TransactionStage1IntentExtractor  — NL → Stage 1 OUTPUT/MAPPED schema
        ▼
-  [2] TransactionQueryBuilder.run(intent)
+  [2] TransactionStage2AlgorithmCreator — Stage 1 → algorithm
+       ▼
+  [3] TransactionQueryBuilder.run(intent)
        │
        ├── BUILD    — schema-grounded SQL; ALL intent entities in WHERE clause
        ├── REVIEW   — pre-execution gate; entity completeness check is #1 priority
@@ -61,12 +60,17 @@ from agents.data_retrieval_transaction.helpers import (
     parse_json,
     validate_select_only,
 )
-from agents.data_retrieval_transaction.intent_extractor import IntentExtractor
 from agents.data_retrieval_transaction.models import (
     Iteration,
     ObserveVerdict,
     QueryResult,
     StepStatus,
+)
+from agents.data_retrieval_transaction.stage1_sample import TransactionStage1IntentExtractor
+from agents.data_retrieval_transaction.stage2_algorithm import (
+    TransactionStage2AlgorithmCreator,
+    needs_clarification,
+    normalize_stage_outputs_for_react,
 )
 from agents.data_retrieval_transaction.prompts import (
     SQL_BUILD_PROMPT,
@@ -89,7 +93,7 @@ class TransactionQueryBuilder:
     """
     Production-grade ReAct SQL query builder.
 
-    Takes a structured intent dict (from IntentExtractor) and runs a
+    Takes a structured intent dict normalized from new Stage 1 + Stage 2 and runs a
     BUILD → REVIEW → EXECUTE → OBSERVE → REFLECT loop until a satisfactory
     result is produced or MAX_ITERATIONS is reached.
 
@@ -98,9 +102,6 @@ class TransactionQueryBuilder:
 
     Usage
     ─────
-        extractor = IntentExtractor(client)
-        intent    = extractor.extract(user_query)
-
         builder   = TransactionQueryBuilder(client=client, db_executor=run_sql)
         result    = builder.run(intent)
 
@@ -167,7 +168,7 @@ class TransactionQueryBuilder:
         # ── STEP 0B: SEMANTIC PROJECT/LOCATION/CITY RESOLUTION ────────────────
         # Convert misspelled or aliased spatial names to exact DB values before
         # probe/build so every downstream stage works with canonical names.
-        self._resolve_semantic_space_entities(intent)
+        # self._resolve_semantic_space_entities(intent)
 
         # ── STEP 0: PROBE ─────────────────────────────────────────────────────
         # Identify which columns actually contain the entities to avoid empty results.
@@ -655,8 +656,9 @@ def run_query(
     Single entry point: raw user query string → QueryResult.
 
     Pipeline:
-      1. IntentExtractor converts the query to a structured intent dict.
-      2. TransactionQueryBuilder runs the ReAct loop against the intent.
+      1. TransactionStage1IntentExtractor creates Stage 1 output.
+      2. TransactionStage2AlgorithmCreator creates the Stage 2 algorithm.
+      3. The outputs are normalized and passed to the ReAct SQL loop.
 
     Example
     ───────
@@ -670,8 +672,22 @@ def run_query(
         print(result.rows)
         print(result.success)
     """
-    extractor = IntentExtractor(client=client, model=model)
-    intent    = extractor.extract(user_query)
+    stage1_extractor = TransactionStage1IntentExtractor(client=client, model="gpt-4o-mini")
+    stage1_output = stage1_extractor.extract(user_query)
+    if needs_clarification(stage1_output):
+        return QueryResult(
+            sql="",
+            rows=[],
+            intent=stage1_output,
+            iterations=0,
+            trace=[],
+            success=False,
+            error="Stage 1 clarification required.",
+        )
+
+    stage2_creator = TransactionStage2AlgorithmCreator(client=client, model="gpt-4o-mini")
+    stage2_algorithm = stage2_creator.create_algorithm(user_query, stage1_output)
+    intent = normalize_stage_outputs_for_react(user_query, stage1_output, stage2_algorithm)
 
     builder   = TransactionQueryBuilder(
         client=client,

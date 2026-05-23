@@ -8,12 +8,12 @@ transactions:
   project_name: Name of project
   village_name_marathi: Village name in Marathi
   location_id: Location identifier
-  location_name: Location name
+  location_name: Location of transaction
   village_name: Village name in English
   year: Transaction year
   quarter: Transaction quarter
   city_id: City identifier
-  city_name: City name
+  city_name: City of transaction
   transaction_category_id: Transaction category ID
   sub_registrar_office_code: SRO office code
   sub_registrar_office_name: SRO office name
@@ -78,4 +78,17 @@ Semantic category columns:
   transaction_category, property_type, unit_configuration, project_type,
   sale_type, furnishing_status, condition_status, facing_direction, view_type,
   bank_type.
+"""
+
+
+SPACE_SCHEMA="""
+1 | unit | unit_number
+2 | building | tower_name
+3 | parcel/survey/CTS/khasra/plot no | plot_number
+4 | project | project_name
+5 | location | location_name
+6 | micromarket | micro_market
+7 | city | city_name
+8 | state | state_name
+9 | country | country_name
 """

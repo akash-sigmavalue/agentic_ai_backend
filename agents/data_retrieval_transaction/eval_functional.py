@@ -3,7 +3,7 @@ Functional Evaluation Framework for ReAct SQL Agent  —  v1.0
 =============================================================
 
 Evaluates THREE layers of your agent:
-  Layer A  — IntentExtractor  (NL → structured intent)
+  Layer A  — TransactionStage1IntentExtractor  (NL → Stage 1 intent/schema)
   Layer B  — SQL Quality      (entity completeness, patterns, safety)
   Layer C  — End-to-end loop  (iterations, success, result relevance)
 
@@ -73,10 +73,11 @@ except ImportError:
 # Adjust these import paths to match your project structure.
 # Example: if your file is at backend/agent/transaction/query_builder.py
 #   from backend.agent.transaction.query_builder import (
-#       IntentExtractor, TransactionQueryBuilder, run_query, QueryResult
+#       TransactionStage1IntentExtractor, TransactionQueryBuilder, run_query, QueryResult
 #   )
 try:
-    from agents.data_retrieval_transaction.query_builder import (IntentExtractor, TransactionQueryBuilder, run_query, QueryResult)
+    from agents.data_retrieval_transaction.query_builder import (TransactionQueryBuilder, run_query, QueryResult)
+    from agents.data_retrieval_transaction.stage1_sample import TransactionStage1IntentExtractor as IntentExtractor
     from agents.data_retrieval_transaction.schema import TRANSACTION_QUERY_SCHEMA
     AGENT_IMPORTED = True
 except ImportError as e:

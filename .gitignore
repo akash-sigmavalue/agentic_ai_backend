@@ -25,3 +25,4 @@ __pycache__/
 
 # Databases
 *.sqlite3
+run_logs/

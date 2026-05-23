@@ -18,7 +18,7 @@ from agents.data_retrieval_transaction.helpers import (
     parse_json,
 )
 from agents.data_retrieval_transaction.prompts import INTENT_EXTRACT_PROMPT
-from agents.data_retrieval_transaction.schema import TRANSACTION_QUERY_SCHEMA
+from agents.data_retrieval_transaction.schema import SPACE_SCHEMA, TRANSACTION_QUERY_SCHEMA
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +69,7 @@ class IntentExtractor:
         """
         prompt = INTENT_EXTRACT_PROMPT.format(
             schema=TRANSACTION_QUERY_SCHEMA,
+            space_schema = SPACE_SCHEMA,
             user_query=user_query,
         )
         messages = [
@@ -104,9 +105,15 @@ class IntentExtractor:
                 f"IntentExtractor: failed to parse LLM response: {raw[:300]}"
             )
 
-        merge_space_filters(intent, user_query)
-        if not intent_has_space_context(intent):
-            mark_space_clarification_required(intent)
+        # merge_space_filters(intent, user_query)
+        # if not intent_has_space_context(intent):
+        #     mark_space_clarification_required(intent)
+
+        import json
+        print("\n========== EXTRACTED INTENT ==========")
+        print(json.dumps(intent, indent=2, ensure_ascii=False))
+        print("======================================\n")
+
 
         locations = (intent.get("entities") or {}).get("locations") or []
         metrics   = [m.get("alias") for m in (intent.get("metrics") or [])]
@@ -117,4 +124,8 @@ class IntentExtractor:
             [loc.get("value") for loc in locations],
             metrics,
         )
+
+        # print("" + "="*40)
+        # print(f"Extracted intent: {intent}");
+        # print("" + "="*40)  
         return intent

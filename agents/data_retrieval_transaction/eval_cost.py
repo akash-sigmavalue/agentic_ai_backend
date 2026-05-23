@@ -61,9 +61,14 @@ except ImportError:
 try:
     from agents.data_retrieval_transaction.eval_functional import TEST_CASES, _build_db_executor
     from agents.data_retrieval_transaction.query_builder import (
-        IntentExtractor,
         QueryResult,
         TransactionQueryBuilder,
+    )
+    from agents.data_retrieval_transaction.stage1_sample import TransactionStage1IntentExtractor
+    from agents.data_retrieval_transaction.stage2_algorithm import (
+        TransactionStage2AlgorithmCreator,
+        needs_clarification,
+        normalize_stage_outputs_for_react,
     )
 except ImportError as exc:
     print(f"[ERROR] Could not import transaction agent/eval code: {exc}")
@@ -274,9 +279,18 @@ class CostEvaluator:
         issues: list[str] = []
 
         try:
-            extractor = IntentExtractor(client=self.client, model=self.model)
-            intent = extractor.extract(query)
-            usage.add(extractor.last_usage)
+            stage1_extractor = TransactionStage1IntentExtractor(client=self.client, model="gpt-4o-mini")
+            stage1_output = stage1_extractor.extract(query)
+            usage.add(stage1_extractor.last_usage)
+
+            if needs_clarification(stage1_output):
+                raise RuntimeError("Stage 1 clarification required.")
+
+            stage2_creator = TransactionStage2AlgorithmCreator(client=self.client, model="gpt-4o-mini")
+            stage2_algorithm = stage2_creator.create_algorithm(query, stage1_output)
+            usage.add(stage2_creator.last_usage)
+
+            intent = normalize_stage_outputs_for_react(query, stage1_output, stage2_algorithm)
 
             builder = TransactionQueryBuilder(
                 client=self.client,

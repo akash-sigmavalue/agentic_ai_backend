@@ -5,8 +5,14 @@ from utils.data_retrieval.clarification import (
     SPACE_CLARIFICATION_QUESTION,
 )
 from utils.data_retrieval.query_executor import ExecutionEngine
-from agents.data_retrieval_transaction.intent_extractor import IntentExtractor
 from agents.data_retrieval_transaction.query_builder import TransactionQueryBuilder
+from agents.data_retrieval_transaction.stage1_sample import TransactionStage1IntentExtractor
+from agents.data_retrieval_transaction.stage2_algorithm import (
+    TransactionStage2AlgorithmCreator,
+    needs_clarification,
+    normalize_stage_outputs_for_react,
+    stage1_clarification_payload,
+)
 
 
 class TransactionDomainAgent:
@@ -14,8 +20,11 @@ class TransactionDomainAgent:
         self.domain_key = "transaction"
         self.display_name = "Transaction Agent"
         
-        # Use gpt-4o-mini for intent extraction (cost efficient)
-        self.intent_extractor = IntentExtractor(client, model="gpt-4o-mini")
+        # Stage 1: new transaction intent/schema extraction.
+        self.stage1_extractor = TransactionStage1IntentExtractor(client, model="gpt-4o-mini")
+
+        # Stage 2: schema-grounded algorithm generation from Stage 1 output.
+        self.stage2_algorithm_creator = TransactionStage2AlgorithmCreator(client, model="gpt-4o-mini")
         
         # Use gpt-5.1 for the core ReAct loop (high reasoning)
         self.query_builder = TransactionQueryBuilder(client=client, model="gpt-5.1")
@@ -92,24 +101,26 @@ class TransactionDomainAgent:
     def execute_events(self, question: str):
         try:
             yield self._event("stage", f"{self.display_name} · Stage 1: Extracting intent and entities...")
-            intent = self.intent_extractor.extract(question)
-            if self.intent_extractor.last_usage is not None:
+            stage1_output = self.stage1_extractor.extract(question)
+            if self.stage1_extractor.last_usage is not None:
                 yield self._event(
                     "token_usage_raw",
                     None,
                     stage_name=f"{self.domain_key}.s1_intent",
-                    usage=self.intent_extractor.last_usage,
+                    usage=self.stage1_extractor.last_usage,
                 )
-            yield self._event("intent", intent, agent=self.domain_key)
+            yield self._event("intent", stage1_output, agent=self.domain_key)
             yield self._event(
                 "debug_trace",
                 {
                     "phase": "observe",
                     "step": "intent_extraction",
-                    "summary": "Intent extracted via V3 IntentExtractor.",
-                    "analysis_type": intent.get("analysis_type"),
-                    "metrics": [m.get("alias") for m in (intent.get("metrics") or [])],
-                    "locations": [loc.get("value") for loc in (intent.get("entities") or {}).get("locations") or []],
+                    "summary": "Intent extracted via new Transaction Stage 1.",
+                    "analysis_type": (
+                        (stage1_output.get("OUTPUT_JSON_SCHEMA") or {}).get("analysis_type")
+                        or stage1_output.get("analysis_type")
+                    ),
+                    "needs_clarification": needs_clarification(stage1_output),
                 },
                 agent=self.domain_key,
             )
@@ -123,30 +134,64 @@ class TransactionDomainAgent:
                 "report_chunks": [],
             }
 
-        route = (intent.get("route") or "internal_db").lower()
-        if route == "clarify" or intent.get("needs_clarification"):
-            questions = intent.get("clarification_questions") or [
-                "Please specify the unit, building, parcel / survey / CTS / khasra / plot number, project, location, micromarket, city, state, or country."
-            ]
-            clarification_payload = {
-                "message": intent.get("clarification_reason") or "I need a little more detail to answer safely.",
-                "questions": questions,
-            }
+        route = "internal_db"
+        if needs_clarification(stage1_output):
+            clarification_payload = stage1_clarification_payload(stage1_output)
+            questions = clarification_payload.get("questions") or []
             if SPACE_CLARIFICATION_QUESTION in questions:
                 clarification_payload["clarification_type"] = "space_filter"
                 clarification_payload["options"] = SPACE_CLARIFICATION_OPTIONS
             return {
                 "status": "clarify",
                 "domain": self.domain_key,
-                "route": route,
-                "intent": intent,
+                "route": "clarify",
+                "intent": stage1_output,
                 "clarification_payload": clarification_payload,
                 "report_text": "",
                 "report_chunks": [],
             }
 
+        try:
+            yield self._event("stage", f"{self.display_name} · Stage 2: Creating algorithm...")
+            stage2_algorithm = self.stage2_algorithm_creator.create_algorithm(question, stage1_output)
+            if self.stage2_algorithm_creator.last_usage is not None:
+                yield self._event(
+                    "token_usage_raw",
+                    None,
+                    stage_name=f"{self.domain_key}.s2_algorithm",
+                    usage=self.stage2_algorithm_creator.last_usage,
+                )
+            yield self._event("algorithm", stage2_algorithm, agent=self.domain_key)
+            intent = normalize_stage_outputs_for_react(question, stage1_output, stage2_algorithm)
+            yield self._event(
+                "debug_trace",
+                {
+                    "phase": "plan",
+                    "step": "algorithm_creation",
+                    "summary": "Stage 2 algorithm generated and normalized for the ReAct SQL loop.",
+                    "algorithm_type": stage2_algorithm.get("algorithm_type"),
+                    "steps_count": len(stage2_algorithm.get("algorithm_steps", [])),
+                },
+                agent=self.domain_key,
+            )
+        except Exception as error:
+            yield self._event("error", f"{self.display_name} Stage 2 failed: {str(error)}")
+            return {
+                "status": "error",
+                "domain": self.domain_key,
+                "route": route,
+                "intent": stage1_output,
+                "error": str(error),
+                "report_text": "",
+                "report_chunks": [],
+            }
+
         # ReAct loop initialization
-        plan = {"steps": ["ReAct SQL Loop"], "explanation": "v3.0 integrated ReAct pipeline"}
+        plan = {
+            "steps": stage2_algorithm.get("algorithm_steps", []) or ["ReAct SQL Loop"],
+            "explanation": "New Stage 1 + Stage 2 algorithm connected to v3.0 ReAct SQL loop",
+            "stage2_algorithm": stage2_algorithm,
+        }
         tool_selections = []
         report_chunks = []
         sql = None
@@ -238,6 +283,8 @@ class TransactionDomainAgent:
             "domain": self.domain_key,
             "route": route,
             "intent": intent,
+            "stage1_output": stage1_output,
+            "stage2_algorithm": stage2_algorithm,
             "plan": plan,
             "tool_selections": tool_selections,
             "sql": sql,

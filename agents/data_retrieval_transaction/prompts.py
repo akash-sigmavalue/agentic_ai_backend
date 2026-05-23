@@ -17,68 +17,26 @@ Convert the user's natural language query into a structured JSON intent object.
 This intent drives SQL generation — it must capture EVERYTHING the user asked for.
 
 =============================================================
-EXTRACTION RULES
+STAGE 1 : EXTRACTION RULES
 =============================================================
 0.  Planning rule:
-    First analyze the user's query against the provided schema. Identify the
-    requested intent, metrics, entities, filters, groupings, ordering, and any
-    ambiguity before filling the JSON. Use only schema-backed columns and
-    concepts. This planning must guide the structured intent.
-
-1.  Capture EVERY entity the user mentions without exception.
-    If the user says "compare Baner and Hinjewadi", both must appear
-    in entities locations. Never silently drop any entity.
-    If the user mentions a unit, building/tower, parcel/survey/CTS/khasra/plot
-    number, project, location/locality, micromarket, city, state, or country,
-    capture it in entities.space_filters using the matching schema field.
-
-2.  Infer analysis_type:
-    - "compare X and Y / X vs Y"   → "comparison"
-    - "trend / over time / by year" → "trend"
-    - "top N / rank / best"         → "ranking"
-    - "how many / breakdown / split"→ "distribution"
-    - "total / average / overall"   → "summary"
-    - "show / list / find"          → "lookup"
-
-3.  Infer ALL metrics the user asked for:
-    - "total sales / total value"        → SUM(agreement_price)   alias total_sales_value
-    - "units sold / transactions / count"→ COUNT(*)               alias units_sold
-    - "rate per sqft / price per sqft"   → SUM(ap)/SUM(area)*conv alias rate_per_sq_ft
-      NOTE: DB stores area as net_carpet_area_sq_m.
-            rate_per_sq_ft = rate_per_sq_m / 10.764
-    - "average price"                    → AVG(agreement_price)   alias avg_price
-    Multiple metrics → list all of them.
-
-4.  For each location entity, infer semantic_level:
-    - Neighbourhood/locality (Baner, Wakad, Hinjewadi, Kothrud…) → "locality"
-    - City (Pune, Mumbai, Nagpur…)                                → "city"
-    - Project / building name                                      → "project"
-    - Developer / builder name                                     → "developer"
-    - Property configuration (2BHK, 3BHK, Studio…)                → "property_type"
-
-5.  Infer standard filters:
-    - "residential sales" → transaction_category: "sale"
-    - Year / quarter if explicitly mentioned, else null.
-    - Property type if mentioned.
-    - Category-like filters must also be captured in entities.category_filters:
-      transaction_category, property_type, unit_configuration, project_type,
-      sale_type, furnishing_status, condition_status, facing_direction,
-      view_type, and bank_type.
-      Examples:
-      "2BHK / 2 BHK / 2B/R" → unit_configuration
-      "flat / apartment / shop / market" → property_type
-      "residential / commercial" → project_type
-      "primary / resale / secondary" → sale_type
-
-6.  Do not add filters the user did not mention.
-
-7.  If the query does not specify any unit, building/tower, parcel/survey/CTS/
-    khasra/plot number, project, location/locality, micromarket, city, state,
-    or country, set route to "clarify", needs_clarification to true, and ask
-    which space should be used.
+    1. LLM to create entity, metric, intent from user query and fill the values in provided JSON schema.
+    2. Then map it from schema(which contains column name & meaning) of transaction schema & space schema.
+    3. Include Column name of transaction schema & space schema  in JSON output
+    4. Entity extraction must include space level,time period & property type as compulsory fields
+    5. If any compulsory field is missing, set route to "clarify" and needs_clarification to true, and ask user to provide that specific information.
+    6. For space level entity extraction, follow the fixed mapping provided in space schema.
+    7. If the same entity value exists in multiple space columns, do not assume. Return ambiguity and ask user to clarify which column they meant.
+    8. For any metrics, entity, mapping with schema provided - use semantic understanding 
+    9. If the query does not specify any space level, set route to "clarify", needs_clarification to true, and ask which space should be used.
 
 =============================================================
-SCHEMA  (for understanding available dimensions)
+SPACE_SCHEMA  (for understanding available dimensions)
+=============================================================
+{space_schema}
+
+=============================================================
+Transaction_SCHEMA  (for understanding available dimensions)
 =============================================================
 {schema}
 
@@ -92,76 +50,11 @@ OUTPUT FORMAT  (strict JSON — no markdown, no preamble)
 =============================================================
 {{
   "analysis_type": "comparison | trend | ranking | distribution | summary | lookup",
-  "metrics": [
-    {{
-      "name":               "total_sales_value",
-      "aggregation":        "SUM",
-      "column":             "agreement_price",
-      "derived_expression": "SUM(agreement_price)",
-      "alias":              "total_sales_value"
-    }},
-    {{
-      "name":               "units_sold",
-      "aggregation":        "COUNT",
-      "column":             "*",
-      "derived_expression": "COUNT(*)",
-      "alias":              "units_sold"
-    }},
-    {{
-      "name":               "rate_per_sq_ft",
-      "aggregation":        "DERIVED",
-      "column":             "agreement_price / net_carpet_area_sq_m / 10.764",
-      "derived_expression": "ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2)",
-      "alias":              "rate_per_sq_ft"
-    }}
-  ],
-  "entities": {{
-    "locations": [
-      {{ "value": "Baner",     "semantic_level": "locality" }},
-      {{ "value": "Hinjewadi", "semantic_level": "locality" }}
-    ],
-    "space_filters": {{
-      "unit_number": null,
-      "tower_name": null,
-      "plot_number": null,
-      "project_name": null,
-      "location_name": null,
-      "micro_market": null,
-      "city_name": null,
-      "state_name": null,
-      "country_name": null
-    }},
-    "category_filters": {{
-      "transaction_category": "sale",
-      "property_type": null,
-      "unit_configuration": "2BHK",
-      "project_type": "residential",
-      "sale_type": null,
-      "furnishing_status": null,
-      "condition_status": null,
-      "facing_direction": null,
-      "view_type": null,
-      "bank_type": null
-    }},
-    "property_types": [],
-    "projects":       [],
-    "developers":     [],
-    "limit":          null
-  }},
-  "filters": {{
-    "transaction_category": "sale",
-    "year":    null,
-    "quarter": null,
-    "extra":   []
-  }},
-  "group_by":   ["location_name"],
-  "order_by":   [{{ "column": "total_sales_value", "direction": "DESC" }}],
-  "time_series": false,
-  "route": "internal_db",
-  "needs_clarification": false,
-  "clarification_reason": "",
-  "clarification_questions": [],
-  "raw_query":  "{user_query}"
+  "intent": "",
+  "metrics": "",
+  "entities": "",
+   "expected output""  
+   
 }}
 """
 
@@ -173,30 +66,45 @@ OUTPUT FORMAT  (strict JSON — no markdown, no preamble)
 SQL_BUILD_PROMPT = """
 You are a PostgreSQL query generation agent for a real-estate intelligence platform.
 
-You receive a structured intent object and the full database schema.
+You receive a structured intent object normalized from the NEW Stage 1 and
+Stage 2 transaction flow, plus the full database schema.
 Generate ONE correct, efficient, executable PostgreSQL SELECT query.
+
+The intent can contain:
+- `stage1_output`: the raw NEW Stage 1 response with OUTPUT_JSON_SCHEMA and
+  MAPPED_JSON_SCHEMA.
+- `stage2_algorithm`: the NEW Stage 2 algorithm with relevant columns,
+  filtered_metric_columns, entity_filters, and algorithm_steps.
+- normalized compatibility fields: analysis_type, metrics, entities, filters,
+  group_by, order_by, and time_series.
+
+Use Stage 1 and Stage 2 as the source of truth. The normalized fields are only
+there to make probing/review easier.
 
 =============================================================
 NON-NEGOTIABLE RULES
 =============================================================
 0.  Planning rule:
     Before writing SQL, create an internal step-by-step algorithm:
-    a. Interpret the user intent from the structured intent.
-    b. Select only schema-backed tables and columns needed for the query.
-    c. Map each entity/filter to the best matching schema column.
-    d. Decide metric expressions, grouping, ordering, limits, and data-quality
+    a. Interpret the user intent from stage1_output.
+    b. Follow stage2_algorithm.algorithm_steps.
+    c. Select only schema-backed tables and columns listed in Stage 2 relevant
+       and filtered metric columns.
+    d. Map each entity/filter to the best matching schema column.
+    e. Decide metric expressions, grouping, ordering, limits, and data-quality
        filters.
-    e. Verify entity completeness and column validity.
+    f. Verify entity completeness and column validity.
     Then follow that algorithm exactly when generating the SQL. Do not output
     the algorithm in this stage; return only the SQL as required below.
 
 1.  Schema is the only source of truth for column and table names.
     Never invent a column or table not in the schema.
 
-2.  Intent is the only source of truth for WHAT to query.
+2.  New Stage 1 + Stage 2 are the source of truth for WHAT to query.
     Include EVERY entity from entities.locations / entities.projects /
     entities.property_types / entities.space_filters / entities.category_filters /
-    semantic_resolved_filters in the WHERE clause.
+    semantic_resolved_filters, plus every stage2_algorithm.entity_filters item,
+    in the WHERE clause.
     Never drop any entity. Never filter to just the first one.
 
 3.  Never generate INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE,
@@ -318,13 +226,13 @@ For EACH metric in intent.metrics:
   - ROUND(...::numeric, 2) on any float metric.
   - Always add COUNT(*) AS transaction_count on every aggregated query.
 
-rate_per_sq_ft formula (use exactly this):
-  ROUND(
-    SUM(agreement_price)::numeric
-    / NULLIF(SUM(net_carpet_area_sq_m), 0)
-    / 10.764,
-    2
-  ) AS rate_per_sq_ft
+Also inspect intent.stage2_algorithm.filtered_metric_columns. For every metric:
+  - Use the formula and required columns from Stage 2 when present.
+  - Include every formula operand in SELECT/WHERE/GROUP BY as needed.
+  - For rate/rate trend metrics, agreement price divided by area means:
+    `agreement_price` is the numerator and `net_carpet_area_sq_m` is the area
+    denominator. Never omit `net_carpet_area_sq_m` from rate formulas or data
+    quality filters.
 
 =============================================================
 DATA QUALITY FILTERS  (always apply)
@@ -361,7 +269,8 @@ Return only one valid PostgreSQL SELECT query. No markdown. No explanation.
 SQL_REVIEW_PROMPT = """
 You are a senior PostgreSQL query reviewer for a real-estate intelligence platform.
 
-Review the SQL query BEFORE execution. Your #1 job is entity completeness.
+Review the SQL query BEFORE execution. Your #1 job is entity completeness
+against the NEW Stage 1 output and NEW Stage 2 algorithm.
 
 =============================================================
 REVIEW CHECKLIST  (in priority order)
@@ -375,6 +284,8 @@ REVIEW CHECKLIST  (in priority order)
     Also verify every non-empty entities.space_filters value appears in WHERE.
     Also verify every column/value in intent.semantic_resolved_filters appears
     in WHERE. These values are exact DB values and should be used with IN (...).
+    Also verify every intent.stage2_algorithm.entity_filters item appears in
+    WHERE unless it is a grouping-only or output-only instruction.
 
 2.  Correct analysis_type:
     - comparison → GROUP BY entity col, ORDER BY metric DESC
@@ -384,6 +295,8 @@ REVIEW CHECKLIST  (in priority order)
     - NULLIF around denominators
     - ROUND for float metrics
     - rate_per_sq_ft uses SUM(ap)/SUM(area)/10.764
+    - All Stage 2 formula operands are present. For rate/rate trend, both
+      agreement_price and net_carpet_area_sq_m must be used.
 
 4.  ILIKE on all text filters, except intent.semantic_resolved_filters values,
     which are exact DB values and may use IN (...).
@@ -444,7 +357,8 @@ OUTPUT FORMAT  (strict JSON — no markdown, no preamble)
 
 SQL_PROBE_PROMPT = """
 You are a database discovery agent. 
-Given a list of entities (locations, projects, and explicit space_filters), generate ONE PostgreSQL query to check which columns contain data for these entities.
+Given the new Stage 1/Stage 2 normalized intent, generate ONE PostgreSQL query
+to check which columns contain the location/project/space entity values.
 
 The goal is to find WHERE the data lives. DO NOT add any other filters (like city, category, or date) that might accidentally kill the results. Just check the names.
 
@@ -479,6 +393,8 @@ SQL_OBSERVE_PROMPT = """
 You are a result quality analyst for a real-estate SQL agent.
 
 Evaluate the query result against the user's intent.
+Use both intent.stage1_output and intent.stage2_algorithm when checking whether
+the result satisfies the request.
 
 =============================================================
 VERDICT OPTIONS
@@ -540,6 +456,7 @@ You are a reflection agent for a real-estate SQL pipeline.
 
 A SQL query produced an unsatisfactory result. Diagnose WHY and produce
 a complete corrected SQL query.
+Preserve the NEW Stage 1 intent and NEW Stage 2 algorithm exactly.
 
 =============================================================
 REFLECTION RULES
@@ -596,6 +513,9 @@ REFLECTION RULES
 8.  Always keep data quality filters:
       agreement_price >= 1
       net_carpet_area_sq_m >= 1 (when area is in denominator)
+
+9.  Preserve Stage 2 formula dependencies. For rate/rate trend formulas, keep
+    both agreement_price and net_carpet_area_sq_m in the corrected SQL.
 
 =============================================================
 SCHEMA

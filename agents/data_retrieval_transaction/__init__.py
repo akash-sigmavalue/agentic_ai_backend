@@ -1,7 +1,7 @@
 """
 Transaction Agent Package
 =========================
-QueryBuilder and IntentExtractor modules are now segregated into focused files.
+Transaction agent package exports for the ReAct SQL loop.
 """
 
 from agents.data_retrieval_transaction.constants import (
@@ -22,7 +22,6 @@ from agents.data_retrieval_transaction.helpers import (
     parse_json,
     validate_select_only,
 )
-from agents.data_retrieval_transaction.intent_extractor import IntentExtractor
 from agents.data_retrieval_transaction.models import (
     Iteration,
     ObserveVerdict,
@@ -31,7 +30,6 @@ from agents.data_retrieval_transaction.models import (
 )
 from agents.data_retrieval_transaction.pipeline import TransactionDomainAgent
 from agents.data_retrieval_transaction.prompts import (
-    INTENT_EXTRACT_PROMPT,
     SQL_BUILD_PROMPT,
     SQL_FIX_PROMPT,
     SQL_OBSERVE_PROMPT,
@@ -58,7 +56,6 @@ __all__ = [
     "Iteration",
     "QueryResult",
     # Classes
-    "IntentExtractor",
     "TransactionQueryBuilder",
     # Functions
     "run_query",
@@ -74,7 +71,6 @@ __all__ = [
     "contains_named_entity",
     "intent_has_space_context",
     # Prompts
-    "INTENT_EXTRACT_PROMPT",
     "SQL_BUILD_PROMPT",
     "SQL_FIX_PROMPT",
     "SQL_OBSERVE_PROMPT",

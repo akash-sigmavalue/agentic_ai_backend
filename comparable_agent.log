@@ -1,0 +1,402 @@
+2026-05-22 13:28:34,037 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 13:28:34,038 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 13:28:34,038 | INFO | Scheduler started
+2026-05-22 13:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 13:30:00 IST)" (scheduled at 2026-05-22 13:30:00+05:30)
+2026-05-22 13:30:00,153 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 14:00:00 IST)" executed successfully
+2026-05-22 14:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 14:30:00 IST)" (scheduled at 2026-05-22 14:00:00+05:30)
+2026-05-22 14:00:00,020 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 14:30:00 IST)" executed successfully
+2026-05-22 14:22:59,817 | INFO | Scheduler has been shut down
+2026-05-22 14:23:10,014 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 14:23:10,015 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 14:23:10,015 | INFO | Scheduler started
+2026-05-22 14:30:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 14:30:00 IST)" (scheduled at 2026-05-22 14:30:00+05:30)
+2026-05-22 14:30:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 15:00:00 IST)" executed successfully
+2026-05-22 14:34:32,491 | INFO | Scheduler has been shut down
+2026-05-22 14:34:42,071 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 14:34:42,071 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 14:34:42,071 | INFO | Scheduler started
+2026-05-22 14:37:56,360 | INFO | Scheduler has been shut down
+2026-05-22 14:38:06,473 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 14:38:06,473 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 14:38:06,473 | INFO | Scheduler started
+2026-05-22 14:38:17,358 | INFO | Scheduler has been shut down
+2026-05-22 14:38:26,904 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 14:38:26,905 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 14:38:26,905 | INFO | Scheduler started
+2026-05-22 14:41:03,313 | INFO | Scheduler has been shut down
+2026-05-22 14:41:12,792 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 14:41:12,793 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 14:41:12,793 | INFO | Scheduler started
+2026-05-22 15:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 15:00:00 IST)" (scheduled at 2026-05-22 15:00:00+05:30)
+2026-05-22 15:00:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 15:30:00 IST)" executed successfully
+2026-05-22 15:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 16:00:00 IST)" (scheduled at 2026-05-22 15:30:00+05:30)
+2026-05-22 15:30:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 16:00:00 IST)" executed successfully
+2026-05-22 16:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 16:30:00 IST)" (scheduled at 2026-05-22 16:00:00+05:30)
+2026-05-22 16:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 16:30:00 IST)" executed successfully
+2026-05-22 16:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" (scheduled at 2026-05-22 16:30:00+05:30)
+2026-05-22 16:30:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" executed successfully
+2026-05-22 16:31:34,936 | INFO | Scheduler has been shut down
+2026-05-22 16:31:46,173 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:31:46,173 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:31:46,173 | INFO | Scheduler started
+2026-05-22 16:32:35,847 | INFO | Scheduler has been shut down
+2026-05-22 16:32:45,686 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:32:45,686 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:32:45,686 | INFO | Scheduler started
+2026-05-22 16:33:06,387 | INFO | Scheduler has been shut down
+2026-05-22 16:33:16,765 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:33:16,766 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:33:16,766 | INFO | Scheduler started
+2026-05-22 16:33:17,634 | INFO | Scheduler has been shut down
+2026-05-22 16:33:27,951 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:33:27,952 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:33:27,952 | INFO | Scheduler started
+2026-05-22 16:34:21,935 | INFO | Scheduler has been shut down
+2026-05-22 16:34:31,527 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:34:31,527 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:34:31,527 | INFO | Scheduler started
+2026-05-22 16:35:06,550 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:36:26,102 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:36:26,103 | INFO | IntentExtractor: analysis_type=trend  locations=[]  metrics=[]
+2026-05-22 16:36:53,773 | INFO | Scheduler has been shut down
+2026-05-22 16:37:03,787 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:37:03,787 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:37:03,787 | INFO | Scheduler started
+2026-05-22 16:37:20,916 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:37:20,925 | INFO | IntentExtractor: analysis_type=trend  locations=[]  metrics=[]
+2026-05-22 16:38:27,178 | INFO | Scheduler has been shut down
+2026-05-22 16:38:36,899 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:38:36,899 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:38:36,899 | INFO | Scheduler started
+2026-05-22 16:38:47,749 | INFO | Scheduler has been shut down
+2026-05-22 16:38:57,246 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:38:57,246 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:38:57,247 | INFO | Scheduler started
+2026-05-22 16:39:14,793 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:39:14,800 | INFO | IntentExtractor: analysis_type=trend  locations=[]  metrics=[]
+2026-05-22 16:42:55,292 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:42:55,297 | INFO | IntentExtractor: analysis_type=trend  locations=[]  metrics=[]
+2026-05-22 16:43:27,675 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:46:39,433 | INFO | Scheduler has been shut down
+2026-05-22 16:46:49,260 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:46:49,261 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:46:49,261 | INFO | Scheduler started
+2026-05-22 16:47:04,730 | INFO | Scheduler has been shut down
+2026-05-22 16:47:14,327 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:47:14,327 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:47:14,328 | INFO | Scheduler started
+2026-05-22 16:47:35,244 | INFO | Scheduler has been shut down
+2026-05-22 16:47:45,407 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:47:45,407 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:47:45,407 | INFO | Scheduler started
+2026-05-22 16:50:31,898 | INFO | Scheduler has been shut down
+2026-05-22 16:50:42,353 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:50:42,353 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:50:42,353 | INFO | Scheduler started
+2026-05-22 16:53:04,401 | INFO | Scheduler has been shut down
+2026-05-22 16:53:14,478 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:53:14,479 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:53:14,479 | INFO | Scheduler started
+2026-05-22 16:55:59,270 | INFO | Scheduler has been shut down
+2026-05-22 16:56:09,554 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:56:09,554 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:56:09,555 | INFO | Scheduler started
+2026-05-22 17:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" (scheduled at 2026-05-22 17:00:00+05:30)
+2026-05-22 17:00:00,028 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:30:00 IST)" executed successfully
+2026-05-22 17:00:47,546 | INFO | Scheduler has been shut down
+2026-05-22 17:00:57,544 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 17:00:57,544 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 17:00:57,544 | INFO | Scheduler started
+2026-05-22 17:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:30:00 IST)" (scheduled at 2026-05-22 17:30:00+05:30)
+2026-05-22 17:30:00,028 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" executed successfully
+2026-05-22 17:33:24,431 | INFO | Scheduler has been shut down
+2026-05-22 17:33:35,198 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 17:33:35,198 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 17:33:35,198 | INFO | Scheduler started
+2026-05-22 17:54:36,297 | INFO | Scheduler has been shut down
+2026-05-22 17:54:46,019 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 17:54:46,019 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 17:54:46,019 | INFO | Scheduler started
+2026-05-22 18:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" (scheduled at 2026-05-22 18:00:00+05:30)
+2026-05-22 18:00:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:30:00 IST)" executed successfully
+2026-05-22 18:05:19,387 | INFO | Scheduler has been shut down
+2026-05-22 18:05:29,267 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:05:29,267 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:05:29,267 | INFO | Scheduler started
+2026-05-22 18:05:49,857 | INFO | Scheduler has been shut down
+2026-05-22 18:05:59,439 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:05:59,439 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:05:59,439 | INFO | Scheduler started
+2026-05-22 18:08:34,467 | INFO | Scheduler has been shut down
+2026-05-22 18:08:45,051 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:08:45,052 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:08:45,052 | INFO | Scheduler started
+2026-05-22 18:08:45,916 | INFO | Scheduler has been shut down
+2026-05-22 18:08:55,807 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:08:55,807 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:08:55,807 | INFO | Scheduler started
+2026-05-22 18:14:07,741 | INFO | Scheduler has been shut down
+2026-05-22 18:14:17,642 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:14:17,643 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:14:17,643 | INFO | Scheduler started
+2026-05-22 18:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:30:00 IST)" (scheduled at 2026-05-22 18:30:00+05:30)
+2026-05-22 18:30:00,023 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:00:00 IST)" executed successfully
+2026-05-22 18:35:30,394 | INFO | Scheduler has been shut down
+2026-05-22 18:35:41,137 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:35:41,138 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:35:41,138 | INFO | Scheduler started
+2026-05-22 18:37:12,836 | INFO | Scheduler has been shut down
+2026-05-22 18:37:22,645 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:37:22,645 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:37:22,645 | INFO | Scheduler started
+2026-05-22 18:41:54,606 | INFO | Scheduler has been shut down
+2026-05-22 18:42:04,524 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:42:04,524 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:42:04,525 | INFO | Scheduler started
+2026-05-22 18:42:10,517 | INFO | Scheduler has been shut down
+2026-05-22 18:42:20,085 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:42:20,086 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:42:20,086 | INFO | Scheduler started
+2026-05-22 18:44:26,944 | INFO | Scheduler has been shut down
+2026-05-22 18:44:36,840 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:44:36,840 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:44:36,840 | INFO | Scheduler started
+2026-05-22 18:49:23,634 | INFO | Scheduler has been shut down
+2026-05-22 18:49:33,940 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:49:33,941 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:49:33,941 | INFO | Scheduler started
+2026-05-22 18:51:20,648 | INFO | Scheduler has been shut down
+2026-05-22 18:51:30,431 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:51:30,432 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:51:30,432 | INFO | Scheduler started
+2026-05-22 18:57:57,174 | INFO | Scheduler has been shut down
+2026-05-22 18:58:07,338 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:58:07,338 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:58:07,338 | INFO | Scheduler started
+2026-05-22 18:58:13,048 | INFO | Scheduler has been shut down
+2026-05-22 18:58:23,121 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:58:23,121 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:58:23,122 | INFO | Scheduler started
+2026-05-22 18:59:36,572 | INFO | Scheduler has been shut down
+2026-05-22 18:59:46,524 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 18:59:46,524 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 18:59:46,524 | INFO | Scheduler started
+2026-05-22 18:59:52,416 | INFO | Scheduler has been shut down
+2026-05-22 19:00:02,225 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:00:02,225 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:00:02,226 | INFO | Scheduler started
+2026-05-22 19:00:03,311 | INFO | Scheduler has been shut down
+2026-05-22 19:00:12,793 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:00:12,793 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:00:12,793 | INFO | Scheduler started
+2026-05-22 19:09:19,715 | INFO | Scheduler has been shut down
+2026-05-22 19:09:30,459 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:09:30,459 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:09:30,459 | INFO | Scheduler started
+2026-05-22 19:09:41,372 | INFO | Scheduler has been shut down
+2026-05-22 19:09:52,094 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:09:52,094 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:09:52,094 | INFO | Scheduler started
+2026-05-22 19:11:47,130 | INFO | Scheduler has been shut down
+2026-05-22 19:11:57,177 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:11:57,177 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:11:57,177 | INFO | Scheduler started
+2026-05-22 19:13:23,158 | INFO | Scheduler has been shut down
+2026-05-22 19:13:33,830 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:13:33,831 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:13:33,831 | INFO | Scheduler started
+2026-05-22 19:13:34,704 | INFO | Scheduler has been shut down
+2026-05-22 19:13:44,536 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:13:44,536 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:13:44,537 | INFO | Scheduler started
+2026-05-22 19:15:27,707 | INFO | Scheduler has been shut down
+2026-05-22 19:15:38,624 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:15:38,625 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:15:38,625 | INFO | Scheduler started
+2026-05-22 19:15:40,873 | INFO | Scheduler has been shut down
+2026-05-22 19:15:51,429 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:15:51,429 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:15:51,429 | INFO | Scheduler started
+2026-05-22 19:15:52,392 | INFO | Scheduler has been shut down
+2026-05-22 19:16:03,454 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:16:03,454 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:16:03,454 | INFO | Scheduler started
+2026-05-22 19:16:29,749 | INFO | Scheduler has been shut down
+2026-05-22 19:16:40,053 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:16:40,054 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:16:40,054 | INFO | Scheduler started
+2026-05-22 19:25:35,140 | INFO | Scheduler has been shut down
+2026-05-22 19:25:45,554 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:25:45,554 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:25:45,554 | INFO | Scheduler started
+2026-05-22 19:26:17,033 | INFO | Scheduler has been shut down
+2026-05-22 19:26:27,180 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:26:27,180 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:26:27,180 | INFO | Scheduler started
+2026-05-22 19:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:30:00 IST)" (scheduled at 2026-05-22 19:30:00+05:30)
+2026-05-22 19:30:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:00:00 IST)" executed successfully
+2026-05-22 19:38:27,196 | INFO | Scheduler has been shut down
+2026-05-22 19:38:38,150 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:38:38,151 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:38:38,151 | INFO | Scheduler started
+2026-05-22 19:41:44,223 | INFO | Scheduler has been shut down
+2026-05-22 19:41:53,780 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 19:41:53,780 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 19:41:53,781 | INFO | Scheduler started
+2026-05-22 20:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:00:00 IST)" (scheduled at 2026-05-22 20:00:00+05:30)
+2026-05-22 20:00:00,027 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:30:00 IST)" executed successfully
+2026-05-22 20:22:24,860 | INFO | Scheduler has been shut down
+2026-05-22 20:22:36,322 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:22:36,323 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:22:36,323 | INFO | Scheduler started
+2026-05-22 20:22:55,287 | INFO | Scheduler has been shut down
+2026-05-22 20:23:04,650 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:23:04,651 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:23:04,651 | INFO | Scheduler started
+2026-05-22 20:23:10,715 | INFO | Scheduler has been shut down
+2026-05-22 20:23:20,336 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:23:20,336 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:23:20,336 | INFO | Scheduler started
+2026-05-22 20:24:05,310 | INFO | Scheduler has been shut down
+2026-05-22 20:24:15,185 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:24:15,186 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:24:15,186 | INFO | Scheduler started
+2026-05-22 20:27:48,199 | INFO | Scheduler has been shut down
+2026-05-22 20:27:58,408 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:27:58,408 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:27:58,408 | INFO | Scheduler started
+2026-05-22 20:28:37,493 | INFO | Scheduler has been shut down
+2026-05-22 20:28:46,897 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:28:46,897 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:28:46,897 | INFO | Scheduler started
+2026-05-22 20:29:30,929 | INFO | Scheduler has been shut down
+2026-05-22 20:29:40,591 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:29:40,591 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:29:40,591 | INFO | Scheduler started
+2026-05-22 20:30:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:30:00 IST)" (scheduled at 2026-05-22 20:30:00+05:30)
+2026-05-22 20:30:00,027 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 21:00:00 IST)" executed successfully
+2026-05-22 20:37:04,565 | INFO | Scheduler has been shut down
+2026-05-22 20:37:14,956 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 20:37:14,956 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 20:37:14,956 | INFO | Scheduler started
+2026-05-22 21:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 21:00:00 IST)" (scheduled at 2026-05-22 21:00:00+05:30)
+2026-05-22 21:00:00,030 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 21:30:00 IST)" executed successfully
+2026-05-22 21:10:30,131 | INFO | Scheduler has been shut down
+2026-05-22 21:10:39,970 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 21:10:39,971 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 21:10:39,971 | INFO | Scheduler started
+2026-05-22 21:28:48,842 | INFO | Scheduler has been shut down
+2026-05-22 21:28:58,148 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 21:28:58,149 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 21:28:58,149 | INFO | Scheduler started
+2026-05-22 21:28:59,651 | INFO | Scheduler has been shut down
+2026-05-22 21:29:09,792 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 21:29:09,793 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 21:29:09,793 | INFO | Scheduler started
+2026-05-22 21:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 21:30:00 IST)" (scheduled at 2026-05-22 21:30:00+05:30)
+2026-05-22 21:30:00,020 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 22:00:00 IST)" executed successfully
+2026-05-22 21:32:20,248 | INFO | Scheduler has been shut down
+2026-05-22 21:32:30,730 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 21:32:30,730 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 21:32:30,730 | INFO | Scheduler started
+2026-05-22 22:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 22:00:00 IST)" (scheduled at 2026-05-22 22:00:00+05:30)
+2026-05-22 22:00:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 22:30:00 IST)" executed successfully
+2026-05-22 22:14:47,775 | INFO | Scheduler has been shut down
+2026-05-22 22:14:58,669 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:14:58,669 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:14:58,670 | INFO | Scheduler started
+2026-05-22 22:15:05,196 | INFO | Scheduler has been shut down
+2026-05-22 22:15:15,446 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:15:15,447 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:15:15,447 | INFO | Scheduler started
+2026-05-22 22:15:22,149 | INFO | Scheduler has been shut down
+2026-05-22 22:15:32,016 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:15:32,016 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:15:32,016 | INFO | Scheduler started
+2026-05-22 22:15:38,233 | INFO | Scheduler has been shut down
+2026-05-22 22:15:47,801 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:15:47,801 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:15:47,802 | INFO | Scheduler started
+2026-05-22 22:15:48,876 | INFO | Scheduler has been shut down
+2026-05-22 22:15:58,917 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:15:58,917 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:15:58,917 | INFO | Scheduler started
+2026-05-22 22:16:14,269 | INFO | Scheduler has been shut down
+2026-05-22 22:16:23,828 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:16:23,828 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:16:23,828 | INFO | Scheduler started
+2026-05-22 22:18:38,825 | INFO | Scheduler has been shut down
+2026-05-22 22:18:48,168 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:18:48,168 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:18:48,168 | INFO | Scheduler started
+2026-05-22 22:22:44,882 | INFO | Scheduler has been shut down
+2026-05-22 22:22:54,414 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:22:54,415 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:22:54,415 | INFO | Scheduler started
+2026-05-22 22:22:55,473 | INFO | Scheduler has been shut down
+2026-05-22 22:23:04,688 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 22:23:04,689 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 22:23:04,689 | INFO | Scheduler started
+2026-05-22 22:29:06,668 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:29:06,675 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-22 22:29:20,870 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:30:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 22:30:00 IST)" (scheduled at 2026-05-22 22:30:00+05:30)
+2026-05-22 22:30:00,039 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 23:00:00 IST)" executed successfully
+2026-05-22 22:30:33,153 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:30:34,563 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:30:34,564 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-22 22:30:35,756 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:04,133 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 22:31:06,618 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:06,619 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 22:31:11,732 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:11,732 | INFO | [iter=0] REVIEW rejected  confidence=95  missing=[]  reason=All required entities and semantic_resolved_filters (location_name Baner, property_type Flat, transaction_category Sale, year 2024) are present and correctly applied, satisfying entity completeness. However, the analysis_type is rate_trend, which per the instructions must compute a rate metric using both agreement_price and net_carpet_area_sq_m (with the standard rate_per_sq_ft formula). The provided SQL only counts agreement_price and does not calculate any rate or use net_carpet_area_sq_m, so it does not satisfy the Stage 2 rate_trend algorithm requirements. The suggested fix introduces a proper rate_per_sq_ft metric using SUM(agreement_price)/SUM(net_carpet_area_sq_m)/10.764 with NULLIF protection, preserves the transaction count as requested by the metric description, and keeps the same time-based grouping and ordering for the trend.
+2026-05-22 22:31:11,733 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-22 22:31:11,733 | INFO | [iter=0] EXECUTE — SELECT
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(
+    SUM(agreement_price) / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764,
+    2
+  ) AS rate_per_sq_ft,
+  COUNT(agreement_price) AS "residential sale transactions"
+FROM transactions
+WHERE
+  (location_name ILIKE '%Baner%' OR sub_locality ILIKE '%Baner%' OR micro_market ILIKE '%Baner%')
+  AND property_type IN ('Flat')
+  AND transaction_category IN ('Sale')
+  AND year = 2024
+  AND agreement_price >= 1
+  AND net_carpet_area_sq_m IS NOT NULL
+GROUP BY
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  year ASC,
+  quarter ASC;
+2026-05-22 22:31:40,199 | INFO | [iter=0] OBSERVE — rows=5  error=none
+2026-05-22 22:31:44,262 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:44,263 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=[]  suspect=GROUP BY year, quarter, location_name, location_latitude, location_longitude
+2026-05-22 22:31:48,740 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:48,741 | INFO | [iter=0] REWRITE — action=fix_groupby  missing_fix=[]  new_col=None
+2026-05-22 22:31:48,741 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-22 22:31:48,741 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-22 22:31:52,488 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:31:52,493 | INFO | [iter=1] EXECUTE — SELECT
+  COUNT(agreement_price) AS "residential sale transactions"
+FROM transactions
+WHERE
+  (location_name ILIKE '%Baner%' OR sub_locality ILIKE '%Baner%' OR micro_market ILIKE '%Baner%')
+  AND property_type IN ('Flat')
+  AND transaction_category IN ('Sale')
+  AND year = 2024
+  AND agreement_price >= 1;
+2026-05-22 22:32:20,584 | INFO | [iter=1] OBSERVE — rows=1  error=none
+2026-05-22 22:32:23,674 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 22:32:23,676 | INFO | [iter=1] DONE — verdict=GOOD
