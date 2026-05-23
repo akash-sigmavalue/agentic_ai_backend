@@ -535,6 +535,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                 location_name=c.get("location"),
                 country=c.get("country"),
                 project_name=c.get("project_name"),
+                stage="Comparable Geocoding (S3)"
             )
             c["map_search_lat"] = res.get("lat")
             c["map_search_lng"] = res.get("lng")

@@ -95,6 +95,21 @@ class PropertyValuationAgent:
             yield _sse("stage", "Stage 1: Profiling property and strategy...")
             entities = self.intent_extractor.extract(question)
             entities["_original_query"] = question
+
+            # Check if coordinates were extracted directly from user manual input in query
+            coords = entities.get("coordinates")
+            has_valid_coords = coords and coords.get("lat") is not None and coords.get("lng") is not None and coords.get("lat") != 0 and coords.get("lng") != 0
+            if has_valid_coords and entities.get("coordinates_confirmed"):
+                log_msg = (
+                    f"\n=== [COORDINATES RESOLUTION] ===\n"
+                    f"  Stage: Subject Property Profiling (S1)\n"
+                    f"  Target: Project='{entities.get('project_name') or 'N/A'}', Location='{entities.get('location_name')}', Country='{entities.get('country')}'\n"
+                    f"  Source: Extracted directly from user query (User manual input)\n"
+                    f"  Result: Lat={coords['lat']}, Lng={coords['lng']}\n"
+                    f"================================="
+                )
+                print(log_msg)
+                logging.getLogger("map_search").info(log_msg.replace("\n", " | "))
             metrics.tools_called += 1
 
             token_event = self._emit_tokens(metrics, "stage1_profiling", self.intent_extractor.last_usage, model_name=self.intent_extractor.last_model)

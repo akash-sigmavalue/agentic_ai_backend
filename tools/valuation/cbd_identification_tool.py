@@ -145,7 +145,7 @@ def _geocode_cbd(cbd_name: str, country: str = "India") -> Optional[Dict]:
         return _geocode_cache[cache_key]
     
     logger.info(f"[CBD Geocode] Geocoding: '{cbd_name}'")
-    result = search_coordinates(location_name=cbd_name, country=country)
+    result = search_coordinates(location_name=cbd_name, country=country, stage="CBD Geocoding (S3)")
     
     if "lat" in result and "lng" in result:
         _geocode_cache[cache_key] = result

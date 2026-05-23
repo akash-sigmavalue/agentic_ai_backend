@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
-def search_coordinates(location_name: str, country: str, project_name: str = None) -> dict:
+def search_coordinates(location_name: str, country: str = "India", project_name: str = None, stage: str = None) -> dict:
     """
     Search for a location and return its latitude and longitude.
     Uses Google Maps Geocoding API if GOOGLE_MAPS_API_KEY is available,
@@ -70,34 +70,81 @@ def search_coordinates(location_name: str, country: str, project_name: str = Non
             return {"error": "Not found"}
         return {"error": f"HTTP {response.status_code}"}
 
+    final_res = None
+
     # 1. Try Google Maps Places API for POI accuracy
     if api_key:
         try:
             # Places API is vastly superior for building/project names than Geocoding API
             res = fetch_google_places(query)
-            if "lat" in res: return res
+            if "lat" in res:
+                final_res = res
             
             # If Places fails, fallback to Geocoding
-            res = fetch_google_geocode(query)
-            if "lat" in res: return res
+            if not final_res:
+                res = fetch_google_geocode(query)
+                if "lat" in res:
+                    final_res = res
             
             # Final retry with just the base location
-            if project_name:
+            if not final_res and project_name:
                 res = fetch_google_geocode(base_location)
-                if "lat" in res: return res
+                if "lat" in res:
+                    final_res = res
 
         except Exception as e:
             print(f"Google Maps Exception: {e}")
 
     # 2. Fallback to Nominatim with Project + Location + Country
-    try:
-        res = fetch_nominatim(query)
-        if "lat" in res: return res
-        # Retry with just location + country
-        if project_name:
-            res = fetch_nominatim(base_location)
-            if "lat" in res: return res
-    except Exception as e:
-        return {"error": f"Exception in Nominatim: {str(e)}"}
+    if not final_res:
+        try:
+            res = fetch_nominatim(query)
+            if "lat" in res:
+                final_res = res
+            # Retry with just location + country
+            if not final_res and project_name:
+                res = fetch_nominatim(base_location)
+                if "lat" in res:
+                    final_res = res
+        except Exception as e:
+            final_res = {"error": f"Exception in Nominatim: {str(e)}"}
 
-    return {"error": "Location could not be found."}
+    if not final_res:
+        final_res = {"error": "Location could not be found."}
+
+    # Print coordinate resolution source and results in the terminal
+    import logging
+    logger = logging.getLogger("map_search")
+    
+    tgt_desc = f"Project='{project_name or 'N/A'}', Location='{location_name}', Country='{country}'"
+    stage_info = f"Stage: {stage}" if stage else "Stage: Subject Property Geocoding (S1)"
+    
+    if "lat" in final_res and "lng" in final_res:
+        src = final_res.get("source", "unknown")
+        src_label = {
+            "google_places_api": "Google Places API",
+            "google_geocoding_api": "Google Geocoding API",
+            "nominatim": "OpenStreetMap / Nominatim (OSM Fallback)"
+        }.get(src, src)
+        
+        log_msg = (
+            f"\n=== [COORDINATES RESOLUTION] ===\n"
+            f"  {stage_info}\n"
+            f"  Target: {tgt_desc}\n"
+            f"  Source: {src_label}\n"
+            f"  Result: Lat={final_res['lat']}, Lng={final_res['lng']}\n"
+            f"================================="
+        )
+    else:
+        log_msg = (
+            f"\n=== [COORDINATES RESOLUTION FAILURE] ===\n"
+            f"  {stage_info}\n"
+            f"  Target: {tgt_desc}\n"
+            f"  Reason: {final_res.get('error', 'Unknown Error')}\n"
+            f"========================================="
+        )
+    
+    print(log_msg)
+    logger.info(log_msg.replace("\n", " | "))
+
+    return final_res
