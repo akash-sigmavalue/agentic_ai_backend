@@ -292,7 +292,7 @@ def fetch_comparables(subject: dict) -> tuple[list, dict]:
             "completion_tokens": getattr(response.usage, "output_tokens", 0),
             "total_tokens":      getattr(response.usage, "total_tokens", 0),
             "model":             model_name,
-            "tool_calls":        2  # web_search_preview
+            "tool_calls":        3  # web_search_preview
         }
         logger.info(f"[LLM Fetch] Received {len(comps)} raw comparables | tokens={usage['total_tokens']}")
 

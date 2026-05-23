@@ -622,7 +622,7 @@ def search_urls_for_projects_batch(
 def fetch_page_text(
     url: str,
     project_name: str = "",
-    char_limit: int = 2000,
+    char_limit: int = 5000,
     run_logger: Optional[any] = None,
 ) -> str:
     """Uses Selenium for robust scraping."""
@@ -968,7 +968,7 @@ def listing_pipeline(
     property_type:            str,
     listing_type:             str = "sale",
     max_listings_per_project: int = 30,
-    max_urls_per_project:     int = 5,
+    max_urls_per_project:     int = 10,
     on_progress=None,
     run_logger=None,
     custom_urls:              Optional[dict] = None,
