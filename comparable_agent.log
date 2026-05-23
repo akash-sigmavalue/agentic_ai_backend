@@ -8550,3 +8550,825 @@ ORDER BY transaction_date DESC
 2026-05-23 12:42:45,441 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
 2026-05-23 12:42:45,441 | INFO | Scheduler started
 2026-05-23 12:43:01,952 | INFO | Scheduler has been shut down
+2026-05-23 12:43:13,170 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 12:43:13,170 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 12:43:13,171 | INFO | Scheduler started
+2026-05-23 12:43:14,878 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:15,472 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:43:20,103 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:20,162 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 12:43:20,162 | INFO | Found 3 DB amenities near (18.5529376, 73.7589327)
+2026-05-23 12:43:27,688 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:27,961 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:43:32,715 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:42,908 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:43,446 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:43:49,646 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:03,251 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:03,517 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:08,574 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:08,579 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:22,047 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:22,558 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:27,363 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:27,365 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:35,071 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:35,331 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Google Places API |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:42,217 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:42,224 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Om Paradise', Location='Sus', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5529376, Lng=73.7589327 | =================================
+2026-05-23 12:44:42,228 | INFO | [Agent Start] project='Om Paradise' type='apartment' category='Residential' search_term='apartment' location='Sus'
+2026-05-23 12:44:42,229 | INFO | [LLM Fetch] Pass 1/1
+2026-05-23 12:44:54,192 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-23 12:44:54,320 | INFO | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-23 12:44:54,320 | INFO | [LLM Fetch] Received 11 raw comparables | tokens=2813
+2026-05-23 12:44:54,321 | INFO | [Multi-pass] Total raw comparables: 11
+2026-05-23 12:44:54,322 | INFO | [Dedup] 11/11 unique comparables
+2026-05-23 12:44:54,323 | INFO | [Hard Filter] 11/11 passed type check (allowed cross-types included)
+2026-05-23 12:44:54,323 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-23 12:44:54,324 | INFO | [Geocode] Starting for 11 comparables
+2026-05-23 12:44:55,371 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Mantra Sus', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5476136, Lng=73.7522992 | =================================
+2026-05-23 12:44:55,371 | INFO | [Geocode] OK 'Mantra Sus' -> (18.5476136, 73.7522992) | Certainty: Sure
+2026-05-23 12:44:56,863 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Reelicon Fairy Bell', Location='Sus, Pune', Country='India' |   Source: Google Geocoding API |   Result: Lat=18.5605014, Lng=73.76089809999999 | =================================
+2026-05-23 12:44:56,863 | INFO | [Geocode] OK 'Reelicon Fairy Bell' -> (18.5605014, 73.76089809999999) | Certainty: Sure
+2026-05-23 12:44:57,929 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Pinnacle Golden Forest', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5629448, Lng=73.7545569 | =================================
+2026-05-23 12:44:57,929 | INFO | [Geocode] OK 'Pinnacle Golden Forest' -> (18.5629448, 73.7545569) | Certainty: Sure
+2026-05-23 12:44:59,010 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Kiran Swastik', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5541935, Lng=73.746482 | =================================
+2026-05-23 12:44:59,011 | INFO | [Geocode] OK 'Kiran Swastik' -> (18.5541935, 73.746482) | Certainty: Sure
+2026-05-23 12:44:59,802 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Kohinoor Falcon', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5530815, Lng=73.75826620000001 | =================================
+2026-05-23 12:44:59,802 | INFO | [Geocode] OK 'Kohinoor Falcon' -> (18.5530815, 73.75826620000001) | Certainty: Sure
+2026-05-23 12:45:00,900 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Teerth Avila', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5510753, Lng=73.7509619 | =================================
+2026-05-23 12:45:00,901 | INFO | [Geocode] OK 'Teerth Avila' -> (18.5510753, 73.7509619) | Certainty: Sure
+2026-05-23 12:45:01,679 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Pinnacle Neelanchal Phase I', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5628364, Lng=73.7545889 | =================================
+2026-05-23 12:45:01,679 | INFO | [Geocode] OK 'Pinnacle Neelanchal Phase I' -> (18.5628364, 73.7545889) | Certainty: Sure
+2026-05-23 12:45:02,718 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='VTP Skylights Sierra', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5541229, Lng=73.7607704 | =================================
+2026-05-23 12:45:02,718 | INFO | [Geocode] OK 'VTP Skylights Sierra' -> (18.5541229, 73.7607704) | Certainty: Sure
+2026-05-23 12:45:03,494 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Galaxy Orizzonte Phase 1', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5619019, Lng=73.7588225 | =================================
+2026-05-23 12:45:03,495 | INFO | [Geocode] OK 'Galaxy Orizzonte Phase 1' -> (18.5619019, 73.7588225) | Certainty: Sure
+2026-05-23 12:45:04,321 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Rachana Bellacasa Royale Tower N2', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5557353, Lng=73.7641543 | =================================
+2026-05-23 12:45:04,321 | INFO | [Geocode] OK 'Rachana Bellacasa Royale Tower N2' -> (18.5557353, 73.7641543) | Certainty: Sure
+2026-05-23 12:45:05,080 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Rachana Bellacasa Royale Tower B', Location='Sus, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5557353, Lng=73.7641543 | =================================
+2026-05-23 12:45:05,080 | INFO | [Geocode] OK 'Rachana Bellacasa Royale Tower B' -> (18.5557353, 73.7641543) | Certainty: Sure
+2026-05-23 12:45:05,281 | INFO | [Distance] 11 comparables with valid coordinates
+2026-05-23 12:45:05,281 | INFO | [Subject Filter] 11 comparables remain after removing subject project
+2026-05-23 12:45:05,281 | INFO | [URL Filter] 11 comparables after URL cleanup
+2026-05-23 12:45:05,282 | INFO | [Agent Done] Final comparables: 11 | Total tokens: 2813
+2026-05-23 12:45:05,284 | INFO | [DB Comparables] Query: I need all unique projects within 3 km radius of this Latitute is 18.5529376 and Longitude 73.7589327 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-23 12:45:17,099 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:17,115 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=['total_transaction_count']
+2026-05-23 12:45:19,237 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:19,932 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:19,933 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-23 12:45:19,933 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 12:45:19,933 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:45:22,001 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:22,002 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:45:23,868 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:23,868 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5529376)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.7589327)) +
+        sin(radians(18.5529376)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions
+WHERE
+  project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5529376)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.7589327)) +
+        sin(radians(18.5529376)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) <= 3.0
+  AND agreement_price >= 1
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+ORDER BY
+  distance ASC
+2026-05-23 12:45:25,873 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 12:45:27,921 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:27,922 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 12:45:27,925 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-23 12:45:27,926 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=11323
+2026-05-23 12:45:27,930 | INFO | [DB Comparables] Found 29 comparables from DB (via result_set)
+2026-05-23 12:45:27,930 | INFO | [Stage3b] Subject project found in DB: Om Paradise (id=137023)
+2026-05-23 12:46:46,660 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:46,661 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 12:46:48,317 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:48,318 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 12:46:52,932 | INFO | Semantic transaction project/location entities resolved: {'projects': [{'path': 'entities.projects', 'original': '137128', 'resolved': '172'}]}
+2026-05-23 12:46:54,262 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:55,465 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:56,602 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:57,617 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:46:58,891 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:46:58,892 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:47:02,500 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:02,501 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=['project_id IN (172)']  reason=The key entity is the project, which semantic_resolved_entities maps to project_id 172. The SQL instead filters on project_id = 18547, violating entity completeness. The property_type filter matches the resolved value 'Flat' correctly. Updating the WHERE clause to project_id IN (172) restores alignment with the intent and semantic resolution. Other aspects (columns, ordering, and use of IN for the semantic filter) are consistent with the intent.
+2026-05-23 12:47:02,502 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:47:02,502 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id IN (172)
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC;
+2026-05-23 12:47:02,508 | INFO | [iter=0] OBSERVE — rows=0  error=none
+2026-05-23 12:47:04,916 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:04,917 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=project_id
+2026-05-23 12:47:08,380 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:08,381 | INFO | [iter=0] REWRITE — action=replace_column  missing_fix=[]  new_col=internal_index_id
+2026-05-23 12:47:08,381 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 12:47:08,382 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 12:47:11,473 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:11,474 | INFO | [iter=1] REVIEW rejected  confidence=96  missing=[]  reason=The primary entity is a project resolved semantically to internal_index_id = 172, but the SQL filters on internal_index_id = 137128, which violates entity completeness/correctness. Locations and space_filters do not introduce additional required entities. Property_type = 'Flat' from semantic_resolved_filters is correctly applied with IN ('Flat'). Fixing the internal_index_id to 172 aligns the SQL with the resolved project entity; other aspects (selected columns, ordering, and basic data-quality filter on agreement_price) are acceptable.
+2026-05-23 12:47:11,475 | INFO | [iter=1] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:47:11,475 | INFO | [iter=1] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  internal_index_id = 172
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC;
+2026-05-23 12:47:12,988 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:12,992 | INFO | [iter=1] OBSERVE — rows=0  error=none
+2026-05-23 12:47:15,478 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:15,479 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=internal_index_id
+2026-05-23 12:47:18,273 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:18,274 | INFO | [iter=1] REWRITE — action=replace_column  missing_fix=[]  new_col=project_id
+2026-05-23 12:47:18,274 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-23 12:47:18,274 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-23 12:47:21,445 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:21,446 | INFO | [iter=2] REVIEW rejected  confidence=94  missing=['project_id = 172']  reason=The primary issue is entity completeness with respect to the project entity. The semantic resolution maps the requested project (original 137128) to project_id 172, so the SQL must filter on project_id = 172, not 137128. The property_type filter matches the semantic_resolved_filters exactly. No locations or additional space_filters are present, so no other entity branches are required. Once project_id is corrected, the query aligns with the intent and schema and returns the requested columns ordered by transaction_date DESC.
+2026-05-23 12:47:21,446 | INFO | [iter=2] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:47:21,447 | INFO | [iter=2] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 172
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC;
+2026-05-23 12:47:21,449 | INFO | [iter=2] OBSERVE — rows=0  error=none
+2026-05-23 12:47:23,769 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:23,771 | INFO | [iter=2] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=project_id
+2026-05-23 12:47:27,086 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:27,087 | INFO | [iter=2] REWRITE — action=replace_column  missing_fix=[]  new_col=project_name
+2026-05-23 12:47:27,088 | INFO | [iter=3] REWRITE — applying reflected SQL
+2026-05-23 12:47:27,088 | INFO | [iter=3] REVIEW — pre-execution gate
+2026-05-23 12:47:30,255 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:30,256 | INFO | [iter=3] REVIEW rejected  confidence=96  missing=['project_id:172']  reason=Entity completeness fails because the intent has a single project entity resolved to project_id = 172, but the SQL does not filter on project_id at all and instead uses project_name/tower_name ILIKE '%137128%'. The corrected SQL uses project_id IN (172) and preserves the required property_type = 'Flat' filter and ordering.
+2026-05-23 12:47:30,256 | INFO | [iter=3] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:47:30,257 | INFO | [iter=3] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id IN (172)
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC;
+2026-05-23 12:47:30,259 | INFO | [iter=3] OBSERVE — rows=0  error=none
+2026-05-23 12:47:33,023 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:33,024 | INFO | [iter=3] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=None
+2026-05-23 12:47:36,611 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:36,613 | INFO | [iter=3] REWRITE — action=replace_column  missing_fix=[]  new_col=project_name
+2026-05-23 12:47:36,614 | INFO | [iter=4] REWRITE — applying reflected SQL
+2026-05-23 12:47:36,614 | INFO | [iter=4] REVIEW — pre-execution gate
+2026-05-23 12:47:40,928 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:40,928 | INFO | [iter=4] REVIEW rejected  confidence=98  missing=['Exact project identifier filter using resolved project ID (e.g., project_id = 172 or internal_index_id = 172)']  reason=The user intent is to fetch all transactions for the project with project_id = 137128, which has been semantically resolved to project 172. The current SQL uses project_name ILIKE '%172%', which is an incorrect mapping of a project identifier to a text column and violates entity completeness: the resolved project entity must be applied as an exact ID filter (e.g., internal_index_id = 172 or project_id = 172). The property_type semantic filter 'Flat' is correctly represented with an IN clause using the resolved value. The corrected query replaces the ILIKE on project_name with an exact filter on the project identifier column while preserving the property_type filter, the requested columns, and the ordering by transaction_date DESC.
+2026-05-23 12:47:40,930 | INFO | [iter=4] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:47:40,930 | INFO | [iter=4] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  internal_index_id = 172
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC;
+2026-05-23 12:47:42,087 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:42,089 | INFO | [iter=4] OBSERVE — rows=0  error=none
+2026-05-23 12:47:44,475 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:44,476 | WARNING | Max iterations (5) reached without a satisfactory result
+2026-05-23 12:47:53,084 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:53,093 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 12:47:54,698 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:54,698 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 12:47:54,699 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 12:47:56,120 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:57,649 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:47:59,906 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:48:01,066 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:01,067 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:48:03,283 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:03,284 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 116023
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 12:48:03,291 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 12:48:05,197 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:05,198 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 12:48:05,201 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 12:48:05,202 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 12:48:05,205 | INFO | [DB Transactions] project_id=116023 property_type=apartment -> 30 transactions
+2026-05-23 12:48:13,241 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:13,242 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 12:48:13,244 | WARNING | [DB Transactions] Attempt 1/3: empty stream for project_id=137134. Retrying...
+2026-05-23 12:48:23,531 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:23,536 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 12:48:25,277 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:25,278 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 12:48:25,278 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 12:48:26,682 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:27,724 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:48:29,007 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:29,008 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:48:33,564 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:33,570 | INFO | [iter=0] REVIEW rejected  confidence=98  missing=[]  reason=The intent requires all transactions where project_id=137134 and property_type='Flat', ordered by transaction_date DESC. The entities.locations list is empty, so no location branches are required. The semantic_resolved_filters specify property_type=['Flat'], which is correctly implemented via property_type IN ('Flat'). The projects list contains value 137134, correctly mapped to project_id=137134 in the WHERE clause. No other non-null space_filters or category filters are present. All referenced columns exist in the schema. For a project/location-oriented lookup, the SELECT includes project_name plus project_latitude/project_longitude and also location_name plus location_latitude/location_longitude, satisfying the platform’s response-column requirement. There is a basic data quality filter (agreement_price >= 1). ORDER BY transaction_date DESC matches the requested ordering. No GROUP BY is needed since this is a simple lookup. Overall, the SQL matches the intent and passes the entity completeness and checklist requirements.
+2026-05-23 12:48:33,571 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  project_latitude,
+  project_longitude,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  location_latitude,
+  location_longitude,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 137134
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 12:48:33,574 | INFO | [iter=0] OBSERVE — rows=1  error=none
+2026-05-23 12:48:35,436 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:35,437 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.IRRELEVANT  missing=[]  suspect=project_latitude, project_longitude, location_latitude, location_longitude
+2026-05-23 12:48:37,709 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:37,710 | INFO | [iter=0] REWRITE — action=other  missing_fix=[]  new_col=None
+2026-05-23 12:48:37,710 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 12:48:37,710 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 12:48:39,808 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:39,808 | INFO | [iter=1] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 137134
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 12:48:39,810 | INFO | [iter=1] OBSERVE — rows=1  error=none
+2026-05-23 12:48:41,665 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:41,667 | INFO | [iter=1] DONE — verdict=GOOD
+2026-05-23 12:48:41,670 | INFO | [DB Transactions] result_set captured: 1 rows
+2026-05-23 12:48:41,671 | INFO | [DB Transactions] Using 1 rows from result_set
+2026-05-23 12:48:41,672 | INFO | [DB Transactions] project_id=137134 property_type=apartment -> 1 transactions
+2026-05-23 12:48:49,839 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:49,842 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 12:48:51,289 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:51,290 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 12:48:51,290 | INFO | Semantic transaction project/location entities resolved: {'projects': [{'path': 'entities.projects', 'original': '137023', 'resolved': '172'}]}
+2026-05-23 12:48:53,110 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:54,800 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:58,467 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:48:59,625 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:48:59,625 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:49:03,337 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:03,338 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=['Exact equality filter for project_id = 172 (numeric or exact match, not ILIKE)']  reason=The intent specifies transactions for a specific project (semantic_resolved_entities.projects resolved to '172') and property_type = 'Flat'. Entity completeness requires that this resolved project identifier be reflected exactly in the WHERE clause. Using project_id ILIKE '%172%' is incorrect for a numeric ID and can match unintended rows. The property_type filter correctly uses an exact IN with the semantic_resolved_filters value. An extra agreement_price >= 1 condition is not derived from the intent and may improperly constrain results, so it should be removed. The corrected SQL uses project_id = 172 and preserves the exact property_type filter, aligning with the intent and entity completeness rules.
+2026-05-23 12:49:03,338 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:49:03,338 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 172
+  AND property_type IN ('Flat')
+ORDER BY transaction_date DESC;
+2026-05-23 12:49:03,340 | INFO | [iter=0] OBSERVE — rows=0  error=none
+2026-05-23 12:49:05,374 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:05,375 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=None
+2026-05-23 12:49:09,315 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:09,316 | INFO | [iter=0] REWRITE — action=replace_column  missing_fix=[]  new_col=project_id
+2026-05-23 12:49:09,316 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 12:49:09,316 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 12:49:13,424 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:13,425 | INFO | [iter=1] REVIEW rejected  confidence=96  missing=['project_id = 172']  reason=All required non-location entities from the intent must be reflected in the WHERE clause. The semantic_resolved_entities block indicates that the user's project reference should resolve to project_id = 172, but the SQL uses project_id = 137023. This violates entity completeness with respect to the resolved project entity. The corrected SQL replaces 137023 with 172 while retaining the exact property_type filter 'Flat' and the requested columns and ordering.
+2026-05-23 12:49:13,425 | INFO | [iter=1] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:49:13,425 | INFO | [iter=1] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 172
+  AND property_type IN ('Flat')
+ORDER BY transaction_date DESC;
+2026-05-23 12:49:13,427 | INFO | [iter=1] OBSERVE — rows=0  error=none
+2026-05-23 12:49:15,219 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:15,220 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=None
+2026-05-23 12:49:18,702 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:18,703 | INFO | [iter=1] REWRITE — action=replace_column  missing_fix=[]  new_col=internal_index_id
+2026-05-23 12:49:18,703 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-23 12:49:18,704 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-23 12:49:22,755 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:22,759 | INFO | [iter=2] REVIEW rejected  confidence=96  missing=[]  reason=The intent asks for all transactions where project_id = 137023 and property_type is Flat. Semantic_resolved_filters correctly resolves property_type to 'Flat' and this appears in the WHERE clause as an IN(...) filter, which is correct. There are no location entities, so no location filters are required. However, semantic_resolved_entities.projects.resolved = '172' has been applied to the internal_index_id column, while the user explicitly filters on project_id = 137023. Using both internal_index_id = 172 and project_id = 137023 is potentially inconsistent and may cause unnecessary row loss; the intent does not require filtering by internal_index_id. To align with the stated intent and avoid over‑constraint, the filter should only use project_id = 137023 together with property_type IN ('Flat'), and the internal_index_id condition should be removed.
+2026-05-23 12:49:22,759 | INFO | [iter=2] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:49:22,759 | INFO | [iter=2] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 137023
+  AND property_type IN ('Flat')
+ORDER BY transaction_date DESC;
+2026-05-23 12:49:22,762 | INFO | [iter=2] OBSERVE — rows=30  error=none
+2026-05-23 12:49:24,576 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:24,577 | INFO | [iter=2] DONE — verdict=GOOD
+2026-05-23 12:49:24,581 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 12:49:24,583 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 12:49:24,586 | INFO | [DB Transactions] project_id=137023 property_type=apartment -> 30 transactions
+2026-05-23 12:49:24,608 | INFO | [Pipeline Start] subject='Om Paradise' type='apartment' search_term='apartment' listing='sale' comparables=3
+2026-05-23 12:49:24,608 | INFO | [Pipeline] Total projects: 4
+2026-05-23 12:49:24,608 | INFO | [Pipeline] Categories: 'Om Paradise' → Residential, 'Kohinoor Falcon' → Residential, 'VTP Skylights Sierra' → Residential, 'Teerth Avila' → Residential
+2026-05-23 12:49:24,608 | INFO | 
+============================================================
+[Pipeline] Project: 'Om Paradise' | type=apartment | category=Residential
+============================================================
+2026-05-23 12:49:24,609 | INFO | [URL Search] Query: 'buy apartment in Om Paradise, Sus, India, coordinates: 18.5529376, 73.7589327'
+2026-05-23 12:49:24,609 | INFO | [Search] Creating new undetected browser
+2026-05-23 12:49:24,636 | INFO | [Browser] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:49:24,723 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-23 12:49:25,268 | INFO | patching driver executable C:\Users\Sagar\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-23 12:49:27,430 | INFO | setting properties for headless
+2026-05-23 12:49:27,435 | INFO | [DDG] Searching: buy apartment in Om Paradise, Sus, India, coordinates: 18.5529376, 73.7589327
+2026-05-23 12:49:40,373 | INFO | [DDG] Found 5 URLs
+2026-05-23 12:49:40,373 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Om Paradise, Sus, India, coordinates: 18.5529376, 73.7589327'
+2026-05-23 12:49:40,374 | INFO | [URL Search] Result: 'Om Paradise' -> 5 URLs.
+2026-05-23 12:49:41,374 | INFO | [URLs] Om Paradise -> 5 urls
+2026-05-23 12:49:41,374 | INFO | [Scrape] URL #1 Starting: https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus
+2026-05-23 12:49:41,375 | INFO | [Scrape] project='Om Paradise' url='https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus'
+2026-05-23 12:49:41,375 | INFO | [Scrape] URL #2 Starting: https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45
+2026-05-23 12:49:41,375 | INFO | [Scrape] Trying requests for https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus
+2026-05-23 12:49:41,376 | INFO | [Scrape] project='Om Paradise' url='https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45'
+2026-05-23 12:49:41,376 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239
+2026-05-23 12:49:41,376 | INFO | [Scrape] Trying requests for https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45
+2026-05-23 12:49:41,377 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project
+2026-05-23 12:49:41,377 | INFO | [Scrape] project='Om Paradise' url='https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239'
+2026-05-23 12:49:41,377 | INFO | [Scrape] URL #5 Starting: https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid
+2026-05-23 12:49:41,378 | INFO | [Scrape] project='Om Paradise' url='https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project'
+2026-05-23 12:49:41,379 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239
+2026-05-23 12:49:41,379 | INFO | [Scrape] project='Om Paradise' url='https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid'
+2026-05-23 12:49:41,379 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project
+2026-05-23 12:49:41,379 | INFO | [Scrape] Trying requests for https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid
+2026-05-23 12:49:41,808 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 12:49:41,808 | INFO | [Scrape] URL 'https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:49:41,808 | INFO | [Driver Pool] Creating new browser for thread 7820
+2026-05-23 12:49:41,827 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:49:41,939 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project
+2026-05-23 12:49:42,074 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45
+2026-05-23 12:49:42,720 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239
+2026-05-23 12:49:42,787 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:42,787 | INFO | [Extract] 'Om Paradise' -> 0 raw listings from 'https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45'
+2026-05-23 12:49:42,787 | INFO | [Extract Filter] 'Om Paradise' -> 0/0 passed type + name filter
+2026-05-23 12:49:42,788 | INFO | [Scrape] URL #2 -> 0 listings | https://www.nobroker.in/sr-om-paradise-sus_pune-prjt-5ba3f027714b56aa08570b45
+2026-05-23 12:49:43,467 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:43,471 | INFO | [Extract] 'Om Paradise' -> 0 raw listings from 'https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239'
+2026-05-23 12:49:43,471 | INFO | [Extract Filter] 'Om Paradise' -> 0/0 passed type + name filter
+2026-05-23 12:49:43,471 | INFO | [Scrape] URL #3 -> 0 listings | https://www.magicbricks.com/sr-om-paradise-sus-pune-pdpid-4d4235303538373239
+2026-05-23 12:49:43,804 | INFO | [Scrape] Requests returned status 406. Falling back to Selenium.
+2026-05-23 12:49:43,804 | INFO | [Scrape] URL 'https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:49:43,804 | INFO | [Driver Pool] Creating new browser for thread 20116
+2026-05-23 12:49:43,822 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:49:48,694 | INFO | [Scrape] OK via Selenium (Text Mode) for https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus
+2026-05-23 12:49:49,448 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:49,449 | INFO | [Extract] 'Om Paradise' -> 0 raw listings from 'https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus'
+2026-05-23 12:49:49,449 | INFO | [Extract Filter] 'Om Paradise' -> 0/0 passed type + name filter
+2026-05-23 12:49:49,449 | INFO | [Scrape] URL #1 -> 0 listings | https://housing.com/in/buy/projects/page/102746-s-r-om-paradise-by-s-r-buildpro-icon-llp-in-sus
+2026-05-23 12:49:51,270 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid
+2026-05-23 12:49:51,844 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:51,847 | INFO | [Extract] 'Om Paradise' -> 0 raw listings from 'https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid'
+2026-05-23 12:49:51,847 | INFO | [Extract Filter] 'Om Paradise' -> 0/0 passed type + name filter
+2026-05-23 12:49:51,847 | INFO | [Scrape] URL #5 -> 0 listings | https://www.99acres.com/2-bhk-flats-for-resale-in-sr-om-paradise-sus-pune-760689-npffid
+2026-05-23 12:49:55,166 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:49:55,167 | INFO | [Extract] 'Om Paradise' -> 4 raw listings from 'https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project'
+2026-05-23 12:49:55,167 | INFO | [Extract Filter] 'Om Paradise' -> 4/4 passed type + name filter
+2026-05-23 12:49:55,167 | INFO | [Scrape] URL #4 -> 4 listings | https://www.squareyards.com/pune-residential-property/sr-om-paradise/227844/project
+2026-05-23 12:49:55,169 | INFO | [Project Done] 'Om Paradise' -> 4 listings
+2026-05-23 12:49:55,169 | INFO | 
+============================================================
+[Pipeline] Project: 'Kohinoor Falcon' | type=apartment | category=Residential
+============================================================
+2026-05-23 12:49:55,169 | INFO | [URL Search] Query: 'buy apartment in Kohinoor Falcon, Sus, Pune, India, coordinates: 18.5530815, 73.75826620000001'
+2026-05-23 12:49:55,173 | INFO | [DDG] Searching: buy apartment in Kohinoor Falcon, Sus, Pune, India, coordinates: 18.5530815, 73.75826620000001
+2026-05-23 12:50:09,568 | INFO | [DDG] Found 5 URLs
+2026-05-23 12:50:09,568 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Kohinoor Falcon, Sus, Pune, India, coordinates: 18.5530815, 73.75826620000001'
+2026-05-23 12:50:09,570 | INFO | [URL Search] Result: 'Kohinoor Falcon' -> 5 URLs.
+2026-05-23 12:50:10,570 | INFO | [URLs] Kohinoor Falcon -> 5 urls
+2026-05-23 12:50:10,570 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351
+2026-05-23 12:50:10,571 | INFO | [Scrape] project='Kohinoor Falcon' url='https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351'
+2026-05-23 12:50:10,571 | INFO | [Scrape] Trying requests for https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351
+2026-05-23 12:50:10,571 | INFO | [Scrape] URL #2 Starting: https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936
+2026-05-23 12:50:10,572 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834
+2026-05-23 12:50:10,572 | INFO | [Scrape] project='Kohinoor Falcon' url='https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936'
+2026-05-23 12:50:10,573 | INFO | [Scrape] project='Kohinoor Falcon' url='https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834'
+2026-05-23 12:50:10,573 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project
+2026-05-23 12:50:10,573 | INFO | [Scrape] Trying requests for https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936
+2026-05-23 12:50:10,573 | INFO | [Scrape] URL #5 Starting: https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684
+2026-05-23 12:50:10,573 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834
+2026-05-23 12:50:10,574 | INFO | [Scrape] project='Kohinoor Falcon' url='https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project'
+2026-05-23 12:50:10,574 | INFO | [Scrape] project='Kohinoor Falcon' url='https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684'
+2026-05-23 12:50:10,575 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project
+2026-05-23 12:50:10,576 | INFO | [Scrape] Trying requests for https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684
+2026-05-23 12:50:10,973 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 12:50:10,973 | INFO | [Scrape] URL 'https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:50:10,973 | INFO | [Driver Pool] Creating new browser for thread 21312
+2026-05-23 12:50:10,991 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:50:11,184 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936
+2026-05-23 12:50:11,501 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project
+2026-05-23 12:50:11,627 | INFO | [Scrape] OK via Requests (200 OK) for https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684
+2026-05-23 12:50:11,979 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:11,982 | INFO | [Extract] 'Kohinoor Falcon' -> 0 raw listings from 'https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936'
+2026-05-23 12:50:11,982 | INFO | [Extract Filter] 'Kohinoor Falcon' -> 0/0 passed type + name filter
+2026-05-23 12:50:11,983 | INFO | [Scrape] URL #2 -> 0 listings | https://www.nobroker.in/kohinoor-falcon-sus_pune-prjt-5ba3f027714b56aa08570936
+2026-05-23 12:50:12,885 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834
+2026-05-23 12:50:13,447 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:13,448 | INFO | [Extract] 'Kohinoor Falcon' -> 0 raw listings from 'https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684'
+2026-05-23 12:50:13,448 | INFO | [Extract Filter] 'Kohinoor Falcon' -> 0/0 passed type + name filter
+2026-05-23 12:50:13,448 | INFO | [Scrape] URL #5 -> 0 listings | https://www.proptiger.com/pune/sus/kohinoor-group-pune-falcon-666684
+2026-05-23 12:50:13,760 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:13,765 | INFO | [Extract] 'Kohinoor Falcon' -> 0 raw listings from 'https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834'
+2026-05-23 12:50:13,765 | INFO | [Extract Filter] 'Kohinoor Falcon' -> 0/0 passed type + name filter
+2026-05-23 12:50:13,766 | INFO | [Scrape] URL #3 -> 0 listings | https://www.magicbricks.com/falcon-sus-pune-pdpid-4d4235303735363834
+2026-05-23 12:50:17,225 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351
+2026-05-23 12:50:18,621 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:18,626 | INFO | [Extract] 'Kohinoor Falcon' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project'
+2026-05-23 12:50:18,626 | INFO | [Extract Filter] 'Kohinoor Falcon' -> 2/2 passed type + name filter
+2026-05-23 12:50:18,626 | INFO | [Scrape] URL #4 -> 2 listings | https://www.squareyards.com/pune-residential-property/kohinoor-falcon/23098/project
+2026-05-23 12:50:29,674 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:29,679 | INFO | [Extract] 'Kohinoor Falcon' -> 4 raw listings from 'https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351'
+2026-05-23 12:50:29,679 | INFO | [Extract Filter] 'Kohinoor Falcon' -> 4/4 passed type + name filter
+2026-05-23 12:50:29,679 | INFO | [Scrape] URL #1 -> 4 listings | https://www.99acres.com/kohinoor-falcon-sus-pune-npxid-r129351
+2026-05-23 12:50:29,681 | INFO | [Project Done] 'Kohinoor Falcon' -> 6 listings
+2026-05-23 12:50:29,681 | INFO | 
+============================================================
+[Pipeline] Project: 'VTP Skylights Sierra' | type=apartment | category=Residential
+============================================================
+2026-05-23 12:50:29,681 | INFO | [URL Search] Query: 'buy apartment in VTP Skylights Sierra, Sus, Pune, India, coordinates: 18.5541229, 73.7607704'
+2026-05-23 12:50:29,686 | INFO | [DDG] Searching: buy apartment in VTP Skylights Sierra, Sus, Pune, India, coordinates: 18.5541229, 73.7607704
+2026-05-23 12:50:44,699 | INFO | [DDG] Found 5 URLs
+2026-05-23 12:50:44,699 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in VTP Skylights Sierra, Sus, Pune, India, coordinates: 18.5541229, 73.7607704'
+2026-05-23 12:50:44,699 | INFO | [URL Search] Result: 'VTP Skylights Sierra' -> 5 URLs.
+2026-05-23 12:50:45,701 | INFO | [URLs] VTP Skylights Sierra -> 5 urls
+2026-05-23 12:50:45,701 | INFO | [Scrape] URL #1 Starting: https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner
+2026-05-23 12:50:45,702 | INFO | [Scrape] project='VTP Skylights Sierra' url='https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner'
+2026-05-23 12:50:45,702 | INFO | [Scrape] Trying requests for https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner
+2026-05-23 12:50:45,702 | INFO | [Scrape] URL #2 Starting: https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune
+2026-05-23 12:50:45,702 | INFO | [Scrape] project='VTP Skylights Sierra' url='https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune'
+2026-05-23 12:50:45,702 | INFO | [Scrape] URL #3 Starting: https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987
+2026-05-23 12:50:45,704 | INFO | [Scrape] URL #4 Starting: https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs
+2026-05-23 12:50:45,704 | INFO | [Scrape] Trying requests for https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune
+2026-05-23 12:50:45,704 | INFO | [Scrape] project='VTP Skylights Sierra' url='https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987'
+2026-05-23 12:50:45,704 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project
+2026-05-23 12:50:45,705 | INFO | [Scrape] project='VTP Skylights Sierra' url='https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs'
+2026-05-23 12:50:45,705 | INFO | [Scrape] Trying requests for https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987
+2026-05-23 12:50:45,705 | INFO | [Scrape] project='VTP Skylights Sierra' url='https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project'
+2026-05-23 12:50:45,705 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs
+2026-05-23 12:50:45,706 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project
+2026-05-23 12:50:46,115 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 12:50:46,115 | INFO | [Scrape] URL 'https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:50:46,115 | INFO | [Driver Pool] Creating new browser for thread 20632
+2026-05-23 12:50:46,124 | INFO | [Scrape] Requests returned status 406. Falling back to Selenium.
+2026-05-23 12:50:46,125 | INFO | [Scrape] URL 'https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:50:46,134 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:50:46,299 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project
+2026-05-23 12:50:46,976 | INFO | [Driver Pool] Creating new browser for thread 21212
+2026-05-23 12:50:46,998 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:50:47,206 | INFO | [Scrape] OK via Requests (200 OK) for https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune
+2026-05-23 12:50:47,372 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:47,381 | INFO | [Extract] 'VTP Skylights Sierra' -> 0 raw listings from 'https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project'
+2026-05-23 12:50:47,381 | INFO | [Extract Filter] 'VTP Skylights Sierra' -> 0/0 passed type + name filter
+2026-05-23 12:50:47,382 | INFO | [Scrape] URL #5 -> 0 listings | https://www.squareyards.com/pune-residential-property/vtp-sierra/103239/project
+2026-05-23 12:50:48,005 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:48,006 | INFO | [Extract] 'VTP Skylights Sierra' -> 0 raw listings from 'https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune'
+2026-05-23 12:50:48,007 | INFO | [Extract Filter] 'VTP Skylights Sierra' -> 0/0 passed type + name filter
+2026-05-23 12:50:48,007 | INFO | [Scrape] URL #2 -> 0 listings | https://www.vtprealty.in/projects/vtp-sierra-baner-sus-pune
+2026-05-23 12:50:48,650 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs
+2026-05-23 12:50:49,667 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:49,668 | INFO | [Extract] 'VTP Skylights Sierra' -> 0 raw listings from 'https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs'
+2026-05-23 12:50:49,668 | INFO | [Extract Filter] 'VTP Skylights Sierra' -> 0/0 passed type + name filter
+2026-05-23 12:50:49,668 | INFO | [Scrape] URL #4 -> 0 listings | https://www.magicbricks.com/project-vtp-sierra-for-sale-in-pune-pppfs
+2026-05-23 12:50:51,810 | INFO | [Scrape] OK via Selenium (Text Mode) for https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner
+2026-05-23 12:50:52,332 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987
+2026-05-23 12:50:52,807 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:50:52,816 | INFO | [Extract] 'VTP Skylights Sierra' -> 0 raw listings from 'https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner'
+2026-05-23 12:50:52,816 | INFO | [Extract Filter] 'VTP Skylights Sierra' -> 0/0 passed type + name filter
+2026-05-23 12:50:52,816 | INFO | [Scrape] URL #1 -> 0 listings | https://housing.com/in/buy/projects/page/255329-vtp-sierra-by-vtp-realty-in-baner
+2026-05-23 12:51:01,492 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:01,497 | INFO | [Extract] 'VTP Skylights Sierra' -> 2 raw listings from 'https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987'
+2026-05-23 12:51:01,497 | INFO | [Extract Filter] 'VTP Skylights Sierra' -> 2/2 passed type + name filter
+2026-05-23 12:51:01,497 | INFO | [Scrape] URL #3 -> 2 listings | https://www.99acres.com/vtp-sierra-sus-pune-npxid-r374987
+2026-05-23 12:51:01,498 | INFO | [Project Done] 'VTP Skylights Sierra' -> 2 listings
+2026-05-23 12:51:01,498 | INFO | 
+============================================================
+[Pipeline] Project: 'Teerth Avila' | type=apartment | category=Residential
+============================================================
+2026-05-23 12:51:01,498 | INFO | [URL Search] Query: 'buy apartment in Teerth Avila, Sus, Pune, India, coordinates: 18.5510753, 73.7509619'
+2026-05-23 12:51:01,505 | INFO | [DDG] Searching: buy apartment in Teerth Avila, Sus, Pune, India, coordinates: 18.5510753, 73.7509619
+2026-05-23 12:51:15,057 | INFO | [DDG] Found 5 URLs
+2026-05-23 12:51:15,058 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Teerth Avila, Sus, Pune, India, coordinates: 18.5510753, 73.7509619'
+2026-05-23 12:51:15,058 | INFO | [URL Search] Result: 'Teerth Avila' -> 5 URLs.
+2026-05-23 12:51:16,058 | INFO | [URLs] Teerth Avila -> 5 urls
+2026-05-23 12:51:16,059 | INFO | [Scrape] URL #1 Starting: https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus
+2026-05-23 12:51:16,059 | INFO | [Scrape] project='Teerth Avila' url='https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus'
+2026-05-23 12:51:16,059 | INFO | [Scrape] Trying requests for https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus
+2026-05-23 12:51:16,059 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340
+2026-05-23 12:51:16,060 | INFO | [Scrape] project='Teerth Avila' url='https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340'
+2026-05-23 12:51:16,060 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs
+2026-05-23 12:51:16,061 | INFO | [Scrape] Trying requests for https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340
+2026-05-23 12:51:16,061 | INFO | [Scrape] project='Teerth Avila' url='https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs'
+2026-05-23 12:51:16,062 | INFO | [Scrape] URL #4 Starting: https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project
+2026-05-23 12:51:16,062 | INFO | [Scrape] URL #5 Starting: https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl
+2026-05-23 12:51:16,062 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs
+2026-05-23 12:51:16,063 | INFO | [Scrape] project='Teerth Avila' url='https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project'
+2026-05-23 12:51:16,063 | INFO | [Scrape] project='Teerth Avila' url='https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl'
+2026-05-23 12:51:16,064 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project
+2026-05-23 12:51:16,064 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl
+2026-05-23 12:51:16,673 | INFO | [Scrape] Requests returned status 406. Falling back to Selenium.
+2026-05-23 12:51:16,673 | INFO | [Scrape] URL 'https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:51:16,674 | INFO | [Driver Pool] Creating new browser for thread 22356
+2026-05-23 12:51:16,691 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:51:16,904 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project
+2026-05-23 12:51:17,310 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl
+2026-05-23 12:51:17,448 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 12:51:17,448 | INFO | [Scrape] URL 'https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340' is difficult to scrape, using Selenium Pool.
+2026-05-23 12:51:17,449 | INFO | [Driver Pool] Creating new browser for thread 22332
+2026-05-23 12:51:17,470 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 12:51:18,265 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs
+2026-05-23 12:51:21,551 | INFO | [Scrape] OK via Selenium (Text Mode) for https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus
+2026-05-23 12:51:22,260 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:22,267 | INFO | [Extract] 'Teerth Avila' -> 1 raw listings from 'https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project'
+2026-05-23 12:51:22,267 | INFO | [Extract Filter] 'Teerth Avila' -> 1/1 passed type + name filter
+2026-05-23 12:51:22,267 | INFO | [Scrape] URL #4 -> 1 listings | https://www.squareyards.com/pune-residential-property/teerth-avila/158206/project
+2026-05-23 12:51:22,384 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:22,388 | INFO | [Extract] 'Teerth Avila' -> 0 raw listings from 'https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus'
+2026-05-23 12:51:22,388 | INFO | [Extract Filter] 'Teerth Avila' -> 0/0 passed type + name filter
+2026-05-23 12:51:22,388 | INFO | [Scrape] URL #1 -> 0 listings | https://housing.com/in/buy/projects/page/289620-teerth-avila-by-teerth-developers-in-sus
+2026-05-23 12:51:23,791 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340
+2026-05-23 12:51:24,599 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:24,605 | INFO | [Extract] 'Teerth Avila' -> 1 raw listings from 'https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs'
+2026-05-23 12:51:24,605 | INFO | [Extract Filter] 'Teerth Avila' -> 1/1 passed type + name filter
+2026-05-23 12:51:24,605 | INFO | [Scrape] URL #3 -> 1 listings | https://www.magicbricks.com/project-teerth-avila-for-sale-in-pune-pppfs
+2026-05-23 12:51:29,340 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:29,342 | INFO | [Extract] 'Teerth Avila' -> 1 raw listings from 'https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340'
+2026-05-23 12:51:29,342 | INFO | [Extract Filter] 'Teerth Avila' -> 1/1 passed type + name filter
+2026-05-23 12:51:29,342 | INFO | [Scrape] URL #2 -> 1 listings | https://www.99acres.com/teerth-avila-sus-pune-npxid-r390340
+2026-05-23 12:51:33,517 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:51:33,525 | INFO | [Extract] 'Teerth Avila' -> 3 raw listings from 'https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl'
+2026-05-23 12:51:33,525 | INFO | [Extract Filter] 'Teerth Avila' -> 3/3 passed type + name filter
+2026-05-23 12:51:33,525 | INFO | [Scrape] URL #5 -> 3 listings | https://www.nobroker.in/flats-for-sale-in-teerth-avila-sus-pune-prjtl
+2026-05-23 12:51:33,525 | INFO | [Project Done] 'Teerth Avila' -> 6 listings
+2026-05-23 12:51:33,526 | WARNING | [DROP] stage=final_validation | project='Om Paradise' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "23 K", "area_sqft": null}
+2026-05-23 12:51:33,526 | WARNING | [DROP] stage=final_validation | project='Om Paradise' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "27 K", "area_sqft": null}
+2026-05-23 12:51:33,526 | WARNING | [DROP] stage=final_validation | project='Teerth Avila' | reason=missing_mandatory_fields: ['price'] | detail={"price": "null", "area_sqft": "743"}
+2026-05-23 12:51:33,526 | WARNING | [DROP] stage=final_validation | project='Teerth Avila' | reason=missing_mandatory_fields: ['area_sqft'] | detail={"price": "9200000", "area_sqft": null}
+2026-05-23 12:51:33,528 | INFO | [Pipeline Done] final_listings=14 | projects=4 | tokens=21803
+2026-05-23 12:51:35,726 | INFO | [Driver Pool] Closed driver for thread 7820
+2026-05-23 12:51:37,909 | INFO | [Driver Pool] Closed driver for thread 20116
+2026-05-23 12:51:40,056 | INFO | [Driver Pool] Closed driver for thread 21312
+2026-05-23 12:51:42,213 | INFO | [Driver Pool] Closed driver for thread 20632
+2026-05-23 12:51:44,356 | INFO | [Driver Pool] Closed driver for thread 21212
+2026-05-23 12:51:46,484 | INFO | [Driver Pool] Closed driver for thread 22356
+2026-05-23 12:51:48,655 | INFO | [Driver Pool] Closed driver for thread 22332
+2026-05-23 12:55:00,316 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:55:01,876 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:55:04,581 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:55:09,517 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:57:52,342 | INFO | [CBD Tool] Identifying CBDs for 7 projects in a single LLM call...
+2026-05-23 12:58:07,500 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:58:07,501 | INFO | [CBD LLM] Raw response length: 3393
+2026-05-23 12:58:07,501 | INFO | [CBD LLM] Tokens — prompt: 575, completion: 925, total: 1500
+2026-05-23 12:58:07,502 | INFO | [CBD Geocode] Geocoding: 'Hinjewadi IT Park, Pune'
+2026-05-23 12:58:08,147 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Hinjewadi IT Park, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5946784, Lng=73.7095365 | =================================
+2026-05-23 12:58:08,147 | INFO | [CBD Geocode] OK → (18.5947, 73.7095)
+2026-05-23 12:58:08,448 | INFO | [CBD Tool] Om Paradise → Hinjewadi (6.97 km)
+2026-05-23 12:58:08,448 | INFO | [CBD Geocode] Geocoding: 'Pune Camp, Pune'
+2026-05-23 12:58:09,338 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Pune Camp, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.4989676, Lng=73.8957205 | =================================
+2026-05-23 12:58:09,339 | INFO | [CBD Geocode] OK → (18.4990, 73.8957)
+2026-05-23 12:58:09,640 | INFO | [CBD Tool] Om Paradise → Pune Camp (15.62 km)
+2026-05-23 12:58:09,640 | INFO | [CBD Geocode] Geocoding: 'Kalyani Nagar, Pune'
+2026-05-23 12:58:10,558 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Kalyani Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5462313, Lng=73.90395099999999 | =================================
+2026-05-23 12:58:10,558 | INFO | [CBD Geocode] OK → (18.5462, 73.9040)
+2026-05-23 12:58:10,859 | INFO | [CBD Tool] Om Paradise → Kalyani Nagar (15.31 km)
+2026-05-23 12:58:10,859 | INFO | [CBD Tool] Kohinoor Falcon → Hinjewadi (6.92 km)
+2026-05-23 12:58:10,859 | INFO | [CBD Tool] Kohinoor Falcon → Pune Camp (15.66 km)
+2026-05-23 12:58:10,859 | INFO | [CBD Tool] Kohinoor Falcon → Kalyani Nagar (15.33 km)
+2026-05-23 12:58:10,860 | INFO | [CBD Tool] Kohinoor Falcon → Hinjewadi (6.92 km)
+2026-05-23 12:58:10,860 | INFO | [CBD Tool] Kohinoor Falcon → Pune Camp (15.66 km)
+2026-05-23 12:58:10,860 | INFO | [CBD Tool] Kohinoor Falcon → Kalyani Nagar (15.33 km)
+2026-05-23 12:58:10,860 | INFO | [CBD Tool] Vtp Sierra → Hinjewadi (7.08 km)
+2026-05-23 12:58:10,860 | INFO | [CBD Tool] Vtp Sierra → Pune Camp (15.47 km)
+2026-05-23 12:58:10,861 | INFO | [CBD Tool] Vtp Sierra → Kalyani Nagar (15.12 km)
+2026-05-23 12:58:10,861 | INFO | [CBD Tool] VTP Skylights Sierra → Hinjewadi (7.04 km)
+2026-05-23 12:58:10,861 | INFO | [CBD Tool] VTP Skylights Sierra → Pune Camp (15.49 km)
+2026-05-23 12:58:10,861 | INFO | [CBD Tool] VTP Skylights Sierra → Kalyani Nagar (15.12 km)
+2026-05-23 12:58:10,861 | INFO | [CBD Tool] Teerth Avila → Hinjewadi (6.53 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Teerth Avila → Pune Camp (16.32 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Teerth Avila → Kalyani Nagar (16.14 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Western Hills → Hinjewadi (6.85 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Western Hills → Pune Camp (15.65 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Western Hills → Kalyani Nagar (15.24 km)
+2026-05-23 12:58:10,862 | INFO | [CBD Tool] Done. Results for 6 projects.
+2026-05-23 12:58:10,863 | INFO | CBD identification complete for 6 projects
+2026-05-23 12:58:17,048 | INFO | [DB] Found 6 candidates in spatial bounding box
+2026-05-23 12:58:17,048 | INFO | Found 3 DB amenities near (18.55551049, 73.75975201)
+2026-05-23 12:58:17,088 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 12:58:17,089 | INFO | Found 3 DB amenities near (18.5529376, 73.7589327)
+2026-05-23 12:58:17,107 | INFO | [DB] Found 3 candidates in spatial bounding box
+2026-05-23 12:58:17,107 | INFO | Found 3 DB amenities near (18.5530815, 73.75826620000001)
+2026-05-23 12:58:17,121 | INFO | [DB] Found 6 candidates in spatial bounding box
+2026-05-23 12:58:17,122 | INFO | Found 6 DB amenities near (18.55352, 73.76075)
+2026-05-23 12:58:21,651 | ERROR | OSM Road Category lookup failed: HTTPSConnectionPool(host='overpass-api.de', port=443): Read timed out. (read timeout=10)
+2026-05-23 12:58:21,656 | INFO | [DB] Found 6 candidates in spatial bounding box
+2026-05-23 12:58:21,656 | INFO | Found 6 DB amenities near (18.5541229, 73.7607704)
+2026-05-23 12:58:21,681 | ERROR | OSM Road Category lookup failed: HTTPSConnectionPool(host='overpass-api.de', port=443): Read timed out. (read timeout=10)
+2026-05-23 12:58:21,686 | INFO | [DB] Found 3 candidates in spatial bounding box
+2026-05-23 12:58:21,687 | INFO | Found 3 DB amenities near (18.5510753, 73.7509619)
+2026-05-23 12:59:08,745 | INFO | Aggregated raw counts: {'hospitals': 1, 'restaurants_entertainment': 2}
+2026-05-23 12:59:08,750 | INFO | Aggregated raw counts: {'hospitals': 1, 'restaurants_entertainment': 2}
+2026-05-23 12:59:08,752 | INFO | Aggregated raw counts: {'hospitals': 1, 'restaurants_entertainment': 1, 'schools': 1}
+2026-05-23 12:59:08,754 | INFO | Aggregated raw counts: {'hospitals': 1, 'it_parks': 1, 'restaurants_entertainment': 4}
+2026-05-23 12:59:08,756 | INFO | Aggregated raw counts: {'hospitals': 1, 'it_parks': 1, 'restaurants_entertainment': 4}
+2026-05-23 12:59:08,756 | INFO | Aggregated raw counts: {'hospitals': 1, 'restaurants_entertainment': 2}
+2026-05-23 12:59:08,758 | INFO | Factorial table: 9 projects, 73 total valid listings
+2026-05-23 12:59:59,887 | INFO | [LLM Factoring] Calling gpt-4o with 8 comparables...
+2026-05-23 13:00:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:00:00 IST)" (scheduled at 2026-05-23 13:00:00+05:30)
+2026-05-23 13:00:00,029 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:30:00 IST)" executed successfully
+2026-05-23 13:00:47,976 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:00:48,192 | INFO | [LLM Factoring] Done. Subject final rate: 7242 INR/sqft
+2026-05-23 13:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:00:00 IST)" (scheduled at 2026-05-23 13:30:00+05:30)
+2026-05-23 13:30:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:00:00 IST)" executed successfully
+2026-05-23 14:00:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:30:00 IST)" (scheduled at 2026-05-23 14:00:00+05:30)
+2026-05-23 14:00:00,018 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:30:00 IST)" executed successfully
+2026-05-23 14:30:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:00:00 IST)" (scheduled at 2026-05-23 14:30:00+05:30)
+2026-05-23 14:30:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:00:00 IST)" executed successfully
+2026-05-23 15:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:30:00 IST)" (scheduled at 2026-05-23 15:00:00+05:30)
+2026-05-23 15:00:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:30:00 IST)" executed successfully
+2026-05-23 15:30:00,013 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:00:00 IST)" (scheduled at 2026-05-23 15:30:00+05:30)
+2026-05-23 15:30:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:00:00 IST)" executed successfully
+2026-05-23 16:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" (scheduled at 2026-05-23 16:00:00+05:30)
+2026-05-23 16:00:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" executed successfully
+2026-05-23 16:03:12,316 | INFO | Scheduler has been shut down
+2026-05-23 16:03:12,323 | INFO | ensuring close
