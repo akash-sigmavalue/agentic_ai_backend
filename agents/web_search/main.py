@@ -21,7 +21,7 @@ from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v14-llm-source-rerank"
+SEARCH_CACHE_VERSION = "source-discovery-v15-source-traceability"
 
 
 class DuckDuckGoSearchAgent:
@@ -117,7 +117,10 @@ class DuckDuckGoSearchAgent:
         if fetch_content:
             extraction_sources = sorted(
                 search_results[:min(max_results, len(search_results))],
-                key=lambda item: item.get('trust_score', 0.5),
+                key=lambda item: (
+                    item.get('verification_status') == 'verified_indicator',
+                    item.get('trust_score', 0.5),
+                ),
                 reverse=True,
             )
             urls = [r['url'] for r in extraction_sources]
@@ -612,6 +615,9 @@ class DuckDuckGoSearchAgent:
                         'type': 'exact_evidence_match',
                         'text': text,
                     })
+            evidence_lines.extend(
+                self._structured_data_evidence(result.get('extracted_data'), index, url, result.get('title'))
+            )
 
         primary_sources.sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
         additional_sources.sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
@@ -623,3 +629,50 @@ class DuckDuckGoSearchAgent:
             'document_source_urls': document_sources,
             'extracted_evidence': evidence_lines,
         }
+
+    def _structured_data_evidence(self, extracted_data, source_index: int, source_url: str, source_title: str = None) -> List[Dict]:
+        if not extracted_data:
+            return []
+        if hasattr(extracted_data, '__dataclass_fields__'):
+            extracted_data = asdict(extracted_data)
+        if not isinstance(extracted_data, dict):
+            return []
+
+        evidence = []
+        for fact in extracted_data.get('key_facts') or []:
+            if fact:
+                evidence.append({
+                    'source_index': source_index,
+                    'source_url': source_url,
+                    'source_title': source_title,
+                    'type': 'key_fact',
+                    'text': str(fact),
+                })
+
+        for number in extracted_data.get('numbers') or []:
+            if not isinstance(number, dict):
+                continue
+            value = number.get('value')
+            context = number.get('context')
+            text = f"{value}: {context}" if context else str(value or "")
+            if text.strip():
+                evidence.append({
+                    'source_index': source_index,
+                    'source_url': source_url,
+                    'source_title': source_title,
+                    'type': 'number',
+                    'text': text,
+                })
+
+        for field_name in ('dates', 'locations', 'entities'):
+            for value in extracted_data.get(field_name) or []:
+                if value:
+                    evidence.append({
+                        'source_index': source_index,
+                        'source_url': source_url,
+                        'source_title': source_title,
+                        'type': field_name[:-1],
+                        'text': str(value),
+                    })
+
+        return evidence

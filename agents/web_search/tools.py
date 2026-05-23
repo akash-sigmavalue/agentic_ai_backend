@@ -8,6 +8,7 @@ Token usage: 0 (no LLM)
 from typing import List, Dict, Any
 from datetime import datetime
 import json
+from dataclasses import asdict
 
 
 class ResponseFormatter:
@@ -233,10 +234,60 @@ class ResponseFormatter:
                         'type': 'exact_evidence_match',
                         'text': match.get('text'),
                     })
+            traceability['extracted_evidence'].extend(
+                self._structured_data_evidence(result.get('extracted_data'), index, url, result.get('title'))
+            )
 
         traceability['top_verified_sources'].sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
         traceability['additional_sources'].sort(key=lambda item: item.get('trust_score') or 0, reverse=True)
         return traceability
+
+    def _structured_data_evidence(self, extracted_data, source_index: int, source_url: str, source_title: str = None) -> List[Dict]:
+        if not extracted_data:
+            return []
+        if hasattr(extracted_data, '__dataclass_fields__'):
+            extracted_data = asdict(extracted_data)
+        if not isinstance(extracted_data, dict):
+            return []
+
+        evidence = []
+        for fact in extracted_data.get('key_facts') or []:
+            if fact:
+                evidence.append({
+                    'source_index': source_index,
+                    'source_url': source_url,
+                    'source_title': source_title,
+                    'type': 'key_fact',
+                    'text': str(fact),
+                })
+
+        for number in extracted_data.get('numbers') or []:
+            if not isinstance(number, dict):
+                continue
+            value = number.get('value')
+            context = number.get('context')
+            text = f"{value}: {context}" if context else str(value or "")
+            if text.strip():
+                evidence.append({
+                    'source_index': source_index,
+                    'source_url': source_url,
+                    'source_title': source_title,
+                    'type': 'number',
+                    'text': text,
+                })
+
+        for field_name in ('dates', 'locations', 'entities'):
+            for value in extracted_data.get(field_name) or []:
+                if value:
+                    evidence.append({
+                        'source_index': source_index,
+                        'source_url': source_url,
+                        'source_title': source_title,
+                        'type': field_name[:-1],
+                        'text': str(value),
+                    })
+
+        return evidence
 
     def format_streaming(self, query: str, result: Dict, is_last: bool = False) -> str:
         """Format for streaming response"""

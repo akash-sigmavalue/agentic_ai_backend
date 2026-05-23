@@ -8,6 +8,7 @@ import json
 import re
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from dataclasses import asdict
 from openai import OpenAI
 import tiktoken
 from core.web_search.config import config
@@ -126,7 +127,7 @@ class LightweightAnalyzer:
             if self._is_new_project_query(query, intent) and hasattr(self, "validate_real_estate_content"):
                 answer = self.validate_real_estate_content(answer, query)
 
-            answer = self._add_sentence_source_labels(answer, results)
+            answer = self._append_source_urls_to_cited_lines(answer, results)
 
             traceability_section = self.build_source_traceability_section(
                 results,
@@ -148,7 +149,7 @@ class LightweightAnalyzer:
         except Exception as e:
             print(f"Error in generate_trusted_answer: {e}")
             fallback = self.build_source_based_answer(query, results)
-            fallback = self._add_sentence_source_labels(fallback, results)
+            fallback = self._append_source_urls_to_cited_lines(fallback, results)
             traceability_section = self.build_source_traceability_section(
                 results,
                 source_traceability=source_traceability,
@@ -231,66 +232,28 @@ class LightweightAnalyzer:
         if traceability_section:
             answer.append(f"\n\n{traceability_section}")
 
-        return self._add_sentence_source_labels("".join(answer), results)
+        return "".join(answer)
 
-    def _add_sentence_source_labels(self, answer: str, results: List[Dict]) -> str:
+    def _append_source_urls_to_cited_lines(self, answer: str, results: List[Dict]) -> str:
         """
-        Prefix factual prose sentences with the most likely retrieved content source.
-
-        The LLM is instructed to cite every claim, but this pass makes the UI more
-        dependable by showing "Content N" labels and one de-duplicated external
-        source list even when the model omits a URL on a sentence.
+        Display-only provenance pass: expand existing [1], [2] citations into exact URLs.
+        This does not select sources, extract data, rank results, or change URL lists.
         """
         if not answer or not results:
             return answer or ""
 
-        sources = self._content_sources(results)
-        if not sources:
+        source_urls = {
+            index: result.get("url")
+            for index, result in enumerate(results[:10], 1)
+            if result.get("url")
+        }
+        if not source_urls:
             return answer
 
-        body = self._strip_generated_source_sections(answer)
-        annotated = self._annotate_markdown_sentences(body, sources)
-        source_map = self._render_content_source_map(sources)
-        external_sources = self._render_external_sources(results, sources)
-
-        sections = [annotated.rstrip(), source_map]
-        if external_sources:
-            sections.append(external_sources)
-        return "\n\n".join(section for section in sections if section).strip()
-
-    def _content_sources(self, results: List[Dict]) -> List[Dict]:
-        sources = []
-        seen_urls = set()
-        for index, result in enumerate(results or [], 1):
-            url = result.get("url")
-            if not url or url in seen_urls:
-                continue
-            seen_urls.add(url)
-            text = " ".join([
-                str(result.get("title") or ""),
-                str(result.get("snippet") or ""),
-                str(result.get("content") or ""),
-            ])
-            sources.append({
-                "index": index,
-                "label": f"Content {index}",
-                "title": self._clean_text(result.get("title") or url),
-                "url": url,
-                "tokens": self._meaningful_tokens(text),
-            })
-        return sources
-
-    def _strip_generated_source_sections(self, answer: str) -> str:
-        section_pattern = re.compile(
-            r"\n{0,2}(?:#{2,3}\s*)?(?:Content Source Map|External Sources|Reference URLs)\b.*?(?=\n#{2,3}\s|\Z)",
-            re.IGNORECASE | re.DOTALL,
-        )
-        return section_pattern.sub("", answer).strip()
-
-    def _annotate_markdown_sentences(self, answer: str, sources: List[Dict]) -> str:
         lines = []
         in_code_block = False
-        for raw_line in str(answer or "").splitlines():
+        skip_section = False
+        for raw_line in str(answer).splitlines():
             line = raw_line.rstrip()
             stripped = line.strip()
 
@@ -299,123 +262,50 @@ class LightweightAnalyzer:
                 lines.append(line)
                 continue
 
-            if (
-                in_code_block
-                or not stripped
-                or stripped.startswith("#")
-                or stripped.startswith("|")
-                or re.match(r"^\|?[-:\s|]+\|?$", stripped)
-                or re.match(r"^\s*(?:[-*]\s*)?\[(?:Content\s+\d+|Synthesis)\]", stripped, re.IGNORECASE)
-                or re.match(r"^\s*\d+\.\s*\[.*?\]\(https?://", stripped)
-            ):
+            heading_match = re.match(r"^#{1,6}\s+(.+?)\s*$", stripped)
+            if heading_match:
+                heading = heading_match.group(1).strip().lower()
+                skip_section = heading in {
+                    "reference urls",
+                    "source traceability",
+                    "top verified sources",
+                    "additional sources used",
+                    "crawled source urls",
+                    "document source urls",
+                    "extracted evidence lines",
+                }
                 lines.append(line)
                 continue
 
-            prefix = ""
-            content = line
-            list_match = re.match(r"^(\s*(?:[-*]|\d+\.)\s+)(.*)$", line)
-            if list_match:
-                prefix, content = list_match.groups()
+            if in_code_block or skip_section or not stripped:
+                lines.append(line)
+                continue
 
-            annotated_content = self._annotate_sentence_text(content, sources)
-            lines.append(f"{prefix}{annotated_content}" if prefix else annotated_content)
+            lines.append(self._append_source_urls_to_line(line, source_urls))
 
         return "\n".join(lines).strip()
 
-    def _annotate_sentence_text(self, text: str, sources: List[Dict]) -> str:
-        chunks = re.split(r"(?<=[.!?])(\s+)", text)
-        if len(chunks) == 1:
-            label = self._source_label_for_sentence(text, sources)
-            return f"[{label}] {text.strip()}" if text.strip() else text
+    def _append_source_urls_to_line(self, line: str, source_urls: Dict[int, str]) -> str:
+        if not line.strip() or "http://" in line or "https://" in line or re.search(r"\bSource(?:s)?:", line, re.I):
+            return line
 
-        annotated = []
-        for index in range(0, len(chunks), 2):
-            sentence = chunks[index]
-            spacing = chunks[index + 1] if index + 1 < len(chunks) else ""
-            if sentence.strip():
-                label = self._source_label_for_sentence(sentence, sources)
-                annotated.append(f"[{label}] {sentence.strip()}{spacing}")
-            else:
-                annotated.append(sentence + spacing)
-        return "".join(annotated).rstrip()
-
-    def _source_label_for_sentence(self, sentence: str, sources: List[Dict]) -> str:
-        source_indexes = self._source_indexes_from_citations(sentence, sources)
-        if source_indexes:
-            return ", ".join(f"Content {index}" for index in source_indexes[:3])
-
-        sentence_tokens = self._meaningful_tokens(sentence)
-        if not sentence_tokens:
-            return "Synthesis"
-
-        best_source = None
-        best_score = 0
-        for source in sources:
-            score = len(sentence_tokens.intersection(source["tokens"]))
-            if score > best_score:
-                best_source = source
-                best_score = score
-
-        if best_source and best_score > 0:
-            return best_source["label"]
-        return "Synthesis"
-
-    def _source_indexes_from_citations(self, sentence: str, sources: List[Dict]) -> List[int]:
-        valid_indexes = {source["index"] for source in sources}
-        indexes = []
-        for match in re.findall(r"\[(\d+)\]", sentence):
+        cited_indexes = []
+        for match in re.findall(r"\[(\d+)\]", line):
             index = int(match)
-            if index in valid_indexes and index not in indexes:
-                indexes.append(index)
+            if index in source_urls and index not in cited_indexes:
+                cited_indexes.append(index)
 
-        for source in sources:
-            if source["url"] and source["url"] in sentence and source["index"] not in indexes:
-                indexes.append(source["index"])
+        if not cited_indexes:
+            return line
 
-        return indexes
+        urls = [source_urls[index] for index in cited_indexes]
+        source_text = "Source URL" if len(urls) == 1 else "Source URLs"
+        suffix = f" {source_text}: {' | '.join(urls)}"
 
-    def _meaningful_tokens(self, text: str) -> set:
-        stop_words = {
-            "about", "after", "also", "and", "are", "because", "been", "but",
-            "can", "could", "does", "for", "from", "has", "have", "into",
-            "its", "may", "more", "not", "only", "or", "such", "than", "that",
-            "the", "their", "these", "this", "through", "to", "was", "were",
-            "which", "with", "within", "without", "would", "you", "your",
-        }
-        return {
-            token
-            for token in re.findall(r"[a-zA-Z0-9][a-zA-Z0-9.-]{2,}", str(text or "").lower())
-            if token not in stop_words
-        }
+        if line.lstrip().startswith("|") and line.rstrip().endswith("|"):
+            return re.sub(r"\s*\|$", f"{suffix} |", line)
 
-    def _render_content_source_map(self, sources: List[Dict]) -> str:
-        lines = ["### Content Source Map"]
-        for source in sources[:10]:
-            lines.append(f"- [{source['label']}] [{source['title']}]({source['url']})")
-        return "\n".join(lines)
-
-    def _render_external_sources(self, results: List[Dict], sources: List[Dict]) -> str:
-        primary_urls = {source["url"] for source in sources}
-        external_urls = []
-        for result in results or []:
-            candidates = []
-            candidates.extend(result.get("reference_urls") or [])
-            document = result.get("document") or {}
-            if document.get("source_url"):
-                candidates.append(document["source_url"])
-            candidates.extend(document.get("reference_urls") or [])
-
-            for url in candidates:
-                if url and url not in primary_urls and url not in external_urls:
-                    external_urls.append(url)
-
-        if not external_urls:
-            return ""
-
-        lines = ["### External Sources"]
-        for index, url in enumerate(external_urls[:20], 1):
-            lines.append(f"{index}. {url}")
-        return "\n".join(lines)
+        return f"{line}{suffix}"
 
     def build_source_traceability_section(self, results: List[Dict], source_traceability: Dict = None) -> str:
         """Render source-level traceability without changing extraction/ranking behavior."""
@@ -426,6 +316,7 @@ class LightweightAnalyzer:
         lines = ["## Source Traceability"]
 
         verified_sources = traceability.get("top_verified_sources") or []
+        additional_sources = traceability.get("additional_sources") or []
         lines.append("\n### Top Verified Sources")
         if verified_sources:
             for i, source in enumerate(verified_sources[:10], 1):
@@ -436,16 +327,12 @@ class LightweightAnalyzer:
                 lines.append(f"{i}. [{title}]({url}) - trust score: {trust_text}")
         else:
             lines.append("No source met the current verified-source indicator check.")
-
-        additional_sources = traceability.get("additional_sources") or []
-        if additional_sources:
-            lines.append("\n### Additional Sources Used")
-            for i, source in enumerate(additional_sources[:10], 1):
-                title = self._clean_text(source.get("title") or source.get("url") or f"Additional source {i}")
-                url = source.get("url") or ""
-                trust = source.get("trust_score")
-                trust_text = f"{float(trust) * 100:.0f}%" if isinstance(trust, (int, float)) else "unknown"
-                lines.append(f"{i}. [{title}]({url}) - trust score: {trust_text}")
+            if additional_sources:
+                lines.append("\n### Source URLs")
+                for i, source in enumerate(additional_sources[:10], 1):
+                    title = self._clean_text(source.get("title") or source.get("url") or f"Source {i}")
+                    url = source.get("url") or ""
+                    lines.append(f"{i}. [{title}]({url})")
 
         crawled_sources = traceability.get("crawled_source_urls") or []
         if crawled_sources:
@@ -467,15 +354,6 @@ class LightweightAnalyzer:
                     lines.append(f"{i}. [{title}]({url}) from {source_url}")
                 else:
                     lines.append(f"{i}. [{title}]({url})")
-
-        evidence_lines = traceability.get("extracted_evidence") or []
-        if evidence_lines:
-            lines.append("\n### Extracted Evidence Lines")
-            for i, evidence in enumerate(evidence_lines[:20], 1):
-                text = self._clean_text(evidence.get("text") or "")
-                url = evidence.get("source_url") or ""
-                source_index = evidence.get("source_index")
-                lines.append(f"{i}. [Source {source_index}] {text} Source: {url}")
 
         return "\n".join(lines)
 
@@ -531,10 +409,65 @@ class LightweightAnalyzer:
                         "type": "exact_evidence_match",
                         "text": text,
                     })
+            traceability["extracted_evidence"].extend(
+                self._structured_data_evidence(
+                    result.get("extracted_data"),
+                    index,
+                    url,
+                    result.get("title"),
+                )
+            )
 
         traceability["top_verified_sources"].sort(key=lambda item: item.get("trust_score") or 0, reverse=True)
         traceability["additional_sources"].sort(key=lambda item: item.get("trust_score") or 0, reverse=True)
         return traceability
+
+    def _structured_data_evidence(self, extracted_data, source_index: int, source_url: str, source_title: str = None) -> List[Dict]:
+        if not extracted_data:
+            return []
+        if hasattr(extracted_data, "__dataclass_fields__"):
+            extracted_data = asdict(extracted_data)
+        if not isinstance(extracted_data, dict):
+            return []
+
+        evidence = []
+        for fact in extracted_data.get("key_facts") or []:
+            if fact:
+                evidence.append({
+                    "source_index": source_index,
+                    "source_url": source_url,
+                    "source_title": source_title,
+                    "type": "key_fact",
+                    "text": str(fact),
+                })
+
+        for number in extracted_data.get("numbers") or []:
+            if not isinstance(number, dict):
+                continue
+            value = number.get("value")
+            context = number.get("context")
+            text = f"{value}: {context}" if context else str(value or "")
+            if text.strip():
+                evidence.append({
+                    "source_index": source_index,
+                    "source_url": source_url,
+                    "source_title": source_title,
+                    "type": "number",
+                    "text": text,
+                })
+
+        for field_name in ("dates", "locations", "entities"):
+            for value in extracted_data.get(field_name) or []:
+                if value:
+                    evidence.append({
+                        "source_index": source_index,
+                        "source_url": source_url,
+                        "source_title": source_title,
+                        "type": field_name[:-1],
+                        "text": str(value),
+                    })
+
+        return evidence
 
     def _clean_text(self, text: str) -> str:
         return re.sub(r"\s+", " ", str(text or "")).strip()
@@ -595,16 +528,43 @@ class LightweightAnalyzer:
             return re.sub(r"\s+", " ", location).strip(" ,.-") or "the requested location"
         return "the requested location"
 
+    def _trust_value(self, result: Dict) -> float:
+        trust = result.get("trust_score", result.get("source_trust", 0.5))
+        return trust if isinstance(trust, (int, float)) else 0.5
+
+    def _rank_context_results(self, results: List[Dict], limit: int = 12) -> List:
+        """Select sources whose content should be visible to the answer prompt."""
+        def score(item):
+            index, result = item
+            source_type = result.get("source") or "web"
+            has_content = bool(result.get("content") or result.get("snippet"))
+            return (
+                result.get("verification_status") == "verified_indicator",
+                self._trust_value(result),
+                source_type in {"deep-crawl", "document-extraction"},
+                has_content,
+                -index,
+            )
+
+        return sorted(enumerate(results or [], 1), key=score, reverse=True)[:limit]
+
     def _build_accuracy_prompt(self, query: str, results: List[Dict], validation: Dict, intent: str = None) -> str:
         source_context = []
+        source_priority_context = []
         exact_row_context = []
         exact_evidence_context = []
-        for i, r in enumerate(results[:10], 1):
+        prioritized_sources = self._rank_context_results(results)
+        for i, r in prioritized_sources:
+            trust_score = self._trust_value(r)
+            source_priority_context.append(
+                f"[{i}] {r.get('title')}\nURL: {r.get('url')}\nTrust Score: {trust_score*100:.0f}%\nVerification Status: {r.get('verification_status', 'unverified')}\nSource Type: {r.get('source') or 'web'}"
+            )
+        for i, r in prioritized_sources:
             content = r.get('content') or r.get('snippet') or "No content available."
             source_type = r.get('source') or "web"
             document = r.get('document') or {}
             doc_line = f"\nDocument: {document.get('filename')} from {document.get('source_url')}" if document else ""
-            trust_score = r.get('trust_score', r.get('source_trust', 0.5)) or 0.5
+            trust_score = self._trust_value(r)
             source_context.append(f"[{i}] {r.get('title')}\nSource Type: {source_type}{doc_line}\nURL: {r.get('url')}\nTrust Score: {trust_score*100:.0f}%\nContent: {content[:5000]}")
             for row in r.get('exact_ready_reckoner_rows', []) or []:
                 exact_row_context.append(f"[{i}] {row.get('row_text')} | Exact Source URL: {r.get('url')}")
@@ -630,13 +590,20 @@ CRITICAL INSTRUCTIONS:
 - If sources are listing-search pages rather than individual project pages, summarize what each source indicates and say individual availability should be verified on the linked page.
 - Do not invent prices, unit counts, builders, or amenities not present in the source context.
 - Every extracted statement, row, listing detail, and data point must include its exact source URL in the same row or bullet.
-- Treat SEARCH RESULTS CONTEXT entry [1] as Content 1, [2] as Content 2, and so on. Start every factual sentence with [Content N] or [Content N, Content M].
+- If a complete paragraph is extracted from one source, mention that exact source URL at the end of that paragraph.
+- Do not reduce or shorten data extraction to make room for URLs. Keep the same detailed extraction depth and add source URLs beside the extracted data.
+- Extract all relevant details available in the source context: names, locations, rates, dates, amounts, official bodies, status, conditions, exceptions, missing fields, and caveats.
+- Do not produce short sections. When source context contains enough material, use detailed paragraphs plus multiple bullets or table rows, not one-line summaries.
+- Choose evidence from VERIFIED SOURCE PRIORITY in order: first use the highest-trust verified source; if it does not contain relevant data, move to the next source in that priority list.
 
 LOCATION FOCUS:
 {location}
 
 EXACT EVIDENCE MATCHES:
 {chr(10).join(exact_evidence_context) if exact_evidence_context else "No exact constraint-level evidence was extracted."}
+
+VERIFIED SOURCE PRIORITY (highest trust first; use this sequence when choosing evidence):
+{chr(10).join(source_priority_context) if source_priority_context else "No source priority metadata available."}
 
 SEARCH RESULTS CONTEXT:
 {"-"*20}
@@ -645,7 +612,7 @@ SEARCH RESULTS CONTEXT:
 
 FORMAT:
 ## Executive Summary
-Briefly explain what matching existing sea/water-view real estate was found.
+Explain what matching existing sea/water-view real estate was found with source-backed specifics.
 
 ## Matching Existing Projects / Listings
 Use a table with columns: Name / Source Title, Area, Type, View Match, Details Found, Source.
@@ -674,11 +641,18 @@ Answer:"""
 4. **ALWAYS** prioritize official registration, developer disclosures, and sources with direct evidence
 5. **ALWAYS** include for each project: name, builder, location, status, possession date
 6. **ALWAYS** include the exact source URL beside every extracted project detail or table row
-7. Treat source [1] as Content 1, [2] as Content 2, and so on. Start every factual sentence with [Content N] or [Content N, Content M].
+7. **ALWAYS** choose evidence from the verified source priority list in order, using the next source only when the higher-trust source does not contain the relevant data
+8. **ALWAYS** mention the exact source URL at the end of a paragraph when the full paragraph comes from one source
+9. **NEVER** shorten data extraction because source URLs are required; preserve detailed extraction and append URLs beside the relevant extracted line/data point
+10. **ALWAYS** extract every relevant available field from the source context instead of giving only a short summary
+11. **ALWAYS** use detailed rows/bullets when source context has enough material; do not collapse project extraction to only highlights
 
 ## User Query: {query}
 
 ## Available Sources (Real Estate Only):
+Verified source priority, highest trust first:
+{chr(10).join(source_priority_context) if source_priority_context else "No source priority metadata available."}
+
 {sources_str}
 
 ## FORMAT YOUR ANSWER AS:
@@ -713,10 +687,17 @@ CRITICAL INSTRUCTIONS:
 - Prefer official registration records, developer pages, filings, PDFs, or data-rich listings when present
 - For each project, include: name, builder, possession date, total units, current status
 - Include the exact source URL beside every extracted project detail or table row
-- Treat SEARCH RESULTS CONTEXT entry [1] as Content 1, [2] as Content 2, and so on. Start every factual sentence with [Content N] or [Content N, Content M].
+- If a complete paragraph is extracted from one source, mention that exact source URL at the end of that paragraph.
+- Do not reduce or shorten data extraction to make room for URLs. Keep the same detailed extraction depth and add source URLs beside the extracted data.
+- Extract all relevant details available in the source context: project names, builders, locations, possession dates, prices, units, registration numbers, official status, caveats, and missing fields.
+- Do not produce short sections. When source context contains enough material, use detailed paragraphs plus multiple bullets or table rows, not one-line summaries.
+- Choose evidence from VERIFIED SOURCE PRIORITY in order: first use the highest-trust verified source; if it does not contain relevant project data, move to the next source in that priority list.
 
 CROSS-SOURCE VALIDATION DATA:
 {validated_str or "No cross-source consensus found."}
+
+VERIFIED SOURCE PRIORITY (highest trust first; use this sequence when choosing evidence):
+{chr(10).join(source_priority_context) if source_priority_context else "No source priority metadata available."}
 
 SEARCH RESULTS CONTEXT:
 {"-"*20}
@@ -743,6 +724,9 @@ EXACT EVIDENCE MATCHES:
 CROSS-SOURCE VALIDATION DATA:
 {validated_str or "No cross-source consensus found for specific numbers/facts."}
 
+VERIFIED SOURCE PRIORITY (highest trust first; use this sequence when choosing evidence):
+{chr(10).join(source_priority_context) if source_priority_context else "No source priority metadata available."}
+
 SEARCH RESULTS CONTEXT:
 {"-"*20}
 {sources_str}
@@ -755,7 +739,11 @@ INSTRUCTIONS:
 3. If sources do not contain the requested specific constraint, say that clearly instead of giving a generic answer.
 4. Provide an EXTREMELY DETAILED and COMPREHENSIVE answer (aim for 90% extraction of all relevant facts).
 4a. For legal/regulatory applicability questions, extract the regulation's scope, applicable jurisdictions, non-applicable/excluded jurisdictions, exempted authorities, special planning areas, exceptions, and source wording that supports each item. Distinguish directly stated exclusions from inferred exclusions.
-4b. Treat SEARCH RESULTS CONTEXT entry [1] as Content 1, [2] as Content 2, and so on. Start EVERY factual sentence with [Content N] or [Content N, Content M]. Use [Synthesis] only for reasoning that combines sources and is not directly copied from one source.
+4b. Do not reduce, compress, or shorten data extraction because source URLs are required. Keep the answer detailed, relevant, exact, and accurate, then append the exact URL beside each extracted line/data point.
+4c. Extract all available relevant facts from SEARCH RESULTS CONTEXT, including rates, dates, amounts, departments, official bodies, applicability, exceptions, missing fields, caveats, and conflicts. Do not stop after one or two bullets when more relevant source-backed details are present.
+4d. Minimum detail requirement: if the source context has enough relevant material, provide at least 10-15 substantive extracted bullets/table rows across the findings and context sections. Each bullet/row must include its citation and exact source URL.
+4e. For rate/regulatory/property questions, include separate detailed coverage for direct answer, exact rate/value, year/date applicability, issuing authority, calculation/use case, historical/comparison context, update frequency, applicability scope, exceptions/missing data, conflicts, and verification caveats when present in sources.
+4f. Avoid generic filler. Prefer exact extracted wording, numbers, years, departments, rates, dates, and source-backed conditions over broad summaries.
 5. Structure your response with high-density information:
    - ## 📝 Executive Summary
    - ## 🔍 Exhaustive Findings (Extract EVERY specific number, fee, date, and legal rule found)
@@ -763,6 +751,8 @@ INSTRUCTIONS:
    - ## ⚠️ Penalties & Enforcement (If applicable, extract specific amounts and durations)
 6. Use internal citations [1], [2], etc., for EVERY factual claim.
 6a. Also include the exact source URL beside every extracted statement, line, row, or data point.
+6b. Choose evidence from VERIFIED SOURCE PRIORITY in order: first use the highest-trust verified source; if it does not contain relevant data, move to the next source in that priority list.
+6c. If a complete paragraph is extracted from one source, mention that exact source URL at the end of that paragraph.
 7. DO NOT SUMMARIZE. If a source provides a list of 5 changes, list all 5 with their exact values.
 8. If sources conflict, explicitly mention the contradiction.
 9. Use tables to present numerical data or comparisons.
@@ -776,7 +766,7 @@ Answer:"""
             payload = {
                 "model": config.LLM_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": config.MAX_TOKENS * 2,
+                "max_tokens": self._answer_max_tokens(),
                 "temperature": 0.2,
             }
             if debug_llm_payloads:
@@ -801,7 +791,7 @@ Answer:"""
             payload = {
                 "model": config.LLM_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": config.MAX_TOKENS * 2,
+                "max_tokens": self._answer_max_tokens(),
                 "temperature": 0.2,
                 "stream": True,
             }
@@ -830,6 +820,10 @@ Answer:"""
             err = f"Error in stream: {str(e)}"
             stream_callback(err)
             return err
+
+    def _answer_max_tokens(self) -> int:
+        """Use a larger answer budget so source URLs do not force short extraction."""
+        return max(config.MAX_TOKENS * 4, 3000)
 
     def _get_confidence_level(self, score: float) -> str:
         if score >= 80:
