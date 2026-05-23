@@ -48,6 +48,11 @@ class TransactionDomainAgent:
         try:
             yield self._event("stage", f"{self.display_name} · Stage 1: Extracting intent and entities...")
             intent = self.intent_extractor.extract(question)
+            print(f"\n{'='*80}")
+            print(f"EXTRACTED INTENT ({self.display_name}):")
+            print(f"{'='*80}")
+            print(json.dumps(intent, indent=2))
+            print(f"{'='*80}\n", flush=True)
             if self.intent_extractor.last_usage is not None:
                 yield self._event(
                     "token_usage_raw",

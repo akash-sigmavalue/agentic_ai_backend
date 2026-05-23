@@ -1,0 +1,87 @@
+{
+  "analysis_type": "trend",
+  "metrics": [
+    {
+      "name": "total_sales_value",
+      "aggregation": "SUM",
+      "column": "agreement_price",
+      "derived_expression": "SUM(agreement_price)",
+      "alias": "total_sales_value"
+    },
+    {
+      "name": "units_sold",
+      "aggregation": "COUNT",
+      "column": "*",
+      "derived_expression": "COUNT(*)",
+      "alias": "units_sold"
+    },
+    {
+      "name": "rate_per_sq_ft",
+      "aggregation": "DERIVED",
+      "column": "agreement_price / net_carpet_area_sq_m / 10.764",
+      "derived_expression": "ROUND(SUM(agreement_price)::numeric / NULLIF(SUM(net_carpet_area_sq_m), 0) / 10.764, 2)",
+      "alias": "rate_per_sq_ft"
+    }
+  ],
+  "entities": {
+    "locations": [
+      {
+        "value": "Baner",
+        "semantic_level": "locality"
+      },
+      {
+        "value": "Balewadi",
+        "semantic_level": "locality"
+      }
+    ],
+    "space_filters": {
+      "unit_number": null,
+      "tower_name": null,
+      "plot_number": null,
+      "project_name": null,
+      "location_name": null,
+      "micro_market": null,
+      "city_name": null,
+      "state_name": null,
+      "country_name": null
+    },
+    "category_filters": {
+      "transaction_category": "sale",
+      "property_type": null,
+      "unit_configuration": null,
+      "project_type": "residential",
+      "sale_type": null,
+      "furnishing_status": null,
+      "condition_status": null,
+      "facing_direction": null,
+      "view_type": null,
+      "bank_type": null
+    },
+    "property_types": [],
+    "projects": [],
+    "developers": [],
+    "limit": null
+  },
+  "filters": {
+    "transaction_category": "sale",
+    "year": 2021,
+    "quarter": null,
+    "extra": []
+  },
+  "group_by": [
+    "year",
+    "location_name"
+  ],
+  "order_by": [
+    {
+      "column": "total_sales_value",
+      "direction": "DESC"
+    }
+  ],
+  "time_series": true,
+  "route": "internal_db",
+  "needs_clarification": false,
+  "clarification_reason": "",
+  "clarification_questions": [],
+  "raw_query": "Show residential sales density in Baner and Balewadi from 2021 to 2024."
+}

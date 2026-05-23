@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import json
 import math
 import os
@@ -35,6 +36,9 @@ DEFAULT_EXCEL_PATH = Path(__file__).resolve().parents[3] / "database" / "transac
 NOMINATIM_MIN_INTERVAL_S = 1.05
 _nominatim_lock = threading.Lock()
 _nominatim_last_call_ts = 0.0
+_OVERTURE_CACHE_MAX_ENTRIES = 48
+_overture_cache: dict[str, dict[str, Any]] = {}
+_overture_cache_order: list[str] = []
 
 
 def init_cache_db() -> None:
@@ -492,7 +496,85 @@ def annotate_custom_buildings_with_snapping(
     return source_counts["exact_match"] + source_counts["snapped"], source_counts, features
 
 
-def fetch_overture_buildings(lat: float, lng: float, radius_m: int = 450) -> dict[str, Any]:
+def _overture_cache_key(lat: float, lng: float, radius_m: int, max_buildings: int | None) -> str:
+    return f"{round(lat, 5)}:{round(lng, 5)}:{int(radius_m)}:{max_buildings or 'all'}"
+
+
+def _get_cached_overture(key: str) -> dict[str, Any] | None:
+    cached = _overture_cache.get(key)
+    return copy.deepcopy(cached) if cached else None
+
+
+def _set_cached_overture(key: str, geojson: dict[str, Any]) -> None:
+    _overture_cache[key] = copy.deepcopy(geojson)
+    if key in _overture_cache_order:
+        _overture_cache_order.remove(key)
+    _overture_cache_order.append(key)
+    while len(_overture_cache_order) > _OVERTURE_CACHE_MAX_ENTRIES:
+        oldest = _overture_cache_order.pop(0)
+        _overture_cache.pop(oldest, None)
+
+
+def _feature_center(feature: dict[str, Any]) -> tuple[float, float] | None:
+    geometry = feature.get("geometry")
+    if not geometry:
+        return None
+    try:
+        centroid = shape(geometry).centroid
+        return centroid.y, centroid.x
+    except Exception:
+        return None
+
+
+def _feature_identity(feature: dict[str, Any]) -> str:
+    props = feature.get("properties") or {}
+    for key in ("id", "feature_id", "source_id"):
+        value = props.get(key) or feature.get(key)
+        if value:
+            return str(value)
+    geometry = feature.get("geometry") or {}
+    return json.dumps(geometry, sort_keys=True)[:240]
+
+
+def _filter_and_rank_buildings(
+    features: list[dict[str, Any]],
+    focus_points: list[tuple[float, float]],
+    radius_m: int,
+    max_buildings: int | None,
+) -> list[dict[str, Any]]:
+    ranked: list[tuple[float, dict[str, Any]]] = []
+    seen: set[str] = set()
+    for feature in features:
+        center = _feature_center(feature)
+        if not center:
+            continue
+        distance = min(haversine_distance(center[0], center[1], lat, lng) for lat, lng in focus_points)
+        if distance > radius_m:
+            continue
+        identity = _feature_identity(feature)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        ranked.append((distance, feature))
+    ranked.sort(key=lambda item: item[0])
+    if max_buildings and max_buildings > 0:
+        ranked = ranked[:max_buildings]
+    return [feature for _, feature in ranked]
+
+
+def fetch_overture_buildings(
+    lat: float,
+    lng: float,
+    radius_m: int = 450,
+    *,
+    max_buildings: int | None = None,
+    true_radius_filter: bool = False,
+) -> dict[str, Any]:
+    cache_key = _overture_cache_key(lat, lng, radius_m, max_buildings if true_radius_filter else None)
+    cached = _get_cached_overture(cache_key)
+    if cached:
+        return cached
+
     west, south, east, north = radius_to_bbox(lat, lng, radius_m)
     overture_exe = shutil.which("overturemaps") or shutil.which("overturemaps.exe")
     if not overture_exe:
@@ -537,7 +619,41 @@ def fetch_overture_buildings(lat: float, lng: float, radius_m: int = 450) -> dic
         props["max_rate"] = None
         feature["properties"] = props
         features.append(feature)
-    return {"type": "FeatureCollection", "features": features}
+    if true_radius_filter or max_buildings:
+        features = _filter_and_rank_buildings(features, [(lat, lng)], radius_m, max_buildings)
+    result_geojson = {"type": "FeatureCollection", "features": features}
+    _set_cached_overture(cache_key, result_geojson)
+    return copy.deepcopy(result_geojson)
+
+
+def fetch_overture_buildings_for_focus_points(
+    focus_points: list[tuple[float, float]],
+    radius_m: int = 350,
+    *,
+    max_buildings_per_location: int | None = 300,
+    max_total_buildings: int | None = 1000,
+) -> dict[str, Any]:
+    merged: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for lat, lng in focus_points:
+        geojson = fetch_overture_buildings(
+            lat,
+            lng,
+            radius_m,
+            max_buildings=max_buildings_per_location,
+            true_radius_filter=True,
+        )
+        for feature in geojson.get("features", []):
+            identity = _feature_identity(feature)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            merged.append(feature)
+
+    ranked = _filter_and_rank_buildings(merged, focus_points, radius_m, None)
+    if max_total_buildings and max_total_buildings > 0:
+        ranked = ranked[:max_total_buildings]
+    return {"type": "FeatureCollection", "features": ranked}
 
 
 def _run_correction(buildings_to_correct: list[dict[str, Any]], city: str, debug_log: list[str]) -> int:
@@ -560,7 +676,13 @@ def build_3d_map(request: ThreeDMapRequest) -> ThreeDMapResponse:
 
     lat, lng, formatted_address = geocode_place(request.place_name, request.city_for_api)
     try:
-        geojson = fetch_overture_buildings(lat, lng, request.radius_m)
+        geojson = fetch_overture_buildings(
+            lat,
+            lng,
+            request.radius_m,
+            max_buildings=request.max_buildings if request.fast_mode else None,
+            true_radius_filter=request.fast_mode,
+        )
     except Exception as exc:
         # Don't fail the whole endpoint if Overture is unavailable.
         # The frontend can still render Excel markers and will show the warning.

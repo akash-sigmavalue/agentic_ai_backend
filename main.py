@@ -27,6 +27,9 @@ from agents.data_retrieval.pipeline import UniversalRealEstateAgent
 from api.routes.connector import connectors, debug, gmail_webhook, oauth
 from api.routes.geospatial import map_overlays, maps
 from api.routes.ui_creation import generation
+from api.routes.visualization_agent import module1 as viz_module1
+from api.routes.visualization_agent import module2 as viz_module2
+from api.routes.visualization_agent import module31 as viz_module31
 from api.routes.user_input import user_input
 from api.routes.valuation.valuation import router as valuation_router
 from api.routes.web_search import chat as web_search_chat
@@ -97,6 +100,9 @@ def _include_routes(app: FastAPI) -> None:
     app.include_router(web_search_chat.router, prefix="/api", tags=["web-search"])
     app.include_router(web_search_health.router, prefix="/api")
     app.include_router(web_search_web.router, prefix="/web-search")
+    app.include_router(viz_module1.router)
+    app.include_router(viz_module2.router)
+    app.include_router(viz_module31.router)
     app.include_router(_build_workflow_router())
 
 

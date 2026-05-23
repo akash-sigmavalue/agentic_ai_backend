@@ -87,6 +87,15 @@ class IntentExtractor:
             [loc.get("value") for loc in locations],
             metrics,
         )
+        
+        # Print intent to terminal for debugging
+        import json
+        print(f"\n{'='*80}")
+        print(f"[PROJECT] EXTRACTED INTENT:")
+        print(f"{'='*80}")
+        print(json.dumps(intent, indent=2))
+        print(f"{'='*80}\n", flush=True)
+        
         return intent
 
 

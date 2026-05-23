@@ -104,10 +104,14 @@ def load_timeseries_excel(
                     if pd.isna(agreement_price) or pd.isna(carpet_area) or float(carpet_area) <= 0:
                         continue
                     rate = float(agreement_price) / float(carpet_area)
+                    if rate <= 0:
+                        continue
                 else:
                     if pd.isna(row["rate"]):
                         continue
                     rate = float(row["rate"])
+                    if rate <= 0:
+                        continue
 
                 month_label = pd.Timestamp(row[date_col]).to_period("M").strftime("%Y-%m")
 
@@ -231,7 +235,13 @@ def build_3d_map_timelapse(request: ThreeDMapTimelapseRequest) -> ThreeDMapTimel
 
     lat, lng, formatted_address = geocode_place(request.place_name, request.city_for_api)
     try:
-        geojson = fetch_overture_buildings(lat, lng, request.radius_m)
+        geojson = fetch_overture_buildings(
+            lat,
+            lng,
+            request.radius_m,
+            max_buildings=request.max_buildings if request.fast_mode else None,
+            true_radius_filter=request.fast_mode,
+        )
     except Exception as exc:
         warnings_list.append(f"Overture buildings unavailable: {exc}")
         geojson = {"type": "FeatureCollection", "features": []}

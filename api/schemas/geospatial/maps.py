@@ -3,6 +3,12 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class MapFocusPoint(BaseModel):
+    name: str | None = Field(default=None)
+    lat: float
+    lng: float
+
+
 class ThreeDMapRequest(BaseModel):
     place_name: str = Field(..., min_length=2, description="Location to geocode and inspect")
     radius_m: int = Field(default=450, ge=150, le=1000)
@@ -10,6 +16,8 @@ class ThreeDMapRequest(BaseModel):
     city_for_api: str | None = Field(default=None, description="Optional city hint for coordinate correction")
     dry_run: bool = Field(default=False, description="Estimate correction work without updating coordinates")
     include_debug_logs: bool = Field(default=False, description="Return verbose geocoding debug logs")
+    fast_mode: bool = Field(default=False, description="Use capped, nearest-first building loading")
+    max_buildings: int | None = Field(default=None, ge=50, le=3000)
 
 
 class MapLocation(BaseModel):
@@ -45,6 +53,8 @@ class ThreeDMapTimelapseRequest(BaseModel):
     city_for_api: str | None = Field(default=None, description="Optional city hint for coordinate correction / geocoding")
     dry_run: bool = Field(default=False, description="Estimate correction work without updating coordinates")
     include_debug_logs: bool = Field(default=False, description="Return verbose processing logs")
+    fast_mode: bool = Field(default=False, description="Use capped, nearest-first building loading")
+    max_buildings: int | None = Field(default=None, ge=50, le=3000)
 
 
 class ThreeDMapTimelapseSummary(BaseModel):
@@ -217,6 +227,10 @@ class HeatmapTimelapseRequest(BaseModel):
     place_name: str = Field(..., min_length=2, description="Location to geocode and inspect")
     radius_m: int = Field(default=450, ge=150, le=2000)
     city_for_api: str | None = Field(default=None, description="Optional city hint")
+    focus_points: list[MapFocusPoint] | None = Field(default=None, description="Optional multi-location 3D focus points")
+    fast_mode: bool = Field(default=False, description="Use capped, nearest-first building loading")
+    max_buildings_per_location: int | None = Field(default=None, ge=50, le=1500)
+    max_total_buildings: int | None = Field(default=None, ge=100, le=3000)
 
 
 class HeatmapHub(BaseModel):

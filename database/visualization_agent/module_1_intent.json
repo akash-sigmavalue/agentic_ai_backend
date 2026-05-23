@@ -1,0 +1,649 @@
+{
+  "module_number": 1,
+  "module_name": "Intent Finalization & Visualization Planning",
+  "module_purpose": "Convert the user query into a finalized visualization intent with map-first requirements, time-awareness, and downstream execution guidance for data preparation, plotting, and insight generation.",
+  "user_query": "Show residential sales density in Baner and Balewadi from 2021 to 2024.in 3d heatmap timelapse",
+  "business_objective": "Visualize how residential sales density changed across Baner and Balewadi over time from 2021 to 2024 using a time-aware map-based output.",
+  "structured_intent": {
+    "intent_type": "time_based_spatial_visualization",
+    "domain": "real_estate",
+    "primary_subject": "residential sales density",
+    "geographies": [
+      "Baner",
+      "Balewadi"
+    ],
+    "time_range": {
+      "start": 2021,
+      "end": 2024,
+      "time_granularity": "annual"
+    },
+    "visualization_request": {
+      "requested_visualization_type": "3d heatmap timelapse",
+      "inferred_map_type": "3d_heatmap",
+      "time_aware": true,
+      "timelapse_required": true
+    },
+    "analysis_focus": [
+      "density comparison",
+      "temporal change"
+    ],
+    "data_expectation": [
+      "sales transactions",
+      "property location or area mapping",
+      "year-wise aggregation"
+    ],
+    "output_expectation": "map_based_visualization"
+  },
+  "request_classification": {
+    "is_valid": true,
+    "confidence": "high",
+    "query_category": "time_based_map_visualization",
+    "spatial_query": true,
+    "temporal_query": true,
+    "comparison_query": true,
+    "simulation_query": false,
+    "what_if_query": false,
+    "needs_geo_enrichment": true,
+    "needs_time_series_processing": true
+  },
+  "execution_flags": {
+    "requires_data_restructuring": true,
+    "requires_geo": true,
+    "requires_map_plotting": true,
+    "requires_simulation": false,
+    "requires_what_if": false,
+    "requires_spatial": false,
+    "requires_insight": true
+  },
+  "active_requirement_blocks": [
+    "map_output_requirements"
+  ],
+  "map_output_requirements": {
+    "is_active": true,
+    "is_map_output_required": true,
+    "selected_map_types": [
+      "3d_heatmap"
+    ],
+    "primary_map_type": "3d_heatmap",
+    "base_map_metric": "residential_sales_density",
+    "geo_level": "micromarket",
+    "timelapse_required": true,
+    "timelapse_mode": "time_slider",
+    "time_field_required": true,
+    "time_granularity": "annual",
+    "needs_timelapse_layer": true,
+    "additional_parameters": {
+      "target_geographies": [
+        "Baner",
+        "Balewadi"
+      ],
+      "time_range": {
+        "start": 2021,
+        "end": 2024
+      },
+      "preferred_density_view": "3d_surface_density",
+      "aggregation_dimension": "year",
+      "comparison_mode": "side_by_side_time_aware_density",
+      "output_preference": "interactive_map_with_time_slider",
+      "visual_encoding": {
+        "height_dimension": "sales_density",
+        "color_dimension": "sales_density",
+        "time_dimension": "year"
+      },
+      "time_requirement_reason": "A multi-period time range or trend was detected, so the map must be time-aware with a time-slider/timelapse payload.",
+      "time_aware_map": true,
+      "timelapse_payload_required": true,
+      "timelapse_mode": "time_slider",
+      "timelapse_rule": "Keep the primary map type unchanged and add a time-slider/timelapse payload for multi-period time ranges."
+    },
+    "visualization_intent_provided": true,
+    "visualization_auto_selected": false,
+    "secondary_map_types": [],
+    "map_metric_aggregation": "auto",
+    "location_fields_required": [
+      "latitude",
+      "longitude"
+    ],
+    "optional_location_fields": [
+      "project_name",
+      "location_name",
+      "village",
+      "micromarket",
+      "city"
+    ],
+    "tooltip_fields": [],
+    "layer_requirements": {
+      "needs_2d_layer": false,
+      "needs_3d_layer": true,
+      "needs_heatmap_layer": true,
+      "needs_marker_layer": false,
+      "needs_boundary_layer": false,
+      "needs_timelapse_layer": true,
+      "needs_comparison_layer": false,
+      "needs_proximity_layer": false
+    }
+  },
+  "simulation_requirements": {
+    "is_active": false,
+    "scenario_variable": "",
+    "change_type": "",
+    "target_metric": "",
+    "additional_parameters": {}
+  },
+  "what_if_requirements": {
+    "is_active": false,
+    "base_case": "",
+    "changed_case": "",
+    "comparison_metric": "",
+    "additional_parameters": {}
+  },
+  "spatial_requirements": {
+    "is_active": false,
+    "analysis_type": [],
+    "spatial_input_dependency": "plotted_map_output",
+    "additional_parameters": {}
+  },
+  "insight_requirements": {
+    "is_active": true,
+    "required": true,
+    "insight_types": [
+      "temporal_trend_summary",
+      "area_wise_density_comparison",
+      "peak_year_identification"
+    ],
+    "additional_parameters": {
+      "focus_geographies": [
+        "Baner",
+        "Balewadi"
+      ],
+      "time_range": {
+        "start": 2021,
+        "end": 2024
+      }
+    }
+  },
+  "required_modules": [
+    "Data Restructuring & Filtering",
+    "Geo-Enrichment & Map Plotting",
+    "Insight Generation"
+  ],
+  "execution_plan": [
+    {
+      "step_id": 1,
+      "step_name": "Finalize and validate user intent",
+      "module": "Intent Finalization & Visualization Planning",
+      "step_purpose": "Confirm the business objective, metric, geography, filters, time requirement, map output requirement, and downstream workflow route.",
+      "action_type": "intent_validation",
+      "input_required": [
+        "user_query",
+        "structured_intent",
+        "request_classification",
+        "map_output_requirements"
+      ],
+      "expected_output": "validated_intent_json_with_requirement_blocks",
+      "depends_on": [],
+      "validation_checks": [
+        "business_objective is present or inferable",
+        "structured_intent is available",
+        "map_output_requirements.is_active is true",
+        "at least one selected_map_type is present",
+        "required_modules and execution_flags are consistent with active requirement blocks"
+      ],
+      "skip_condition": "Never skip. This is the first mandatory workflow step.",
+      "failure_handling": "If minimum intent cannot be inferred, set clarification_required=true and stop before data processing.",
+      "status": "planned"
+    },
+    {
+      "step_id": 2,
+      "step_name": "Receive retrieved data from Data Retrieval Agent",
+      "module": "Data Restructuring & Filtering",
+      "step_purpose": "Accept the dataset already retrieved by the Data Retrieval Agent and prepare it for compatibility checks.",
+      "action_type": "data_input",
+      "input_required": [
+        "retrieved_dataset",
+        "column_metadata",
+        "validated_intent_json"
+      ],
+      "expected_output": "raw_dataset_for_visualization_agent",
+      "depends_on": [
+        1
+      ],
+      "validation_checks": [
+        "retrieved_dataset is available",
+        "dataset has rows and columns",
+        "dataset is readable as tabular or structured records",
+        "column_metadata is available or can be inferred"
+      ],
+      "skip_condition": "Never skip when the user expects a data-backed visualization.",
+      "failure_handling": "Return data_missing status if the retrieved dataset is empty or unavailable.",
+      "status": "planned"
+    },
+    {
+      "step_id": 3,
+      "step_name": "Map retrieved columns to intent requirements",
+      "module": "Data Restructuring & Filtering",
+      "step_purpose": "Map source columns to the fields required by the finalized intent.",
+      "action_type": "schema_mapping",
+      "input_required": [
+        "raw_dataset_for_visualization_agent",
+        "structured_intent",
+        "map_output_requirements",
+        "intent_mapping"
+      ],
+      "expected_output": "mapped_field_config",
+      "depends_on": [
+        2
+      ],
+      "validation_checks": [
+        "metric/source measure field is mapped or derivable",
+        "location/geography field is mapped or derivable",
+        "time field is mapped when time_field_required is true",
+        "filter fields are mapped when filters are present",
+        "map tooltip candidate fields are identified where possible"
+      ],
+      "skip_condition": "Skip only if the retrieved dataset already follows the standard visualization schema.",
+      "failure_handling": "Use intent_mapping fallback candidates; if still unresolved, mark missing_field_requirements for the conversational clarification layer.",
+      "status": "planned"
+    },
+    {
+      "step_id": 4,
+      "step_name": "Filter dataset based on finalized intent",
+      "module": "Data Restructuring & Filtering",
+      "step_purpose": "Apply user-intent filters such as location, property segment, project, date range, price range, or category.",
+      "action_type": "filtering",
+      "input_required": [
+        "raw_dataset_for_visualization_agent",
+        "mapped_field_config",
+        "structured_intent.filters"
+      ],
+      "expected_output": "filtered_dataset",
+      "depends_on": [
+        3
+      ],
+      "validation_checks": [
+        "all filter fields exist or have valid fallback mappings",
+        "time filters are applied when time_field_required is true",
+        "filtered_dataset is not empty",
+        "excluded records are counted or logged for transparency"
+      ],
+      "skip_condition": "Skip only if the user query contains no filters and full retrieved data should be used.",
+      "failure_handling": "If filtering returns no records, return filter_no_result with filter summary and candidate fallback values.",
+      "status": "planned"
+    },
+    {
+      "step_id": 5,
+      "step_name": "Aggregate and restructure data for visualization",
+      "module": "Data Restructuring & Filtering",
+      "step_purpose": "Convert filtered data into an analysis-ready dataset at the required metric, geography, dimension, and time granularity.",
+      "action_type": "aggregation_restructuring",
+      "input_required": [
+        "filtered_dataset",
+        "mapped_field_config",
+        "structured_intent",
+        "map_output_requirements",
+        "intent_mapping"
+      ],
+      "expected_output": "analysis_ready_dataset",
+      "depends_on": [
+        4
+      ],
+      "validation_checks": [
+        "aggregation level matches geo_level",
+        "base_map_metric is computed or derivable",
+        "time buckets are created when time_field_required is true",
+        "timelapse frame key is created when timelapse_required is true",
+        "analysis_ready_dataset contains usable records for map plotting"
+      ],
+      "skip_condition": "Skip aggregation only if the selected map type requires raw row-level plotting.",
+      "failure_handling": "If metric aggregation fails, return aggregation_failed and include missing numeric/date fields.",
+      "status": "planned"
+    },
+    {
+      "step_id": 6,
+      "step_name": "Run simulation if required",
+      "module": "Simulation Depiction Layer",
+      "step_purpose": "Apply scenario assumptions and create a simulated dataset when simulation_requirements is active.",
+      "action_type": "simulation",
+      "input_required": [
+        "simulation_requirements"
+      ],
+      "expected_output": "simulation_not_required",
+      "depends_on": [
+        1
+      ],
+      "validation_checks": [
+        "simulation_requirements.is_active is false"
+      ],
+      "skip_condition": "Skip because simulation_requirements.is_active is false.",
+      "failure_handling": "If unsupported, return simulation_skipped_or_unsupported and continue with base analysis_ready_dataset.",
+      "status": "skipped"
+    },
+    {
+      "step_id": 7,
+      "step_name": "Run what-if comparison if required",
+      "module": "What-if Analysis Engine",
+      "step_purpose": "Compare the base dataset with a changed or simulated scenario when what_if_requirements is active.",
+      "action_type": "what_if_comparison",
+      "input_required": [
+        "what_if_requirements"
+      ],
+      "expected_output": "what_if_not_required",
+      "depends_on": [
+        1
+      ],
+      "validation_checks": [
+        "what_if_requirements.is_active is false"
+      ],
+      "skip_condition": "Skip because what_if_requirements.is_active is false.",
+      "failure_handling": "If comparison cannot be computed, return what_if_skipped_or_unsupported and continue with available outputs.",
+      "status": "skipped"
+    },
+    {
+      "step_id": 8,
+      "step_name": "Validate map output requirements against prepared data",
+      "module": "Geo-Enrichment & Map Plotting",
+      "step_purpose": "Confirm that the selected map type, metric, geo level, time/timelapse requirement, and layer requirements can be produced from the prepared data.",
+      "action_type": "map_requirement_validation",
+      "input_required": [
+        "analysis_ready_dataset",
+        "map_output_requirements",
+        "intent_mapping"
+      ],
+      "expected_output": "validated_map_requirements",
+      "depends_on": [
+        5
+      ],
+      "validation_checks": [
+        "primary_map_type is supported",
+        "base_map_metric exists in analysis or scenario output",
+        "geo_level is available or mappable",
+        "time field exists when time_field_required is true",
+        "timelapse frame field exists when timelapse_required is true",
+        "layer_requirements are internally consistent with selected_map_types"
+      ],
+      "skip_condition": "Never skip because map output is mandatory for this Visualization Agent.",
+      "failure_handling": "Fallback to the simplest valid map type, usually marker_map or 2d_heatmap.",
+      "status": "planned"
+    },
+    {
+      "step_id": 9,
+      "step_name": "Prepare geo-compatible plotting data",
+      "module": "Geo-Enrichment & Map Plotting",
+      "step_purpose": "Convert analysis/scenario output into map-compatible records with coordinates, geometry, metric values, tooltip fields, and optional time frames.",
+      "action_type": "geo_data_preparation",
+      "input_required": [
+        "validated_map_requirements",
+        "analysis_ready_dataset",
+        "mapped_field_config",
+        "intent_mapping"
+      ],
+      "expected_output": "map_compatible_dataset",
+      "depends_on": [
+        8
+      ],
+      "validation_checks": [
+        "latitude/longitude or boundary/centroid is available or mappable",
+        "each map feature has a metric value",
+        "tooltip fields are available or generated from mapped fields",
+        "time frame field is preserved for time-aware maps",
+        "records are grouped at the intended geo_level"
+      ],
+      "skip_condition": "Skip only if analysis_ready_dataset is already in the finalized frontend map contract.",
+      "failure_handling": "Use static location lookup or centroid fallback.",
+      "status": "planned"
+    },
+    {
+      "step_id": 10,
+      "step_name": "Generate plotted map output",
+      "module": "Geo-Enrichment & Map Plotting",
+      "step_purpose": "Generate the actual first-iteration plotted map output/configuration.",
+      "action_type": "map_generation",
+      "input_required": [
+        "map_compatible_dataset",
+        "selected_map_types",
+        "primary_map_type",
+        "base_map_metric",
+        "layer_requirements",
+        "timelapse_settings"
+      ],
+      "expected_output": "plotted_map_output",
+      "depends_on": [
+        9
+      ],
+      "validation_checks": [
+        "selected map types are supported: ['3d_heatmap']",
+        "primary map type is generated: 3d_heatmap",
+        "map layer data follows frontend contract",
+        "tooltip metadata is attached",
+        "time-slider/timelapse payload is attached"
+      ],
+      "skip_condition": "Never skip because a visual/map output is required for every user query.",
+      "failure_handling": "Fallback to marker_map with metric annotations if the selected map output cannot be generated.",
+      "status": "planned"
+    },
+    {
+      "step_id": 11,
+      "step_name": "Run spatial analysis if required",
+      "module": "Spatial Analysis",
+      "step_purpose": "Analyze geographic patterns from the plotted map output when spatial_requirements is active.",
+      "action_type": "spatial_analysis",
+      "input_required": [
+        "spatial_requirements"
+      ],
+      "expected_output": "spatial_analysis_not_required",
+      "depends_on": [
+        1
+      ],
+      "validation_checks": [
+        "spatial_requirements.is_active is false"
+      ],
+      "skip_condition": "Skip because spatial_requirements.is_active is false.",
+      "failure_handling": "If advanced context layers are unavailable, generate basic spatial interpretation from plotted map output.",
+      "status": "skipped"
+    },
+    {
+      "step_id": 12,
+      "step_name": "Generate final insight summary",
+      "module": "Insight Generation",
+      "step_purpose": "Generate the final user-facing response by combining the intent, prepared data, plotted map output, and any simulation/what-if/spatial outputs that were executed.",
+      "action_type": "insight_generation",
+      "input_required": [
+        "validated_intent_json",
+        "analysis_ready_dataset",
+        "plotted_map_output",
+        "insight_requirements",
+        "intent_mapping"
+      ],
+      "expected_output": "final_visualization_agent_response",
+      "depends_on": [
+        10
+      ],
+      "validation_checks": [
+        "final response is aligned with business_objective",
+        "insights are supported by computed outputs",
+        "map output is included or referenced",
+        "skipped modules are not treated as executed outputs",
+        "limitations/fallbacks are mentioned when relevant"
+      ],
+      "skip_condition": "Never skip because final user-facing response is required.",
+      "failure_handling": "Generate a limited response from available successful outputs and clearly state missing/failed workflow parts.",
+      "status": "planned"
+    }
+  ],
+  "validation_status": {
+    "is_valid": true,
+    "minimum_visualization_requirement_met": true,
+    "hybrid_schema_applied": true,
+    "fixed_outer_schema_keys": [
+      "module_number",
+      "module_name",
+      "module_purpose",
+      "user_query",
+      "business_objective",
+      "structured_intent",
+      "request_classification",
+      "execution_flags",
+      "active_requirement_blocks",
+      "map_output_requirements",
+      "simulation_requirements",
+      "what_if_requirements",
+      "spatial_requirements",
+      "insight_requirements",
+      "required_modules",
+      "execution_plan",
+      "validation_status",
+      "intent_mapping"
+    ],
+    "dynamic_inner_blocks_allowed": true,
+    "visualization_intent_provided": true,
+    "visualization_auto_selected": false,
+    "active_requirement_blocks": [
+      "map_output_requirements"
+    ],
+    "clarification_required": false,
+    "missing_fields": [],
+    "fallback_applied": false,
+    "fallback_reason": ""
+  },
+  "intent_mapping": {
+    "mapping_purpose": "Define how the query intent should be translated into downstream field usage for filtering, aggregation, geo-plotting, and insight generation without ambiguity.",
+    "core_field_mapping": {
+      "primary_subject": "sales_density_metric",
+      "geographies": "location_name_or_geo_boundary",
+      "time_range": "transaction_date_or_year",
+      "visualization_request": "map_type_and_timelapse_settings"
+    },
+    "dynamic_field_mapping": {
+      "target_geographies": {
+        "meaning": "List of requested locations to include in the visualization.",
+        "downstream_use": "Module 2 filters records to these geographies; Module 3 maps them to spatial units; Module 7 compares them in the summary."
+      },
+      "time_range": {
+        "meaning": "Start and end years defining the time window for the density analysis.",
+        "downstream_use": "Module 2 filters by date/year; Module 3 groups records by year; Module 7 summarizes year-wise trends."
+      },
+      "time_granularity": {
+        "meaning": "Temporal bucket size used for aggregation and timelapse frame generation.",
+        "downstream_use": "Module 2 and Module 3 use this to aggregate values annually and create frame sequence labels."
+      },
+      "timelapse_required": {
+        "meaning": "Indicates the visualization must animate across time.",
+        "downstream_use": "Module 3 must output frame-ready data and enable time-slider plotting."
+      },
+      "needs_timelapse_layer": {
+        "meaning": "Signals that the selected map type must include a layered time dimension.",
+        "downstream_use": "Module 3 should preserve per-period outputs rather than collapsing all years into a single static layer."
+      },
+      "preferred_density_view": {
+        "meaning": "Preferred rendering style for density visualization.",
+        "downstream_use": "Module 3 uses this to choose 3D surface-style density shaping rather than marker-only output."
+      },
+      "aggregation_dimension": {
+        "meaning": "The primary bucket used when computing density values.",
+        "downstream_use": "Module 2 groups by year and geography; Module 3 renders each aggregated bucket as a frame or layer."
+      },
+      "visual_encoding": {
+        "meaning": "Rules for encoding data dimensions into visual channels.",
+        "downstream_use": "Module 3 maps sales density to height and color, and year to frame progression."
+      },
+      "selected_map_types": {
+        "value": [
+          "3d_heatmap"
+        ],
+        "meaning": "Map visualization types selected for the query.",
+        "source": "User-specified visualization or backend fallback selection.",
+        "used_by_modules": [
+          "Geo-Enrichment & Map Plotting"
+        ]
+      },
+      "primary_map_type": {
+        "value": "3d_heatmap",
+        "meaning": "Primary map visualization that should drive the first plotted output.",
+        "source": "User visualization intent or inferred fallback logic.",
+        "used_by_modules": [
+          "Geo-Enrichment & Map Plotting",
+          "Insight Generation"
+        ]
+      },
+      "timelapse_requirements": {
+        "value": {
+          "timelapse_required": true,
+          "timelapse_mode": "time_slider",
+          "time_granularity": "annual",
+          "time_field_required": true
+        },
+        "meaning": "Time-aware map requirement used to build a time-slider or timelapse payload without changing the primary map type.",
+        "source": "Derived from user-provided time range or temporal comparison intent.",
+        "used_by_modules": [
+          "Data Restructuring & Filtering",
+          "Geo-Enrichment & Map Plotting",
+          "Insight Generation"
+        ]
+      }
+    },
+    "module_usage_mapping": {
+      "Data Restructuring & Filtering": [
+        "Use target_geographies to filter the dataset",
+        "Use time_range and time_granularity to filter and aggregate records",
+        "Use primary_subject to select the correct sales-density measure"
+      ],
+      "Geo-Enrichment & Map Plotting": [
+        "Use selected_map_types and primary_map_type to choose rendering path",
+        "Use geo_level to determine spatial resolution",
+        "Use timelapse_required and needs_timelapse_layer to enable frame-based plotting",
+        "Use visual_encoding to assign visual channels"
+      ],
+      "Simulation Depiction Layer": [
+        "Only activate if a future scenario or changed_case appears in the intent",
+        "Use base_map_metric and additional_parameters for overlay construction"
+      ],
+      "What-if Analysis Engine": [
+        "Only activate if a changed case is defined versus a base case",
+        "Use comparison_mode-like parameters if added later in extensions"
+      ],
+      "Spatial Analysis": [
+        "Use plotted_map_output as the mandatory spatial input dependency",
+        "Only perform if new spatial analysis flags are introduced"
+      ],
+      "Insight Generation": [
+        "Use the plotted map output as the primary source",
+        "Use time_range and geographies to summarize trends and differences",
+        "Use yearly aggregation outputs to identify peak and low periods"
+      ]
+    },
+    "field_dependency_mapping": {
+      "sales_density_metric": [
+        "sales transaction count",
+        "geographic normalization denominator if available"
+      ],
+      "transaction_date_or_year": [
+        "time_range",
+        "time_granularity",
+        "timelapse_required"
+      ],
+      "location_name_or_geo_boundary": [
+        "target_geographies",
+        "geo_level",
+        "geo-compatible plotting payload"
+      ],
+      "visualization_request": [
+        "selected_map_types",
+        "primary_map_type",
+        "timelapse_mode"
+      ]
+    },
+    "fallback_mapping": {
+      "if_density_not_available": "Use transaction count as a proxy density metric and label it clearly as count-based density proxy.",
+      "if_exact_boundary_missing": "Use centroid or micromarket boundary approximation for Baner and Balewadi.",
+      "if_year_field_missing": "Attempt to derive year from transaction date; if unavailable, mark timelapse as degraded and preserve static map output if possible.",
+      "if_3d_rendering_fails": "Fallback to 2d_heatmap or 2d_overlay while retaining time slider support.",
+      "if_timelapse_not_supported": "Return a static year-filtered map for the latest available year and flag degraded temporal fidelity."
+    },
+    "notes_for_downstream_modules": [
+      "Do not reinterpret the geography list as a single combined area; preserve both Baner and Balewadi as distinct comparison targets.",
+      "The query is explicitly time-bounded, so yearly buckets are preferred unless the source data only supports a coarser or finer consistent grain.",
+      "A 3D heatmap timelapse should remain the primary target; downgrade only if technical constraints force it.",
+      "Insight generation should emphasize both spatial difference and temporal evolution rather than only one dimension."
+    ]
+  }
+}
