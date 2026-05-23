@@ -428,6 +428,7 @@ def build_factoring_payload(
     currency      = factorial_data.get("currency", "INR")
     area_unit     = factorial_data.get("area_unit", "sqft")
     area_type     = factorial_data.get("area_type", "Built-up Area")
+    rate_basis    = factorial_data.get("rate_basis", "built_up")
     property_type = (
         subject.get("property_type")
         or (comparables[0].get("property_type") if comparables else None)
@@ -440,6 +441,7 @@ def build_factoring_payload(
         "currency":       currency,
         "area_unit":      area_unit,
         "area_type":      area_type,
+        "rate_basis":     rate_basis,
         "property_type":  property_type,
         "total_listings": factorial_data.get("total_valid", 0),
         "radii_used": {
@@ -1094,6 +1096,7 @@ def run_llm_factoring(
     result = llm_factorial_analysis(payload, model=model)
     result["_payload_summary"] = {
         "property_type": payload["property_type"],
+        "rate_basis":    payload.get("rate_basis"),
         "currency":      payload["currency"],
         "area_unit":     payload["area_unit"],
         "radii_used":    payload["radii_used"],

@@ -4,7 +4,8 @@ plot_rate_pipeline.py
 Post-pipeline step: enriches cleaned listings with Plot Area Rate data.
 
 Call `calculate_plot_rates(...)` AFTER `data_cleaning_pipeline(...)` returns,
-but ONLY when the subject property_type is "plot".
+but ONLY when downstream valuation needs a plot/land rate. This includes
+plot market valuation and villa cost approach valuation.
 
 Each cleaned listing gets four new fields:
   - plot_fsi_range              : {"low": float, "high": float, "best": float}
@@ -167,7 +168,8 @@ def calculate_plot_rates(
     country : str
         Country name (e.g. "India").
     property_type : str
-        Only runs when this equals "plot" (case-insensitive).
+        Subject property type. Call this only when the valuation rate basis is
+        plot/land; e.g. plot market valuation or villa cost approach.
     batch_size : int
         Number of listings per LLM call (default 8).
     on_progress : callable | None
@@ -196,14 +198,14 @@ def calculate_plot_rates(
         return pipeline_output
 
     if on_progress:
-        on_progress("plot_rate_start", f"Starting plot rate calculation for {len(cleaned)} listings")
+        on_progress("plot_rate_start", f"Starting plot/land rate calculation for {len(cleaned)} listings")
     print(f"🏗️  [Plot Rate] Starting for {len(cleaned)} cleaned listings …")
 
     # ── Split into processable vs. skippable ──────────────────────────────
     processable: List[Tuple[int, Dict]] = []   # (original index, listing)
     skipped_count = 0
 
-    subject_is_plot = property_type.strip().lower() in ("plot", "villa")
+    subject_needs_plot_land_rate = property_type.strip().lower() in ("plot", "villa")
 
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
@@ -218,7 +220,7 @@ def calculate_plot_rates(
 
         listing_is_plot = ptype in ["plot", "residential land", "land"]
 
-        if subject_is_plot:
+        if subject_needs_plot_land_rate:
             if listing_is_plot:
                 # Already a plot - use direct rate, skip LLM
                 _stamp_direct_plot_fields(cleaned[orig_idx])

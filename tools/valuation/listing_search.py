@@ -35,6 +35,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 from typing import Optional, List
 from openai import OpenAI
+from ddgs import DDGS
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -463,59 +464,26 @@ _SEARCH_HEADERS = {
 }
 
 
-def search_duckduckgo(query: str, num_results: int = 15) -> List[str]:
-    """Browser-based DuckDuckGo search using undetected-chromedriver."""
+def search_ddgs(query: str, num_results: int = 15) -> List[str]:
+    """
+    Primary search via the `ddgs` package (DuckDuckGo API).
+    No browser needed — uses the DDG search API directly.
+    Much more reliable than scraping HTML endpoints which
+    frequently return 202 / bot-challenge pages.
+    """
     try:
-        driver = _get_uc_search_driver()
-        logger.info(f"[DDG] Searching: {query}")
-        driver.get("https://duckduckgo.com/")
-        time.sleep(random.uniform(1.5, 2.5))
-
-        try:
-            box = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.NAME, "q"))
-            )
-            box.clear()
-            for ch in query:
-                box.send_keys(ch)
-                time.sleep(random.uniform(0.04, 0.12))
-            box.send_keys(Keys.RETURN)
-        except TimeoutException:
-            logger.warning("[DDG] Search box not found")
-            return []
-
-        time.sleep(random.uniform(2.0, 3.5))
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        results = []
-
-        # Primary DDG result selectors
-        for article in soup.select("article[data-testid='result']"):
-            title_el = article.select_one("h2 a") or article.select_one("a[data-testid='result-title-a']")
-            if not title_el: continue
-            href = title_el.get("href", "")
-            if href.startswith("http") and "duckduckgo.com" not in href:
-                results.append(href)
-            if len(results) >= num_results: break
-
-        # Fallback for older layouts or simpler parsing
-        if not results:
-            for a in soup.select("a[href^='http']"):
-                href = a.get("href", "")
-                if "duckduckgo.com" in href or not href: continue
-                text = a.get_text(strip=True)
-                if len(text) > 15:
-                    results.append(href)
-                if len(results) >= num_results: break
-
-        logger.info(f"[DDG] Found {len(results)} URLs")
-        return results
+        logger.info(f"[DDGS] Searching: {query}")
+        results = DDGS().text(query, max_results=num_results)
+        urls = [r.get("href") or r.get("url", "") for r in results if r.get("href") or r.get("url")]
+        logger.info(f"[DDGS] Found {len(urls)} URLs")
+        return urls
     except Exception as e:
-        logger.error(f"[DDG] Search failed: {e}")
+        logger.error(f"[DDGS] Search failed: {e}")
         return []
 
 
-def search_bing(query: str, num_results: int = 15) -> List[str]:
-    """Browser-based Bing search using undetected-chromedriver."""
+def search_bing_browser(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Bing search (fallback only) using undetected-chromedriver."""
     try:
         driver = _get_uc_search_driver()
         logger.info(f"[Bing] Searching: {query}")
@@ -525,13 +493,17 @@ def search_bing(query: str, num_results: int = 15) -> List[str]:
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
         links = []
-        for li in soup.select("li.b_algo"):
-            title_el = li.select_one("h2 a")
-            if not title_el: continue
-            href = title_el.get("href", "")
-            if href.startswith("http"):
-                links.append(href)
-            if len(links) >= num_results: break
+        # Try multiple Bing selectors (structure changes over time)
+        for sel in ["li.b_algo h2 a", "li.b_algo a", "h2 a", ".b_title a"]:
+            for el in soup.select(sel):
+                href = el.get("href", "")
+                if href.startswith("http") and "bing.com" not in href and "microsoft.com" not in href:
+                    if href not in links:
+                        links.append(href)
+                if len(links) >= num_results:
+                    break
+            if links:
+                break
 
         logger.info(f"[Bing] Found {len(links)} URLs")
         return links
@@ -540,8 +512,8 @@ def search_bing(query: str, num_results: int = 15) -> List[str]:
         return []
 
 
-def search_google(query: str, num_results: int = 15) -> List[str]:
-    """Browser-based Google search using undetected-chromedriver."""
+def search_google_browser(query: str, num_results: int = 15) -> List[str]:
+    """Browser-based Google search (last-resort fallback) using undetected-chromedriver."""
     try:
         driver = _get_uc_search_driver()
         logger.info(f"[Google] Searching: {query}")
@@ -559,13 +531,17 @@ def search_google(query: str, num_results: int = 15) -> List[str]:
 
         soup = BeautifulSoup(driver.page_source, "html.parser")
         links = []
-        for div in soup.select("div.g"):
-            link_el = div.select_one("a[href]")
-            if not link_el: continue
-            href = link_el.get("href", "")
-            if href.startswith("http") and "google.com" not in href:
-                links.append(href)
-            if len(links) >= num_results: break
+        # Multiple Google selectors
+        for sel in ["div.g a[href]", "div[data-hveid] a[href]", "a[href^='http']"]:
+            for el in soup.select(sel):
+                href = el.get("href", "")
+                if href.startswith("http") and "google.com" not in href:
+                    if href not in links:
+                        links.append(href)
+                if len(links) >= num_results:
+                    break
+            if links:
+                break
 
         logger.info(f"[Google] Found {len(links)} URLs")
         return links
@@ -577,15 +553,15 @@ def search_google(query: str, num_results: int = 15) -> List[str]:
 def search_web_with_fallback(query: str, num_results: int = 15) -> List[str]:
     """
     Multi-engine search with automatic fallback:
-      1. DuckDuckGo HTML (primary)
-      2. Bing              (fallback if DDG returns 0 or is blocked)
-      3. Google            (last resort)
+      1. DDGS API (primary — no browser, reliable)
+      2. Bing browser  (fallback if DDGS returns 0)
+      3. Google browser (last resort)
     Returns the first non-empty result set.
     """
     engines = [
-        ("DDG",    search_duckduckgo),
-        ("Bing",   search_bing),
-        ("Google", search_google),
+        ("DDGS",   search_ddgs),
+        ("Bing",   search_bing_browser),
+        ("Google", search_google_browser),
     ]
     for name, fn in engines:
         results = fn(query, num_results)

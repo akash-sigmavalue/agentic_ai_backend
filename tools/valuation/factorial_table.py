@@ -27,6 +27,7 @@ def compute_factorial_table(
     comparables: List[Dict],
     currency: str = "INR",
     area_unit: str = "sqft",
+    rate_basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Build the factorial rate summary.
@@ -39,6 +40,7 @@ def compute_factorial_table(
     """
     subject_name = subject.get("project_name", "Subject Property")
     property_type = subject.get("property_type", "apartment")
+    rate_basis = _resolve_rate_basis(property_type, subject, rate_basis)
 
     # Property types eligible for micromarket fallback (not plots)
     MICROMARKET_ELIGIBLE = {"apartment", "flat", "villa", "retail", "shop",
@@ -70,6 +72,7 @@ def compute_factorial_table(
             "table": [],
             "currency": currency,
             "area_unit": area_unit,
+            "rate_basis": rate_basis,
             "total_valid": 0,
         }
 
@@ -96,6 +99,7 @@ def compute_factorial_table(
                 "table": [],
                 "currency": currency,
                 "area_unit": area_unit,
+                "rate_basis": rate_basis,
                 "total_valid": 0,
             }
 
@@ -110,16 +114,34 @@ def compute_factorial_table(
             "table": [],
             "currency": currency,
             "area_unit": area_unit,
+            "rate_basis": rate_basis,
             "total_valid": 0,
         }
 
     # --- Calculate Rate per listing --------------------------------------
-    # If plot derived rates are present, use them. Otherwise fallback to built-up rate.
-    if "plot_derived_rate_per_sqft" in valid.columns:
-        # Use plot_derived_rate_per_sqft where available, else fallback to standard price/area
-        valid["rate"] = valid["plot_derived_rate_per_sqft"].fillna(valid[price_col] / valid[area_col])
+    if rate_basis == "plot_land":
+        if "plot_derived_rate_per_sqft" not in valid.columns:
+            logger.warning("Plot-land rate basis requested but plot_derived_rate_per_sqft is missing.")
+            return {
+                "table": [],
+                "currency": currency,
+                "area_unit": area_unit,
+                "rate_basis": rate_basis,
+                "total_valid": 0,
+            }
+        valid["rate"] = pd.to_numeric(valid["plot_derived_rate_per_sqft"], errors="coerce")
+        valid = valid[valid["rate"].notna() & (valid["rate"] > 0)].copy()
     else:
         valid["rate"] = valid[price_col] / valid[area_col]
+
+    if valid.empty:
+        return {
+            "table": [],
+            "currency": currency,
+            "area_unit": area_unit,
+            "rate_basis": rate_basis,
+            "total_valid": 0,
+        }
 
     # --- Group by project ------------------------------------------------
     summary_rows: List[Dict] = []
@@ -311,7 +333,7 @@ def compute_factorial_table(
 
     # Identify primary area type from valid listings
     area_type = "Built-up Area"
-    if "plot_derived_rate_per_sqft" in valid.columns and valid["plot_derived_rate_per_sqft"].notna().any():
+    if rate_basis == "plot_land":
         area_type = "Plot Land Area"
     elif "cleaned_area_type" in valid.columns:
         mode_series = valid["cleaned_area_type"].mode()
@@ -323,8 +345,30 @@ def compute_factorial_table(
         "currency": currency,
         "area_unit": area_unit,
         "area_type": area_type,
+        "rate_basis": rate_basis,
         "total_valid": int(valid.shape[0]),
     }
+
+
+def _resolve_rate_basis(property_type: str, subject: Dict, requested: Optional[str]) -> str:
+    requested_normalized = (requested or "").strip().lower()
+    if requested_normalized in {"plot_land", "built_up"}:
+        return requested_normalized
+
+    ptype = (property_type or "").strip().lower()
+    approach = (
+        subject.get("recommended_approach")
+        or subject.get("user_requested_approach")
+        or subject.get("approach")
+        or ""
+    )
+    approach = str(approach).strip().lower()
+
+    if ptype == "plot":
+        return "plot_land"
+    if ptype == "villa" and approach == "cost":
+        return "plot_land"
+    return "built_up"
 
 
 def _fuzzy_match(a: str, b: str) -> bool:

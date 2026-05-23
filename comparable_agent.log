@@ -29512,3 +29512,1238 @@ ORDER BY
 2026-05-22 13:00:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 13:00:00 IST)" (scheduled at 2026-05-22 13:00:00+05:30)
 2026-05-22 13:00:00,034 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 13:30:00 IST)" executed successfully
 2026-05-22 13:00:08,628 | INFO | Scheduler has been shut down
+2026-05-22 13:01:35,582 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 13:01:35,583 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 13:01:35,583 | INFO | Scheduler started
+2026-05-22 13:02:16,852 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:02:25,131 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:02:25,221 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-22 13:02:25,222 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-22 13:02:28,578 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:02:36,278 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:02:44,659 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:02:52,813 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:03:05,194 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:03:11,300 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:03:14,971 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:03:23,097 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:04:14,839 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:04:21,924 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:04:21,941 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 13:04:21,944 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 13:04:37,317 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 13:04:37,487 | INFO | [LLM Fetch] Received 8 raw comparables | tokens=2439
+2026-05-22 13:04:37,488 | INFO | [Multi-pass] Total raw comparables: 8
+2026-05-22 13:04:37,488 | INFO | [Dedup] 8/8 unique comparables
+2026-05-22 13:04:37,498 | INFO | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-22 13:04:37,499 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 13:04:37,501 | INFO | [Geocode] Starting for 8 comparables
+2026-05-22 13:04:38,388 | INFO | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | Certainty: Sure
+2026-05-22 13:04:39,484 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 13:04:40,999 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 13:04:42,067 | INFO | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 13:04:43,481 | INFO | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-22 13:04:44,621 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-22 13:04:45,691 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 13:04:46,828 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 13:04:47,029 | INFO | [Distance] 8 comparables with valid coordinates
+2026-05-22 13:04:47,029 | WARNING | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-22 13:04:47,030 | INFO | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-22 13:04:47,030 | INFO | [URL Filter] 7 comparables after URL cleanup
+2026-05-22 13:04:47,030 | INFO | [Agent Done] Final comparables: 7 | Total tokens: 2439
+2026-05-22 13:04:47,034 | INFO | [DB Comparables] Query: I need all unique projects within 2 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-22 13:04:55,489 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:04:55,506 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-22 13:04:59,833 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:05:00,695 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:05:00,696 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-22 13:05:00,696 | INFO | No semantic transaction project/location entities resolved.
+2026-05-22 13:05:00,696 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 13:05:03,628 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:05:03,634 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 13:05:06,657 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:05:06,659 | INFO | [iter=0] EXECUTE — SELECT
+  t.project_id,
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+        cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions t
+WHERE
+  t.agreement_price >= 1
+  AND t.project_latitude IS NOT NULL
+  AND t.project_longitude IS NOT NULL
+  AND t.transaction_category IN ('Sale')
+  AND t.property_type IN ('Flat')
+GROUP BY
+  t.project_id,
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category
+HAVING
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+      cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+      sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+    ))
+  ) <= 2.0
+ORDER BY
+  distance ASC
+2026-05-22 13:05:09,805 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-22 13:05:12,761 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:05:12,762 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-22 13:05:12,766 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-22 13:05:12,768 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=11590
+2026-05-22 13:05:12,769 | INFO | [DB Comparables] Found 30 comparables from DB (via result_set)
+2026-05-22 13:05:32,643 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=3
+2026-05-22 13:05:32,644 | INFO | [Pipeline] Total projects: 4
+2026-05-22 13:05:32,644 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'Bansall Amara' → Residential, 'Mantra Mesmer' → Residential, 'Vertical Oriana' → Residential
+2026-05-22 13:05:32,644 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:05:32,645 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 13:05:32,645 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:05:32,664 | INFO | [Browser] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:05:32,664 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-22 13:05:35,226 | INFO | patching driver executable C:\Users\Administrator\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-22 13:05:39,543 | INFO | [DDG] Searching: buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999
+2026-05-22 13:05:58,963 | INFO | [DDG] Found 5 URLs
+2026-05-22 13:05:58,963 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 13:05:58,964 | INFO | [URL Search] Result: 'Godrej Infinity' -> 5 URLs.
+2026-05-22 13:05:59,964 | INFO | [URLs] Godrej Infinity -> 5 urls
+2026-05-22 13:05:59,966 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-22 13:05:59,967 | INFO | [Scrape] project='Godrej Infinity' url='https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-22 13:05:59,967 | INFO | [Scrape] URL #2 Starting: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-22 13:05:59,968 | INFO | [Scrape] Trying requests for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-22 13:05:59,968 | INFO | [Scrape] project='Godrej Infinity' url='https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-22 13:05:59,968 | INFO | [Scrape] URL #3 Starting: https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-22 13:05:59,970 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-22 13:05:59,970 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-22 13:05:59,971 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-22 13:05:59,971 | INFO | [Scrape] project='Godrej Infinity' url='https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-22 13:05:59,973 | INFO | [Scrape] project='Godrej Infinity' url='https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-22 13:05:59,973 | INFO | [Scrape] project='Godrej Infinity' url='https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-22 13:05:59,974 | INFO | [Scrape] Trying requests for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-22 13:05:59,974 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-22 13:05:59,974 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-22 13:06:01,199 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-22 13:06:01,200 | INFO | [Scrape] URL 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342' is difficult to scrape, using Selenium Pool.
+2026-05-22 13:06:01,200 | INFO | [Driver Pool] Creating new browser for thread 21232
+2026-05-22 13:06:01,229 | INFO | [Driver Pool] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:06:02,712 | INFO | [Scrape] OK via Requests (200 OK) for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-22 13:06:03,926 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-22 13:06:04,314 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:06:04,342 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-22 13:06:04,359 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-22 13:06:04,376 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-22 13:06:04,398 | INFO | [Scrape] URL #3 -> 0 listings | https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-22 13:06:04,647 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-22 13:06:05,576 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:06:05,579 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-22 13:06:05,579 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-22 13:06:05,580 | INFO | [Scrape] URL #2 -> 0 listings | https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-22 13:06:11,753 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-22 13:06:14,631 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:06:14,638 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-22 13:06:14,638 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-22 13:06:14,640 | INFO | [Scrape] URL #5 -> 2 listings | https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-22 13:06:15,512 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:06:15,515 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-22 13:06:15,515 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-22 13:06:15,516 | INFO | [Scrape] URL #4 -> 2 listings | https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-22 13:06:32,377 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:06:32,393 | INFO | [Extract] 'Godrej Infinity' -> 5 raw listings from 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-22 13:06:32,394 | INFO | [Extract Filter] 'Godrej Infinity' -> 5/5 passed type + name filter
+2026-05-22 13:06:32,395 | INFO | [Scrape] URL #1 -> 5 listings | https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-22 13:06:32,398 | INFO | [Project Done] 'Godrej Infinity' -> 9 listings
+2026-05-22 13:06:32,398 | INFO | 
+============================================================
+[Pipeline] Project: 'Bansall Amara' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:06:32,399 | INFO | [URL Search] Query: 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639'
+2026-05-22 13:06:36,484 | WARNING | Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=62802): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/4d872024e8cb77d9c5318501b07013f3/url
+2026-05-22 13:06:40,602 | WARNING | Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=62802): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/4d872024e8cb77d9c5318501b07013f3/url
+2026-05-22 13:06:44,670 | WARNING | Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=62802): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/4d872024e8cb77d9c5318501b07013f3/url
+2026-05-22 13:06:48,740 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:06:48,988 | INFO | [Browser] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:06:48,988 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-22 13:06:51,334 | INFO | patching driver executable C:\Users\Administrator\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-22 13:06:55,019 | INFO | [DDG] Searching: buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639
+2026-05-22 13:06:58,200 | ERROR | [DDG] Search failed: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=148.0.7778.179)
+Stacktrace:
+	undetected_chromedriver!GetHandleVerifier [0x39b593+105d3]
+	undetected_chromedriver!GetHandleVerifier [0x39b6c4+10704]
+	undetected_chromedriver!(No symbol) [0x1a1ea0]
+	undetected_chromedriver!(No symbol) [0x180933]
+	undetected_chromedriver!(No symbol) [0x213aeb]
+	undetected_chromedriver!(No symbol) [0x22a2a9]
+	undetected_chromedriver!(No symbol) [0x20d516]
+	undetected_chromedriver!(No symbol) [0x1e08e9]
+	undetected_chromedriver!(No symbol) [0x1e16a4]
+	undetected_chromedriver!GetHandleVerifier [0x623014+298054]
+	undetected_chromedriver!GetHandleVerifier [0x61e603+293643]
+	undetected_chromedriver!GetHandleVerifier [0x63ea05+2b3a45]
+	undetected_chromedriver!GetHandleVerifier [0x3b54e8+2a528]
+	undetected_chromedriver!GetHandleVerifier [0x3bcd1d+31d5d]
+	undetected_chromedriver!GetHandleVerifier [0x3a3e68+18ea8]
+	undetected_chromedriver!GetHandleVerifier [0x3a4015+19055]
+	undetected_chromedriver!GetHandleVerifier [0x38d65f+269f]
+	KERNEL32!BaseThreadInitThunk [0x74fc7ba9+19]
+	ntdll!RtlInitializeExceptionChain [0x76ecc3ab+6b]
+	ntdll!RtlClearBits [0x76ecc32f+bf]
+	(No symbol) [(nil)]
+
+2026-05-22 13:06:58,203 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 13:06:58,708 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:06:58,770 | INFO | [Browser] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:06:58,770 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-22 13:07:01,595 | INFO | patching driver executable C:\Users\Administrator\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-22 13:07:03,263 | INFO | Scheduler has been shut down
+2026-05-22 13:07:05,234 | INFO | [Bing] Searching: buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639
+2026-05-22 13:07:12,511 | WARNING | Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/source
+2026-05-22 13:07:16,612 | WARNING | Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/source
+2026-05-22 13:07:20,720 | WARNING | Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/source
+2026-05-22 13:07:24,801 | ERROR | [Bing] Search failed: HTTPConnectionPool(host='localhost', port=55028): Max retries exceeded with url: /session/f4c75839c1e4ef37219a334b8bd29798/source (Caused by NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-05-22 13:07:24,801 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 13:07:29,365 | WARNING | Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/url
+2026-05-22 13:07:33,467 | WARNING | Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/url
+2026-05-22 13:07:37,528 | WARNING | Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=55028): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it")': /session/f4c75839c1e4ef37219a334b8bd29798/url
+2026-05-22 13:07:41,618 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:07:41,708 | INFO | [Browser] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:07:41,709 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-22 13:07:44,305 | INFO | patching driver executable C:\Users\Administrator\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-22 13:07:47,356 | INFO | [Google] Searching: buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639
+2026-05-22 13:07:53,004 | ERROR | [Google] Search failed: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=148.0.7778.179); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	undetected_chromedriver!GetHandleVerifier [0x63b593+105d3]
+	undetected_chromedriver!GetHandleVerifier [0x63b6c4+10704]
+	undetected_chromedriver!(No symbol) [0x441ea0]
+	undetected_chromedriver!(No symbol) [0x430dbe]
+	undetected_chromedriver!(No symbol) [0x44f98e]
+	undetected_chromedriver!(No symbol) [0x4b3cdc]
+	undetected_chromedriver!(No symbol) [0x4ca2a9]
+	undetected_chromedriver!(No symbol) [0x4ad516]
+	undetected_chromedriver!(No symbol) [0x4808e9]
+	undetected_chromedriver!(No symbol) [0x4816a4]
+	undetected_chromedriver!GetHandleVerifier [0x8c3014+298054]
+	undetected_chromedriver!GetHandleVerifier [0x8be603+293643]
+	undetected_chromedriver!GetHandleVerifier [0x8dea05+2b3a45]
+	undetected_chromedriver!GetHandleVerifier [0x6554e8+2a528]
+	undetected_chromedriver!GetHandleVerifier [0x65cd1d+31d5d]
+	undetected_chromedriver!GetHandleVerifier [0x643e68+18ea8]
+	undetected_chromedriver!GetHandleVerifier [0x644015+19055]
+	undetected_chromedriver!GetHandleVerifier [0x62d65f+269f]
+	KERNEL32!BaseThreadInitThunk [0x74fc7ba9+19]
+	ntdll!RtlInitializeExceptionChain [0x76ecc3ab+6b]
+	ntdll!RtlClearBits [0x76ecc32f+bf]
+
+2026-05-22 13:07:53,005 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639' — trying next fallback
+2026-05-22 13:07:53,506 | ERROR | [Search] All search engines failed for 'buy apartment in Bansall Amara, Keshav Nagar, Pune, India, coordinates: 18.5404599, 73.9481639'
+2026-05-22 13:07:53,506 | INFO | [URL Search] Result: 'Bansall Amara' -> 0 URLs.
+2026-05-22 13:07:54,507 | INFO | [URLs] Bansall Amara -> 0 urls
+2026-05-22 13:07:54,508 | WARNING | [DROP] stage=url_search | project='Bansall Amara' | reason=zero_urls_returned
+2026-05-22 13:07:54,508 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:07:54,509 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 13:07:54,511 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:07:54,569 | INFO | [Browser] Using Chrome binary: C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe
+2026-05-22 13:07:54,570 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-22 13:07:56,933 | INFO | patching driver executable C:\Users\Administrator\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-22 13:08:00,477 | INFO | [DDG] Searching: buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464
+2026-05-22 13:08:18,134 | INFO | [DDG] Found 5 URLs
+2026-05-22 13:08:18,135 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 13:08:18,135 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 5 URLs.
+2026-05-22 13:08:19,136 | INFO | [URLs] Mantra Mesmer -> 5 urls
+2026-05-22 13:08:19,137 | ERROR | Listing pipeline failed
+Traceback (most recent call last):
+  File "C:\deeksha@sigmavalue,co,in\Projects\agentic_ai_backend\api\routes\valuation\valuation.py", line 66, in _listing_stream_generator
+    result = listing_pipeline(
+        subject=req.subject,
+    ...<4 lines>...
+        run_logger=run_logger,
+    )
+  File "C:\deeksha@sigmavalue,co,in\Projects\agentic_ai_backend\tools\valuation\listing_search.py", line 1159, in listing_pipeline
+    executor.submit(
+    ~~~~~~~~~~~~~~~^
+        process_url,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        p.get("is_general_search", False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ): url
+    ^
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\concurrent\futures\thread.py", line 173, in submit
+    raise RuntimeError('cannot schedule new futures after '
+                       'interpreter shutdown')
+RuntimeError: cannot schedule new futures after interpreter shutdown
+2026-05-22 13:08:19,196 | INFO | ensuring close
+2026-05-22 13:08:19,197 | INFO | ensuring close
+2026-05-22 13:08:19,197 | INFO | ensuring close
+2026-05-22 13:08:19,197 | INFO | ensuring close
+2026-05-22 13:08:19,198 | INFO | ensuring close
+2026-05-22 13:09:37,866 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 13:09:37,867 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 13:09:37,867 | INFO | Scheduler started
+2026-05-22 13:09:57,178 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:05,174 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:05,322 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-22 13:10:05,323 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-22 13:10:10,604 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:18,772 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:25,348 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:33,157 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:39,111 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:47,471 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:52,365 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:10:58,433 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:02,177 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:09,456 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:09,462 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar'
+2026-05-22 13:11:09,463 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 13:11:24,609 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 13:11:24,994 | INFO | [JSON Parse] Fallback extracted 10 individual objects
+2026-05-22 13:11:24,995 | INFO | [LLM Fetch] Received 10 raw comparables | tokens=2822
+2026-05-22 13:11:24,996 | INFO | [Multi-pass] Total raw comparables: 10
+2026-05-22 13:11:24,996 | INFO | [Dedup] 10/10 unique comparables
+2026-05-22 13:11:25,006 | INFO | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-22 13:11:25,007 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 13:11:25,009 | INFO | [Geocode] Starting for 10 comparables
+2026-05-22 13:11:25,960 | INFO | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 13:11:26,998 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 13:11:28,329 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 13:11:29,633 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 13:11:30,748 | INFO | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 13:11:32,227 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-22 13:11:33,322 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 13:11:34,331 | INFO | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 13:11:35,697 | INFO | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | Certainty: Sure
+2026-05-22 13:11:36,858 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5961255, 73.7523101) | Certainty: Not Sure
+2026-05-22 13:11:37,059 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-22 13:11:37,060 | INFO | [Subject Filter] 10 comparables remain after removing subject project
+2026-05-22 13:11:37,060 | INFO | [URL Filter] 10 comparables after URL cleanup
+2026-05-22 13:11:37,060 | WARNING | [DROP] stage=distance_filter | project='Bansall Amara' | reason=beyond_15km_radius | detail={"distance_km": 21.4}
+2026-05-22 13:11:37,061 | INFO | [Agent Done] Final comparables: 9 | Total tokens: 2822
+2026-05-22 13:11:37,064 | INFO | [DB Comparables] Query: I need all unique projects within 2 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-22 13:11:48,834 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:48,856 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=['total_transaction_count']
+2026-05-22 13:11:54,309 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:55,198 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:55,200 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-22 13:11:55,200 | INFO | No semantic transaction project/location entities resolved.
+2026-05-22 13:11:55,201 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 13:11:57,497 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:11:57,499 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 13:12:03,308 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:12:03,314 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=[]  reason=All required entities from intent are present: there are no textual locations or space_filters, and the coordinate-based spatial_filter is correctly implemented via project_latitude/project_longitude distance logic using the given lat/long and radius 2 km. Semantic resolved filters for transaction_category ('Sale') and property_type ('Flat') are used exactly as IN (...) lists. The query returns unique projects with requested columns and total_transaction_count, grouping correctly by all non-aggregated columns and ordering by distance. To better align with the intent and make the spatial radius logic more explicit pre-aggregation, the distance condition is moved into the WHERE clause rather than HAVING, keeping the same formula and maintaining correctness. Hence the original is very close but slightly adjusted for clarity and alignment, so not approved as-is but with a minimal corrected version.
+2026-05-22 13:12:03,314 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-22 13:12:03,315 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude AS lat,
+  project_longitude AS long,
+  location_name AS location,
+  country_name AS country,
+  property_type,
+  transaction_category AS property_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND 6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94636849999999)) +
+      sin(radians(18.5395129)) * sin(radians(project_latitude))
+    ))
+  ) <= 2.0
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+ORDER BY
+  distance ASC;
+2026-05-22 13:12:06,620 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-22 13:12:09,678 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 13:12:09,683 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-22 13:12:09,687 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-22 13:12:09,690 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=10423
+2026-05-22 13:12:09,693 | INFO | [DB Comparables] Found 30 comparables from DB (via result_set)
+2026-05-22 13:12:20,573 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=2
+2026-05-22 13:12:20,574 | INFO | [Pipeline] Total projects: 3
+2026-05-22 13:12:20,574 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'Mantra Mesmer' → Residential, 'Vertical Oriana' → Residential
+2026-05-22 13:12:20,575 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:12:20,575 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 13:12:20,576 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:20,600 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:20,601 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 13:12:21,101 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:21,120 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:21,121 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 13:12:21,621 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:21,639 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:21,639 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 13:12:22,140 | ERROR | [Search] All search engines failed for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 13:12:22,141 | INFO | [URL Search] Result: 'Godrej Infinity' -> 0 URLs.
+2026-05-22 13:12:23,150 | INFO | [URLs] Godrej Infinity -> 0 urls
+2026-05-22 13:12:23,164 | WARNING | [DROP] stage=url_search | project='Godrej Infinity' | reason=zero_urls_returned
+2026-05-22 13:12:23,191 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:12:23,192 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 13:12:23,193 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:23,218 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:23,218 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 13:12:23,721 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:23,739 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:23,739 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 13:12:24,240 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:24,255 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:24,255 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 13:12:24,756 | ERROR | [Search] All search engines failed for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 13:12:24,757 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 0 URLs.
+2026-05-22 13:12:25,758 | INFO | [URLs] Mantra Mesmer -> 0 urls
+2026-05-22 13:12:25,759 | WARNING | [DROP] stage=url_search | project='Mantra Mesmer' | reason=zero_urls_returned
+2026-05-22 13:12:25,759 | INFO | 
+============================================================
+[Pipeline] Project: 'Vertical Oriana' | type=apartment | category=Residential
+============================================================
+2026-05-22 13:12:25,760 | INFO | [URL Search] Query: 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 13:12:25,761 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:25,784 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:25,784 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 13:12:26,285 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:26,319 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:26,320 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 13:12:26,821 | INFO | [Search] Creating new undetected browser
+2026-05-22 13:12:26,834 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 13:12:26,834 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 13:12:27,335 | ERROR | [Search] All search engines failed for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 13:12:27,336 | INFO | [URL Search] Result: 'Vertical Oriana' -> 0 URLs.
+2026-05-22 13:12:28,337 | INFO | [URLs] Vertical Oriana -> 0 urls
+2026-05-22 13:12:28,338 | WARNING | [DROP] stage=url_search | project='Vertical Oriana' | reason=zero_urls_returned
+2026-05-22 13:12:28,350 | INFO | [Pipeline Done] final_listings=0 | projects=3 | tokens=0
+2026-05-22 13:12:49,708 | INFO | Scheduler has been shut down
+2026-05-22 16:38:23,133 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:38:23,134 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:38:23,135 | INFO | Scheduler started
+2026-05-22 16:41:47,966 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:41:47,968 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:41:47,968 | INFO | Scheduler started
+2026-05-22 16:45:31,503 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:45:41,413 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:45:47,536 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:45:55,559 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:46:23,183 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:46:31,254 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:46:59,945 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:47:08,244 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:47:12,691 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:47:20,733 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 16:47:20,745 | INFO | [Agent Start] project='DLF Camellias' type='villa' category='Villa' search_term='villa or plot' location='Gurgaon'
+2026-05-22 16:47:20,748 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 16:47:36,917 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 16:47:37,156 | INFO | [JSON Parse] Fallback extracted 12 individual objects
+2026-05-22 16:47:37,156 | INFO | [LLM Fetch] Received 12 raw comparables | tokens=2828
+2026-05-22 16:47:37,158 | INFO | [Multi-pass] Total raw comparables: 12
+2026-05-22 16:47:37,158 | INFO | [Dedup] 12/12 unique comparables
+2026-05-22 16:47:37,168 | INFO | [Hard Filter] 12/12 passed type check (allowed cross-types included)
+2026-05-22 16:47:37,169 | INFO | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 16:47:37,171 | INFO | [Geocode] Starting for 12 comparables
+2026-05-22 16:47:38,454 | INFO | [Geocode] OK 'DLF The Camellias' -> (28.4513058, 77.1006597) | Certainty: Sure
+2026-05-22 16:47:39,977 | INFO | [Geocode] OK 'DLF The Aralias' -> (28.4592173, 77.10318989999999) | Certainty: Sure
+2026-05-22 16:47:41,317 | INFO | [Geocode] OK 'DLF The Magnolias' -> (28.4570998, 77.10023009999999) | Certainty: Sure
+2026-05-22 16:47:42,825 | INFO | [Geocode] OK 'DLF The Belaire' -> (28.4488617, 77.10155209999999) | Certainty: Sure
+2026-05-22 16:47:44,189 | INFO | [Geocode] OK 'DLF Park Place' -> (28.444572, 77.1078346) | Certainty: Sure
+2026-05-22 16:47:45,795 | INFO | [Geocode] OK 'DLF The Crest' -> (28.4441628, 77.1110449) | Certainty: Sure
+2026-05-22 16:47:47,439 | INFO | [Geocode] OK 'DLF The Summit' -> (28.4465012, 77.104495) | Certainty: Sure
+2026-05-22 16:47:48,688 | INFO | [Geocode] OK 'DLF The Pinnacle' -> (28.4528064, 77.0959443) | Certainty: Sure
+2026-05-22 16:47:50,202 | INFO | [Geocode] OK 'DLF The Camellias Mini' -> (28.4507956, 77.1005205) | Certainty: Sure
+2026-05-22 16:47:51,730 | INFO | [Geocode] OK 'DLF The Crest Villas' -> (28.4441628, 77.1110449) | Certainty: Sure
+2026-05-22 16:47:53,498 | INFO | [Geocode] OK 'DLF The Summit Villas' -> (28.4467265, 77.10463709999999) | Certainty: Sure
+2026-05-22 16:47:55,347 | INFO | [Geocode] OK 'DLF The Pinnacle Villas' -> (28.4528064, 77.0959443) | Certainty: Sure
+2026-05-22 16:47:55,548 | INFO | [Distance] 12 comparables with valid coordinates
+2026-05-22 16:47:55,549 | WARNING | [DROP] stage=subject_filter | project='DLF The Camellias Mini' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "dlf camellias", "comp_name": "dlf the camellias mini", "distance_km": 0.0}
+2026-05-22 16:47:55,550 | INFO | [Subject Filter] 11 comparables remain after removing subject project
+2026-05-22 16:47:55,550 | INFO | [URL Filter] 11 comparables after URL cleanup
+2026-05-22 16:47:55,551 | INFO | [Agent Done] Final comparables: 11 | Total tokens: 2828
+2026-05-22 16:53:15,806 | INFO | [Pipeline Start] subject='DLF Camellias' type='villa' search_term='villa or plot' listing='sale' comparables=4
+2026-05-22 16:53:15,806 | INFO | [Pipeline] Total projects: 5
+2026-05-22 16:53:15,806 | INFO | [Pipeline] Categories: 'DLF Camellias' → Villa, 'DLF The Pinnacle' → Villa, 'DLF The Belaire' → Villa, 'DLF The Pinnacle Villas' → Villa, 'DLF The Summit Villas' → Villa
+2026-05-22 16:53:15,807 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF Camellias' | type=villa | category=Villa
+============================================================
+2026-05-22 16:53:15,807 | INFO | [URL Search] Query: 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205'
+2026-05-22 16:53:15,807 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:15,833 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:15,833 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 16:53:16,334 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:16,363 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:16,363 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 16:53:16,864 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:16,881 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:16,881 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 16:53:17,382 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205'
+2026-05-22 16:53:17,383 | INFO | [URL Search] Result: 'DLF Camellias' -> 0 URLs.
+2026-05-22 16:53:18,384 | INFO | [URLs] DLF Camellias -> 0 urls
+2026-05-22 16:53:18,385 | WARNING | [DROP] stage=url_search | project='DLF Camellias' | reason=zero_urls_returned
+2026-05-22 16:53:18,385 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Pinnacle' | type=villa | category=Villa
+============================================================
+2026-05-22 16:53:18,385 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 16:53:18,385 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:18,414 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:18,414 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:18,915 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:18,943 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:18,944 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:19,444 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:19,476 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:19,477 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:19,977 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 16:53:19,978 | INFO | [URL Search] Result: 'DLF The Pinnacle' -> 0 URLs.
+2026-05-22 16:53:20,978 | INFO | [URLs] DLF The Pinnacle -> 0 urls
+2026-05-22 16:53:20,979 | WARNING | [DROP] stage=url_search | project='DLF The Pinnacle' | reason=zero_urls_returned
+2026-05-22 16:53:20,979 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Belaire' | type=villa | category=Villa
+============================================================
+2026-05-22 16:53:20,980 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Belaire, Sector 54, Gurgaon, India, coordinates: 28.4488617, 77.10155209999999'
+2026-05-22 16:53:20,980 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:21,028 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:21,029 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Belaire, Sector 54, Gurgaon, India, coordinates: 28.4488617, 77.10155209999999' — trying next fallback
+2026-05-22 16:53:21,530 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:21,593 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:21,593 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Belaire, Sector 54, Gurgaon, India, coordinates: 28.4488617, 77.10155209999999' — trying next fallback
+2026-05-22 16:53:22,094 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:22,143 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:22,143 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Belaire, Sector 54, Gurgaon, India, coordinates: 28.4488617, 77.10155209999999' — trying next fallback
+2026-05-22 16:53:22,644 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Belaire, Sector 54, Gurgaon, India, coordinates: 28.4488617, 77.10155209999999'
+2026-05-22 16:53:22,644 | INFO | [URL Search] Result: 'DLF The Belaire' -> 0 URLs.
+2026-05-22 16:53:23,645 | INFO | [URLs] DLF The Belaire -> 0 urls
+2026-05-22 16:53:23,646 | WARNING | [DROP] stage=url_search | project='DLF The Belaire' | reason=zero_urls_returned
+2026-05-22 16:53:23,646 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Pinnacle Villas' | type=villa | category=Villa
+============================================================
+2026-05-22 16:53:23,646 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Pinnacle Villas, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 16:53:23,646 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:23,677 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:23,677 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Pinnacle Villas, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:24,177 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:24,201 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:24,202 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Pinnacle Villas, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:24,703 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:24,753 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:24,754 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Pinnacle Villas, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 16:53:25,255 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Pinnacle Villas, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 16:53:25,255 | INFO | [URL Search] Result: 'DLF The Pinnacle Villas' -> 0 URLs.
+2026-05-22 16:53:26,256 | INFO | [URLs] DLF The Pinnacle Villas -> 0 urls
+2026-05-22 16:53:26,257 | WARNING | [DROP] stage=url_search | project='DLF The Pinnacle Villas' | reason=zero_urls_returned
+2026-05-22 16:53:26,257 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Summit Villas' | type=villa | category=Villa
+============================================================
+2026-05-22 16:53:26,257 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Summit Villas, Sector 54, Gurgaon, India, coordinates: 28.4467265, 77.10463709999999'
+2026-05-22 16:53:26,257 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:26,278 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:26,278 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Summit Villas, Sector 54, Gurgaon, India, coordinates: 28.4467265, 77.10463709999999' — trying next fallback
+2026-05-22 16:53:26,779 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:26,799 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:26,799 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Summit Villas, Sector 54, Gurgaon, India, coordinates: 28.4467265, 77.10463709999999' — trying next fallback
+2026-05-22 16:53:27,299 | INFO | [Search] Creating new undetected browser
+2026-05-22 16:53:27,337 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 16:53:27,338 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Summit Villas, Sector 54, Gurgaon, India, coordinates: 28.4467265, 77.10463709999999' — trying next fallback
+2026-05-22 16:53:27,838 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Summit Villas, Sector 54, Gurgaon, India, coordinates: 28.4467265, 77.10463709999999'
+2026-05-22 16:53:27,839 | INFO | [URL Search] Result: 'DLF The Summit Villas' -> 0 URLs.
+2026-05-22 16:53:28,839 | INFO | [URLs] DLF The Summit Villas -> 0 urls
+2026-05-22 16:53:28,840 | WARNING | [DROP] stage=url_search | project='DLF The Summit Villas' | reason=zero_urls_returned
+2026-05-22 16:53:28,853 | INFO | [Pipeline Done] final_listings=0 | projects=5 | tokens=0
+2026-05-22 16:53:55,883 | INFO | Scheduler has been shut down
+2026-05-22 16:54:31,597 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:54:31,598 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:54:31,599 | INFO | Scheduler started
+2026-05-22 17:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" (scheduled at 2026-05-22 17:00:00+05:30)
+2026-05-22 17:00:00,018 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" (scheduled at 2026-05-22 17:00:00+05:30)
+2026-05-22 17:00:00,102 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:30:00 IST)" executed successfully
+2026-05-22 17:00:00,103 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:30:00 IST)" executed successfully
+2026-05-22 17:09:20,223 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:31,757 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:37,273 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:44,238 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:10:50,441 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:10:58,990 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:21,114 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:28,495 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:35,036 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:41,663 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:45,618 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:52,447 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:11:52,465 | INFO | [Agent Start] project='DLF Camellias' type='villa' category='Villa' search_term='villa or plot' location='Gurgaon'
+2026-05-22 17:11:52,469 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 17:12:06,884 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 17:12:07,041 | INFO | [JSON Parse] Fallback extracted 10 individual objects
+2026-05-22 17:12:07,042 | INFO | [LLM Fetch] Received 10 raw comparables | tokens=2828
+2026-05-22 17:12:07,047 | INFO | [Multi-pass] Total raw comparables: 10
+2026-05-22 17:12:07,048 | INFO | [Dedup] 10/10 unique comparables
+2026-05-22 17:12:07,062 | INFO | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-22 17:12:07,062 | INFO | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 17:12:07,068 | INFO | [Geocode] Starting for 10 comparables
+2026-05-22 17:12:08,222 | INFO | [Geocode] OK 'DLF The Arbour' -> (28.3971649, 77.0819181) | Certainty: Sure
+2026-05-22 17:12:09,806 | INFO | [Geocode] OK 'DLF Privana South' -> (28.3801838, 76.990768) | Certainty: Sure
+2026-05-22 17:12:11,494 | INFO | [Geocode] OK 'DLF Privana North' -> (28.3850224, 76.9922339) | Certainty: Sure
+2026-05-22 17:12:12,935 | INFO | [Geocode] OK 'DLF The Crest' -> (28.4441628, 77.1110449) | Certainty: Sure
+2026-05-22 17:12:14,260 | INFO | [Geocode] OK 'DLF The Magnolias' -> (28.4570998, 77.10023009999999) | Certainty: Sure
+2026-05-22 17:12:15,822 | INFO | [Geocode] OK 'DLF The Belaire' -> (28.4488617, 77.10155209999999) | Certainty: Sure
+2026-05-22 17:12:17,409 | INFO | [Geocode] OK 'DLF The Aralias' -> (28.4592173, 77.10318989999999) | Certainty: Sure
+2026-05-22 17:12:18,765 | INFO | [Geocode] OK 'DLF The Pinnacle' -> (28.4528064, 77.0959443) | Certainty: Sure
+2026-05-22 17:12:20,301 | INFO | [Geocode] OK 'DLF The Summit' -> (28.4465012, 77.104495) | Certainty: Sure
+2026-05-22 17:12:21,632 | INFO | [Geocode] OK 'DLF The Camellias' -> (28.4513058, 77.1006597) | Certainty: Sure
+2026-05-22 17:12:21,833 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-22 17:12:21,834 | INFO | [Subject Filter] 10 comparables remain after removing subject project
+2026-05-22 17:12:21,835 | INFO | [URL Filter] 10 comparables after URL cleanup
+2026-05-22 17:12:21,835 | INFO | [Agent Done] Final comparables: 10 | Total tokens: 2828
+2026-05-22 17:13:05,968 | INFO | [Pipeline Start] subject='DLF Camellias' type='villa' search_term='villa or plot' listing='sale' comparables=2
+2026-05-22 17:13:05,968 | INFO | [Pipeline] Total projects: 3
+2026-05-22 17:13:05,969 | INFO | [Pipeline] Categories: 'DLF Camellias' → Villa, 'DLF The Pinnacle' → Villa, 'DLF The Summit' → Villa
+2026-05-22 17:13:05,969 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF Camellias' | type=villa | category=Villa
+============================================================
+2026-05-22 17:13:05,969 | INFO | [URL Search] Query: 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205'
+2026-05-22 17:13:05,970 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:06,005 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:06,005 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 17:13:06,506 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:06,530 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:06,530 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 17:13:07,031 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:07,059 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:07,059 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205' — trying next fallback
+2026-05-22 17:13:07,560 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF Camellias, Gurgaon, India, coordinates: 28.4507956, 77.1005205'
+2026-05-22 17:13:07,561 | INFO | [URL Search] Result: 'DLF Camellias' -> 0 URLs.
+2026-05-22 17:13:08,562 | INFO | [URLs] DLF Camellias -> 0 urls
+2026-05-22 17:13:08,562 | WARNING | [DROP] stage=url_search | project='DLF Camellias' | reason=zero_urls_returned
+2026-05-22 17:13:08,563 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Pinnacle' | type=villa | category=Villa
+============================================================
+2026-05-22 17:13:08,563 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 17:13:08,564 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:08,613 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:08,613 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 17:13:09,114 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:09,162 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:09,163 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 17:13:09,664 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:09,714 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:09,715 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443' — trying next fallback
+2026-05-22 17:13:10,216 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Pinnacle, Sector 43, Gurgaon, India, coordinates: 28.4528064, 77.0959443'
+2026-05-22 17:13:10,216 | INFO | [URL Search] Result: 'DLF The Pinnacle' -> 0 URLs.
+2026-05-22 17:13:11,218 | INFO | [URLs] DLF The Pinnacle -> 0 urls
+2026-05-22 17:13:11,218 | WARNING | [DROP] stage=url_search | project='DLF The Pinnacle' | reason=zero_urls_returned
+2026-05-22 17:13:11,218 | INFO | 
+============================================================
+[Pipeline] Project: 'DLF The Summit' | type=villa | category=Villa
+============================================================
+2026-05-22 17:13:11,219 | INFO | [URL Search] Query: 'buy villa or plot in DLF The Summit, Sector 54, Gurgaon, India, coordinates: 28.4465012, 77.104495'
+2026-05-22 17:13:11,219 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:11,271 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:11,271 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy villa or plot in DLF The Summit, Sector 54, Gurgaon, India, coordinates: 28.4465012, 77.104495' — trying next fallback
+2026-05-22 17:13:11,772 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:11,827 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:11,828 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy villa or plot in DLF The Summit, Sector 54, Gurgaon, India, coordinates: 28.4465012, 77.104495' — trying next fallback
+2026-05-22 17:13:12,329 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:13:12,377 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:13:12,377 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy villa or plot in DLF The Summit, Sector 54, Gurgaon, India, coordinates: 28.4465012, 77.104495' — trying next fallback
+2026-05-22 17:13:12,878 | ERROR | [Search] All search engines failed for 'buy villa or plot in DLF The Summit, Sector 54, Gurgaon, India, coordinates: 28.4465012, 77.104495'
+2026-05-22 17:13:12,879 | INFO | [URL Search] Result: 'DLF The Summit' -> 0 URLs.
+2026-05-22 17:13:13,880 | INFO | [URLs] DLF The Summit -> 0 urls
+2026-05-22 17:13:13,881 | WARNING | [DROP] stage=url_search | project='DLF The Summit' | reason=zero_urls_returned
+2026-05-22 17:13:13,885 | INFO | [Pipeline Done] final_listings=0 | projects=3 | tokens=0
+2026-05-22 17:13:20,919 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:13:30,033 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:13:30,343 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-22 17:13:30,344 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-22 17:13:51,338 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:13:59,107 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:05,823 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:14,443 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:17,592 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:34,033 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:40,069 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:46,730 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:46,841 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 17:14:46,843 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 17:14:57,397 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 17:14:57,407 | INFO | [LLM Fetch] Received 7 raw comparables | tokens=2291
+2026-05-22 17:14:57,412 | INFO | [Multi-pass] Total raw comparables: 7
+2026-05-22 17:14:57,413 | INFO | [Dedup] 7/7 unique comparables
+2026-05-22 17:14:57,427 | INFO | [Hard Filter] 7/7 passed type check (allowed cross-types included)
+2026-05-22 17:14:57,428 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 17:14:57,433 | INFO | [Geocode] Starting for 7 comparables
+2026-05-22 17:14:58,703 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 17:15:00,047 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 17:15:02,305 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 17:15:03,631 | INFO | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 17:15:04,887 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-22 17:15:07,035 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-22 17:15:08,811 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 17:15:09,014 | INFO | [Distance] 7 comparables with valid coordinates
+2026-05-22 17:15:09,015 | INFO | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-22 17:15:09,015 | INFO | [URL Filter] 7 comparables after URL cleanup
+2026-05-22 17:15:09,015 | INFO | [Agent Done] Final comparables: 7 | Total tokens: 2291
+2026-05-22 17:15:09,026 | INFO | [DB Comparables] Query: I need all unique projects within 2 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-22 17:15:17,793 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:17,843 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=['total_transaction_count']
+2026-05-22 17:15:24,939 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:25,849 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:25,852 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-22 17:15:25,853 | INFO | No semantic transaction project/location entities resolved.
+2026-05-22 17:15:25,855 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 17:15:28,351 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:28,358 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 17:15:32,585 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:32,588 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND (
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )
+  ) <= 2.0
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+ORDER BY
+  distance ASC
+2026-05-22 17:15:35,785 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-22 17:15:39,366 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:39,367 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-22 17:15:39,376 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-22 17:15:39,378 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=11571
+2026-05-22 17:15:39,379 | INFO | [DB Comparables] Found 30 comparables from DB (via result_set)
+2026-05-22 17:24:52,383 | INFO | Scheduler has been shut down
+2026-05-22 17:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" (scheduled at 2026-05-22 17:30:00+05:30)
+2026-05-22 17:30:00,028 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" executed successfully
+2026-05-22 17:33:34,273 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:33:45,800 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:33:45,909 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-22 17:33:45,910 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-22 17:33:51,065 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:00,259 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:07,950 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:17,485 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:37,060 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:46,977 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:51,679 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:59,412 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:34:59,443 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 17:34:59,446 | INFO | [LLM Fetch] Pass 1/1
+2026-05-22 17:35:13,974 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-22 17:35:13,979 | INFO | [LLM Fetch] Received 7 raw comparables | tokens=2236
+2026-05-22 17:35:13,990 | INFO | [Multi-pass] Total raw comparables: 7
+2026-05-22 17:35:13,991 | INFO | [Dedup] 7/7 unique comparables
+2026-05-22 17:35:13,993 | INFO | [Hard Filter] 7/7 passed type check (allowed cross-types included)
+2026-05-22 17:35:13,994 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 17:35:13,996 | INFO | [Geocode] Starting for 7 comparables
+2026-05-22 17:35:15,453 | INFO | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 17:35:16,983 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 17:35:18,519 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 17:35:20,164 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 17:35:22,310 | INFO | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 17:35:23,902 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-22 17:35:25,533 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 17:35:25,734 | INFO | [Distance] 7 comparables with valid coordinates
+2026-05-22 17:35:25,734 | INFO | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-22 17:35:25,734 | INFO | [URL Filter] 7 comparables after URL cleanup
+2026-05-22 17:35:25,735 | INFO | [Agent Done] Final comparables: 7 | Total tokens: 2236
+2026-05-22 17:35:25,743 | INFO | [DB Comparables] Query: I need all unique projects within 2 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-22 17:35:40,432 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:35:40,436 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=['total_transaction_count']
+2026-05-22 17:35:48,418 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:35:49,943 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:35:49,945 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-22 17:35:49,946 | INFO | No semantic transaction project/location entities resolved.
+2026-05-22 17:35:49,946 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-22 17:35:52,719 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:35:52,722 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-22 17:35:55,381 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:35:55,384 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance_km,
+  COUNT(*) AS total_transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND 6371 * acos(
+        least(1, greatest(-1,
+          cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+          cos(radians(project_longitude) - radians(73.94636849999999)) +
+          sin(radians(18.5395129)) * sin(radians(project_latitude))
+        ))
+      ) <= 2.0
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+ORDER BY
+  distance_km ASC
+2026-05-22 17:35:58,194 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-22 17:36:00,702 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:36:00,707 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-22 17:36:00,720 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-22 17:36:00,729 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=11647
+2026-05-22 17:36:00,736 | INFO | [DB Comparables] Found 30 comparables from DB (via result_set)
+2026-05-22 17:40:23,061 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=2
+2026-05-22 17:40:23,061 | INFO | [Pipeline] Total projects: 3
+2026-05-22 17:40:23,061 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'Mantra Mesmer' → Residential, 'Vertical Oriana' → Residential
+2026-05-22 17:40:23,061 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-22 17:40:23,061 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 17:40:23,061 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:23,082 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:23,082 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 17:40:23,583 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:23,596 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:23,597 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 17:40:24,097 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:24,116 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:24,116 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999' — trying next fallback
+2026-05-22 17:40:24,617 | ERROR | [Search] All search engines failed for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-22 17:40:24,617 | INFO | [URL Search] Result: 'Godrej Infinity' -> 0 URLs.
+2026-05-22 17:40:25,617 | INFO | [URLs] Godrej Infinity -> 0 urls
+2026-05-22 17:40:25,617 | WARNING | [DROP] stage=url_search | project='Godrej Infinity' | reason=zero_urls_returned
+2026-05-22 17:40:25,617 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-22 17:40:25,618 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 17:40:25,618 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:25,631 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:25,631 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 17:40:26,131 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:26,144 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:26,145 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 17:40:26,645 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:26,658 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:26,659 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464' — trying next fallback
+2026-05-22 17:40:27,159 | ERROR | [Search] All search engines failed for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-22 17:40:27,160 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 0 URLs.
+2026-05-22 17:40:28,160 | INFO | [URLs] Mantra Mesmer -> 0 urls
+2026-05-22 17:40:28,160 | WARNING | [DROP] stage=url_search | project='Mantra Mesmer' | reason=zero_urls_returned
+2026-05-22 17:40:28,160 | INFO | 
+============================================================
+[Pipeline] Project: 'Vertical Oriana' | type=apartment | category=Residential
+============================================================
+2026-05-22 17:40:28,160 | INFO | [URL Search] Query: 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 17:40:28,160 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:28,173 | ERROR | [DDG] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:28,173 | WARNING | [Search] Engine 'DDG' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 17:40:28,674 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:28,687 | ERROR | [Bing] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:28,687 | WARNING | [Search] Engine 'Bing' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 17:40:29,188 | INFO | [Search] Creating new undetected browser
+2026-05-22 17:40:29,200 | ERROR | [Google] Search failed: Chrome binary not found. Install Chrome/Chromium or set CHROME_BIN.
+2026-05-22 17:40:29,200 | WARNING | [Search] Engine 'Google' returned 0 results for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831' — trying next fallback
+2026-05-22 17:40:29,700 | ERROR | [Search] All search engines failed for 'buy apartment in Vertical Oriana, Keshav Nagar, Pune, India, coordinates: 18.5358988, 73.9449831'
+2026-05-22 17:40:29,700 | INFO | [URL Search] Result: 'Vertical Oriana' -> 0 URLs.
+2026-05-22 17:40:30,701 | INFO | [URLs] Vertical Oriana -> 0 urls
+2026-05-22 17:40:30,701 | WARNING | [DROP] stage=url_search | project='Vertical Oriana' | reason=zero_urls_returned
+2026-05-22 17:40:30,711 | INFO | [Pipeline Done] final_listings=0 | projects=3 | tokens=0
+2026-05-22 18:02:34,248 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 18:02:34,261 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 18:02:48,308 | INFO | comparable_agent | [LLM Fetch] Received 7 raw comparables | tokens=2337
+2026-05-22 18:02:48,310 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 7
+2026-05-22 18:02:48,310 | INFO | comparable_agent | [Dedup] 7/7 unique comparables
+2026-05-22 18:02:48,321 | INFO | comparable_agent | [Hard Filter] 7/7 passed type check (allowed cross-types included)
+2026-05-22 18:02:48,321 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 18:02:48,327 | INFO | comparable_agent | [Geocode] Starting for 7 comparables
+2026-05-22 18:02:49,645 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 18:02:50,886 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 18:02:52,580 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 18:02:53,894 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 18:02:55,572 | INFO | comparable_agent | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 18:02:56,815 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-22 18:02:58,116 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 18:02:58,318 | INFO | comparable_agent | [Distance] 7 comparables with valid coordinates
+2026-05-22 18:02:58,319 | INFO | comparable_agent | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-22 18:02:58,320 | INFO | comparable_agent | [URL Filter] 7 comparables after URL cleanup
+2026-05-22 18:02:58,321 | INFO | comparable_agent | [Agent Done] Final comparables: 7 | Total tokens: 2337
+2026-05-22 18:07:10,413 | INFO | comparable_agent | [Agent Start] project='DLF Camellias' type='villa' category='Villa' search_term='villa or plot' location='Gurgaon'
+2026-05-22 18:07:10,415 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 18:07:23,088 | INFO | comparable_agent | [JSON Parse] Fallback extracted 9 individual objects
+2026-05-22 18:07:23,089 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2837
+2026-05-22 18:07:23,091 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 9
+2026-05-22 18:07:23,091 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-22 18:07:23,102 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-22 18:07:23,103 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Plot', 'Villa'}
+2026-05-22 18:07:23,105 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-22 18:07:24,436 | INFO | comparable_agent | [Geocode] OK 'Residential Bungalow/Villa in DLF 5' -> (28.4446059, 77.10390149999999) | Certainty: Sure
+2026-05-22 18:07:25,863 | INFO | comparable_agent | [Geocode] OK 'Brand New Ultra-Luxury Kothi in DLF Phase 1' -> (28.4190759, 77.07797219999999) | Certainty: Sure
+2026-05-22 18:07:27,278 | INFO | comparable_agent | [Geocode] OK 'Residential Plot in DLF Phase IV' -> (28.4692867, 77.08665719999999) | Certainty: Sure
+2026-05-22 18:07:28,635 | INFO | comparable_agent | [Geocode] OK 'Residential Plot in Unitech Nirvana Villas' -> (28.4180274, 77.0655456) | Certainty: Sure
+2026-05-22 18:07:30,106 | INFO | comparable_agent | [Geocode] OK 'Residential Plot in Vatika Horizon 82' -> (28.3872445, 76.96168759999999) | Certainty: Sure
+2026-05-22 18:07:31,885 | INFO | comparable_agent | [Geocode] OK 'Residential Plot in Unitech Uniworld Resort The Villas' -> (28.4264744, 77.03978409999999) | Certainty: Sure
+2026-05-22 18:07:34,963 | INFO | comparable_agent | [Geocode] OK 'Villa in DLF Phase I' -> (28.4659999, 77.1017035) | Certainty: Sure
+2026-05-22 18:07:36,523 | INFO | comparable_agent | [Geocode] OK 'Villa in Unitech Nirvana Villas' -> (28.4149784, 77.05989319999999) | Certainty: Sure
+2026-05-22 18:07:38,262 | INFO | comparable_agent | [Geocode] OK 'Villa in Unitech Uniworld Resort The Villas' -> (28.4294293, 77.02693769999999) | Certainty: Sure
+2026-05-22 18:07:38,464 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-22 18:07:38,466 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-22 18:07:38,467 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-22 18:07:38,468 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Residential Plot in Vatika Horizon 82' | reason=beyond_15km_radius | detail={"distance_km": 15.31}
+2026-05-22 18:07:38,469 | INFO | comparable_agent | [Agent Done] Final comparables: 8 | Total tokens: 2837
+2026-05-22 18:34:23,169 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 18:34:23,171 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 18:34:41,906 | INFO | comparable_agent | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-22 18:34:41,907 | INFO | comparable_agent | [LLM Fetch] Received 11 raw comparables | tokens=2827
+2026-05-22 18:34:41,909 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 11
+2026-05-22 18:34:41,909 | INFO | comparable_agent | [Dedup] 11/11 unique comparables
+2026-05-22 18:34:41,912 | INFO | comparable_agent | [Hard Filter] 11/11 passed type check (allowed cross-types included)
+2026-05-22 18:34:41,913 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 18:34:41,914 | INFO | comparable_agent | [Geocode] Starting for 11 comparables
+2026-05-22 18:34:42,470 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | Certainty: Sure
+2026-05-22 18:34:43,631 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Sapphire' -> (18.6202013, 73.7557844) | Certainty: Sure
+2026-05-22 18:34:45,090 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Tinsel Town' -> (18.5872516, 73.69927229999999) | Certainty: Sure
+2026-05-22 18:34:46,123 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview' -> (18.6156625, 73.7329531) | Certainty: Sure
+2026-05-22 18:34:47,174 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 2' -> (18.6156625, 73.7329531) | Certainty: Sure
+2026-05-22 18:34:48,235 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 3' -> (18.6156625, 73.7329531) | Certainty: Sure
+2026-05-22 18:34:50,409 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 4' -> (18.5324925, 73.9385451) | Certainty: Sure
+2026-05-22 18:34:52,225 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 5' -> (18.5301716, 73.9374362) | Certainty: Sure
+2026-05-22 18:34:53,315 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 6' -> (18.6156625, 73.7329531) | Certainty: Sure
+2026-05-22 18:34:54,400 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 7' -> (18.6156625, 73.7329531) | Certainty: Sure
+2026-05-22 18:34:56,570 | INFO | comparable_agent | [Geocode] OK 'Kohinoor Westview 8' -> (18.5293959, 73.93755399999999) | Certainty: Sure
+2026-05-22 18:34:56,771 | INFO | comparable_agent | [Distance] 11 comparables with valid coordinates
+2026-05-22 18:34:56,772 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-22 18:34:56,772 | INFO | comparable_agent | [Subject Filter] 10 comparables remain after removing subject project
+2026-05-22 18:34:56,772 | INFO | comparable_agent | [URL Filter] 10 comparables after URL cleanup
+2026-05-22 18:34:56,773 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Sapphire' | reason=beyond_15km_radius | detail={"distance_km": 22.0}
+2026-05-22 18:34:56,773 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Tinsel Town' | reason=beyond_15km_radius | detail={"distance_km": 26.58}
+2026-05-22 18:34:56,773 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Westview' | reason=beyond_15km_radius | detail={"distance_km": 24.04}
+2026-05-22 18:34:56,774 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Westview 2' | reason=beyond_15km_radius | detail={"distance_km": 24.04}
+2026-05-22 18:34:56,774 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Westview 3' | reason=beyond_15km_radius | detail={"distance_km": 24.04}
+2026-05-22 18:34:56,774 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Westview 6' | reason=beyond_15km_radius | detail={"distance_km": 24.04}
+2026-05-22 18:34:56,775 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kohinoor Westview 7' | reason=beyond_15km_radius | detail={"distance_km": 24.04}
+2026-05-22 18:34:56,775 | INFO | comparable_agent | [Agent Done] Final comparables: 3 | Total tokens: 2827
+2026-05-22 18:40:17,386 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-22 18:40:17,388 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 18:40:40,210 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2528
+2026-05-22 18:40:40,212 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 9
+2026-05-22 18:40:40,212 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-22 18:40:40,222 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-22 18:40:40,222 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-22 18:40:40,224 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-22 18:40:41,123 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | Certainty: Sure
+2026-05-22 18:40:42,295 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-22 18:40:43,808 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-22 18:40:45,227 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-22 18:40:46,315 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-22 18:40:47,358 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-22 18:40:48,730 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-22 18:40:50,124 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-22 18:40:51,156 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-22 18:40:51,356 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-22 18:40:51,357 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-22 18:40:51,357 | INFO | comparable_agent | [Subject Filter] 8 comparables remain after removing subject project
+2026-05-22 18:40:51,358 | INFO | comparable_agent | [URL Filter] 8 comparables after URL cleanup
+2026-05-22 18:40:51,358 | INFO | comparable_agent | [Agent Done] Final comparables: 8 | Total tokens: 2528
+2026-05-22 18:51:30,896 | INFO | comparable_agent | [Agent Start] project='DLF Camellias' type='villa' category='Villa' search_term='villa or plot' location='Gurgaon'
+2026-05-22 18:51:30,899 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 18:51:43,202 | INFO | comparable_agent | [JSON Parse] Fallback extracted 10 individual objects
+2026-05-22 18:51:43,203 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2828
+2026-05-22 18:51:43,204 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 10
+2026-05-22 18:51:43,204 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-22 18:51:43,214 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-22 18:51:43,215 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 18:51:43,216 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-22 18:51:44,305 | INFO | comparable_agent | [Geocode] OK 'DLF The Camellias' -> (28.4513058, 77.1006597) | Certainty: Sure
+2026-05-22 18:51:45,614 | INFO | comparable_agent | [Geocode] OK 'DLF The Arbour' -> (28.3971649, 77.0819181) | Certainty: Sure
+2026-05-22 18:51:46,606 | INFO | comparable_agent | [Geocode] OK 'DLF Privana South' -> (28.3801838, 76.990768) | Certainty: Sure
+2026-05-22 18:51:47,646 | INFO | comparable_agent | [Geocode] OK 'DLF Privana North' -> (28.3850224, 76.9922339) | Certainty: Sure
+2026-05-22 18:51:48,699 | INFO | comparable_agent | [Geocode] OK 'DLF The Crest' -> (28.4441628, 77.1110449) | Certainty: Sure
+2026-05-22 18:51:49,722 | INFO | comparable_agent | [Geocode] OK 'DLF The Magnolias' -> (28.4570998, 77.10023009999999) | Certainty: Sure
+2026-05-22 18:51:50,757 | INFO | comparable_agent | [Geocode] OK 'DLF The Aralias' -> (28.4592173, 77.10318989999999) | Certainty: Sure
+2026-05-22 18:51:51,712 | INFO | comparable_agent | [Geocode] OK 'DLF The Belaire' -> (28.4488617, 77.10155209999999) | Certainty: Sure
+2026-05-22 18:51:52,687 | INFO | comparable_agent | [Geocode] OK 'DLF The Pinnacle' -> (28.4528064, 77.0959443) | Certainty: Sure
+2026-05-22 18:51:54,042 | INFO | comparable_agent | [Geocode] OK 'DLF Park Place' -> (28.444572, 77.1078346) | Certainty: Sure
+2026-05-22 18:51:54,243 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-22 18:51:54,244 | INFO | comparable_agent | [Subject Filter] 10 comparables remain after removing subject project
+2026-05-22 18:51:54,245 | INFO | comparable_agent | [URL Filter] 10 comparables after URL cleanup
+2026-05-22 18:51:54,246 | INFO | comparable_agent | [Agent Done] Final comparables: 10 | Total tokens: 2828
+2026-05-22 19:05:34,056 | INFO | comparable_agent | [Agent Start] project='VK Sky Villa' type='villa' category='Villa' search_term='villa or plot' location='Handewadi'
+2026-05-22 19:05:34,058 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 19:05:47,107 | INFO | comparable_agent | [LLM Fetch] Received 5 raw comparables | tokens=1990
+2026-05-22 19:05:47,109 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 5
+2026-05-22 19:05:47,109 | INFO | comparable_agent | [Dedup] 5/5 unique comparables
+2026-05-22 19:05:47,120 | INFO | comparable_agent | [Hard Filter] 5/5 passed type check (allowed cross-types included)
+2026-05-22 19:05:47,120 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 19:05:47,122 | INFO | comparable_agent | [Geocode] Starting for 5 comparables
+2026-05-22 19:05:47,989 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:05:49,579 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchard' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:05:50,698 | INFO | comparable_agent | [Geocode] OK 'Divine Maple County Row Houses' -> (18.4662308, 73.8895865) | Certainty: Not Sure
+2026-05-22 19:05:51,820 | INFO | comparable_agent | [Geocode] OK 'Kolte Patil I Ven Row House' -> (18.6009968, 73.7339896) | Certainty: Not Sure
+2026-05-22 19:05:53,314 | INFO | comparable_agent | [Geocode] OK 'DSK Vishwa Villa' -> (18.4448541, 73.7958716) | Certainty: Not Sure
+2026-05-22 19:05:53,515 | INFO | comparable_agent | [Distance] 5 comparables with valid coordinates
+2026-05-22 19:05:53,516 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-22 19:05:53,517 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchard' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa orchard", "distance_km": 0.0}
+2026-05-22 19:05:53,517 | INFO | comparable_agent | [Subject Filter] 3 comparables remain after removing subject project
+2026-05-22 19:05:53,518 | INFO | comparable_agent | [URL Filter] 3 comparables after URL cleanup
+2026-05-22 19:05:53,518 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Kolte Patil I Ven Row House' | reason=beyond_15km_radius | detail={"distance_km": 25.93}
+2026-05-22 19:05:53,518 | INFO | comparable_agent | [Agent Done] Final comparables: 2 | Total tokens: 1990
+2026-05-22 19:14:21,072 | INFO | comparable_agent | [Agent Start] project='VK Sky Villa' type='villa' category='Villa' search_term='villa or plot' location='Handewadi'
+2026-05-22 19:14:21,075 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 19:14:31,778 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2539
+2026-05-22 19:14:31,783 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 9
+2026-05-22 19:14:31,784 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-22 19:14:31,796 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-22 19:14:31,797 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 19:14:31,801 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-22 19:14:33,034 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:34,792 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Lily' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:36,238 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchard' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:37,807 | INFO | comparable_agent | [Geocode] OK 'Taksh Villas' -> (18.4578981, 73.95122719999999) | Certainty: Sure
+2026-05-22 19:14:39,586 | INFO | comparable_agent | [Geocode] OK 'Elite VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:41,025 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Autadwadi' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:42,283 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:14:43,690 | INFO | comparable_agent | [Geocode] OK 'Majestique Rhythm County' -> (18.4632369, 73.9345172) | Certainty: Sure
+2026-05-22 19:14:45,223 | INFO | comparable_agent | [Geocode] OK 'Orient Palace' -> (18.4620387, 73.9343119) | Certainty: Sure
+2026-05-22 19:14:45,425 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-22 19:14:45,425 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-22 19:14:45,426 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Lily' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa lily", "distance_km": 0.0}
+2026-05-22 19:14:45,427 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchard' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa orchard", "distance_km": 0.0}
+2026-05-22 19:14:45,427 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Elite VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "elite vk sky villa rose", "distance_km": 0.0}
+2026-05-22 19:14:45,428 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Autadwadi' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa autadwadi", "distance_km": 0.0}
+2026-05-22 19:14:45,429 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa", "distance_km": 0.0}
+2026-05-22 19:14:45,430 | INFO | comparable_agent | [Subject Filter] 3 comparables remain after removing subject project
+2026-05-22 19:14:45,430 | INFO | comparable_agent | [URL Filter] 3 comparables after URL cleanup
+2026-05-22 19:14:45,431 | INFO | comparable_agent | [Agent Done] Final comparables: 3 | Total tokens: 2539
+2026-05-22 19:48:52,638 | INFO | comparable_agent | [Agent Start] project='VK Sky Villa' type='villa' category='Villa' search_term='villa or plot' location='Handewadi'
+2026-05-22 19:48:52,641 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 19:49:07,411 | INFO | comparable_agent | [LLM Fetch] Received 5 raw comparables | tokens=1970
+2026-05-22 19:49:07,414 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 5
+2026-05-22 19:49:07,415 | WARNING | comparable_agent | [DROP] stage=dedup | project='VTP Codename Never Before' | reason=duplicate
+2026-05-22 19:49:07,415 | INFO | comparable_agent | [Dedup] 4/5 unique comparables
+2026-05-22 19:49:07,419 | INFO | comparable_agent | [Hard Filter] 4/4 passed type check (allowed cross-types included)
+2026-05-22 19:49:07,420 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 19:49:07,423 | INFO | comparable_agent | [Geocode] Starting for 4 comparables
+2026-05-22 19:49:08,704 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Lily' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:49:10,819 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchard' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:49:12,288 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:49:14,031 | INFO | comparable_agent | [Geocode] OK 'VTP Codename Never Before' -> (18.5664334, 73.7392926) | Certainty: Not Sure
+2026-05-22 19:49:14,232 | INFO | comparable_agent | [Distance] 4 comparables with valid coordinates
+2026-05-22 19:49:14,233 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Lily' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa lily", "distance_km": 0.0}
+2026-05-22 19:49:14,233 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchard' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa orchard", "distance_km": 0.0}
+2026-05-22 19:49:14,234 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-22 19:49:14,234 | INFO | comparable_agent | [Subject Filter] 1 comparables remain after removing subject project
+2026-05-22 19:49:14,235 | INFO | comparable_agent | [URL Filter] 1 comparables after URL cleanup
+2026-05-22 19:49:14,235 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='VTP Codename Never Before' | reason=beyond_15km_radius | detail={"distance_km": 23.32}
+2026-05-22 19:49:14,236 | INFO | comparable_agent | [Agent Done] Final comparables: 0 | Total tokens: 1970
+2026-05-22 19:53:05,779 | INFO | comparable_agent | [Agent Start] project='VK Sky Villa' type='villa' category='Villa' search_term='villa or plot' location='Handewadi'
+2026-05-22 19:53:05,783 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-22 19:53:15,691 | INFO | comparable_agent | [LLM Fetch] Received 5 raw comparables | tokens=1978
+2026-05-22 19:53:15,693 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 5
+2026-05-22 19:53:15,694 | WARNING | comparable_agent | [DROP] stage=dedup | project='Taksh Villas' | reason=duplicate
+2026-05-22 19:53:15,694 | INFO | comparable_agent | [Dedup] 4/5 unique comparables
+2026-05-22 19:53:15,698 | INFO | comparable_agent | [Hard Filter] 4/4 passed type check (allowed cross-types included)
+2026-05-22 19:53:15,698 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-22 19:53:15,700 | INFO | comparable_agent | [Geocode] Starting for 4 comparables
+2026-05-22 19:53:16,595 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:53:17,775 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Lily' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:53:19,386 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchard' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-22 19:53:20,800 | INFO | comparable_agent | [Geocode] OK 'Taksh Villas' -> (18.4578981, 73.95122719999999) | Certainty: Sure
+2026-05-22 19:53:21,002 | INFO | comparable_agent | [Distance] 4 comparables with valid coordinates
+2026-05-22 19:53:21,002 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-22 19:53:21,003 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Lily' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa lily", "distance_km": 0.0}
+2026-05-22 19:53:21,003 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchard' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa orchard", "distance_km": 0.0}
+2026-05-22 19:53:21,004 | INFO | comparable_agent | [Subject Filter] 1 comparables remain after removing subject project
+2026-05-22 19:53:21,004 | INFO | comparable_agent | [URL Filter] 1 comparables after URL cleanup
+2026-05-22 19:53:21,005 | INFO | comparable_agent | [Agent Done] Final comparables: 1 | Total tokens: 1978
+2026-05-23 10:06:41,347 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-23 10:06:41,349 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-23 10:06:55,777 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2504
+2026-05-23 10:06:55,779 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 9
+2026-05-23 10:06:55,780 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-23 10:06:55,782 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-23 10:06:55,782 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-23 10:06:55,784 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-23 10:06:56,636 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-23 10:06:58,472 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-23 10:07:00,017 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-23 10:07:01,235 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-23 10:07:02,338 | INFO | comparable_agent | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-23 10:07:03,784 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-23 10:07:04,907 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-23 10:07:06,404 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-23 10:07:07,736 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-23 10:07:07,937 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-23 10:07:07,937 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-23 10:07:07,938 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-23 10:07:07,938 | INFO | comparable_agent | [Agent Done] Final comparables: 9 | Total tokens: 2504
+2026-05-23 10:49:44,554 | INFO | comparable_agent | [Agent Start] project='vk sky villa' type='villa' category='Villa' search_term='villa or plot' location='handewadi'
+2026-05-23 10:49:44,555 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-23 10:50:01,042 | INFO | comparable_agent | [JSON Parse] Fallback extracted 10 individual objects
+2026-05-23 10:50:01,042 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2824
+2026-05-23 10:50:01,044 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 10
+2026-05-23 10:50:01,044 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-23 10:50:01,054 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-23 10:50:01,055 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-23 10:50:01,056 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-23 10:50:02,322 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:03,371 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Lily' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:04,596 | INFO | comparable_agent | [Geocode] OK 'Taksh Villas' -> (18.4578981, 73.95122719999999) | Certainty: Not Sure
+2026-05-23 10:50:06,011 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Autadwadi' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:07,016 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchid' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:08,011 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Tulip' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:09,369 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Jasmine' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:10,420 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Sunflower' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:11,812 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Lavender' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:12,817 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Marigold' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-23 10:50:13,018 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-23 10:50:13,019 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-23 10:50:13,019 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Lily' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa lily", "distance_km": 0.0}
+2026-05-23 10:50:13,019 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Autadwadi' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa autadwadi", "distance_km": 0.0}
+2026-05-23 10:50:13,020 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchid' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa orchid", "distance_km": 0.0}
+2026-05-23 10:50:13,020 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Tulip' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa tulip", "distance_km": 0.0}
+2026-05-23 10:50:13,020 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Jasmine' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa jasmine", "distance_km": 0.0}
+2026-05-23 10:50:13,021 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Sunflower' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa sunflower", "distance_km": 0.0}
+2026-05-23 10:50:13,021 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Lavender' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa lavender", "distance_km": 0.0}
+2026-05-23 10:50:13,021 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Marigold' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk sky villa", "comp_name": "vk sky villa marigold", "distance_km": 0.0}
+2026-05-23 10:50:13,022 | INFO | comparable_agent | [Subject Filter] 1 comparables remain after removing subject project
+2026-05-23 10:50:13,022 | INFO | comparable_agent | [URL Filter] 1 comparables after URL cleanup
+2026-05-23 10:50:13,022 | INFO | comparable_agent | [Agent Done] Final comparables: 1 | Total tokens: 2824
+2026-05-23 13:05:41,540 | INFO | comparable_agent | [Agent Start] project='Yoo Villas' type='villa' category='Villa' search_term='villa or plot' location='kharadi'
+2026-05-23 13:05:41,542 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-23 13:05:57,929 | INFO | comparable_agent | [JSON Parse] Fallback extracted 9 individual objects
+2026-05-23 13:05:57,929 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2825
+2026-05-23 13:05:57,931 | INFO | comparable_agent | [Multi-pass] Total raw comparables: 9
+2026-05-23 13:05:57,932 | WARNING | comparable_agent | [DROP] stage=dedup | project='VTP Velvet Villa' | reason=duplicate
+2026-05-23 13:05:57,932 | WARNING | comparable_agent | [DROP] stage=dedup | project='Panchshil T Villa' | reason=duplicate
+2026-05-23 13:05:57,932 | WARNING | comparable_agent | [DROP] stage=dedup | project='VJ Yashwin Enchante' | reason=duplicate
+2026-05-23 13:05:57,933 | INFO | comparable_agent | [Dedup] 6/9 unique comparables
+2026-05-23 13:05:57,937 | INFO | comparable_agent | [Hard Filter] 6/6 passed type check (allowed cross-types included)
+2026-05-23 13:05:57,937 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-23 13:05:57,939 | INFO | comparable_agent | [Geocode] Starting for 6 comparables
+2026-05-23 13:05:58,939 | INFO | comparable_agent | [Geocode] OK 'VTP Velvet Villa' -> (18.5491161, 73.971947) | Certainty: Sure
+2026-05-23 13:06:00,141 | INFO | comparable_agent | [Geocode] OK 'Panchshil Yoo Villas' -> (18.5491392, 73.96385599999999) | Certainty: Sure
+2026-05-23 13:06:01,528 | INFO | comparable_agent | [Geocode] OK 'Panchshil T Villa' -> (18.5532587, 73.96150449999999) | Certainty: Sure
+2026-05-23 13:06:02,619 | INFO | comparable_agent | [Geocode] OK 'VJ Yashwin Enchante' -> (18.5725022, 73.9716306) | Certainty: Sure
+2026-05-23 13:06:03,684 | INFO | comparable_agent | [Geocode] OK 'VTP Velvet Villas Phase I' -> (18.5443239, 73.9824057) | Certainty: Sure
+2026-05-23 13:06:05,129 | INFO | comparable_agent | [Geocode] OK 'Panchshil Yoo Villas Phase 2' -> (18.5491392, 73.96385599999999) | Certainty: Sure
+2026-05-23 13:06:05,330 | INFO | comparable_agent | [Distance] 6 comparables with valid coordinates
+2026-05-23 13:06:05,331 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Panchshil Yoo Villas' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "yoo villas", "comp_name": "panchshil yoo villas", "distance_km": 0.0}
+2026-05-23 13:06:05,331 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Panchshil Yoo Villas Phase 2' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "yoo villas", "comp_name": "panchshil yoo villas phase 2", "distance_km": 0.0}
+2026-05-23 13:06:05,332 | INFO | comparable_agent | [Subject Filter] 4 comparables remain after removing subject project
+2026-05-23 13:06:05,332 | INFO | comparable_agent | [URL Filter] 4 comparables after URL cleanup
+2026-05-23 13:06:05,332 | INFO | comparable_agent | [Agent Done] Final comparables: 4 | Total tokens: 2825

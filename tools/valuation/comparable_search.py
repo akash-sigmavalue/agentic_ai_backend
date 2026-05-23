@@ -16,15 +16,23 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 # ── Logging setup ─────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    handlers=[
-        logging.FileHandler("comparable_agent.log", encoding="utf-8"),
-        logging.StreamHandler(),
-    ]
-)
+# NOTE: logging.basicConfig() is a no-op when uvicorn has already attached
+# handlers to the root logger (which happens before any module is imported).
+# We configure the named logger directly with its own handlers so that logs
+# always appear in the uvicorn terminal regardless of startup order.
+_LOG_FMT = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger("comparable_agent")
+if not logger.handlers:
+    logger.setLevel(logging.INFO)
+    _sh = logging.StreamHandler()
+    _sh.setLevel(logging.INFO)
+    _sh.setFormatter(_LOG_FMT)
+    logger.addHandler(_sh)
+    _fh = logging.FileHandler("comparable_agent.log", encoding="utf-8")
+    _fh.setLevel(logging.INFO)
+    _fh.setFormatter(_LOG_FMT)
+    logger.addHandler(_fh)
+    logger.propagate = False  # prevent double-printing via uvicorn root logger
 
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 

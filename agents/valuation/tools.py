@@ -113,7 +113,7 @@ FIELD_SCHEMAS = {
 
 
 # Property types where Cost Approach is valid (building exists to depreciate)
-_COST_APPLICABLE_TYPES = {"apartment", "villa", "retail", "commercial_office"}
+_COST_APPLICABLE_TYPES = {"villa"}
 
 
 def calculate_strategy(entities: dict) -> dict:
@@ -129,25 +129,18 @@ def calculate_strategy(entities: dict) -> dict:
 
     # 1. Recommended Approach selection
     if user_requested == "cost":
-        if pt_lower == "plot":
-            # Cost Approach is NOT applicable for plots — override to market
+        if pt_lower not in _COST_APPLICABLE_TYPES:
+            # Cost Approach is only applicable for villa — override to market
             recommended = "market"
             justification = (
-                "Cost Approach is not applicable for plot properties (no building to depreciate). "
+                "Cost Approach is only applicable for Villa properties (no building to depreciate for other types). "
                 "Switching to the Market Approach automatically."
             )
-        elif pt_lower in _COST_APPLICABLE_TYPES:
+        else:
             recommended = "cost"
             justification = (
                 f"Cost Approach selected as requested. "
                 f"Applicable for {pt_lower} properties."
-            )
-        else:
-            # Unknown / unsupported type — default to market
-            recommended = "market"
-            justification = (
-                f"Cost Approach is not supported for '{pt_lower}'. "
-                "Defaulting to the Market Approach."
             )
     elif user_requested and user_requested != "cost":
         recommended = user_requested
@@ -204,7 +197,7 @@ def calculate_strategy(entities: dict) -> dict:
 
     # 4. Handle approach choice logic
     present_choice = False
-    if not user_requested and not property_type_missing and pt_lower != "plot":
+    if not user_requested and not property_type_missing and pt_lower == "villa":
         present_choice = True
         
     # 5. Build rich schemas for missing fields UI
@@ -235,12 +228,12 @@ def calculate_strategy(entities: dict) -> dict:
     return {
         "recommended_approach": recommended,
         "approach_justification": justification,
-        "alternative_approach": None if pt_lower == "plot" else ("market" if recommended == "cost" else "cost"),
+        "alternative_approach": "cost" if (recommended == "market" and pt_lower == "villa") else None,
         "present_choice_to_user": present_choice,
         "user_choice_question": (
+            f"I recommend the {recommended.title()} Approach for this valuation. Would you like to proceed with this, or switch to the Cost Approach?"
+            if pt_lower == "villa" else
             f"I recommend the {recommended.title()} Approach for this valuation."
-            if pt_lower == "plot" else
-            f"I recommend the {recommended.title()} Approach for this valuation. Would you like to proceed with this, or switch to the {('Market' if recommended == 'cost' else 'Cost')} Approach?"
         ),
         "property_type_missing": property_type_missing,
         "pt_clarification": pt_clarification,
