@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+import asyncio
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
@@ -9,6 +10,21 @@ from agents.user_input.main import token_usage
 from api.schemas.user_input import AskRequest, AskResponse
 from core.user_input.security import require_openai_key
 from database.user_input_runtime import runtime
+from langchain_openai import ChatOpenAI
+from database.user_input_runtime import runtime
+
+from agents.user_input.main import (
+    build_context_string,
+    retrieve_node,
+    understand_query_node,
+)
+from agents.user_input.prompts import ANSWER_VERIFICATION_PROMPT
+from core.user_input.config import OPENAI_API_KEY
+from utils.user_input.helpers import count_tokens
+from agents.user_input.prompts import RAG_PROMPT_TEMPLATE
+from langchain_core.messages import HumanMessage
+import json
+
 
 
 router = APIRouter()
@@ -28,8 +44,8 @@ def _missing_dependency_error(exc: ModuleNotFoundError) -> HTTPException:
 def _load_document_tools():
     try:
         from agents.user_input.tools import (
-            create_faiss_retriever,
-            create_hybrid_retriever,
+            create_multi_retriever,
+            create_hybrid_retriever_multi,
             extract_images_from_pdf,
             hybrid_chunking,
             load_documents,
@@ -37,7 +53,7 @@ def _load_document_tools():
     except ModuleNotFoundError as exc:
         raise _missing_dependency_error(exc) from exc
 
-    return create_faiss_retriever, create_hybrid_retriever, extract_images_from_pdf, hybrid_chunking, load_documents
+    return create_multi_retriever, create_hybrid_retriever_multi, extract_images_from_pdf, hybrid_chunking, load_documents
 
 
 def _load_rag_graph():
@@ -93,8 +109,8 @@ async def upload_documents(files: list[UploadFile] = File(...)) -> dict:
     print("uiehwfuihewufhwe.............")
     require_openai_key()
     (
-        create_faiss_retriever,
-        create_hybrid_retriever,
+        create_multi_retriever,
+        create_hybrid_retriever_multi,
         extract_images_from_pdf,
         hybrid_chunking,
         load_documents,
@@ -144,8 +160,8 @@ async def upload_documents(files: list[UploadFile] = File(...)) -> dict:
     if not chunks:
         raise HTTPException(status_code=400, detail="Documents did not produce any text chunks.")
 
-    create_faiss_retriever(chunks)
-    runtime.ensemble_retriever = create_hybrid_retriever(chunks)
+    create_multi_retriever(chunks)
+    runtime.ensemble_retriever = create_hybrid_retriever_multi()
 
     runtime.document_name = ", ".join(document_names)
     runtime.document_names = document_names
@@ -204,20 +220,9 @@ async def ask_stream(request: AskRequest):
         raise HTTPException(status_code=400, detail="Upload and process a document first.")
 
     async def generate():
-        import asyncio
+        
 
         try:
-            from langchain_openai import ChatOpenAI
-
-            from agents.user_input.main import (
-                build_context_string,
-                generate_node,
-                retrieve_node,
-                understand_query_node,
-            )
-            from agents.user_input.prompts import ANSWER_VERIFICATION_PROMPT
-            from core.user_input.config import OPENAI_API_KEY
-            from utils.user_input.helpers import count_tokens
 
             loop = asyncio.get_running_loop()
             state = {
@@ -251,46 +256,102 @@ async def ask_stream(request: AskRequest):
                 return
 
             yield _sse({"type": "status", "stage": "generate", "content": "Drafting answer"})
-            state = await loop.run_in_executor(None, lambda: generate_node(state))
+            
 
-            # yield _sse({"type": "status", "stage": "check_answer", "content": "Verifying answer"})
-            # context_str = build_context_string(context_blocks)
-            # draft_answer = state.get("answer", "")
-            # prompt = ANSWER_VERIFICATION_PROMPT.format(
-            #     question=question,
-            #     query_plan=json.dumps(state.get("query_plan", {}), ensure_ascii=False, indent=2),
-            #     context_str=context_str,
-            #     draft_answer=draft_answer,
-            # )
+            
+            context_str = build_context_string(context_blocks)
+            prompt = RAG_PROMPT_TEMPLATE.format(
+                context_str=context_str,
+                query_plan=json.dumps(state.get("query_plan", {}), ensure_ascii=False, indent=2),
+                question=state["question"],
+            )
 
-            # llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=True, api_key=OPENAI_API_KEY)
-            # answer_parts = []
-            # async for chunk in llm.astream(prompt):
-            #     content = getattr(chunk, "content", "") or ""
-            #     if not content:
-            #         continue
-            #     answer_parts.append(content)
-            #     yield _sse({"type": "token", "content": content})
+            has_images = any(c.get("type") == "image" and c.get("image_base64") for c in context_blocks)
+            llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1, streaming=True, api_key=OPENAI_API_KEY)
+            
+            if has_images:
+                visual_prompt = (
+                    f"{prompt}\n\n"
+                    "NOTE ON VISUAL CONTEXT: You have been provided with the original base64 images of the document pages "
+                    "as visual context alongside the transcribed text context. If you notice any discrepancy in numbers, "
+                    "decimal positions, or units of measurement (e.g. 'mm' vs 'm') between the transcribed text context "
+                    "and the actual visual content on the image, you MUST trust the exact numbers and units shown on the image."
+                )
+                content = [{"type": "text", "text": visual_prompt}]
+                for c in context_blocks:
+                    if c.get("type") == "image" and c.get("image_base64"):
+                        content.append({
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:{c.get('image_mime', 'image/png')};base64,{c['image_base64']}"
+                            }
+                        })
+                messages = [HumanMessage(content=content)]
+            else:
+                messages = prompt
+                
+            answer_parts = []
+            async for chunk in llm.astream(messages):
+                content = getattr(chunk, "content", "") or ""
+                if content:
+                    answer_parts.append(content)
+                    yield _sse({"type": "token", "content": content})
+                    
+            answer = "".join(answer_parts).strip()
+            
+            suggested_questions = []
+            try:
+                suggested_prompt = f"""Based on the following question and answer, generate exactly 4 relevant, specific follow-up questions that a user might want to ask next.
+Return them as a JSON list of strings. Do not include markdown formatting or backticks around the JSON.
 
-            # answer = "".join(answer_parts).strip() or draft_answer
-            # checker_usage = {
-            #     "input": count_tokens(prompt, "gpt-4o-mini"),
-            #     "output": count_tokens(answer, "gpt-4o-mini"),
-            # }
-            # token_usage = state.get("token_usage") or {"input": 0, "output": 0}
-            # current_token_usage = {
-            #     "input": token_usage.get("input", 0) + checker_usage["input"],
-            #     "output": token_usage.get("output", 0) + checker_usage["output"],
-            # }
+Question: {state['question']}
+Answer: {answer}
+
+JSON format:
+[
+  "Question 1?",
+  "Question 2?",
+  "Question 3?",
+  "Question 4?"
+]
+"""
+                suggested_response = await llm.ainvoke(suggested_prompt)
+                try:
+                    cleaned = suggested_response.content.strip()
+                    if cleaned.startswith("```json"):
+                        cleaned = cleaned.replace("```json", "", 1).strip()
+                    if cleaned.startswith("```"):
+                        cleaned = cleaned.replace("```", "", 1).strip()
+                    if cleaned.endswith("```"):
+                        cleaned = cleaned[:-3].strip()
+                    suggested_questions = json.loads(cleaned)
+                except Exception:
+                    suggested_questions = []
+                if not isinstance(suggested_questions, list):
+                    suggested_questions = []
+            except Exception:
+                pass
+            
+            usage = {
+                "input": count_tokens(prompt, "gpt-4o-mini"),
+                "output": count_tokens(answer, "gpt-4o-mini"),
+            }
+            token_usage = state.get("token_usage") or {"input": 0, "output": 0}
+            combined_usage = {
+                "input": token_usage.get("input", 0) + usage["input"],
+                "output": token_usage.get("output", 0) + usage["output"],
+            }
+            runtime.total_llm_input_tokens += usage["input"]
+            runtime.total_llm_output_tokens += usage["output"]
 
             yield _sse({
                 "type": "done",
-                "answer": state.get("answer", ""),
+                "answer": answer,
                 "chunks": context_blocks,
-                "token_usage": state.get("token_usage") or {"input": 0, "output": 0},
+                "token_usage": combined_usage,
                 "verified": False,
                 "retrieval_timing": state.get("retrieval_timing"),
-                "suggested_questions": state.get("suggested_questions") or [],
+                "suggested_questions": suggested_questions,
             })
         except Exception as exc:
             yield _sse({"type": "error", "content": str(exc)})

@@ -13,8 +13,9 @@ INSTRUCTIONS
 ==================================================
 
 1. SOURCE OF TRUTH & MULTI-DOCUMENT CITATIONS
-   - Use ONLY the provided context.
-   - If the answer is not present in any document, say: "I don't have enough information in the documents to answer that."
+   - Use the provided context as the primary source of truth. 
+   - Do not introduce external factual claims. 
+   - However, you may synthesize, infer, and explain high-level relationships that are reasonably supported by the documents.
    - The context may contain information from MULTIPLE documents/files (check the "Source:" field in each block).
    - You MUST explicitly mention the document/file name in your answer whenever you state any information (e.g. "As per `filename.pdf` ...").
    - If the answer or relevant information is present in multiple documents, print both answers/details and compare/reconcile them, but ALWAYS explicitly mention each document's file name (e.g. "As per `pdf1.pdf`, [details], and as per `pdf2.pdf`, [details]").
@@ -46,6 +47,14 @@ INSTRUCTIONS
    - verify that numerical values match the correct row, column, and category
    - verify that no nearby table values were incorrectly substituted
    - verify that conclusions are supported by the provided context
+
+7. SYNTHESIS & HIGH-LEVEL ANALYSIS
+   - You may synthesize themes, patterns, motivations, or tradeoffs that are reasonably inferable from the provided context.
+   - For analytical or conceptual questions, combine insights across documents to provide a high-level explanation.
+   - Do NOT introduce external factual claims, but you may infer relationships and policy motivations if supported indirectly by the documents.
+   - Clearly distinguish:
+       a. direct statements from documents
+       b. inferred/synthesized conclusions
    
 
 
@@ -248,6 +257,7 @@ JSON STRUCTURE
     "table/clause specific query (e.g., 'Table 6-G FSI non-congested')",
     "contextual queries for definitions or notes"
   ],
+  "expected_answer_type": "text | table | image | mixed",
   "is_calculation": true/false
 }}
 

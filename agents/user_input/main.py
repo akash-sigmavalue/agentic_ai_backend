@@ -7,7 +7,7 @@ from langgraph.graph import END, StateGraph
 from langchain_core.messages import HumanMessage
 
 from agents.user_input.prompts import (
-    # ANSWER_VERIFICATION_PROMPT,
+    ANSWER_VERIFICATION_PROMPT,
     QUERY_UNDERSTANDING_PROMPT,
     RAG_PROMPT_TEMPLATE,
 )
@@ -247,10 +247,16 @@ def retrieve_node(state: GraphState) -> GraphState:
     question = state["question"]
     query_plan = state.get("query_plan", {})
     retrieval_queries = query_plan.get("retrieval_queries", [question])
+    expected_answer_type = query_plan.get("expected_answer_type", "mixed")
+    if expected_answer_type not in ["text", "table", "image", "figure_diagram", "mixed"]:
+        expected_answer_type = "mixed"
 
     all_docs = []
     for rq in retrieval_queries:
-        docs = runtime.ensemble_retriever(rq, k=HYBRID_CANDIDATE_K) if hasattr(runtime, 'ensemble_retriever') else []
+        if hasattr(runtime, 'ensemble_retriever'):
+            docs = runtime.ensemble_retriever(rq, target_type=expected_answer_type, k=HYBRID_CANDIDATE_K)
+        else:
+            docs = []
         all_docs.extend(docs)
 
     docs = deduplicate_docs(all_docs)

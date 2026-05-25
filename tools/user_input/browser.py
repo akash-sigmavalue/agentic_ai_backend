@@ -23,29 +23,91 @@ def extract_images_from_pdf(file_path):
 
     for page_index in range(len(doc)):
         page = doc[page_index]
+        
+        # Render the full page as an image
+        pix = page.get_pixmap(dpi=150)
+        image_bytes = pix.tobytes("png")
+        encoded = base64.b64encode(image_bytes).decode("utf-8")
+        
+        image_docs.append(
+            Document(
+                page_content="[PAGE IMAGE]",
+                metadata={
+                    "page": page_index + 1,
+                    "image_base64": encoded,
+                    "image_mime": "image/png",
+                    "type": "image",
+                    "content_type": "image",
+                },
+            )
+        )
+        
+        # Also extract embedded images (diagrams/figures)
         images = page.get_images(full=True)
-
         for image_index, image in enumerate(images):
             xref = image[0]
             base_image = doc.extract_image(xref)
-            image_bytes = base_image["image"]
+            img_bytes = base_image["image"]
             image_ext = base_image.get("ext", "png")
-            encoded = base64.b64encode(image_bytes).decode("utf-8")
+            encoded_img = base64.b64encode(img_bytes).decode("utf-8")
 
             image_docs.append(
                 Document(
-                    page_content="[IMAGE]",
+                    page_content="[FIGURE/DIAGRAM]",
                     metadata={
                         "page": page_index + 1,
-                        "image_base64": encoded,
+                        "image_base64": encoded_img,
                         "image_mime": f"image/{image_ext}",
-                        "image_index": image_index,
+                        "figure_number": image_index + 1,
                         "type": "image",
+                        "content_type": "figure_diagram",
                     },
                 )
             )
 
     return image_docs
+
+
+def extract_tables_from_pdf(file_path: str, filename: str) -> List[Document]:
+    try:
+        import pdfplumber
+    except ImportError:
+        return []
+        
+    table_docs = []
+    with pdfplumber.open(file_path) as pdf:
+        for page_index, page in enumerate(pdf.pages):
+            tables = page.extract_tables()
+            for table_index, table in enumerate(tables):
+                cleaned_table = []
+                for row in table:
+                    cleaned_table.append([str(cell).replace('\n', ' ') if cell is not None else "" for cell in row])
+                
+                if not cleaned_table:
+                    continue
+                    
+                md_lines = []
+                headers = cleaned_table[0]
+                md_lines.append("| " + " | ".join(headers) + " |")
+                md_lines.append("|" + "|".join(["---"] * len(headers)) + "|")
+                for row in cleaned_table[1:]:
+                    md_lines.append("| " + " | ".join(row) + " |")
+                    
+                md_content = "\n".join(md_lines)
+                table_docs.append(
+                    Document(
+                        page_content=md_content,
+                        metadata={
+                            "page": page_index + 1,
+                            "source": filename,
+                            "type": "text",
+                            "content_type": "table",
+                            "is_table": True,
+                            "table_number": table_index + 1
+                        }
+                    )
+                )
+    return table_docs
 
 
 def load_pdf_with_ocr(file_path: str) -> List[Document]:
@@ -191,39 +253,29 @@ def load_documents(file_path: str, filename: str) -> List[Document]:
         ]
 
     if extension == ".pdf":
-        # Priority 1: OpenDataLoader (richest structured extraction — markdown, sections, tables, bbox)
-        try:
-            docs = load_pdf_with_opendataloader(file_path)
-            total_text = " ".join(doc.page_content for doc in docs)
-            if len(total_text.strip()) > 500:
-                runtime.loader_type = "opendataloader"
-                return docs
-        except Exception as exc:
-            print(f"OpenDataLoader failed, falling back to PyPDFLoader: {exc}")
-
-        # Priority 2: PyPDFLoader (fast text extraction fallback)
+        all_docs = []
+        
         try:
             from langchain_community.document_loaders import PyPDFLoader
-
             loader = PyPDFLoader(file_path)
-            docs = loader.load()
-
-            for doc in docs:
+            text_docs = loader.load()
+            for doc in text_docs:
                 page = doc.metadata.get("page")
                 if isinstance(page, int):
                     doc.metadata["page"] = page + 1
-
-            total_text = " ".join(doc.page_content for doc in docs)
-            if len(total_text.strip()) > 500:
-                runtime.loader_type = "pypdf"
-                return docs
-
+                doc.metadata["content_type"] = "text"
+            all_docs.extend(text_docs)
+            runtime.loader_type = "hybrid_multi_modal"
         except Exception as exc:
-            print(f"PyPDFLoader failed, falling back to OCR: {exc}")
+            print(f"PyPDFLoader text extraction failed: {exc}")
 
-        # Priority 3: OCR (last resort for scanned/image-based PDFs)
-        runtime.loader_type = "ocr"
-        return load_pdf_with_ocr(file_path)
+        try:
+            table_docs = extract_tables_from_pdf(file_path, filename)
+            all_docs.extend(table_docs)
+        except Exception as exc:
+            print(f"pdfplumber table extraction failed: {exc}")
+            
+        return all_docs
 
     if extension == ".docx":
         runtime.loader_type = "docx"

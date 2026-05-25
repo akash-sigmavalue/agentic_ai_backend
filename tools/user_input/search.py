@@ -68,40 +68,53 @@ def merge_pages_for_structural_chunking(documents: List[Document], config: Chunk
     text_docs = [doc for doc in documents if doc.metadata.get("type") != "image"]
     non_text_docs = [doc for doc in documents if doc.metadata.get("type") == "image"]
 
-    page_numbers = [_page_sort_value(doc.metadata.get("page")) for doc in text_docs]
-    has_multiple_pages = len({page for page in page_numbers if page}) > 1
-    if not has_multiple_pages:
-        return documents
-
-    ordered_docs = sorted(
-        enumerate(text_docs),
-        key=lambda item: (_page_sort_value(item[1].metadata.get("page")), item[0]),
-    )
-
-    merged_parts = []
-    merged_pages = []
-    base_metadata = text_docs[0].metadata.copy() if text_docs else {}
-
-    for _, doc in ordered_docs:
-        page = _page_sort_value(doc.metadata.get("page"))
-        if page:
-            merged_pages.append(page)
-            merged_parts.append(f"[[PAGE_BREAK:{page}]]\n{doc.page_content.strip()}")
-        else:
-            merged_parts.append(doc.page_content.strip())
-
-    if not merged_parts:
-        return documents
-
-    merged_text = "\n\n".join(part for part in merged_parts if part)
-    base_metadata.update({
-        "page": min(merged_pages) if merged_pages else base_metadata.get("page"),
-        "pages": sorted(set(merged_pages)),
-        "page_range": _format_page_range(merged_pages),
-        "chunking_source": "merged_pages",
-    })
-
-    return [Document(page_content=merged_text, metadata=base_metadata), *non_text_docs]
+    from collections import defaultdict
+    source_to_docs = defaultdict(list)
+    for doc in text_docs:
+        source = doc.metadata.get("source", "unknown")
+        source_to_docs[source].append(doc)
+        
+    final_merged = []
+    
+    for source, docs in source_to_docs.items():
+        page_numbers = [_page_sort_value(doc.metadata.get("page")) for doc in docs]
+        has_multiple_pages = len({page for page in page_numbers if page}) > 1
+        
+        if not has_multiple_pages:
+            final_merged.extend(docs)
+            continue
+            
+        ordered_docs = sorted(
+            enumerate(docs),
+            key=lambda item: (_page_sort_value(item[1].metadata.get("page")), item[0]),
+        )
+        
+        merged_parts = []
+        merged_pages = []
+        base_metadata = docs[0].metadata.copy() if docs else {}
+        
+        for _, doc in ordered_docs:
+            page = _page_sort_value(doc.metadata.get("page"))
+            if page:
+                merged_pages.append(page)
+                merged_parts.append(f"[[PAGE_BREAK:{page}]]\n{doc.page_content.strip()}")
+            else:
+                merged_parts.append(doc.page_content.strip())
+                
+        if not merged_parts:
+            final_merged.extend(docs)
+            continue
+            
+        merged_text = "\n\n".join(part for part in merged_parts if part)
+        base_metadata.update({
+            "page": min(merged_pages) if merged_pages else base_metadata.get("page"),
+            "pages": sorted(set(merged_pages)),
+            "page_range": _format_page_range(merged_pages),
+            "chunking_source": "merged_pages",
+        })
+        final_merged.append(Document(page_content=merged_text, metadata=base_metadata))
+        
+    return final_merged + non_text_docs
 
 
 def improved_hierarchical_split(documents: List[Document], config: Optional[ChunkingConfig] = None) -> List[Document]:
@@ -255,41 +268,86 @@ def enrich_metadata(chunks: List[Document], config: ChunkingConfig) -> List[Docu
 
 
 # ========================= RETRIEVAL =========================
-def create_faiss_retriever(chunks: List[Document]):
-    runtime.embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
-    chunk_texts = [chunk.page_content for chunk in chunks]
-    embeddings = runtime.embeddings.embed_documents(chunk_texts)
-    
-    embeddings_array = np.array(embeddings).astype("float32")
-    faiss.normalize_L2(embeddings_array)
-    
-    index = faiss.IndexFlatIP(len(embeddings_array[0]))
-    index.add(embeddings_array)
+def create_multi_retriever(chunks: List[Document]):
+    if not runtime.embeddings:
+        runtime.embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
 
+    text_chunks, table_chunks, image_chunks = [], [], []
+    for chunk in chunks:
+        c_type = chunk.metadata.get("content_type")
+        if not c_type:
+            c_type = "table" if chunk.metadata.get("is_table") else "text"
+        
+        if c_type == "table":
+            table_chunks.append(chunk)
+        elif c_type == "image":
+            image_chunks.append(chunk)
+        else:
+            text_chunks.append(chunk)
+            
+    runtime.text_chunks = text_chunks
+    runtime.table_chunks = table_chunks
+    runtime.image_chunks = image_chunks
+
+    def _build_faiss(target_chunks):
+        if not target_chunks:
+            return None
+        chunk_texts = [c.page_content for c in target_chunks]
+        embeddings = runtime.embeddings.embed_documents(chunk_texts)
+        embeddings_array = np.array(embeddings).astype("float32")
+        faiss.normalize_L2(embeddings_array)
+        index = faiss.IndexFlatIP(len(embeddings_array[0]))
+        index.add(embeddings_array)
+        return index
+
+    runtime.text_faiss_index = _build_faiss(text_chunks)
+    runtime.table_faiss_index = _build_faiss(table_chunks)
+    runtime.image_faiss_index = _build_faiss(image_chunks)
+
+    runtime.faiss_index = _build_faiss(chunks)
     runtime.chunks = chunks
-    runtime.faiss_index = index
 
 
-def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.6, bm25_weight: float = 0.4):
-    bm25_retriever = BM25Retriever.from_documents(chunks, preprocess_func=preprocess_for_bm25)
-    bm25_retriever.k = RETRIEVAL_BM25_K
+def create_hybrid_retriever_multi(vector_weight: float = 0.6, bm25_weight: float = 0.4):
+    def _build_bm25(target_chunks):
+        if not target_chunks:
+            return None
+        retriever = BM25Retriever.from_documents(target_chunks, preprocess_func=preprocess_for_bm25)
+        retriever.k = RETRIEVAL_BM25_K
+        return retriever
 
-    def hybrid_search(query: str, k: int = HYBRID_CANDIDATE_K) -> List[Document]:
-        bm25_docs = bm25_retriever.invoke(query)
+    text_bm25 = _build_bm25(runtime.text_chunks)
+    table_bm25 = _build_bm25(runtime.table_chunks)
+    image_bm25 = _build_bm25(runtime.image_chunks)
+    fallback_bm25 = _build_bm25(runtime.chunks)
+
+    def _hybrid_search_target(query: str, target_type: str = "mixed", k: int = HYBRID_CANDIDATE_K) -> List[Document]:
+        if target_type == "table" and runtime.table_faiss_index and table_bm25:
+            idx, bm25, chunks = runtime.table_faiss_index, table_bm25, runtime.table_chunks
+        elif (target_type == "image" or target_type == "figure_diagram") and runtime.image_faiss_index and image_bm25:
+            idx, bm25, chunks = runtime.image_faiss_index, image_bm25, runtime.image_chunks
+        elif target_type == "text" and runtime.text_faiss_index and text_bm25:
+            idx, bm25, chunks = runtime.text_faiss_index, text_bm25, runtime.text_chunks
+        else:
+            idx, bm25, chunks = runtime.faiss_index, fallback_bm25, runtime.chunks
+            
+        if not idx or not bm25:
+            return []
+
+        bm25_docs = bm25.invoke(query)
         
         query_emb = runtime.embeddings.embed_query(query)
         query_array = np.array([query_emb]).astype("float32")
         faiss.normalize_L2(query_array)
-        distances, indices = runtime.faiss_index.search(query_array, RETRIEVAL_FAISS_K)
+        distances, indices = idx.search(query_array, RETRIEVAL_FAISS_K)
 
         faiss_docs = []
-        for idx, dist in zip(indices[0], distances[0]):
-            if idx != -1 and idx < len(runtime.chunks):
-                doc = runtime.chunks[idx]
+        for index_val, dist in zip(indices[0], distances[0]):
+            if index_val != -1 and index_val < len(chunks):
+                doc = chunks[index_val]
                 doc.metadata["faiss_score"] = float(dist)
                 faiss_docs.append(doc)
 
-        # Reciprocal Rank Fusion
         scores: Dict[str, float] = {}
         all_docs = bm25_docs + faiss_docs
 
@@ -309,7 +367,7 @@ def create_hybrid_retriever(chunks: List[Document], vector_weight: float = 0.6, 
         sorted_docs = sorted(unique_docs.values(), key=lambda x: x.metadata.get("hybrid_score", 0), reverse=True)
         return sorted_docs[:k]
 
-    return hybrid_search
+    return _hybrid_search_target
 
 
 # ========================= POST PROCESSING =========================
