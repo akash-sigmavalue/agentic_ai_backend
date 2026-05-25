@@ -1,11 +1,9 @@
 from __future__ import annotations
-
 import re
-
 import tiktoken
 
 
-def count_tokens(text: str, model: str = "text-embedding-ada-002") -> int:
+def count_tokens(text: str, model: str = "text-embedding-3-small") -> int:
     try:
         encoding = tiktoken.encoding_for_model(model)
     except KeyError:

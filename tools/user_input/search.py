@@ -256,7 +256,7 @@ def enrich_metadata(chunks: List[Document], config: ChunkingConfig) -> List[Docu
 
 # ========================= RETRIEVAL =========================
 def create_faiss_retriever(chunks: List[Document]):
-    runtime.embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY)
+    runtime.embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
     chunk_texts = [chunk.page_content for chunk in chunks]
     embeddings = runtime.embeddings.embed_documents(chunk_texts)
     

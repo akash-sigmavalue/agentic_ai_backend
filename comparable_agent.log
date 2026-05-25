@@ -156,3 +156,375 @@
 2026-05-22 12:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 12:30:00 IST)" (scheduled at 2026-05-22 12:00:00+05:30)
 2026-05-22 12:00:00,110 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 12:30:00 IST)" executed successfully
 2026-05-22 12:12:39,389 | INFO | Scheduler has been shut down
+2026-05-22 16:54:24,579 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:54:24,579 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:54:24,579 | INFO | Scheduler started
+2026-05-22 16:54:24,684 | INFO | Scheduler has been shut down
+2026-05-22 16:54:33,102 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:54:33,102 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:54:33,103 | INFO | Scheduler started
+2026-05-22 16:57:50,913 | INFO | Scheduler has been shut down
+2026-05-22 16:57:59,217 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:57:59,217 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:57:59,217 | INFO | Scheduler started
+2026-05-22 16:57:59,329 | INFO | Scheduler has been shut down
+2026-05-22 16:58:07,662 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:07,662 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:07,662 | INFO | Scheduler started
+2026-05-22 16:58:07,765 | INFO | Scheduler has been shut down
+2026-05-22 16:58:16,163 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:16,163 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:16,163 | INFO | Scheduler started
+2026-05-22 16:58:16,268 | INFO | Scheduler has been shut down
+2026-05-22 16:58:24,338 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:24,338 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:24,338 | INFO | Scheduler started
+2026-05-22 16:58:24,447 | INFO | Scheduler has been shut down
+2026-05-22 16:58:32,890 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:32,891 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:32,891 | INFO | Scheduler started
+2026-05-22 16:58:33,001 | INFO | Scheduler has been shut down
+2026-05-22 16:58:41,605 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:41,605 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:41,605 | INFO | Scheduler started
+2026-05-22 16:58:41,717 | INFO | Scheduler has been shut down
+2026-05-22 16:58:50,379 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:58:50,380 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:58:50,380 | INFO | Scheduler started
+2026-05-22 16:58:55,176 | INFO | Scheduler has been shut down
+2026-05-22 16:59:03,722 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 16:59:03,722 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 16:59:03,722 | INFO | Scheduler started
+2026-05-22 17:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:00:00 IST)" (scheduled at 2026-05-22 17:00:00+05:30)
+2026-05-22 17:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 17:30:00 IST)" executed successfully
+2026-05-22 17:07:13,300 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:07:29,670 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:07:30,100 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:07:33,782 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:07:36,064 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:08:13,602 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:08:14,195 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:08:17,010 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:08:18,290 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:20,718 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:21,762 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:09:24,596 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:09:31,751 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:19,692 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:20,114 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:14:25,274 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:26,982 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:44,482 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:44,882 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:14:51,710 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:14:53,617 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:42,703 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:43,159 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:15:45,290 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:46,972 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:53,182 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:15:53,587 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:16:00,532 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:16:02,494 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" (scheduled at 2026-05-22 17:30:00+05:30)
+2026-05-22 17:30:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" executed successfully
+2026-05-22 17:38:53,867 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:38:55,348 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:39:00,948 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:39:03,421 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:48:40,102 | INFO | Scheduler has been shut down
+2026-05-22 17:48:50,609 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-22 17:48:50,610 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-22 17:48:50,610 | INFO | Scheduler started
+2026-05-22 17:51:51,810 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:51:53,732 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:57:40,482 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:57:40,942 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 17:57:58,773 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 17:58:00,458 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:00:00,000 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:00:00 IST)" (scheduled at 2026-05-22 18:00:00+05:30)
+2026-05-22 18:00:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 18:30:00 IST)" executed successfully
+2026-05-22 18:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:00:00 IST)" (scheduled at 2026-05-22 18:30:00+05:30)
+2026-05-22 18:30:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:00:00 IST)" executed successfully
+2026-05-22 18:31:18,338 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 18:33:38,670 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:33:39,644 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 18:33:42,752 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:33:44,198 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:33:55,748 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:33:56,149 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 18:33:58,387 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 18:34:00,510 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 19:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:30:00 IST)" (scheduled at 2026-05-22 19:00:00+05:30)
+2026-05-22 19:00:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 19:30:00 IST)" executed successfully
+2026-05-22 19:30:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:00:00 IST)" (scheduled at 2026-05-22 19:30:00+05:30)
+2026-05-22 19:30:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:00:00 IST)" executed successfully
+2026-05-22 20:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:30:00 IST)" (scheduled at 2026-05-22 20:00:00+05:30)
+2026-05-22 20:00:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-22 20:30:00 IST)" executed successfully
+2026-05-22 20:02:53,498 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 20:02:55,746 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-22 20:02:57,835 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-22 20:03:00,061 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:56:12,759 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 12:56:12,759 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 12:56:12,759 | INFO | Scheduler started
+2026-05-23 13:00:00,021 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:00:00 IST)" (scheduled at 2026-05-23 13:00:00+05:30)
+2026-05-23 13:00:00,048 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:30:00 IST)" executed successfully
+2026-05-23 13:08:51,696 | INFO | Scheduler has been shut down
+2026-05-23 13:09:01,600 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:01,600 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:01,600 | INFO | Scheduler started
+2026-05-23 13:09:01,711 | INFO | Scheduler has been shut down
+2026-05-23 13:09:10,494 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:10,494 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:10,495 | INFO | Scheduler started
+2026-05-23 13:09:10,598 | INFO | Scheduler has been shut down
+2026-05-23 13:09:19,347 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:19,347 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:19,347 | INFO | Scheduler started
+2026-05-23 13:09:19,459 | INFO | Scheduler has been shut down
+2026-05-23 13:09:28,443 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:28,443 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:28,443 | INFO | Scheduler started
+2026-05-23 13:09:28,558 | INFO | Scheduler has been shut down
+2026-05-23 13:09:37,430 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:37,430 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:37,430 | INFO | Scheduler started
+2026-05-23 13:09:41,238 | INFO | Scheduler has been shut down
+2026-05-23 13:09:50,058 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:50,058 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:50,058 | INFO | Scheduler started
+2026-05-23 13:09:50,158 | INFO | Scheduler has been shut down
+2026-05-23 13:09:58,766 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:09:58,766 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:09:58,766 | INFO | Scheduler started
+2026-05-23 13:09:58,874 | INFO | Scheduler has been shut down
+2026-05-23 13:10:08,563 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:10:08,563 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:10:08,563 | INFO | Scheduler started
+2026-05-23 13:10:08,673 | INFO | Scheduler has been shut down
+2026-05-23 13:10:17,540 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:10:17,540 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:10:17,540 | INFO | Scheduler started
+2026-05-23 13:12:17,115 | INFO | Scheduler has been shut down
+2026-05-23 13:12:32,897 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:12:32,897 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:12:32,897 | INFO | Scheduler started
+2026-05-23 13:12:59,873 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:06,743 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:27:08,550 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:08,903 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:09,166 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:09,420 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:09,656 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 13:27:14,287 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:27:15,684 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:30:00 IST)" (scheduled at 2026-05-23 13:30:00+05:30)
+2026-05-23 13:30:00,082 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:00:00 IST)" executed successfully
+2026-05-23 13:30:12,901 | INFO | Scheduler has been shut down
+2026-05-23 13:30:23,405 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:30:23,406 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:30:23,406 | INFO | Scheduler started
+2026-05-23 15:49:21,006 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 15:49:21,006 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 15:49:21,006 | INFO | Scheduler started
+2026-05-23 15:52:54,157 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 15:53:52,081 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 15:53:52,627 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 15:53:55,362 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 15:53:56,574 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:00:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:00:00 IST)" (scheduled at 2026-05-23 16:00:00+05:30)
+2026-05-23 16:00:00,032 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" executed successfully
+2026-05-23 16:30:00,000 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:00:00 IST)" (scheduled at 2026-05-23 16:30:00+05:30)
+2026-05-23 16:30:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:00:00 IST)" executed successfully
+2026-05-23 17:00:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:30:00 IST)" (scheduled at 2026-05-23 17:00:00+05:30)
+2026-05-23 17:00:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:30:00 IST)" executed successfully
+2026-05-23 17:29:10,593 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:29:12,068 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-23 17:29:13,862 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:29:15,672 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" (scheduled at 2026-05-23 17:30:00+05:30)
+2026-05-23 17:30:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" executed successfully
+2026-05-23 18:00:00,000 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" (scheduled at 2026-05-23 18:00:00+05:30)
+2026-05-23 18:00:00,000 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" executed successfully
+2026-05-23 18:30:00,013 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" (scheduled at 2026-05-23 18:30:00+05:30)
+2026-05-23 18:30:00,020 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" executed successfully
+2026-05-23 19:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:30:00 IST)" (scheduled at 2026-05-23 19:00:00+05:30)
+2026-05-23 19:00:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:30:00 IST)" executed successfully
+2026-05-25 11:22:27,582 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:24:16,132 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:24:17,596 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:24:21,617 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:24:23,131 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:33:23,346 | INFO | Scheduler has been shut down
+2026-05-25 11:33:42,115 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:33:42,115 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:33:42,115 | INFO | Scheduler started
+2026-05-25 11:39:25,012 | INFO | Scheduler has been shut down
+2026-05-25 11:39:33,639 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:39:33,639 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:39:33,639 | INFO | Scheduler started
+2026-05-25 11:39:49,787 | INFO | Scheduler has been shut down
+2026-05-25 11:39:58,138 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:39:58,138 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:39:58,138 | INFO | Scheduler started
+2026-05-25 11:40:08,344 | INFO | Scheduler has been shut down
+2026-05-25 11:40:16,794 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:40:16,794 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:40:16,795 | INFO | Scheduler started
+2026-05-25 11:40:32,627 | INFO | Scheduler has been shut down
+2026-05-25 11:40:41,045 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:40:41,045 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:40:41,045 | INFO | Scheduler started
+2026-05-25 11:40:53,075 | INFO | Scheduler has been shut down
+2026-05-25 11:41:01,493 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:41:01,493 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:41:01,493 | INFO | Scheduler started
+2026-05-25 11:42:40,816 | INFO | Scheduler has been shut down
+2026-05-25 11:42:49,353 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:42:49,353 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:42:49,353 | INFO | Scheduler started
+2026-05-25 11:42:51,785 | INFO | Scheduler has been shut down
+2026-05-25 11:43:01,169 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:43:01,169 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:43:01,169 | INFO | Scheduler started
+2026-05-25 11:43:02,751 | INFO | Scheduler has been shut down
+2026-05-25 11:43:11,283 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:43:11,283 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:43:11,283 | INFO | Scheduler started
+2026-05-25 11:43:17,220 | INFO | Scheduler has been shut down
+2026-05-25 11:43:25,717 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:43:25,717 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:43:25,717 | INFO | Scheduler started
+2026-05-25 11:43:34,702 | INFO | Scheduler has been shut down
+2026-05-25 11:43:43,349 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:43:43,349 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:43:43,349 | INFO | Scheduler started
+2026-05-25 11:43:46,116 | INFO | Scheduler has been shut down
+2026-05-25 11:43:54,516 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 11:43:54,516 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 11:43:54,516 | INFO | Scheduler started
+2026-05-25 11:46:00,315 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:46:48,391 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:47:06,263 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:47:10,837 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 11:48:25,237 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:48:28,371 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:48:31,815 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:48:34,888 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:48:55,476 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 11:54:28,318 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:00:00 IST)" (scheduled at 2026-05-25 12:00:00+05:30)
+2026-05-25 12:00:00,032 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:30:00 IST)" executed successfully
+2026-05-25 12:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:00:00 IST)" (scheduled at 2026-05-25 12:30:00+05:30)
+2026-05-25 12:30:00,018 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:00:00 IST)" executed successfully
+2026-05-25 12:30:50,990 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:30:52,818 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:30:53,103 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:30:54,006 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:30:54,304 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:31:07,115 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:31:09,070 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:31:19,864 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:09,631 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:10,179 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:10,455 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:10,684 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:10,926 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:19,865 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:21,415 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:22,257 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:39,925 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:33:40,334 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:40,582 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:40,804 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:33:41,147 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:34:00,384 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:34:02,511 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:34:11,929 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:47:17,541 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:47:41,331 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:47:44,821 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:48:58,965 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:49:02,245 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:49:05,806 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:49:09,482 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:50:37,657 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:50:40,537 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:50:59,882 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:51:15,506 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:51:15,990 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:51:16,249 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:51:16,478 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:51:16,850 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:51:23,818 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:51:25,652 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:51:27,839 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:52:52,616 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:52:53,381 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:52:53,615 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:52:53,836 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:52:54,088 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 12:52:57,194 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:52:58,539 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:53:00,100 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 12:55:42,822 | INFO | Scheduler has been shut down
+2026-05-25 12:56:02,836 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 12:56:02,836 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 12:56:02,836 | INFO | Scheduler started
+2026-05-25 12:56:02,947 | INFO | Scheduler has been shut down
+2026-05-25 12:56:11,737 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 12:56:11,737 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 12:56:11,737 | INFO | Scheduler started
+2026-05-25 12:56:11,864 | INFO | Scheduler has been shut down
+2026-05-25 12:56:20,533 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 12:56:20,534 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 12:56:20,534 | INFO | Scheduler started
+2026-05-25 12:56:20,644 | INFO | Scheduler has been shut down
+2026-05-25 12:56:29,203 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 12:56:29,203 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 12:56:29,203 | INFO | Scheduler started
+2026-05-25 13:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:00:00 IST)" (scheduled at 2026-05-25 13:00:00+05:30)
+2026-05-25 13:00:00,032 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:30:00 IST)" executed successfully
+2026-05-25 13:01:53,412 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:08:57,851 | INFO | Scheduler has been shut down
+2026-05-25 13:09:07,001 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:09:07,001 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:09:07,001 | INFO | Scheduler started
+2026-05-25 13:09:44,246 | INFO | Scheduler has been shut down
+2026-05-25 13:09:52,836 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:09:52,836 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:09:52,836 | INFO | Scheduler started
+2026-05-25 13:09:52,946 | INFO | Scheduler has been shut down
+2026-05-25 13:10:01,332 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:10:01,332 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:10:01,332 | INFO | Scheduler started
+2026-05-25 13:10:01,445 | INFO | Scheduler has been shut down
+2026-05-25 13:10:09,661 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:10:09,661 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:10:09,661 | INFO | Scheduler started
+2026-05-25 13:10:09,762 | INFO | Scheduler has been shut down
+2026-05-25 13:10:17,945 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:10:17,946 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:10:17,946 | INFO | Scheduler started
+2026-05-25 13:12:52,269 | INFO | Scheduler has been shut down
+2026-05-25 13:13:00,596 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-25 13:13:00,602 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-25 13:13:00,602 | INFO | Scheduler started
+2026-05-25 13:17:05,660 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:17:08,289 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:18:09,729 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:18:10,164 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:18:37,819 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:18:39,803 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:20:21,741 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:20:22,396 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:20:44,612 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:20:46,085 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:28:09,741 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:28:10,295 | INFO | HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-05-25 13:28:24,787 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:28:27,613 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-25 13:30:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:30:00 IST)" (scheduled at 2026-05-25 13:30:00+05:30)
+2026-05-25 13:30:00,020 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 14:00:00 IST)" executed successfully
+2026-05-25 13:30:58,784 | INFO | Scheduler has been shut down
