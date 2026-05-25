@@ -237,6 +237,7 @@ def calculate_plot_rates(
     overrides: Optional[Dict] = None,
     fsi_override: Optional[float] = None,
     cc_override: Optional[float] = None,
+    rate_basis: Optional[str] = None,
 ) -> Dict:
     """
     Enriches `pipeline_output["cleaned_listings"]` with plot-rate fields.
@@ -294,7 +295,10 @@ def calculate_plot_rates(
     processable: List[Tuple[int, Dict]] = []   # (original index, listing)
     skipped_count = 0
 
-    subject_needs_plot_land_rate = property_type.strip().lower() in ("plot", "villa")
+    if rate_basis is not None:
+        subject_needs_plot_land_rate = rate_basis.strip().lower() == "plot_land"
+    else:
+        subject_needs_plot_land_rate = property_type.strip().lower() in ("plot", "villa")
 
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
@@ -323,7 +327,7 @@ def calculate_plot_rates(
                 processable.append((orig_idx, lst))
             else:
                 # Villa/Apartment - direct built-up rate (no plot-rate fields needed for valuation)
-                _stamp_null_plot_fields(cleaned[orig_idx])
+                _stamp_direct_builtup_fields(cleaned[orig_idx])
                 skipped_count += 1
 
     print(f"   → {len(processable)} listings queued, {skipped_count} skipped (null price/area or already built-up)")
@@ -690,6 +694,28 @@ def _stamp_direct_plot_fields(listing: Dict) -> None:
         listing["plot_negative_value_flag"]   = True
 
 
+def _stamp_direct_builtup_fields(listing: Dict) -> None:
+    """Stamps fields for properties that are already built-up (Villa/Apartment) in a Villa Market Approach."""
+    price    = listing.get("cleaned_price_value")
+    area     = listing.get("final_super_builtup_area")
+    currency = listing.get("cleaned_currency") or "₹"
+
+    listing["plot_fsi_range"]               = None
+    listing["plot_construction_cost_range"] = None
+
+    if price and area and float(area) > 0:
+        rate = round(float(price) / float(area), 2)
+        listing["plot_derived_rate_range"]    = {"low": rate, "high": rate, "currency": currency}
+        listing["plot_derived_rate_per_sqft"] = rate
+        listing["plot_negative_value_flag"]   = False
+        listing["plot_derived_by"]            = "listing"
+    else:
+        listing["plot_derived_rate_range"]    = None
+        listing["plot_derived_rate_per_sqft"] = None
+        listing["plot_negative_value_flag"]   = True
+        listing["plot_derived_by"]            = None
+
+
 # ---------------------------------------------------------------------------
 # Convenience wrapper — call this from your orchestration layer
 # ---------------------------------------------------------------------------
@@ -701,6 +727,7 @@ def run_plot_rate_if_applicable(
     country: str,
     property_type: str,
     on_progress=None,
+    rate_basis: Optional[str] = None,
 ) -> Dict:
     """
     Thin wrapper that gates on property_type == 'plot'.
@@ -728,4 +755,5 @@ def run_plot_rate_if_applicable(
         country=country,
         property_type=property_type,
         on_progress=on_progress,
+        rate_basis=rate_basis,
     )
