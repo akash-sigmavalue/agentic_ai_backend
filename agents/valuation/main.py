@@ -237,8 +237,8 @@ class PropertyValuationAgent:
         # ══════════════════════════════════════════════════════════════════════
         try:
             pt_lower = (entities.get("property_type") or "").strip().lower()
-            if pt_lower == "plot" and approach == "cost":
-                yield _sse("stage", "Cost Approach is locked for Plot properties. Switching to Market Approach.")
+            if approach == "cost" and pt_lower != "villa":
+                yield _sse("stage", f"Cost Approach is only applicable for Villa properties. Switching to Market Approach for '{pt_lower}'.")
                 approach = "market"
 
             if approach == "market":

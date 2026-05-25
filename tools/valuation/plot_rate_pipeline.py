@@ -4,7 +4,8 @@ plot_rate_pipeline.py
 Post-pipeline step: enriches cleaned listings with Plot Area Rate data.
 
 Call `calculate_plot_rates(...)` AFTER `data_cleaning_pipeline(...)` returns,
-but ONLY when the subject property_type is "plot".
+but ONLY when downstream valuation needs a plot/land rate. This includes
+plot market valuation and villa cost approach valuation.
 
 Each cleaned listing gets four new fields:
   - plot_fsi_range              : {"low": float, "high": float, "best": float}
@@ -33,6 +34,12 @@ from openai import OpenAI
 logger = logging.getLogger("plot_rate_pipeline")
 
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
+
+# ---------------------------------------------------------------------------
+# Sentinel for "user explicitly blanked this field"
+# ---------------------------------------------------------------------------
+_BLANK = object()   # unique sentinel — distinct from None and 0
+
 
 # ---------------------------------------------------------------------------
 # Prompt
@@ -93,6 +100,84 @@ RULES:
 def _build_batch_payload(items: List[Dict]) -> str:
     """Serialises a batch of items for the LLM user message."""
     return json.dumps(items, ensure_ascii=False)
+
+
+# ---------------------------------------------------------------------------
+# Override helper utilities
+# ---------------------------------------------------------------------------
+
+def _parse_val_with_intent(v):
+    """
+    Parses a user-supplied override value with three distinct outcomes:
+
+      - float   → user typed a real number; use it
+      - _BLANK  → user explicitly cleared the field (empty string); respect the intent
+      - None    → field was not present at all; fall through to LLM value
+
+    This distinction is critical:
+      • None   → restore LLM value (field was untouched)
+      • _BLANK → treat as 0.0 so _smart_best ignores that side
+      • float  → use exactly as provided
+    """
+    if v is None:
+        return None          # not present → untouched
+    if str(v).strip() == "":
+        return _BLANK        # empty string → user intentionally cleared it
+    try:
+        return float(v)
+    except (ValueError, TypeError):
+        return None          # unparseable → treat as untouched
+
+
+def _resolve(val_raw, llm_fallback, global_override):
+    """
+    Resolves a single FSI or CC side (low or high) to a concrete float.
+
+    Priority:
+      1. User typed a number      → use it directly
+      2. User blanked the field   → return 0.0  (signals _smart_best to ignore this side)
+      3. Global override present  → use it
+      4. LLM value present        → restore it
+      5. Nothing                  → 0.0
+    """
+    if isinstance(val_raw, float):
+        return val_raw                                      # user-supplied number wins
+    if val_raw is _BLANK:
+        return 0.0                                          # explicit blank → ignore side
+    if global_override is not None:
+        return float(global_override)                       # global scalar override
+    if llm_fallback is not None:
+        try:
+            return float(llm_fallback)                      # restore LLM value
+        except (ValueError, TypeError):
+            pass
+    return 0.0
+
+
+def _smart_best(low: float, high: float) -> float:
+    """
+    Computes the best (headline) estimate from a low/high pair,
+    correctly handling cases where one side was blanked or zeroed.
+
+      Both > 0  → midpoint
+      Only low  → low
+      Only high → high
+      Neither   → 0.0
+
+    This prevents a zero from dragging the midpoint down when the user
+    intentionally cleared one side to express a single known value.
+    """
+    l = float(low)  if low  else 0.0
+    h = float(high) if high else 0.0
+
+    if l > 0 and h > 0:
+        return (l + h) / 2.0
+    elif l > 0:
+        return l
+    elif h > 0:
+        return h
+    else:
+        return 0.0
 
 
 # ---------------------------------------------------------------------------
@@ -167,11 +252,24 @@ def calculate_plot_rates(
     country : str
         Country name (e.g. "India").
     property_type : str
-        Only runs when this equals "plot" (case-insensitive).
+        Subject property type. Call this only when the valuation rate basis is
+        plot/land; e.g. plot market valuation or villa cost approach.
     batch_size : int
         Number of listings per LLM call (default 8).
     on_progress : callable | None
         Optional callback(event_key, message).
+    overrides : dict | None
+        Per-row overrides keyed by original listing index (str or int).
+        Each value is a dict with optional keys:
+          fsi_low, fsi_high, cc_low, cc_high
+        Rules per field:
+          - number string / float  → use that value
+          - empty string ""        → user blanked it; treat as 0 (ignore that side)
+          - key absent / None      → restore from previous LLM value
+    fsi_override : float | None
+        Global FSI scalar applied to ALL rows (single value, no low/high).
+    cc_override : float | None
+        Global CC scalar applied to ALL rows (single value, no low/high).
 
     Returns
     -------
@@ -182,13 +280,6 @@ def calculate_plot_rates(
           - audit_stats["plot_rate_skipped"] count added
     """
 
-    # We now run this for any property type to ensure row-level plot-rate derivation
-    # logic (reverse-engineering for buildings, direct for plots) is applied.
-    # The intelligent split happens inside the loop below.
-    # if property_type.strip().lower() != "plot":
-    #     logger.info("calculate_plot_rates: skipped — property_type is not 'plot'.")
-    #     return pipeline_output
-
     cleaned = pipeline_output.get("cleaned_listings", [])
 
     if not cleaned:
@@ -196,14 +287,14 @@ def calculate_plot_rates(
         return pipeline_output
 
     if on_progress:
-        on_progress("plot_rate_start", f"Starting plot rate calculation for {len(cleaned)} listings")
+        on_progress("plot_rate_start", f"Starting plot/land rate calculation for {len(cleaned)} listings")
     print(f"🏗️  [Plot Rate] Starting for {len(cleaned)} cleaned listings …")
 
     # ── Split into processable vs. skippable ──────────────────────────────
     processable: List[Tuple[int, Dict]] = []   # (original index, listing)
     skipped_count = 0
 
-    subject_is_plot = property_type.strip().lower() in ("plot", "villa")
+    subject_needs_plot_land_rate = property_type.strip().lower() in ("plot", "villa")
 
     for orig_idx, lst in enumerate(cleaned):
         price = lst.get("cleaned_price_value")
@@ -218,7 +309,7 @@ def calculate_plot_rates(
 
         listing_is_plot = ptype in ["plot", "residential land", "land"]
 
-        if subject_is_plot:
+        if subject_needs_plot_land_rate:
             if listing_is_plot:
                 # Already a plot - use direct rate, skip LLM
                 _stamp_direct_plot_fields(cleaned[orig_idx])
@@ -237,63 +328,59 @@ def calculate_plot_rates(
 
     print(f"   → {len(processable)} listings queued, {skipped_count} skipped (null price/area or already built-up)")
 
-    # ── Handle Overrides (Skip LLM) ───────────────────────────────────────
+    # ── Handle Per-Row Overrides (Skip LLM) ───────────────────────────────
     if overrides is not None:
         print("   ⚙️  Recalculating with user overrides (skipping LLM)")
+
         for seq_id, (orig_idx, lst) in enumerate(processable):
             ov = overrides.get(str(orig_idx)) or overrides.get(orig_idx) or {}
-            
-            # Helper to parse empty strings cleanly
-            def parse_val(v):
-                if v is None or str(v).strip() == "": return None
-                try: return float(v)
-                except ValueError: return None
 
-            # 1. Determine FSI
-            f_low  = parse_val(ov.get("fsi_low") or ov.get("fsi"))
-            f_high = parse_val(ov.get("fsi_high") or ov.get("fsi"))
-            
-            if fsi_override is not None:
-                if f_low is None: f_low = float(fsi_override)
-                if f_high is None: f_high = float(fsi_override)
-                
-            if lst.get("plot_fsi_range"):
-                if f_low is None: f_low = lst["plot_fsi_range"].get("low")
-                if f_high is None: f_high = lst["plot_fsi_range"].get("high")
+            # ── FSI ──────────────────────────────────────────────────────
+            # Parse raw inputs — distinguishes number / blank / absent
+            f_low_raw  = _parse_val_with_intent(ov.get("fsi_low"))
+            f_high_raw = _parse_val_with_intent(ov.get("fsi_high"))
 
-            f_low = f_low if f_low is not None else 1.0
-            f_high = f_high if f_high is not None else 1.0
-            f_best = (f_low + f_high) / 2.0  # Recalculate midpoint so headline rate changes
-            
-            # 2. Determine Construction Cost
-            c_low  = parse_val(ov.get("cc_low") or ov.get("construction_cost"))
-            c_high = parse_val(ov.get("cc_high") or ov.get("construction_cost"))
-            
-            if cc_override is not None:
-                if c_low is None: c_low = float(cc_override)
-                if c_high is None: c_high = float(cc_override)
-                
-            if lst.get("plot_construction_cost_range"):
-                if c_low is None: c_low = lst["plot_construction_cost_range"].get("low")
-                if c_high is None: c_high = lst["plot_construction_cost_range"].get("high")
+            # Previous LLM values for this row (fallback when field was untouched)
+            llm_fsi = lst.get("plot_fsi_range") or {}
 
-            c_low = c_low if c_low is not None else 0.0
-            c_high = c_high if c_high is not None else 0.0
-            c_best = (c_low + c_high) / 2.0  # Recalculate midpoint
+            f_low  = _resolve(f_low_raw,  llm_fsi.get("low"),  fsi_override)
+            f_high = _resolve(f_high_raw, llm_fsi.get("high"), fsi_override)
+            f_best = _smart_best(f_low, f_high)
 
-            # Determine if this row was actually overridden
-            is_overridden = bool(ov) or (fsi_override is not None) or (cc_override is not None)
-            row_derived_by = "user" if is_overridden else (lst.get("plot_derived_by") or "llm")
+            # ── Construction Cost ────────────────────────────────────────
+            c_low_raw  = _parse_val_with_intent(ov.get("cc_low"))
+            c_high_raw = _parse_val_with_intent(ov.get("cc_high"))
 
+            llm_cc = lst.get("plot_construction_cost_range") or {}
+
+            c_low  = _resolve(c_low_raw,  llm_cc.get("low"),  cc_override)
+            c_high = _resolve(c_high_raw, llm_cc.get("high"), cc_override)
+            c_best = _smart_best(c_low, c_high)
+
+            # ── Derived-by tag ───────────────────────────────────────────
+            # Mark as "user" if any override was actually applied to this row
+            row_was_touched = (
+                bool(ov)
+                or (fsi_override is not None)
+                or (cc_override is not None)
+            )
+            row_derived_by = "user" if row_was_touched else (lst.get("plot_derived_by") or "llm")
+
+            # ── Build mock result and stamp ──────────────────────────────
             mock_llm_result = {
-                "fsi_low": f_low, "fsi_high": f_high, "fsi_best": f_best,
-                "fsi_reasoning": "User override / Preserved",
-                "const_cost_low": c_low, "const_cost_high": c_high, "const_cost_best": c_best,
+                "fsi_low":            f_low,
+                "fsi_high":           f_high,
+                "fsi_best":           f_best,
+                "fsi_reasoning":      "User override / Preserved",
+                "const_cost_low":     c_low,
+                "const_cost_high":    c_high,
+                "const_cost_best":    c_best,
                 "const_cost_rationale": "User override / Preserved",
             }
-            if lst.get("plot_construction_cost_range") and lst["plot_construction_cost_range"].get("currency"):
-                mock_llm_result["currency_symbol"] = lst["plot_construction_cost_range"]["currency"]
-            
+            # Preserve currency from previous run if available
+            if llm_cc.get("currency"):
+                mock_llm_result["currency_symbol"] = llm_cc["currency"]
+
             _stamp_plot_fields(cleaned[orig_idx], mock_llm_result, derived_by=row_derived_by)
 
         pipeline_output["audit_stats"]["plot_rate_token_usage"] = {"total_tokens": 0}
@@ -304,32 +391,40 @@ def calculate_plot_rates(
         print("✨ [Plot Rate] Done using user overrides.")
         return pipeline_output
 
-    # Global Overrides (Conditional Skip LLM) is now handled inside the overrides block if overrides is not None.
-    # If overrides is None but global overrides are provided, we should still handle them.
+    # ── Handle Global-Only Overrides (no per-row dict, but scalars set) ───
     if overrides is None and (fsi_override is not None or cc_override is not None):
         print(f"   ⚙️  Applying global overrides (FSI={fsi_override}, CC={cc_override})")
+
         for orig_idx, lst in processable:
-            f_val = fsi_override
-            c_val = cc_override
-            
-            # If only one is provided, keep the other from previous run if exists
-            if f_val is None and lst.get("plot_fsi_range"):
-                f_val = lst["plot_fsi_range"].get("best")
-            if c_val is None and lst.get("plot_construction_cost_range"):
-                c_val = lst["plot_construction_cost_range"].get("best")
-                
-            f_val = float(f_val) if f_val is not None else 1.0
-            c_val = float(c_val) if c_val is not None else 0.0
+            # For global override: if only one scalar is set, keep the other
+            # from the previous LLM run (use best as both low and high).
+            llm_fsi = lst.get("plot_fsi_range") or {}
+            llm_cc  = lst.get("plot_construction_cost_range") or {}
+
+            if fsi_override is not None:
+                f_val = float(fsi_override)
+            else:
+                # Keep previous best as the single representative value
+                f_val = float(llm_fsi.get("best") or llm_fsi.get("low") or 1.0)
+
+            if cc_override is not None:
+                c_val = float(cc_override)
+            else:
+                c_val = float(llm_cc.get("best") or llm_cc.get("low") or 0.0)
 
             mock_res = {
-                "fsi_low": f_val, "fsi_high": f_val, "fsi_best": f_val,
-                "fsi_reasoning": "Global user override",
-                "const_cost_low": c_val, "const_cost_high": c_val, "const_cost_best": c_val,
+                "fsi_low":            f_val,
+                "fsi_high":           f_val,
+                "fsi_best":           f_val,   # single scalar → best = itself
+                "fsi_reasoning":      "Global user override",
+                "const_cost_low":     c_val,
+                "const_cost_high":    c_val,
+                "const_cost_best":    c_val,
                 "const_cost_rationale": "Global user override",
             }
-            if lst.get("plot_construction_cost_range") and lst["plot_construction_cost_range"].get("currency"):
-                mock_res["currency_symbol"] = lst["plot_construction_cost_range"]["currency"]
-            
+            if llm_cc.get("currency"):
+                mock_res["currency_symbol"] = llm_cc["currency"]
+
             _stamp_plot_fields(cleaned[orig_idx], mock_res, derived_by="user")
 
         pipeline_output["audit_stats"]["plot_rate_token_usage"] = {"total_tokens": 0}
@@ -345,18 +440,19 @@ def calculate_plot_rates(
         area  = lst.get("final_super_builtup_area")
         category_raw = lst.get("property_category") or lst.get("project_category") or lst.get("property_type") or ""
         item_ptype = str(category_raw).strip().lower()
-        item_is_plot = item_ptype in ["plot", "residential land", "land"] 
+        item_is_plot = item_ptype in ["plot", "residential land", "land"]
 
         llm_items.append({
-            "id":            seq_id,
+            "id":               seq_id,
             "property_category": item_ptype,
-            "project_name":  lst.get("project_name", "Unknown"),
-            "total_price":   price,
-            "plot_area_sqft": area if item_is_plot else None,  
-            "built_up_sqft":  None if item_is_plot else area,  
-            "location":      location or subject.get("location", "Unknown"),
-            "country":       country,
+            "project_name":     lst.get("project_name", "Unknown"),
+            "total_price":      price,
+            "plot_area_sqft":   area if item_is_plot else None,
+            "built_up_sqft":    None if item_is_plot else area,
+            "location":         location or subject.get("location", "Unknown"),
+            "country":          country,
         })
+
     # ── Batch ─────────────────────────────────────────────────────────────
     batches: List[List[Dict]] = [
         llm_items[i : i + batch_size] for i in range(0, len(llm_items), batch_size)
@@ -365,7 +461,6 @@ def calculate_plot_rates(
     metrics = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     metrics_lock = threading.Lock()
 
-    # seq_id → result dict from LLM
     results_by_id: Dict[int, Dict] = {}
 
     with ThreadPoolExecutor(max_workers=4) as executor:
@@ -432,14 +527,14 @@ def _calculate_residual_rate(
 
     # 1. Plot Area Range (Area = Built-up / FSI)
     # Lower FSI means larger land area.
-    area_max = built_up / fsi_low if fsi_low > 0 else built_up
-    area_min = built_up / fsi_high if fsi_high > 0 else built_up
+    area_max  = built_up / fsi_low  if fsi_low  > 0 else built_up
+    area_min  = built_up / fsi_high if fsi_high > 0 else built_up
     area_best = built_up / fsi_best if fsi_best > 0 else built_up
 
     # 2. Plot Value Range (Value = Price - Construction Cost)
     # Higher construction cost means lower land value.
-    val_min = price - (cost_high * built_up)
-    val_max = price - (cost_low * built_up)
+    val_min  = price - (cost_high * built_up)
+    val_max  = price - (cost_low  * built_up)
     val_best = price - (cost_best * built_up)
 
     if val_max < 0:
@@ -447,21 +542,20 @@ def _calculate_residual_rate(
 
     # 3. Plot Rate Range (Rate = Value / Area)
     # Conservative (Low) = Val Min / Area Max
-    # Optimistic (High) = Val Max / Area Min
-    rate_low = val_min / area_max if area_max > 0 else 0
-    rate_high = val_max / area_min if area_min > 0 else 0
+    # Optimistic (High)  = Val Max / Area Min
+    rate_low  = val_min  / area_max  if area_max  > 0 else 0
+    rate_high = val_max  / area_min  if area_min  > 0 else 0
     rate_best = val_best / area_best if area_best > 0 else 0
 
-    # Ensure no negatives in rates
-    rate_low = max(0, rate_low)
+    rate_low  = max(0, rate_low)
     rate_high = max(0, rate_high)
     rate_best = max(0, rate_best)
 
     return {
-        "rate_low": round(rate_low, 2),
-        "rate_high": round(rate_high, 2),
-        "rate_best": round(rate_best, 2),
-        "negative_value": False
+        "rate_low":       round(rate_low,  2),
+        "rate_high":      round(rate_high, 2),
+        "rate_best":      round(rate_best, 2),
+        "negative_value": False,
     }
 
 
@@ -473,64 +567,72 @@ def _stamp_plot_fields(listing: Dict, result: Dict, derived_by: str = "llm") -> 
     """Writes structured plot-rate fields onto a listing dict."""
 
     price = listing.get("cleaned_price_value")
-    area = listing.get("final_super_builtup_area")
+    area  = listing.get("final_super_builtup_area")
 
-    # LLM Estimates
-    fsi_low = result.get("fsi_low")
+    fsi_low  = result.get("fsi_low")
     fsi_high = result.get("fsi_high")
     fsi_best = result.get("fsi_best")
-    cost_low = result.get("const_cost_low")
+    cost_low  = result.get("const_cost_low")
     cost_high = result.get("const_cost_high")
     cost_best = result.get("const_cost_best")
 
     listing["plot_fsi_range"] = {
-        "low": fsi_low,
-        "high": fsi_high,
-        "best": fsi_best,
+        "low":       fsi_low,
+        "high":      fsi_high,
+        "best":      fsi_best,
         "reasoning": result.get("fsi_reasoning"),
     }
 
-    currency = result.get("currency_symbol") or result.get("currency_code") or listing.get("cleaned_currency") or "₹"
+    currency = (
+        result.get("currency_symbol")
+        or result.get("currency_code")
+        or listing.get("cleaned_currency")
+        or "₹"
+    )
 
     listing["plot_construction_cost_range"] = {
-        "low": cost_low,
-        "high": cost_high,
-        "best": cost_best,
-        "currency": currency,
+        "low":       cost_low,
+        "high":      cost_high,
+        "best":      cost_best,
+        "currency":  currency,
         "rationale": result.get("const_cost_rationale"),
     }
 
-    # Perform Deterministic Calculation
-    category_raw = listing.get("property_category") or listing.get("project_category") or listing.get("property_type") or ""
+    # ── Deterministic rate calculation ────────────────────────────────────
+    category_raw = (
+        listing.get("property_category")
+        or listing.get("project_category")
+        or listing.get("property_type")
+        or ""
+    )
     listing_is_plot = str(category_raw).strip().lower() in ["plot", "residential land", "land"]
 
     if listing_is_plot:
-        # Calculating Derived Built-up Rate for a Plot comparable
+        # Derived built-up rate for a Plot comparable
         price_num = float(price or 0)
-        area_num = float(area or 0)
+        area_num  = float(area  or 0)
         if area_num > 0 and (fsi_low or 0) > 0 and (fsi_high or 0) > 0 and (fsi_best or 0) > 0:
             land_rate = price_num / area_num
-            rate_low = (land_rate / float(fsi_high)) + float(cost_low or 0)
-            rate_high = (land_rate / float(fsi_low)) + float(cost_high or 0)
+            rate_low  = (land_rate / float(fsi_high)) + float(cost_low  or 0)
+            rate_high = (land_rate / float(fsi_low))  + float(cost_high or 0)
             rate_best = (land_rate / float(fsi_best)) + float(cost_best or 0)
-            
             calc = {
-                "rate_low": round(rate_low, 2),
-                "rate_high": round(rate_high, 2),
-                "rate_best": round(rate_best, 2),
-                "negative_value": False
+                "rate_low":       round(rate_low,  2),
+                "rate_high":      round(rate_high, 2),
+                "rate_best":      round(rate_best, 2),
+                "negative_value": False,
             }
         else:
             calc = {"negative_value": True}
     else:
-        # Perform Deterministic Calculation (Residual Land Rate for Built-up comparable)
+        # Residual land rate for a built-up comparable
         calc = _calculate_residual_rate(
             price=float(price or 0),
             built_up=float(area or 0),
-            fsi_low=float(fsi_low or 0),
+            fsi_low=float(fsi_low   or 0),
             fsi_high=float(fsi_high or 0),
             fsi_best=float(fsi_best or 0),
-            cost_low=float(cost_low or 0),
+            cost_low=float(cost_low   or 0),
             cost_high=float(cost_high or 0),
             cost_best=float(cost_best or 0),
         )
@@ -538,19 +640,19 @@ def _stamp_plot_fields(listing: Dict, result: Dict, derived_by: str = "llm") -> 
     neg = calc.get("negative_value", False)
 
     if neg or calc.get("rate_best") is None:
-        listing["plot_derived_rate_range"] = None
+        listing["plot_derived_rate_range"]  = None
         listing["plot_derived_rate_per_sqft"] = None
         listing["plot_negative_value_flag"] = True
-        listing["plot_derived_by"] = derived_by
+        listing["plot_derived_by"]          = derived_by
     else:
         listing["plot_derived_rate_range"] = {
-            "low": calc.get("rate_low"),
-            "high": calc.get("rate_high"),
+            "low":      calc.get("rate_low"),
+            "high":     calc.get("rate_high"),
             "currency": currency,
         }
         listing["plot_derived_rate_per_sqft"] = calc.get("rate_best")
-        listing["plot_negative_value_flag"] = False
-        listing["plot_derived_by"] = derived_by
+        listing["plot_negative_value_flag"]   = False
+        listing["plot_derived_by"]            = derived_by
 
     logger.info(f"FSI Range: {listing['plot_fsi_range']}")
     logger.info(f"Construction Cost Range: {listing['plot_construction_cost_range']}")
@@ -569,23 +671,23 @@ def _stamp_null_plot_fields(listing: Dict) -> None:
 
 def _stamp_direct_plot_fields(listing: Dict) -> None:
     """Stamps fields for properties that are already plots (no reverse-engineering needed)."""
-    price = listing.get("cleaned_price_value")
-    area  = listing.get("final_super_builtup_area")
+    price    = listing.get("cleaned_price_value")
+    area     = listing.get("final_super_builtup_area")
     currency = listing.get("cleaned_currency") or "₹"
 
-    listing["plot_fsi_range"] = {"low": 1.0, "high": 1.0, "best": 1.0}
+    listing["plot_fsi_range"]               = {"low": 1.0, "high": 1.0, "best": 1.0}
     listing["plot_construction_cost_range"] = {"low": 0, "high": 0, "best": 0, "currency": currency}
 
     if price and area and float(area) > 0:
         rate = round(float(price) / float(area), 2)
-        listing["plot_derived_rate_range"] = {"low": rate, "high": rate, "currency": currency}
+        listing["plot_derived_rate_range"]    = {"low": rate, "high": rate, "currency": currency}
         listing["plot_derived_rate_per_sqft"] = rate
-        listing["plot_negative_value_flag"] = False
-        listing["plot_derived_by"] = "system"
+        listing["plot_negative_value_flag"]   = False
+        listing["plot_derived_by"]            = "system"
     else:
-        listing["plot_derived_rate_range"] = None
+        listing["plot_derived_rate_range"]    = None
         listing["plot_derived_rate_per_sqft"] = None
-        listing["plot_negative_value_flag"] = True
+        listing["plot_negative_value_flag"]   = True
 
 
 # ---------------------------------------------------------------------------
