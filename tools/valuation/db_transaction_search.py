@@ -217,54 +217,105 @@ def fetch_db_transactions(
 
     url = f"{agent_base_url}/ask_stream_data_retrieval"
 
+    # Check if we can run in-process directly to avoid deadlocking single-threaded Uvicorn
+    try:
+        import sys
+        import os
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        if root_dir not in sys.path:
+            sys.path.insert(0, root_dir)
+        from agents.data_retrieval.pipeline import UniversalRealEstateAgent
+        data_retrieval_agent = UniversalRealEstateAgent()
+        use_in_process = True
+    except Exception as e:
+        logger.warning(f"[DB Transactions] Fallback to HTTP because in-process import failed: {e}")
+        use_in_process = False
+
     def _do_single_fetch():
         """Run one attempt at the SSE stream. Returns (result_rows, accumulated)."""
         _accumulated = ""
         _result_rows = None
 
-        resp = requests.get(
-            url,
-            params={"question": query, "selected_domain": "transaction"},
-            stream=True,
-            timeout=120,
-        )
-        if resp.status_code != 200:
-            raise RuntimeError(f"Agent returned HTTP {resp.status_code}")
+        if use_in_process:
+            logger.info("[DB Transactions] Executing in-process to avoid Uvicorn deadlock")
+            stream = data_retrieval_agent.execute_stream(query, selected_domain="transaction")
+            for line in stream:
+                if not line:
+                    continue
+                if not line.startswith("data:"):
+                    continue
+                payload_str = line[len("data:"):].strip()
+                if not payload_str:
+                    continue
+                try:
+                    payload = json.loads(payload_str)
+                except Exception:
+                    continue
 
-        for raw_line in resp.iter_lines():
-            if not raw_line:
-                continue
-            line = raw_line.decode("utf-8", errors="replace") if isinstance(raw_line, bytes) else raw_line
-            if not line.startswith("data:"):
-                continue
-            payload_str = line[len("data:"):].strip()
-            if not payload_str:
-                continue
-            try:
-                payload = json.loads(payload_str)
-            except Exception:
-                continue
+                event_type = payload.get("type", "")
+                content    = payload.get("content", "")
 
-            event_type = payload.get("type", "")
-            content    = payload.get("content", "")
+                if event_type == "done":
+                    break
 
-            if event_type == "done":
-                break
+                # PRIMARY: capture structured rows directly
+                if event_type == "result_set":
+                    rs = content if isinstance(content, dict) else {}
+                    rows = rs.get("rows") or []
+                    if rows:
+                        _result_rows = rows
+                        logger.info(f"[DB Transactions] result_set captured: {len(_result_rows)} rows")
 
-            # PRIMARY: capture structured rows directly
-            if event_type == "result_set":
-                rs = content if isinstance(content, dict) else {}
-                rows = rs.get("rows") or []
-                if rows:
-                    _result_rows = rows
-                    logger.info(f"[DB Transactions] result_set captured: {len(_result_rows)} rows")
+                # FALLBACK: accumulate streamed text chunks
+                elif event_type == "report_chunk" and content:
+                    _accumulated += str(content)
 
-            # FALLBACK: accumulate streamed text chunks
-            elif event_type == "report_chunk" and content:
-                _accumulated += str(content)
+                elif event_type == "error":
+                    raise RuntimeError(str(content))
+        else:
+            resp = requests.get(
+                url,
+                params={"question": query, "selected_domain": "transaction"},
+                stream=True,
+                timeout=120,
+            )
+            if resp.status_code != 200:
+                raise RuntimeError(f"Agent returned HTTP {resp.status_code}")
 
-            elif event_type == "error":
-                raise RuntimeError(str(content))
+            for raw_line in resp.iter_lines():
+                if not raw_line:
+                    continue
+                line = raw_line.decode("utf-8", errors="replace") if isinstance(raw_line, bytes) else raw_line
+                if not line.startswith("data:"):
+                    continue
+                payload_str = line[len("data:"):].strip()
+                if not payload_str:
+                    continue
+                try:
+                    payload = json.loads(payload_str)
+                except Exception:
+                    continue
+
+                event_type = payload.get("type", "")
+                content    = payload.get("content", "")
+
+                if event_type == "done":
+                    break
+
+                # PRIMARY: capture structured rows directly
+                if event_type == "result_set":
+                    rs = content if isinstance(content, dict) else {}
+                    rows = rs.get("rows") or []
+                    if rows:
+                        _result_rows = rows
+                        logger.info(f"[DB Transactions] result_set captured: {len(_result_rows)} rows")
+
+                # FALLBACK: accumulate streamed text chunks
+                elif event_type == "report_chunk" and content:
+                    _accumulated += str(content)
+
+                elif event_type == "error":
+                    raise RuntimeError(str(content))
 
         return _result_rows, _accumulated
 

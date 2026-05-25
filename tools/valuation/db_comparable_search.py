@@ -301,80 +301,138 @@ def fetch_db_comparables(
 
     logger.info(f"[DB Comparables] Query: {query}")
 
+    # Check if we can run in-process directly to avoid deadlocking single-threaded Uvicorn
+    try:
+        import sys
+        import os
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        if root_dir not in sys.path:
+            sys.path.insert(0, root_dir)
+        from agents.data_retrieval.pipeline import UniversalRealEstateAgent
+        data_retrieval_agent = UniversalRealEstateAgent()
+        stream = data_retrieval_agent.execute_stream(query, selected_domain="transaction")
+        use_in_process = True
+    except Exception as e:
+        logger.warning(f"[DB Comparables] Fallback to HTTP because in-process import failed: {e}")
+        use_in_process = False
+
     accumulated   = ""   # report_chunk text (fallback)
     result_rows   = None # from result_set event (preferred)
 
-    try:
-        response = requests.get(
-            url,
-            params={"question": query, "selected_domain": "transaction"},
-            stream=True,
-            timeout=120,
-        )
-        if response.status_code != 200:
+    if use_in_process:
+        logger.info("[DB Comparables] Executing in-process to avoid Uvicorn deadlock")
+        try:
+            for line in stream:
+                if not line:
+                    continue
+                if not line.startswith("data: "):
+                    continue
+                payload_str = line[len("data: "):].strip()
+                if not payload_str:
+                    continue
+                try:
+                    payload = json.loads(payload_str)
+                    event_type = payload.get("type")
+
+                    if event_type == "done":
+                        break
+
+                    if event_type == "result_set":
+                        rs = payload.get("content") or {}
+                        rows = rs.get("rows") or []
+                        if rows:
+                            result_rows = rows
+                            logger.info(f"[DB Comparables] result_set captured: {len(result_rows)} rows")
+
+                    elif event_type == "report_chunk":
+                        chunk = payload.get("content") or ""
+                        if chunk:
+                            accumulated += chunk
+                            logger.debug(f"[DB Comparables] report_chunk: {chunk[:80]!r}")
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.error(f"[DB Comparables] In-process execution failed: {e}")
             out = {
                 "comparables": [],
                 "count":       0,
                 "status":      "error",
-                "error":       f"HTTP {response.status_code}",
+                "error":       str(e),
             }
             _print_db_result(out, subject_project_name)
             return out
+    else:
+        try:
+            response = requests.get(
+                url,
+                params={"question": query, "selected_domain": "transaction"},
+                stream=True,
+                timeout=120,
+            )
+            if response.status_code != 200:
+                out = {
+                    "comparables": [],
+                    "count":       0,
+                    "status":      "error",
+                    "error":       f"HTTP {response.status_code}",
+                }
+                _print_db_result(out, subject_project_name)
+                return out
 
-        for line in response.iter_lines(decode_unicode=True):
-            if not line:
-                continue
-            if not line.startswith("data: "):
-                continue
-            payload_str = line[len("data: "):].strip()
-            if not payload_str:
-                continue
-            try:
-                payload = json.loads(payload_str)
-                event_type = payload.get("type")
+            for line in response.iter_lines(decode_unicode=True):
+                if not line:
+                    continue
+                if not line.startswith("data: "):
+                    continue
+                payload_str = line[len("data: "):].strip()
+                if not payload_str:
+                    continue
+                try:
+                    payload = json.loads(payload_str)
+                    event_type = payload.get("type")
 
-                # ── Stop reading once the stream signals completion ────
-                if event_type == "done":
-                    break
+                    # ── Stop reading once the stream signals completion ────
+                    if event_type == "done":
+                        break
 
-                # ── PRIMARY: capture result_set rows directly ──────────
-                if event_type == "result_set":
-                    rs = payload.get("content") or {}
-                    rows = rs.get("rows") or []
-                    if rows:
-                        result_rows = rows
-                        logger.info(f"[DB Comparables] result_set captured: {len(result_rows)} rows")
+                    # ── PRIMARY: capture result_set rows directly ──────────
+                    if event_type == "result_set":
+                        rs = payload.get("content") or {}
+                        rows = rs.get("rows") or []
+                        if rows:
+                            result_rows = rows
+                            logger.info(f"[DB Comparables] result_set captured: {len(result_rows)} rows")
 
-                # ── FALLBACK: accumulate report_chunk text ─────────────
-                elif event_type == "report_chunk":
-                    chunk = payload.get("content") or ""
-                    if chunk:
-                        accumulated += chunk
-                        logger.debug(f"[DB Comparables] report_chunk: {chunk[:80]!r}")
+                    # ── FALLBACK: accumulate report_chunk text ─────────────
+                    elif event_type == "report_chunk":
+                        chunk = payload.get("content") or ""
+                        if chunk:
+                            accumulated += chunk
+                            logger.debug(f"[DB Comparables] report_chunk: {chunk[:80]!r}")
 
-            except Exception:
-                pass
+                except Exception:
+                    pass
 
-    except requests.exceptions.ConnectionError as e:
-        logger.error(f"[DB Comparables] Connection error: {e}")
-        out = {
-            "comparables": [],
-            "count":       0,
-            "status":      "error",
-            "error":       "Could not connect to backend server",
-        }
-        _print_db_result(out, subject_project_name)
-        return out
-    except Exception as e:
-        logger.error(f"[DB Comparables] Unexpected error: {e}")
-        out = {
-            "comparables": [],
-            "count":       0,
-            "status":      "error",
-            "error":       str(e),
-        }
-        _print_db_result(out, subject_project_name)
-        return out
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"[DB Comparables] Connection error: {e}")
+            out = {
+                "comparables": [],
+                "count":       0,
+                "status":      "error",
+                "error":       "Could not connect to backend server",
+            }
+            _print_db_result(out, subject_project_name)
+            return out
+        except Exception as e:
+            logger.error(f"[DB Comparables] Unexpected error: {e}")
+            out = {
+                "comparables": [],
+                "count":       0,
+                "status":      "error",
+                "error":       str(e),
+            }
+            _print_db_result(out, subject_project_name)
+            return out
 
     logger.info(f"[DB Comparables] Stream done. result_rows={len(result_rows) if result_rows else None} | accumulated_len={len(accumulated)}")
 

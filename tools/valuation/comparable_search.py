@@ -482,9 +482,9 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         })
 
     # ── Step 1: Multi-pass LLM fetch ──────────────────────────────────────
-    for i in range(1):
-        logger.info(f"[LLM Fetch] Pass {i + 1}/1")
-        comps, usage = fetch_comparables(subject)
+    for i in range(3):
+        logger.info(f"[LLM Fetch] Pass {i + 1}/3")
+        comps, usage = fetch_comparables(subject)   
         all_comps.extend(comps)
         for k in ["prompt_tokens", "completion_tokens", "total_tokens"]:
             total_usage[k] += usage.get(k, 0)
