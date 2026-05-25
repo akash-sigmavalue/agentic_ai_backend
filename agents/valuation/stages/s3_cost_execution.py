@@ -36,6 +36,7 @@ import json
 import logging
 
 from tools.valuation.comparable_search import comparable_selection_agent
+from tools.valuation.db_comparable_search import fetch_db_comparables
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class CostExecutionAgent:
     # ──────────────────────────────────────────────────────────────────────────
     # PHASE 1 — Comparable Identification  (same as Market Approach Step 1)
     # ──────────────────────────────────────────────────────────────────────────
-    def execute_workflow(self, state: dict, metrics, sse_callback, run_logger=None):
+    def execute_workflow(self, state: dict, metrics, sse_callback, run_logger=None, comparable_source: str = "web"):
         """
         Phase 1: Find comparable properties so the frontend can run the full
         market-style pipeline (listing fetch → cleaning → factorial → rate).
@@ -111,9 +112,15 @@ class CostExecutionAgent:
             return
 
         # ── Step 1: Comparable Identification (mirrors Market Approach) ───────
+        source_label = {
+            "web":  "LLM Web Search",
+            "db":   "Internal Database",
+            "both": "LLM Web Search + Internal Database",
+        }.get(comparable_source, "LLM Web Search")
+
         yield sse_callback(
             "stage",
-            "Stage 3 (Cost): Identifying comparable properties via web search...",
+            f"Stage 3 (Cost): Identifying comparable properties via {source_label}...",
         )
 
         coords = entities.get("coordinates") or {}
@@ -128,55 +135,102 @@ class CostExecutionAgent:
             "lng": coords.get("lng") if coords.get("lng") is not None else 0,
         }
 
-        # Progress observer
-        progress_events = []
+        all_comparables = []
 
-        def on_progress(iteration, radius_km, comps_so_far, new_added):
-            progress_events.append(
-                {
-                    "iteration": iteration,
-                    "radius_km": radius_km,
-                    "comps_so_far": comps_so_far,
-                    "new_added": new_added,
-                }
+        # ── Web (LLM) Source ────────────────────────────────────────────────
+        if comparable_source in ("web", "both"):
+            progress_events = []
+
+            def on_progress(iteration, radius_km, comps_so_far, new_added):
+                progress_events.append(
+                    {
+                        "iteration": iteration,
+                        "radius_km": radius_km,
+                        "comps_so_far": comps_so_far,
+                        "new_added": new_added,
+                    }
+                )
+
+            yield sse_callback("stage", "Stage 3a (Cost): Fetching comparables from LLM web search...")
+            comp_result = comparable_selection_agent(
+                subject,
+                on_progress=on_progress,
+                run_logger=run_logger,
+                metrics=metrics,
             )
 
-        # Run comparable search
-        comp_result = comparable_selection_agent(
-            subject,
-            on_progress=on_progress,
-            run_logger=run_logger,
-            metrics=metrics,
-        )
+            metrics.tools_called += comp_result.get("iterations", 0)
 
-        metrics.tools_called += comp_result.get("iterations", 0)
+            # Emit progress events
+            for p in progress_events:
+                if p["new_added"] is not None:
+                    yield sse_callback("comparable_search_progress", p)
 
-        # Emit progress events
-        for p in progress_events:
-            if p["new_added"] is not None:
-                yield sse_callback("comparable_search_progress", p)
+            # Track LLM usage
+            self.last_usage = comp_result.get("_token_usage", {})
+            web_comps = comp_result.get("comparables", [])
 
-        # Track LLM usage
-        self.last_usage = comp_result.get("_token_usage", {})
+            # Tag each with source
+            for c in web_comps:
+                c.setdefault("data_source", "Web")
+
+            all_comparables.extend(web_comps)
+            yield sse_callback("stage", f"Stage 3a (Cost) done: {len(web_comps)} comparables from web search.")
+
+        # ── DB Source ──────────────────────────────────────────────────────
+        if comparable_source in ("db", "both"):
+            yield sse_callback("stage", "Stage 3b (Cost): Fetching comparables from internal database...")
+            db_result = fetch_db_comparables(
+                lat=subject["lat"],
+                lng=subject["lng"],
+                property_type=subject["property_type"],
+                subject_project_name=subject["project_name"],
+            )
+
+            if db_result["status"] == "success":
+                db_comps = db_result["comparables"]
+                all_comparables.extend(db_comps)
+                # Capture subject project from DB (if found) for listing fetch
+                subject_db_project = db_result.get("subject_project")
+                if subject_db_project:
+                    state.setdefault("cost_data", {})["subject_db_project"] = subject_db_project
+                    logger.info("[Cost Stage3b] Subject project found in DB: %s (id=%s)", subject_db_project.get("project_name"), subject_db_project.get("project_id"))
+                yield sse_callback("stage", f"Stage 3b (Cost) done: {len(db_comps)} comparables from internal DB.")
+            else:
+                subject_db_project = None
+                # No results or error — signal the UI
+                yield sse_callback(
+                    "db_comparable_status",
+                    {
+                        "status": db_result["status"],
+                        "message": db_result.get("error", "No projects found in DB"),
+                    },
+                )
+                yield sse_callback("stage", f"Stage 3b (Cost): {db_result.get('error', 'No projects found in DB')}")
+        else:
+            subject_db_project = None
 
         # Emit comparable results
-        comparables = comp_result.get("comparables", [])
         yield sse_callback(
             "comparable_results",
             {
-                "comparables": comparables,
-                "final_radius_km": comp_result.get("final_radius_km"),
-                "iterations": comp_result.get("iterations"),
-                "total_found": len(comparables),
-                "iterations_log": comp_result.get("iterations_log", []),
+                "comparables": all_comparables,
+                "final_radius_km": None,
+                "iterations": None,
+                "total_found": len(all_comparables),
+                "iterations_log": [],
+                "comparable_source":  comparable_source,
+                "subject_db_project": subject_db_project,  # subject's DB entry for listing fetch
             },
         )
 
         # Update state
         if "cost_data" not in state:
             state["cost_data"] = {}
-        state["cost_data"]["raw_comparables"] = comparables
+        state["cost_data"]["raw_comparables"] = all_comparables
         state["cost_data"]["subject"] = subject
+        if subject_db_project:
+            state["cost_data"]["subject_db_project"] = subject_db_project
 
         # ── Inform frontend that cost-specific inputs will be needed after rate ─
         # Determine which inputs are needed based on property type

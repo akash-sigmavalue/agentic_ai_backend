@@ -252,7 +252,8 @@ class PropertyValuationAgent:
                     yield token_event
 
             elif approach == "cost":
-                yield from self.cost_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger)
+                comp_source = state.get("comparable_source", "web")
+                yield from self.cost_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger, comparable_source=comp_source)
                 
                 token_event = self._emit_tokens(metrics, "stage3_cost", self.cost_executor.last_usage)
                 if token_event:
