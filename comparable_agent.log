@@ -9372,3 +9372,1266 @@ ORDER BY transaction_date DESC;
 2026-05-23 16:00:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" executed successfully
 2026-05-23 16:03:12,316 | INFO | Scheduler has been shut down
 2026-05-23 16:03:12,323 | INFO | ensuring close
+2026-05-23 16:03:29,634 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 16:03:29,634 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 16:03:29,635 | INFO | Scheduler started
+2026-05-23 16:04:20,194 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:04:21,128 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:04:26,670 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:04:26,749 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 16:04:26,750 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 16:04:32,039 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:04:32,831 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:04:37,499 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:04:40,216 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:04:40,759 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:04:47,167 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:00,503 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:01,355 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:05:07,228 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:12,079 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:12,896 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:05:17,454 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:17,455 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:05:23,037 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:23,317 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:05:32,856 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:05:32,862 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 16:05:32,866 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar'
+2026-05-23 16:05:32,867 | INFO | [LLM Fetch] Pass 1/1
+2026-05-23 16:05:45,716 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-23 16:05:45,846 | INFO | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-23 16:05:45,847 | INFO | [LLM Fetch] Received 11 raw comparables | tokens=2837
+2026-05-23 16:05:45,848 | INFO | [Multi-pass] Total raw comparables: 11
+2026-05-23 16:05:45,848 | INFO | [Dedup] 11/11 unique comparables
+2026-05-23 16:05:45,849 | INFO | [Hard Filter] 11/11 passed type check (allowed cross-types included)
+2026-05-23 16:05:45,849 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-23 16:05:45,850 | INFO | [Geocode] Starting for 11 comparables
+2026-05-23 16:05:46,460 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='ARV Richvue', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5411875, Lng=73.94531250000001 | =================================
+2026-05-23 16:05:46,461 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-23 16:05:47,329 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice Goodwill Crescent', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5332081, Lng=73.9460423 | =================================
+2026-05-23 16:05:47,329 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-23 16:05:48,440 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='K City', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5322725, Lng=73.9438613 | =================================
+2026-05-23 16:05:48,440 | INFO | [Geocode] OK 'K City' -> (18.5322725, 73.9438613) | Certainty: Sure
+2026-05-23 16:05:49,552 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Shubh Sky Point', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5387829, Lng=73.9474613 | =================================
+2026-05-23 16:05:49,552 | INFO | [Geocode] OK 'Shubh Sky Point' -> (18.5387829, 73.9474613) | Certainty: Sure
+2026-05-23 16:05:50,641 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Mantra Mesmer', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5400346, Lng=73.9497464 | =================================
+2026-05-23 16:05:50,641 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-23 16:05:51,674 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Vertical Oriana', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5358988, Lng=73.9449831 | =================================
+2026-05-23 16:05:51,674 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-23 16:05:52,404 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Codename Light', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5347397, Lng=73.9491948 | =================================
+2026-05-23 16:05:52,404 | INFO | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-23 16:05:53,489 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Purva Silver Sands', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5422128, Lng=73.9472437 | =================================
+2026-05-23 16:05:53,489 | INFO | [Geocode] OK 'Purva Silver Sands' -> (18.5422128, 73.9472437) | Certainty: Sure
+2026-05-23 16:05:54,508 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Bansall Amara', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5404599, Lng=73.9481639 | =================================
+2026-05-23 16:05:54,508 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-23 16:05:55,607 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Godrej Aqua Vista', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5386875, Lng=73.9458125 | =================================
+2026-05-23 16:05:55,607 | INFO | [Geocode] OK 'Godrej Aqua Vista' -> (18.5386875, 73.9458125) | Certainty: Sure
+2026-05-23 16:05:56,381 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Esbee Azura', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5335699, Lng=73.94936600000001 | =================================
+2026-05-23 16:05:56,381 | INFO | [Geocode] OK 'Esbee Azura' -> (18.5335699, 73.94936600000001) | Certainty: Sure
+2026-05-23 16:05:56,582 | INFO | [Distance] 11 comparables with valid coordinates
+2026-05-23 16:05:56,583 | INFO | [Subject Filter] 11 comparables remain after removing subject project
+2026-05-23 16:05:56,583 | INFO | [URL Filter] 11 comparables after URL cleanup
+2026-05-23 16:05:56,583 | INFO | [Agent Done] Final comparables: 11 | Total tokens: 2837
+2026-05-23 16:05:56,585 | INFO | [DB Comparables] Query: I need all unique projects within 3 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-23 16:06:06,247 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:06,257 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:06:10,619 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:11,778 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:11,779 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-23 16:06:11,779 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 16:06:11,780 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:06:13,833 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:13,835 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:06:16,962 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:16,963 | INFO | [iter=0] EXECUTE — SELECT
+  t.project_id,
+  t.project_name,
+  t.project_latitude AS lat,
+  t.project_longitude AS long,
+  t.location_name AS location,
+  t.country_name AS country,
+  t.property_type,
+  t.transaction_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+        cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions t
+WHERE
+  t.project_latitude IS NOT NULL
+  AND t.project_longitude IS NOT NULL
+  AND t.agreement_price >= 1
+  AND t.transaction_category IN ('Sale')
+  AND t.property_type IN ('Flat')
+GROUP BY
+  t.project_id,
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category
+HAVING
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+      cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+      sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+    ))
+  ) <= 3.0
+ORDER BY
+  distance ASC
+2026-05-23 16:06:18,321 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 16:06:21,066 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:06:21,067 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 16:06:21,068 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-23 16:06:21,071 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=10528
+2026-05-23 16:06:21,074 | INFO | [DB Comparables] Found 29 comparables from DB (via result_set)
+2026-05-23 16:06:21,074 | INFO | [Stage3b] Subject project found in DB: Godrej Infinity (id=131698)
+2026-05-23 16:08:25,537 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:25,539 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:08:27,257 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:27,258 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 16:08:32,606 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 16:08:35,140 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:36,303 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:08:37,516 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:37,517 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:08:39,457 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:39,457 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date,
+  project_latitude,
+  project_longitude,
+  location_latitude,
+  location_longitude
+FROM transactions
+WHERE
+  project_id = 131888
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 16:08:39,463 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 16:08:41,435 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:41,437 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 16:08:41,440 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 16:08:41,442 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 16:08:41,445 | INFO | [DB Transactions] project_id=131888 property_type=apartment -> 30 transactions
+2026-05-23 16:08:51,608 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:51,616 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:08:53,250 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:53,251 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 16:08:53,252 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 16:08:54,354 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:55,636 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:08:56,870 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:56,871 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:08:58,578 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:08:58,579 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE project_id = 131805
+  AND agreement_price >= 1
+  AND property_type IN ('Flat')
+ORDER BY transaction_date DESC
+2026-05-23 16:08:58,582 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 16:09:00,228 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:00,229 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 16:09:00,234 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 16:09:00,235 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 16:09:00,236 | INFO | [DB Transactions] project_id=131805 property_type=apartment -> 30 transactions
+2026-05-23 16:09:13,335 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:13,339 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:09:15,046 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:15,046 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 16:09:15,048 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 16:09:17,042 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:18,120 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:09:19,296 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:19,297 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:09:21,175 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:21,176 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 131708
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 16:09:21,180 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 16:09:23,415 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:23,416 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 16:09:23,420 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 16:09:23,421 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 16:09:23,423 | INFO | [DB Transactions] project_id=131708 property_type=apartment -> 30 transactions
+2026-05-23 16:09:34,730 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:34,742 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:09:34,744 | WARNING | [DB Transactions] Attempt 1/3: empty stream for project_id=131698. Retrying...
+2026-05-23 16:09:49,077 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:49,083 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 16:09:50,710 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:50,711 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 16:09:50,711 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 16:09:52,011 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:53,189 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:54,339 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:09:55,966 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:55,967 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:09:57,678 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:57,679 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 131698
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+ORDER BY transaction_date DESC
+2026-05-23 16:09:57,682 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 16:09:59,745 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:09:59,746 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 16:09:59,749 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 16:09:59,751 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 16:09:59,752 | INFO | [DB Transactions] project_id=131698 property_type=apartment -> 30 transactions
+2026-05-23 16:09:59,774 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=3
+2026-05-23 16:09:59,774 | INFO | [Pipeline] Total projects: 4
+2026-05-23 16:09:59,774 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'ARV Richvue' → Residential, 'Mantra Mesmer' → Residential, 'Shubh Sky Point' → Residential
+2026-05-23 16:09:59,775 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-23 16:09:59,775 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-23 16:09:59,775 | INFO | [Search] Creating new undetected browser
+2026-05-23 16:09:59,792 | INFO | [Browser] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:09:59,980 | INFO | [Browser] Detected Chrome major version: 148
+2026-05-23 16:10:00,545 | INFO | patching driver executable C:\Users\Sagar\appdata\roaming\undetected_chromedriver\undetected_chromedriver.exe
+2026-05-23 16:10:02,917 | INFO | setting properties for headless
+2026-05-23 16:10:02,920 | INFO | [DDG] Searching: buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999
+2026-05-23 16:10:20,065 | INFO | [DDG] Found 5 URLs
+2026-05-23 16:10:20,065 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Godrej Infinity, Keshav Nagar, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-23 16:10:20,065 | INFO | [URL Search] Result: 'Godrej Infinity' -> 5 URLs.
+2026-05-23 16:10:21,066 | INFO | [URLs] Godrej Infinity -> 5 urls
+2026-05-23 16:10:21,066 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 16:10:21,067 | INFO | [Scrape] project='Godrej Infinity' url='https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-23 16:10:21,067 | INFO | [Scrape] Trying requests for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 16:10:21,067 | INFO | [Scrape] URL #2 Starting: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 16:10:21,068 | INFO | [Scrape] URL #3 Starting: https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 16:10:21,069 | INFO | [Scrape] project='Godrej Infinity' url='https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-23 16:10:21,069 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 16:10:21,070 | INFO | [Scrape] project='Godrej Infinity' url='https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-23 16:10:21,070 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 16:10:21,070 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 16:10:21,070 | INFO | [Scrape] project='Godrej Infinity' url='https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-23 16:10:21,070 | INFO | [Scrape] Trying requests for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 16:10:21,071 | INFO | [Scrape] project='Godrej Infinity' url='https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-23 16:10:21,071 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 16:10:21,073 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 16:10:21,518 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 16:10:21,565 | INFO | [Scrape] URL 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:10:21,581 | INFO | [Driver Pool] Creating new browser for thread 20324
+2026-05-23 16:10:21,622 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 16:10:21,672 | INFO | [Scrape] OK via Requests (200 OK) for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 16:10:21,689 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:10:22,091 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 16:10:22,548 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:22,551 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-23 16:10:22,552 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-23 16:10:22,552 | INFO | [Scrape] URL #3 -> 0 listings | https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 16:10:24,106 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 16:10:24,654 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:24,662 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-23 16:10:24,662 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-23 16:10:24,662 | INFO | [Scrape] URL #2 -> 0 listings | https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 16:10:28,136 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:28,141 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-23 16:10:28,141 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-23 16:10:28,142 | INFO | [Scrape] URL #4 -> 2 listings | https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 16:10:28,250 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 16:10:28,340 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:28,342 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-23 16:10:28,342 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-23 16:10:28,342 | INFO | [Scrape] URL #5 -> 2 listings | https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 16:10:36,167 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:36,171 | INFO | [Extract] 'Godrej Infinity' -> 3 raw listings from 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-23 16:10:36,171 | INFO | [Extract Filter] 'Godrej Infinity' -> 3/3 passed type + name filter
+2026-05-23 16:10:36,172 | INFO | [Scrape] URL #1 -> 3 listings | https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 16:10:36,172 | INFO | [Project Done] 'Godrej Infinity' -> 7 listings
+2026-05-23 16:10:36,172 | INFO | 
+============================================================
+[Pipeline] Project: 'ARV Richvue' | type=apartment | category=Residential
+============================================================
+2026-05-23 16:10:36,173 | INFO | [URL Search] Query: 'buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001'
+2026-05-23 16:10:36,179 | INFO | [DDG] Searching: buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001
+2026-05-23 16:10:52,246 | INFO | [DDG] Found 5 URLs
+2026-05-23 16:10:52,246 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001'
+2026-05-23 16:10:52,246 | INFO | [URL Search] Result: 'ARV Richvue' -> 5 URLs.
+2026-05-23 16:10:53,247 | INFO | [URLs] ARV Richvue -> 5 urls
+2026-05-23 16:10:53,248 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 16:10:53,248 | INFO | [Scrape] project='ARV Richvue' url='https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-23 16:10:53,248 | INFO | [Scrape] URL #2 Starting: https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 16:10:53,249 | INFO | [Scrape] Trying requests for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 16:10:53,249 | INFO | [Scrape] URL #3 Starting: https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 16:10:53,249 | INFO | [Scrape] project='ARV Richvue' url='https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs'
+2026-05-23 16:10:53,249 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 16:10:53,251 | INFO | [Scrape] project='ARV Richvue' url='https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-23 16:10:53,251 | INFO | [Scrape] URL #5 Starting: https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 16:10:53,251 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 16:10:53,251 | INFO | [Scrape] project='ARV Richvue' url='https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-23 16:10:53,252 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 16:10:53,252 | INFO | [Scrape] project='ARV Richvue' url='https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-23 16:10:53,253 | INFO | [Scrape] Trying requests for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 16:10:53,254 | INFO | [Scrape] Trying requests for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 16:10:53,807 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 16:10:53,938 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 16:10:53,938 | INFO | [Scrape] URL 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:10:53,938 | INFO | [Driver Pool] Creating new browser for thread 22376
+2026-05-23 16:10:53,956 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:10:54,707 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 16:10:54,708 | INFO | [Scrape] OK via Requests (200 OK) for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 16:10:54,814 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 16:10:55,840 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:55,844 | INFO | [Extract] 'ARV Richvue' -> 0 raw listings from 'https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs'
+2026-05-23 16:10:55,844 | INFO | [Extract Filter] 'ARV Richvue' -> 0/0 passed type + name filter
+2026-05-23 16:10:55,844 | INFO | [Scrape] URL #2 -> 0 listings | https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 16:10:58,068 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:10:58,070 | INFO | [Extract] 'ARV Richvue' -> 1 raw listings from 'https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-23 16:10:58,070 | INFO | [Extract Filter] 'ARV Richvue' -> 1/1 passed type + name filter
+2026-05-23 16:10:58,070 | INFO | [Scrape] URL #3 -> 1 listings | https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 16:10:59,920 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 16:11:01,373 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:01,380 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-23 16:11:01,380 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-23 16:11:01,380 | INFO | [Scrape] URL #5 -> 2 listings | https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 16:11:02,151 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:02,158 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-23 16:11:02,158 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-23 16:11:02,159 | INFO | [Scrape] URL #4 -> 2 listings | https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 16:11:09,990 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:09,996 | INFO | [Extract] 'ARV Richvue' -> 3 raw listings from 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-23 16:11:09,996 | INFO | [Extract Filter] 'ARV Richvue' -> 3/3 passed type + name filter
+2026-05-23 16:11:09,997 | INFO | [Scrape] URL #1 -> 3 listings | https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 16:11:09,997 | INFO | [Project Done] 'ARV Richvue' -> 8 listings
+2026-05-23 16:11:09,997 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-23 16:11:09,997 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-23 16:11:10,006 | INFO | [DDG] Searching: buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464
+2026-05-23 16:11:25,498 | INFO | [DDG] Found 5 URLs
+2026-05-23 16:11:25,498 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-23 16:11:25,498 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 5 URLs.
+2026-05-23 16:11:26,499 | INFO | [URLs] Mantra Mesmer -> 5 urls
+2026-05-23 16:11:26,499 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 16:11:26,499 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333'
+2026-05-23 16:11:26,499 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 16:11:26,499 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 16:11:26,501 | INFO | [Scrape] URL #3 Starting: https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 16:11:26,501 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889'
+2026-05-23 16:11:26,502 | INFO | [Scrape] URL #4 Starting: https://www.mesmerkeshavnagar.co.in/
+2026-05-23 16:11:26,502 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project'
+2026-05-23 16:11:26,502 | INFO | [Scrape] Trying requests for https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 16:11:26,503 | INFO | [Scrape] URL #5 Starting: https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 16:11:26,503 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.mesmerkeshavnagar.co.in/'
+2026-05-23 16:11:26,503 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 16:11:26,504 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.mantraproperties.in/properties/residential/mantra-mesmer'
+2026-05-23 16:11:26,504 | INFO | [Scrape] Trying requests for https://www.mesmerkeshavnagar.co.in/
+2026-05-23 16:11:26,504 | INFO | [Scrape] Trying requests for https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 16:11:26,916 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 16:11:26,917 | INFO | [Scrape] URL 'https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:11:26,917 | INFO | [Driver Pool] Creating new browser for thread 23100
+2026-05-23 16:11:27,066 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 16:11:27,071 | INFO | [Scrape] Requests returned 200 but content too short. Falling back.
+2026-05-23 16:11:27,072 | INFO | [Scrape] URL 'https://www.mesmerkeshavnagar.co.in/' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:11:27,080 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:11:27,754 | INFO | [Driver Pool] Creating new browser for thread 20688
+2026-05-23 16:11:27,775 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:11:28,234 | INFO | [Scrape] OK via Requests (200 OK) for https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 16:11:28,551 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 16:11:28,838 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:28,842 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.mantraproperties.in/properties/residential/mantra-mesmer'
+2026-05-23 16:11:28,842 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 16:11:28,842 | INFO | [Scrape] URL #5 -> 0 listings | https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 16:11:31,241 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:31,248 | INFO | [Extract] 'Mantra Mesmer' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project'
+2026-05-23 16:11:31,248 | INFO | [Extract Filter] 'Mantra Mesmer' -> 2/2 passed type + name filter
+2026-05-23 16:11:31,248 | INFO | [Scrape] URL #3 -> 2 listings | https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 16:11:32,886 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.mesmerkeshavnagar.co.in/
+2026-05-23 16:11:33,229 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 16:11:33,594 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:33,602 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.mesmerkeshavnagar.co.in/'
+2026-05-23 16:11:33,603 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 16:11:33,603 | INFO | [Scrape] URL #4 -> 0 listings | https://www.mesmerkeshavnagar.co.in/
+2026-05-23 16:11:37,645 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:37,646 | INFO | [Extract] 'Mantra Mesmer' -> 2 raw listings from 'https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889'
+2026-05-23 16:11:37,646 | INFO | [Extract Filter] 'Mantra Mesmer' -> 2/2 passed type + name filter
+2026-05-23 16:11:37,647 | INFO | [Scrape] URL #2 -> 2 listings | https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 16:11:38,424 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:38,433 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333'
+2026-05-23 16:11:38,433 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 16:11:38,433 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 16:11:38,434 | INFO | [Project Done] 'Mantra Mesmer' -> 4 listings
+2026-05-23 16:11:38,434 | INFO | 
+============================================================
+[Pipeline] Project: 'Shubh Sky Point' | type=apartment | category=Residential
+============================================================
+2026-05-23 16:11:38,434 | INFO | [URL Search] Query: 'buy apartment in Shubh Sky Point, Keshav Nagar, Pune, India, coordinates: 18.5387829, 73.9474613'
+2026-05-23 16:11:38,439 | INFO | [DDG] Searching: buy apartment in Shubh Sky Point, Keshav Nagar, Pune, India, coordinates: 18.5387829, 73.9474613
+2026-05-23 16:11:54,375 | INFO | [DDG] Found 5 URLs
+2026-05-23 16:11:54,375 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Shubh Sky Point, Keshav Nagar, Pune, India, coordinates: 18.5387829, 73.9474613'
+2026-05-23 16:11:54,376 | INFO | [URL Search] Result: 'Shubh Sky Point' -> 5 URLs.
+2026-05-23 16:11:55,377 | INFO | [URLs] Shubh Sky Point -> 5 urls
+2026-05-23 16:11:55,377 | INFO | [Scrape] URL #1 Starting: https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa
+2026-05-23 16:11:55,377 | INFO | [Scrape] project='Shubh Sky Point' url='https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa'
+2026-05-23 16:11:55,377 | INFO | [Scrape] URL #2 Starting: https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail
+2026-05-23 16:11:55,378 | INFO | [Scrape] Trying requests for https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa
+2026-05-23 16:11:55,378 | INFO | [Scrape] project='Shubh Sky Point' url='https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail'
+2026-05-23 16:11:55,378 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832
+2026-05-23 16:11:55,380 | INFO | [Scrape] URL #4 Starting: https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089
+2026-05-23 16:11:55,380 | INFO | [Scrape] Trying requests for https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail
+2026-05-23 16:11:55,380 | INFO | [Scrape] project='Shubh Sky Point' url='https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832'
+2026-05-23 16:11:55,380 | INFO | [Scrape] URL #5 Starting: https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170
+2026-05-23 16:11:55,381 | INFO | [Scrape] project='Shubh Sky Point' url='https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089'
+2026-05-23 16:11:55,382 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832
+2026-05-23 16:11:55,382 | INFO | [Scrape] project='Shubh Sky Point' url='https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170'
+2026-05-23 16:11:55,382 | INFO | [Scrape] Trying requests for https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089
+2026-05-23 16:11:55,383 | INFO | [Scrape] Trying requests for https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170
+2026-05-23 16:11:55,813 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 16:11:55,813 | INFO | [Scrape] URL 'https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:11:55,813 | INFO | [Driver Pool] Creating new browser for thread 23412
+2026-05-23 16:11:55,831 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:11:55,834 | INFO | [Scrape] Requests returned status 406. Falling back to Selenium.
+2026-05-23 16:11:55,835 | INFO | [Scrape] URL 'https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:11:55,948 | INFO | [Scrape] Requests returned 200 but content too short. Falling back.
+2026-05-23 16:11:55,949 | INFO | [Scrape] URL 'https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170' is difficult to scrape, using Selenium Pool.
+2026-05-23 16:11:56,370 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail
+2026-05-23 16:11:56,600 | INFO | [Driver Pool] Creating new browser for thread 3016
+2026-05-23 16:11:56,623 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:11:57,404 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832
+2026-05-23 16:11:57,404 | INFO | [Driver Pool] Creating new browser for thread 20968
+2026-05-23 16:11:57,462 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 16:11:58,302 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:58,309 | INFO | [Extract] 'Shubh Sky Point' -> 0 raw listings from 'https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832'
+2026-05-23 16:11:58,309 | INFO | [Extract Filter] 'Shubh Sky Point' -> 0/0 passed type + name filter
+2026-05-23 16:11:58,309 | INFO | [Scrape] URL #3 -> 0 listings | https://www.magicbricks.com/shubh-sky-point-keshav-nagar-pune-pdpid-4d4235303832303832
+2026-05-23 16:11:59,886 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:11:59,887 | INFO | [Extract] 'Shubh Sky Point' -> 1 raw listings from 'https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail'
+2026-05-23 16:11:59,887 | INFO | [Extract Filter] 'Shubh Sky Point' -> 1/1 passed type + name filter
+2026-05-23 16:11:59,887 | INFO | [Scrape] URL #2 -> 1 listings | https://www.nobroker.in/property/buy/1-BHK-apartment-for-sale-in-Skypoint-Keshav-Nagar-Mundhwa-Pune-Maharashtra-411036-India-pune/ff8081816e4f6051016e55214aa04e68/detail
+2026-05-23 16:12:00,015 | WARNING | [DROP] stage=scrape | project='Shubh Sky Point' | reason=selenium_exception: Message: session not created: Chrome failed to start: was killed.
+  (session not created: DevToolsActivePort file doesn't exist)
+  (The process started from chrome location C:\Program Files\Google\Chrome\Application\chrome.exe is no longer running, so ChromeDriver is assuming that Chrome has crashed.); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#sessionnotcreatedexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7b4d27de5+14895]
+	chromedriver!GetHandleVerifier [0x7ff7b4d27e50+14900]
+	chromedriver!(No symbol) [0x7ff7b4a8d5ad]
+	chromedriver!(No symbol) [0x7ff7b4acf08b]
+	chromedriver!(No symbol) [0x7ff7b4aca349]
+	chromedriver!(No symbol) [0x7ff7b4b1dd21]
+	chromedriver!(No symbol) [0x7ff7b4b1d586]
+	chromedriver!(No symbol) [0x7ff7b4ad9df8]
+	chromedriver!(No symbol) [0x7ff7b4adace3]
+	chromedriver!GetHandleVerifier [0x7ff7b503cc49+3296f9]
+	chromedriver!GetHandleVerifier [0x7ff7b5037375+323e25]
+	chromedriver!GetHandleVerifier [0x7ff7b505bc82+348732]
+	chromedriver!GetHandleVerifier [0x7ff7b4d46045+32af5]
+	chromedriver!GetHandleVerifier [0x7ff7b4d4ecec+3b79c]
+	chromedriver!GetHandleVerifier [0x7ff7b4d31bc4+1e674]
+	chromedriver!GetHandleVerifier [0x7ff7b4d31d54+1e804]
+	chromedriver!GetHandleVerifier [0x7ff7b4d160e7+2b97]
+	KERNEL32!BaseThreadInitThunk [0x7fff7aace8d7+17]
+	ntdll!RtlUserThreadStart [0x7fff7b608d9c+2c]
+ | detail={"url": "https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170"}
+2026-05-23 16:12:00,017 | INFO | [Scrape] URL #5 Failed (No text): https://www.homes247.in/property/pune/keshav-nagar/shubh-sky-point-13170
+2026-05-23 16:12:01,576 | INFO | [Scrape] OK via Selenium (Text Mode) for https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa
+2026-05-23 16:12:01,806 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089
+2026-05-23 16:12:02,257 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:12:02,264 | INFO | [Extract] 'Shubh Sky Point' -> 0 raw listings from 'https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa'
+2026-05-23 16:12:02,264 | INFO | [Extract Filter] 'Shubh Sky Point' -> 0/0 passed type + name filter
+2026-05-23 16:12:02,264 | INFO | [Scrape] URL #1 -> 0 listings | https://housing.com/in/buy/projects/page/52399-shubh-sky-point-phase-i-b-and-c-wing-by-shubh-associates-in-mundhwa
+2026-05-23 16:12:06,843 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:12:06,848 | INFO | [Extract] 'Shubh Sky Point' -> 2 raw listings from 'https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089'
+2026-05-23 16:12:06,848 | INFO | [Extract Filter] 'Shubh Sky Point' -> 2/2 passed type + name filter
+2026-05-23 16:12:06,848 | INFO | [Scrape] URL #4 -> 2 listings | https://www.99acres.com/shubh-skypoint-keshav-nagar-pune-npxid-r157089
+2026-05-23 16:12:06,849 | INFO | [Project Done] 'Shubh Sky Point' -> 3 listings
+2026-05-23 16:12:06,851 | INFO | [Pipeline Done] final_listings=22 | projects=4 | tokens=21694
+2026-05-23 16:12:09,032 | INFO | [Driver Pool] Closed driver for thread 20324
+2026-05-23 16:12:11,257 | INFO | [Driver Pool] Closed driver for thread 22376
+2026-05-23 16:12:13,441 | INFO | [Driver Pool] Closed driver for thread 23100
+2026-05-23 16:12:15,614 | INFO | [Driver Pool] Closed driver for thread 20688
+2026-05-23 16:12:17,778 | INFO | [Driver Pool] Closed driver for thread 23412
+2026-05-23 16:12:19,934 | INFO | [Driver Pool] Closed driver for thread 3016
+2026-05-23 16:13:09,852 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:13:13,411 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:13:22,860 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:13:24,457 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:15:18,650 | INFO | [CBD Tool] Identifying CBDs for 7 projects in a single LLM call...
+2026-05-23 16:15:31,167 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:15:31,172 | INFO | [CBD LLM] Raw response length: 2870
+2026-05-23 16:15:31,172 | INFO | [CBD LLM] Tokens — prompt: 594, completion: 776, total: 1370
+2026-05-23 16:15:31,172 | INFO | [CBD Geocode] Geocoding: 'Kharadi, Pune'
+2026-05-23 16:15:32,023 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Kharadi, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5539311, Lng=73.9476257 | =================================
+2026-05-23 16:15:32,024 | INFO | [CBD Geocode] OK → (18.5539, 73.9476)
+2026-05-23 16:15:32,325 | INFO | [CBD Tool] Godrej Infinity → Kharadi (1.61 km)
+2026-05-23 16:15:32,325 | INFO | [CBD Geocode] Geocoding: 'Magarpatta City, Pune'
+2026-05-23 16:15:32,875 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Magarpatta City, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5158057, Lng=73.9271644 | =================================
+2026-05-23 16:15:32,875 | INFO | [CBD Geocode] OK → (18.5158, 73.9272)
+2026-05-23 16:15:33,176 | INFO | [CBD Tool] Godrej Infinity → Magarpatta (3.32 km)
+2026-05-23 16:15:33,176 | INFO | [CBD Geocode] Geocoding: 'Downtown Pune, Pune'
+2026-05-23 16:15:33,665 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: CBD Geocoding (S3) |   Target: Project='N/A', Location='Downtown Pune, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5604656, Lng=73.9428065 | =================================
+2026-05-23 16:15:33,666 | INFO | [CBD Geocode] OK → (18.5605, 73.9428)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] Godrej Infinity → Downtown Pune (2.36 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] ARV Richvue → Kharadi (1.44 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] ARV Richvue → Magarpatta (3.41 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] ARV Richvue → Downtown Pune (2.16 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] Arv Richvue → Kharadi (1.35 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] Arv Richvue → Magarpatta (3.55 km)
+2026-05-23 16:15:33,967 | INFO | [CBD Tool] Arv Richvue → Downtown Pune (2.12 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Mantra Mesmer → Kharadi (1.63 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Mantra Mesmer → Magarpatta (3.47 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Mantra Mesmer → Downtown Pune (2.44 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Shubh Sky Point → Kharadi (1.68 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Shubh Sky Point → Magarpatta (3.33 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Shubh Sky Point → Downtown Pune (2.46 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Pgd Pinnacle → Kharadi (1.87 km)
+2026-05-23 16:15:33,968 | INFO | [CBD Tool] Pgd Pinnacle → Magarpatta (3.18 km)
+2026-05-23 16:15:33,970 | INFO | [CBD Tool] Pgd Pinnacle → Downtown Pune (2.63 km)
+2026-05-23 16:15:33,970 | INFO | [CBD Tool] Done. Results for 6 projects.
+2026-05-23 16:15:33,970 | INFO | CBD identification complete for 6 projects
+2026-05-23 16:15:35,988 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 16:15:35,989 | INFO | Found 4 DB amenities near (18.5387829, 73.9474613)
+2026-05-23 16:15:36,338 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 16:15:36,338 | INFO | Found 3 DB amenities near (18.5400346, 73.9497464)
+2026-05-23 16:15:36,398 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 16:15:36,399 | INFO | Found 5 DB amenities near (18.53715, 73.94726)
+2026-05-23 16:15:36,413 | INFO | [DB] Found 10 candidates in spatial bounding box
+2026-05-23 16:15:36,415 | INFO | Found 5 DB amenities near (18.5411875, 73.94531250000001)
+2026-05-23 16:15:37,700 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 16:15:37,701 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 16:15:42,718 | INFO | Aggregated raw counts: {'bus_stops': 1, 'gardens': 1, 'hospitals': 1, 'police_stations': 1, 'restaurants_entertainment': 1}
+2026-05-23 16:15:42,721 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'schools': 1}
+2026-05-23 16:15:42,723 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'schools': 1}
+2026-05-23 16:15:42,724 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'it_parks': 1, 'restaurants_entertainment': 1, 'schools': 1}
+2026-05-23 16:15:42,727 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'restaurants_entertainment': 1, 'schools': 1}
+2026-05-23 16:15:42,729 | INFO | Factorial table: 5 projects, 140 total valid listings
+2026-05-23 16:16:55,351 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 16:16:55,352 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 16:16:55,353 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 16:16:55,354 | INFO | Found 4 DB amenities near (18.5387829, 73.9474613)
+2026-05-23 16:16:55,413 | INFO | [DB] Found 10 candidates in spatial bounding box
+2026-05-23 16:16:55,413 | INFO | Found 5 DB amenities near (18.5411875, 73.94531250000001)
+2026-05-23 16:16:55,420 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 16:16:55,421 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 16:16:55,423 | INFO | Found 5 DB amenities near (18.53715, 73.94726)
+2026-05-23 16:16:55,424 | INFO | Found 3 DB amenities near (18.5400346, 73.9497464)
+2026-05-23 16:17:21,935 | INFO | [LLM Factoring] Calling gpt-4o with 4 comparables...
+2026-05-23 16:17:44,088 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:17:44,089 | INFO | [LLM Factoring] Done. Subject final rate: 12594 INR/sqft
+2026-05-23 16:30:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" (scheduled at 2026-05-23 16:30:00+05:30)
+2026-05-23 16:30:00,023 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:00:00 IST)" executed successfully
+2026-05-23 17:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:30:00 IST)" (scheduled at 2026-05-23 17:00:00+05:30)
+2026-05-23 17:00:00,011 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:30:00 IST)" executed successfully
+2026-05-23 17:11:04,522 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:11:05,488 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:11:11,736 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:11:11,804 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 17:11:11,806 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 17:12:40,221 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:12:40,873 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:12:47,084 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:13:40,864 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:13:41,727 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:13:49,638 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:13:57,567 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:13:58,106 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:14:02,282 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:14:10,059 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:14:10,602 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:14:16,546 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:14:16,550 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:14:20,239 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:14:20,493 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:14:27,071 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:14:27,072 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:14:27,076 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar'
+2026-05-23 17:14:27,078 | INFO | [LLM Fetch] Pass 1/1
+2026-05-23 17:22:23,915 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-23 17:22:23,957 | INFO | [LLM Fetch] Received 10 raw comparables | tokens=2707
+2026-05-23 17:22:23,958 | INFO | [Multi-pass] Total raw comparables: 10
+2026-05-23 17:22:23,959 | INFO | [Dedup] 10/10 unique comparables
+2026-05-23 17:22:23,959 | INFO | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-23 17:22:23,959 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-23 17:22:23,960 | INFO | [Geocode] Starting for 10 comparables
+2026-05-23 17:22:24,836 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Godrej Keshav Nagar', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 17:22:24,836 | INFO | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | Certainty: Sure
+2026-05-23 17:22:25,556 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='ARV Richvue', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5411875, Lng=73.94531250000001 | =================================
+2026-05-23 17:22:25,556 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-23 17:22:26,618 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Mantra Mesmer', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5400346, Lng=73.9497464 | =================================
+2026-05-23 17:22:26,618 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-23 17:22:27,375 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Codename Light', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5347397, Lng=73.9491948 | =================================
+2026-05-23 17:22:27,376 | INFO | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-23 17:22:28,570 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='ARP Valora Towers A', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.536181, Lng=73.95212 | =================================
+2026-05-23 17:22:28,570 | INFO | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-23 17:22:29,411 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice QUE 914', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5381992, Lng=73.94785180000001 | =================================
+2026-05-23 17:22:29,411 | INFO | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-23 17:22:30,481 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Bansall Amara', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5404599, Lng=73.9481639 | =================================
+2026-05-23 17:22:30,481 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-23 17:22:31,346 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Vertical Oriana', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5358988, Lng=73.9449831 | =================================
+2026-05-23 17:22:31,346 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-23 17:22:32,166 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice Goodwill Verve', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.530217, Lng=73.9453771 | =================================
+2026-05-23 17:22:32,167 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-23 17:22:33,233 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='QUE 914 Keshav Nagar', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5381992, Lng=73.94785180000001 | =================================
+2026-05-23 17:22:33,233 | INFO | [Geocode] OK 'QUE 914 Keshav Nagar' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-23 17:22:33,434 | INFO | [Distance] 10 comparables with valid coordinates
+2026-05-23 17:22:33,434 | WARNING | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-23 17:22:33,434 | INFO | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-23 17:22:33,434 | INFO | [URL Filter] 9 comparables after URL cleanup
+2026-05-23 17:22:33,434 | INFO | [Agent Done] Final comparables: 9 | Total tokens: 2707
+2026-05-23 17:22:33,436 | INFO | [DB Comparables] Query: I need all unique projects within 3 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-23 17:22:42,289 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:42,295 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 17:22:46,752 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:47,663 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:47,665 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-23 17:22:47,665 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 17:22:47,666 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 17:22:50,289 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:50,292 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 17:22:53,775 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:53,776 | INFO | [iter=0] EXECUTE — SELECT
+  t.project_id,
+  t.project_name,
+  t.project_latitude AS lat,
+  t.project_longitude AS long,
+  t.location_name AS location,
+  t.country_name AS country,
+  t.property_type,
+  t.transaction_category AS property_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+        cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions t
+WHERE
+  t.project_latitude IS NOT NULL
+  AND t.project_longitude IS NOT NULL
+  AND t.agreement_price >= 1
+  AND t.net_carpet_area_sq_m >= 1
+  AND t.transaction_category IN ('Sale')
+  AND t.property_type IN ('Flat')
+GROUP BY
+  t.project_id,
+  t.project_name,
+  t.project_latitude,
+  t.project_longitude,
+  t.location_name,
+  t.country_name,
+  t.property_type,
+  t.transaction_category,
+  distance
+HAVING
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(t.project_latitude)) *
+        cos(radians(t.project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(t.project_latitude))
+      ))
+    )::numeric,
+    2
+  ) <= 3.0
+ORDER BY
+  distance ASC
+2026-05-23 17:22:56,082 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 17:22:59,668 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:22:59,669 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 17:22:59,673 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-23 17:22:59,676 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=10548
+2026-05-23 17:22:59,680 | INFO | [DB Comparables] Found 29 comparables from DB (via result_set)
+2026-05-23 17:22:59,681 | INFO | [Stage3b] Subject project found in DB: Godrej Infinity (id=131698)
+2026-05-23 17:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" (scheduled at 2026-05-23 17:30:00+05:30)
+2026-05-23 17:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" executed successfully
+2026-05-23 18:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" (scheduled at 2026-05-23 18:00:00+05:30)
+2026-05-23 18:00:00,026 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" executed successfully
+2026-05-23 18:03:07,266 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:03:07,829 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:03:13,582 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:03:13,664 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 18:03:13,665 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 18:03:21,251 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:03:21,517 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:03:25,672 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:03:44,434 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:03:45,347 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:03:51,134 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:04:50,373 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:04:51,187 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:04:57,277 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:01,546 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:02,332 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:05:08,694 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:08,699 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:05:12,641 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:13,231 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Geocoding (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:05:19,263 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:19,266 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Subject Property Profiling (S1) |   Target: Project='Godrej Infinity', Location='Keshav Nagar, Pune', Country='India' |   Source: Extracted directly from user query (User manual input) |   Result: Lat=18.5395129, Lng=73.94636849999999 | =================================
+2026-05-23 18:05:19,270 | INFO | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-23 18:05:19,271 | INFO | [LLM Fetch] Pass 1/1
+2026-05-23 18:05:30,182 | INFO | HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-05-23 18:05:30,184 | INFO | [LLM Fetch] Received 9 raw comparables | tokens=2640
+2026-05-23 18:05:30,185 | INFO | [Multi-pass] Total raw comparables: 9
+2026-05-23 18:05:30,185 | INFO | [Dedup] 9/9 unique comparables
+2026-05-23 18:05:30,186 | INFO | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-23 18:05:30,186 | INFO | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-23 18:05:30,187 | INFO | [Geocode] Starting for 9 comparables
+2026-05-23 18:05:30,810 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Maestro Codename Light', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5347397, Lng=73.9491948 | =================================
+2026-05-23 18:05:30,810 | INFO | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | Certainty: Sure
+2026-05-23 18:05:31,556 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='ARV Richvue', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5411875, Lng=73.94531250000001 | =================================
+2026-05-23 18:05:31,556 | INFO | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | Certainty: Sure
+2026-05-23 18:05:32,428 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Mantra Mesmer', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5400346, Lng=73.9497464 | =================================
+2026-05-23 18:05:32,428 | INFO | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | Certainty: Sure
+2026-05-23 18:05:33,131 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Vertical Oriana', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5358988, Lng=73.9449831 | =================================
+2026-05-23 18:05:33,131 | INFO | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | Certainty: Sure
+2026-05-23 18:05:34,147 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Abisky Valora Towers', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.536181, Lng=73.95212 | =================================
+2026-05-23 18:05:34,147 | INFO | [Geocode] OK 'Abisky Valora Towers' -> (18.536181, 73.95212) | Certainty: Sure
+2026-05-23 18:05:35,191 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice QUE 914', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5381992, Lng=73.94785180000001 | =================================
+2026-05-23 18:05:35,191 | INFO | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | Certainty: Sure
+2026-05-23 18:05:36,276 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Bansall Amara', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5404599, Lng=73.9481639 | =================================
+2026-05-23 18:05:36,276 | INFO | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | Certainty: Sure
+2026-05-23 18:05:37,067 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice Goodwill Verve', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.530217, Lng=73.9453771 | =================================
+2026-05-23 18:05:37,067 | INFO | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | Certainty: Sure
+2026-05-23 18:05:37,879 | INFO |  | === [COORDINATES RESOLUTION] === |   Stage: Comparable Geocoding (S3) |   Target: Project='Choice Goodwill Crescent', Location='Keshav Nagar, Pune', Country='India' |   Source: Google Places API |   Result: Lat=18.5332081, Lng=73.9460423 | =================================
+2026-05-23 18:05:37,881 | INFO | [Geocode] OK 'Choice Goodwill Crescent' -> (18.5332081, 73.9460423) | Certainty: Sure
+2026-05-23 18:05:38,081 | INFO | [Distance] 9 comparables with valid coordinates
+2026-05-23 18:05:38,081 | INFO | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-23 18:05:38,081 | INFO | [URL Filter] 9 comparables after URL cleanup
+2026-05-23 18:05:38,081 | INFO | [Agent Done] Final comparables: 9 | Total tokens: 2640
+2026-05-23 18:05:38,084 | INFO | [DB Comparables] Query: I need all unique projects within 3 km radius of this Latitute is 18.5395129 and Longitude 73.94636849999999 and property type is Flat. And expected columns should be Project_id, Project_name, lat, long, Location, Country, Property_type, Property_category, Distance, Total_transaction_count.
+2026-05-23 18:05:51,092 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:51,094 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 18:05:53,006 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:53,007 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 18:05:53,007 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 18:05:53,007 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:05:55,231 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:55,232 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:05:58,594 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:05:58,595 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category AS property_category,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance,
+  COUNT(*) AS total_transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND property_type IN ('Flat')
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  transaction_category
+HAVING
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94636849999999)) +
+      sin(radians(18.5395129)) * sin(radians(project_latitude))
+    ))
+  ) <= 3.0
+ORDER BY
+  distance ASC
+2026-05-23 18:06:00,009 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 18:06:02,092 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:06:02,094 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=[]  suspect=transaction_category
+2026-05-23 18:06:05,379 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:06:05,381 | INFO | [iter=0] REWRITE — action=fix_groupby  missing_fix=[]  new_col=None
+2026-05-23 18:06:05,381 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 18:06:05,381 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 18:06:07,825 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:06:07,826 | INFO | [iter=1] EXECUTE — SELECT
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type,
+  COUNT(*) AS total_transaction_count,
+  ROUND(
+    6371 * acos(
+      least(1, greatest(-1,
+        cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+        cos(radians(project_longitude) - radians(73.94636849999999)) +
+        sin(radians(18.5395129)) * sin(radians(project_latitude))
+      ))
+    )::numeric,
+    2
+  ) AS distance
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND project_latitude IS NOT NULL
+  AND project_longitude IS NOT NULL
+  AND property_type IN ('Flat')
+GROUP BY
+  project_id,
+  project_name,
+  project_latitude,
+  project_longitude,
+  location_name,
+  country_name,
+  property_type
+HAVING
+  6371 * acos(
+    least(1, greatest(-1,
+      cos(radians(18.5395129)) * cos(radians(project_latitude)) *
+      cos(radians(project_longitude) - radians(73.94636849999999)) +
+      sin(radians(18.5395129)) * sin(radians(project_latitude))
+    ))
+  ) <= 3.0
+ORDER BY
+  distance ASC
+2026-05-23 18:06:09,228 | INFO | [iter=1] OBSERVE — rows=30  error=none
+2026-05-23 18:06:11,499 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:06:11,499 | INFO | [iter=1] DONE — verdict=GOOD
+2026-05-23 18:06:11,504 | INFO | [DB Comparables] result_set captured: 30 rows
+2026-05-23 18:06:11,506 | INFO | [DB Comparables] Stream done. result_rows=30 | accumulated_len=10315
+2026-05-23 18:06:11,507 | INFO | [DB Comparables] Found 29 comparables from DB (via result_set)
+2026-05-23 18:06:11,507 | INFO | [Stage3b] Subject project found in DB: Godrej Infinity (id=131698)
+2026-05-23 18:07:47,796 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:47,805 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 18:07:49,407 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:49,409 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 18:07:49,410 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 18:07:51,105 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:52,385 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:07:53,784 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:53,786 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:07:56,563 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:56,563 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 131888
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 18:07:56,568 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 18:07:58,720 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:07:58,721 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 18:07:58,725 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 18:07:58,726 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 18:07:58,728 | INFO | [DB Transactions] project_id=131888 property_type=apartment -> 30 transactions
+2026-05-23 18:08:12,891 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:12,896 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 18:08:14,564 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:14,566 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 18:08:14,566 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 18:08:15,779 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:17,024 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:08:18,226 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:18,228 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:08:21,268 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:21,270 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 131805
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 18:08:21,275 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 18:08:23,376 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:23,378 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 18:08:23,381 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 18:08:23,383 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 18:08:23,385 | INFO | [DB Transactions] project_id=131805 property_type=apartment -> 30 transactions
+2026-05-23 18:08:32,395 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:32,398 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 18:08:33,946 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:33,946 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 18:08:33,947 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 18:08:35,031 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:36,900 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:08:38,018 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:38,020 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:08:40,491 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:40,492 | INFO | [iter=0] EXECUTE — SELECT
+  project_id,
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE agreement_price >= 1
+  AND project_id = 131841
+  AND property_type IN ('Flat')
+ORDER BY transaction_date DESC
+2026-05-23 18:08:40,503 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 18:08:42,993 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:42,994 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 18:08:42,997 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 18:08:42,999 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 18:08:43,000 | INFO | [DB Transactions] project_id=131841 property_type=apartment -> 30 transactions
+2026-05-23 18:08:51,645 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:51,665 | INFO | IntentExtractor: analysis_type=lookup  locations=[]  metrics=[]
+2026-05-23 18:08:53,557 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:53,558 | INFO | Semantic category filters resolved: {'property_type': ['Flat']}
+2026-05-23 18:08:53,558 | INFO | No semantic transaction project/location entities resolved.
+2026-05-23 18:08:54,680 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:55,936 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:08:57,243 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:57,244 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:08:59,902 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:08:59,904 | INFO | [iter=0] EXECUTE — SELECT
+  project_name,
+  property_type_raw,
+  property_type,
+  transaction_category,
+  unit_configuration,
+  agreement_price,
+  net_carpet_area_sq_m,
+  floor_number,
+  location_name,
+  country_name,
+  transaction_date
+FROM transactions
+WHERE
+  project_id = 131698
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+ORDER BY transaction_date DESC
+2026-05-23 18:08:59,911 | INFO | [iter=0] OBSERVE — rows=30  error=none
+2026-05-23 18:09:01,685 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:01,686 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 18:09:01,689 | INFO | [DB Transactions] result_set captured: 30 rows
+2026-05-23 18:09:01,691 | INFO | [DB Transactions] Using 30 rows from result_set
+2026-05-23 18:09:01,692 | INFO | [DB Transactions] project_id=131698 property_type=apartment -> 30 transactions
+2026-05-23 18:09:01,714 | INFO | [Pipeline Start] subject='Godrej Infinity' type='apartment' search_term='apartment' listing='sale' comparables=2
+2026-05-23 18:09:01,714 | INFO | [Pipeline] Total projects: 3
+2026-05-23 18:09:01,714 | INFO | [Pipeline] Categories: 'Godrej Infinity' → Residential, 'ARV Richvue' → Residential, 'Mantra Mesmer' → Residential
+2026-05-23 18:09:01,715 | INFO | 
+============================================================
+[Pipeline] Project: 'Godrej Infinity' | type=apartment | category=Residential
+============================================================
+2026-05-23 18:09:01,715 | INFO | [URL Search] Query: 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-23 18:09:01,735 | INFO | [DDG] Searching: buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999
+2026-05-23 18:09:18,974 | INFO | [DDG] Found 5 URLs
+2026-05-23 18:09:18,974 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Godrej Infinity, Keshav Nagar, Pune, India, coordinates: 18.5395129, 73.94636849999999'
+2026-05-23 18:09:18,975 | INFO | [URL Search] Result: 'Godrej Infinity' -> 5 URLs.
+2026-05-23 18:09:19,976 | INFO | [URLs] Godrej Infinity -> 5 urls
+2026-05-23 18:09:19,976 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 18:09:19,976 | INFO | [Scrape] project='Godrej Infinity' url='https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-23 18:09:19,976 | INFO | [Scrape] URL #2 Starting: https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 18:09:19,978 | INFO | [Scrape] Trying requests for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 18:09:19,978 | INFO | [Scrape] project='Godrej Infinity' url='https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-23 18:09:19,978 | INFO | [Scrape] URL #3 Starting: https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 18:09:19,978 | INFO | [Scrape] Trying requests for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 18:09:19,980 | INFO | [Scrape] URL #4 Starting: https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 18:09:19,980 | INFO | [Scrape] project='Godrej Infinity' url='https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-23 18:09:19,980 | INFO | [Scrape] URL #5 Starting: https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 18:09:19,981 | INFO | [Scrape] project='Godrej Infinity' url='https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-23 18:09:19,981 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 18:09:19,983 | INFO | [Scrape] project='Godrej Infinity' url='https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-23 18:09:19,983 | INFO | [Scrape] Trying requests for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 18:09:19,983 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 18:09:20,389 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 18:09:20,389 | INFO | [Scrape] URL 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342' is difficult to scrape, using Selenium Pool.
+2026-05-23 18:09:20,389 | INFO | [Driver Pool] Creating new browser for thread 22488
+2026-05-23 18:09:20,408 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 18:09:20,594 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 18:09:20,671 | INFO | [Scrape] OK via Requests (200 OK) for https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 18:09:21,207 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 18:09:21,439 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 18:09:21,478 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:21,487 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.godrejproperties.com/pune/residential/godrej-infinity'
+2026-05-23 18:09:21,487 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-23 18:09:21,487 | INFO | [Scrape] URL #2 -> 0 listings | https://www.godrejproperties.com/pune/residential/godrej-infinity
+2026-05-23 18:09:26,505 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:26,512 | INFO | [Extract] 'Godrej Infinity' -> 0 raw listings from 'https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938'
+2026-05-23 18:09:26,512 | INFO | [Extract Filter] 'Godrej Infinity' -> 0/0 passed type + name filter
+2026-05-23 18:09:26,512 | INFO | [Scrape] URL #3 -> 0 listings | https://www.magicbricks.com/godrej-infinity-keshav-nagar-pune-pdpid-4d4235303735303938
+2026-05-23 18:09:26,686 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:26,689 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project'
+2026-05-23 18:09:26,689 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-23 18:09:26,689 | INFO | [Scrape] URL #5 -> 2 listings | https://www.squareyards.com/pune-residential-property/godrej-infinity/5344/project
+2026-05-23 18:09:27,443 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:27,450 | INFO | [Extract] 'Godrej Infinity' -> 2 raw listings from 'https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl'
+2026-05-23 18:09:27,450 | INFO | [Extract Filter] 'Godrej Infinity' -> 2/2 passed type + name filter
+2026-05-23 18:09:27,450 | INFO | [Scrape] URL #4 -> 2 listings | https://www.nobroker.in/flats-for-sale-in-godrej-infinity-keshav-nagar-pune-prjtl
+2026-05-23 18:09:27,694 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 18:09:44,723 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:09:44,728 | INFO | [Extract] 'Godrej Infinity' -> 6 raw listings from 'https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342'
+2026-05-23 18:09:44,729 | INFO | [Extract Filter] 'Godrej Infinity' -> 6/6 passed type + name filter
+2026-05-23 18:09:44,729 | INFO | [Scrape] URL #1 -> 6 listings | https://www.99acres.com/godrej-infinity-keshav-nagar-pune-npxid-r104342
+2026-05-23 18:09:44,729 | INFO | [Project Done] 'Godrej Infinity' -> 10 listings
+2026-05-23 18:09:44,729 | INFO | 
+============================================================
+[Pipeline] Project: 'ARV Richvue' | type=apartment | category=Residential
+============================================================
+2026-05-23 18:09:44,729 | INFO | [URL Search] Query: 'buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001'
+2026-05-23 18:09:44,737 | INFO | [DDG] Searching: buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001
+2026-05-23 18:10:00,590 | INFO | [DDG] Found 5 URLs
+2026-05-23 18:10:00,590 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in ARV Richvue, Keshav Nagar, Pune, India, coordinates: 18.5411875, 73.94531250000001'
+2026-05-23 18:10:00,591 | INFO | [URL Search] Result: 'ARV Richvue' -> 5 URLs.
+2026-05-23 18:10:01,591 | INFO | [URLs] ARV Richvue -> 5 urls
+2026-05-23 18:10:01,591 | INFO | [Scrape] URL #1 Starting: https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 18:10:01,592 | INFO | [Scrape] project='ARV Richvue' url='https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-23 18:10:01,592 | INFO | [Scrape] Trying requests for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 18:10:01,592 | INFO | [Scrape] URL #2 Starting: https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 18:10:01,594 | INFO | [Scrape] URL #3 Starting: https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 18:10:01,594 | INFO | [Scrape] project='ARV Richvue' url='https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-23 18:10:01,594 | INFO | [Scrape] project='ARV Richvue' url='https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-23 18:10:01,594 | INFO | [Scrape] URL #4 Starting: https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 18:10:01,594 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 18:10:01,595 | INFO | [Scrape] Trying requests for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 18:10:01,595 | INFO | [Scrape] URL #5 Starting: https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 18:10:01,595 | INFO | [Scrape] project='ARV Richvue' url='https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs'
+2026-05-23 18:10:01,597 | INFO | [Scrape] project='ARV Richvue' url='https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-23 18:10:01,598 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 18:10:01,598 | INFO | [Scrape] Trying requests for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 18:10:02,077 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 18:10:02,124 | INFO | [Scrape] URL 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619' is difficult to scrape, using Selenium Pool.
+2026-05-23 18:10:02,132 | INFO | [Driver Pool] Creating new browser for thread 8260
+2026-05-23 18:10:02,136 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 18:10:02,157 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 18:10:02,368 | INFO | [Scrape] OK via Requests (200 OK) for https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 18:10:02,887 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 18:10:03,871 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:03,876 | INFO | [Extract] 'ARV Richvue' -> 0 raw listings from 'https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs'
+2026-05-23 18:10:03,876 | INFO | [Extract Filter] 'ARV Richvue' -> 0/0 passed type + name filter
+2026-05-23 18:10:03,876 | INFO | [Scrape] URL #4 -> 0 listings | https://www.magicbricks.com/project-arv-richvue-for-sale-in-pune-pppfs
+2026-05-23 18:10:06,229 | INFO | [Scrape] OK via Requests (200 OK) for https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 18:10:08,158 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 18:10:09,348 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:09,349 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project'
+2026-05-23 18:10:09,349 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-23 18:10:09,351 | INFO | [Scrape] URL #2 -> 2 listings | https://www.squareyards.com/pune-residential-property/arv-richvue/333001/project
+2026-05-23 18:10:14,185 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:14,190 | INFO | [Extract] 'ARV Richvue' -> 2 raw listings from 'https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune'
+2026-05-23 18:10:14,190 | INFO | [Extract Filter] 'ARV Richvue' -> 2/2 passed type + name filter
+2026-05-23 18:10:14,190 | INFO | [Scrape] URL #5 -> 2 listings | https://arvgroupindia.com/2-3-bhk-flats-keshavnagar-pune
+2026-05-23 18:10:18,112 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:18,114 | INFO | [Extract] 'ARV Richvue' -> 3 raw listings from 'https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619'
+2026-05-23 18:10:18,114 | INFO | [Extract Filter] 'ARV Richvue' -> 3/3 passed type + name filter
+2026-05-23 18:10:18,114 | INFO | [Scrape] URL #1 -> 3 listings | https://www.99acres.com/arv-richvue-keshav-nagar-pune-npxid-r444619
+2026-05-23 18:10:19,064 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:19,068 | INFO | [Extract] 'ARV Richvue' -> 4 raw listings from 'https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561'
+2026-05-23 18:10:19,068 | INFO | [Extract Filter] 'ARV Richvue' -> 4/4 passed type + name filter
+2026-05-23 18:10:19,068 | INFO | [Scrape] URL #3 -> 4 listings | https://www.nobroker.in/arv-richvue-keshav-nagar_pune-prjt-8a9fa785994bc94c01994c213d4c2561
+2026-05-23 18:10:19,070 | INFO | [Project Done] 'ARV Richvue' -> 11 listings
+2026-05-23 18:10:19,070 | INFO | 
+============================================================
+[Pipeline] Project: 'Mantra Mesmer' | type=apartment | category=Residential
+============================================================
+2026-05-23 18:10:19,071 | INFO | [URL Search] Query: 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-23 18:10:19,076 | INFO | [DDG] Searching: buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464
+2026-05-23 18:10:33,949 | INFO | [DDG] Found 5 URLs
+2026-05-23 18:10:33,949 | INFO | [Search] Engine 'DDG' succeeded with 5 URLs for 'buy apartment in Mantra Mesmer, Keshav Nagar, Pune, India, coordinates: 18.5400346, 73.9497464'
+2026-05-23 18:10:33,949 | INFO | [URL Search] Result: 'Mantra Mesmer' -> 5 URLs.
+2026-05-23 18:10:34,950 | INFO | [URLs] Mantra Mesmer -> 5 urls
+2026-05-23 18:10:34,950 | INFO | [Scrape] URL #1 Starting: https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 18:10:34,951 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333'
+2026-05-23 18:10:34,951 | INFO | [Scrape] Trying requests for https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 18:10:34,951 | INFO | [Scrape] URL #2 Starting: https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 18:10:34,951 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889'
+2026-05-23 18:10:34,953 | INFO | [Scrape] URL #3 Starting: https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 18:10:34,953 | INFO | [Scrape] Trying requests for https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 18:10:34,954 | INFO | [Scrape] URL #4 Starting: https://www.mesmerkeshavnagar.co.in/
+2026-05-23 18:10:34,954 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project'
+2026-05-23 18:10:34,954 | INFO | [Scrape] URL #5 Starting: https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 18:10:34,955 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.mesmerkeshavnagar.co.in/'
+2026-05-23 18:10:34,956 | INFO | [Scrape] Trying requests for https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 18:10:34,956 | INFO | [Scrape] project='Mantra Mesmer' url='https://www.mantraproperties.in/properties/residential/mantra-mesmer'
+2026-05-23 18:10:34,956 | INFO | [Scrape] Trying requests for https://www.mesmerkeshavnagar.co.in/
+2026-05-23 18:10:34,957 | INFO | [Scrape] Trying requests for https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 18:10:35,622 | INFO | [Scrape] OK via Requests (200 OK) for https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 18:10:35,626 | INFO | [Scrape] Requests returned 200 but content too short. Falling back.
+2026-05-23 18:10:35,626 | INFO | [Scrape] URL 'https://www.mesmerkeshavnagar.co.in/' is difficult to scrape, using Selenium Pool.
+2026-05-23 18:10:35,626 | INFO | [Driver Pool] Creating new browser for thread 10704
+2026-05-23 18:10:35,627 | INFO | [Scrape] OK via Requests (200 OK) for https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 18:10:35,651 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 18:10:36,142 | INFO | [Scrape] OK via Requests (200 OK) for https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 18:10:36,549 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:36,555 | INFO | [Scrape] Requests returned status 403. Falling back to Selenium.
+2026-05-23 18:10:36,555 | INFO | [Scrape] URL 'https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889' is difficult to scrape, using Selenium Pool.
+2026-05-23 18:10:36,555 | INFO | [Driver Pool] Creating new browser for thread 24460
+2026-05-23 18:10:36,557 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.mantraproperties.in/properties/residential/mantra-mesmer'
+2026-05-23 18:10:36,557 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 18:10:36,557 | INFO | [Scrape] URL #5 -> 0 listings | https://www.mantraproperties.in/properties/residential/mantra-mesmer
+2026-05-23 18:10:36,575 | INFO | [Driver Pool] Using Chrome binary: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-05-23 18:10:36,908 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:36,915 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333'
+2026-05-23 18:10:36,915 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 18:10:36,915 | INFO | [Scrape] URL #1 -> 0 listings | https://www.magicbricks.com/mantra-mesmer-phase-1-keshav-nagar-pune-pdpid-4d4235333933353333
+2026-05-23 18:10:40,344 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:40,351 | INFO | [Extract] 'Mantra Mesmer' -> 2 raw listings from 'https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project'
+2026-05-23 18:10:40,351 | INFO | [Extract Filter] 'Mantra Mesmer' -> 2/2 passed type + name filter
+2026-05-23 18:10:40,351 | INFO | [Scrape] URL #3 -> 2 listings | https://www.squareyards.com/pune-residential-property/mantra-mesmer/113762/project
+2026-05-23 18:10:41,624 | INFO | [Scrape] OK via Selenium (HTML Mode) for https://www.mesmerkeshavnagar.co.in/
+2026-05-23 18:10:42,232 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:42,233 | INFO | [Extract] 'Mantra Mesmer' -> 0 raw listings from 'https://www.mesmerkeshavnagar.co.in/'
+2026-05-23 18:10:42,234 | INFO | [Extract Filter] 'Mantra Mesmer' -> 0/0 passed type + name filter
+2026-05-23 18:10:42,234 | INFO | [Scrape] URL #4 -> 0 listings | https://www.mesmerkeshavnagar.co.in/
+2026-05-23 18:10:43,024 | INFO | [Scrape] OK via Selenium (Text Mode) for https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 18:10:47,284 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:10:47,284 | INFO | [Extract] 'Mantra Mesmer' -> 2 raw listings from 'https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889'
+2026-05-23 18:10:47,285 | INFO | [Extract Filter] 'Mantra Mesmer' -> 2/2 passed type + name filter
+2026-05-23 18:10:47,285 | INFO | [Scrape] URL #2 -> 2 listings | https://www.99acres.com/mantra-mesmer-phase-1-keshav-nagar-pune-npxid-r379889
+2026-05-23 18:10:47,286 | INFO | [Project Done] 'Mantra Mesmer' -> 4 listings
+2026-05-23 18:10:47,288 | INFO | [Pipeline Done] final_listings=25 | projects=3 | tokens=18688
+2026-05-23 18:10:49,461 | INFO | [Driver Pool] Closed driver for thread 22488
+2026-05-23 18:10:51,640 | INFO | [Driver Pool] Closed driver for thread 8260
+2026-05-23 18:10:53,788 | INFO | [Driver Pool] Closed driver for thread 10704
+2026-05-23 18:10:55,963 | INFO | [Driver Pool] Closed driver for thread 24460
+2026-05-23 18:11:01,562 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:11:08,754 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:11:19,747 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:11:29,659 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:11:56,001 | INFO | [CBD Tool] Identifying CBDs for 6 projects in a single LLM call...
+2026-05-23 18:12:06,271 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:12:06,275 | INFO | [CBD LLM] Raw response length: 2869
+2026-05-23 18:12:06,275 | INFO | [CBD LLM] Tokens — prompt: 556, completion: 775, total: 1331
+2026-05-23 18:12:06,275 | INFO | [CBD Tool] Godrej Infinity → Kharadi (1.61 km)
+2026-05-23 18:12:06,276 | INFO | [CBD Tool] Godrej Infinity → Magarpatta (3.32 km)
+2026-05-23 18:12:06,276 | INFO | [CBD Tool] Godrej Infinity → Downtown Pune (2.36 km)
+2026-05-23 18:12:06,276 | INFO | [CBD Tool] ARV Richvue → Kharadi (1.44 km)
+2026-05-23 18:12:06,276 | INFO | [CBD Tool] ARV Richvue → Magarpatta (3.41 km)
+2026-05-23 18:12:06,276 | INFO | [CBD Tool] ARV Richvue → Downtown Pune (2.16 km)
+2026-05-23 18:12:06,277 | INFO | [CBD Tool] Arv Richvue → Kharadi (1.35 km)
+2026-05-23 18:12:06,277 | INFO | [CBD Tool] Arv Richvue → Magarpatta (3.55 km)
+2026-05-23 18:12:06,278 | INFO | [CBD Tool] Arv Richvue → Downtown Pune (2.12 km)
+2026-05-23 18:12:06,278 | INFO | [CBD Tool] Mantra Mesmer → Kharadi (1.63 km)
+2026-05-23 18:12:06,278 | INFO | [CBD Tool] Mantra Mesmer → Magarpatta (3.47 km)
+2026-05-23 18:12:06,278 | INFO | [CBD Tool] Mantra Mesmer → Downtown Pune (2.44 km)
+2026-05-23 18:12:06,278 | INFO | [CBD Tool] Mantra Mesmer → Kharadi (1.63 km)
+2026-05-23 18:12:06,279 | INFO | [CBD Tool] Mantra Mesmer → Magarpatta (3.47 km)
+2026-05-23 18:12:06,279 | INFO | [CBD Tool] Mantra Mesmer → Downtown Pune (2.44 km)
+2026-05-23 18:12:06,279 | INFO | [CBD Tool] Que 914 → Kharadi (1.82 km)
+2026-05-23 18:12:06,279 | INFO | [CBD Tool] Que 914 → Magarpatta (3.27 km)
+2026-05-23 18:12:06,279 | INFO | [CBD Tool] Que 914 → Downtown Pune (2.6 km)
+2026-05-23 18:12:06,280 | INFO | [CBD Tool] Done. Results for 5 projects.
+2026-05-23 18:12:06,280 | INFO | CBD identification complete for 5 projects
+2026-05-23 18:12:06,305 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 18:12:06,305 | INFO | [DB] Found 10 candidates in spatial bounding box
+2026-05-23 18:12:06,305 | INFO | [DB] Found 4 candidates in spatial bounding box
+2026-05-23 18:12:06,306 | INFO | Found 3 DB amenities near (18.5395129, 73.94636849999999)
+2026-05-23 18:12:06,306 | INFO | Found 5 DB amenities near (18.5411875, 73.94531250000001)
+2026-05-23 18:12:06,306 | INFO | Found 3 DB amenities near (18.5400346, 73.9497464)
+2026-05-23 18:12:07,188 | INFO | [DB] Found 5 candidates in spatial bounding box
+2026-05-23 18:12:07,188 | INFO | Found 4 DB amenities near (18.53757, 73.948025)
+2026-05-23 18:12:24,583 | INFO | Aggregated raw counts: {'bus_stops': 1, 'gardens': 1, 'hospitals': 1, 'police_stations': 1, 'restaurants_entertainment': 1}
+2026-05-23 18:12:24,585 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'schools': 1}
+2026-05-23 18:12:24,586 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'schools': 1}
+2026-05-23 18:12:24,588 | INFO | Aggregated raw counts: {'bus_stops': 1, 'hospitals': 1, 'restaurants_entertainment': 1, 'schools': 1}
+2026-05-23 18:12:24,589 | INFO | Factorial table: 4 projects, 152 total valid listings
+2026-05-23 18:12:31,278 | INFO | [LLM Factoring] Calling gpt-4o with 3 comparables...
+2026-05-23 18:12:55,550 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:12:55,758 | INFO | [LLM Factoring] Done. Subject final rate: 12349 INR/sqft
+2026-05-23 18:14:33,054 | INFO | [LLM Factoring] Calling gpt-4o with 3 comparables...
+2026-05-23 18:14:58,196 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:14:58,412 | INFO | [LLM Factoring] Done. Subject final rate: 12474 INR/sqft
+2026-05-23 18:30:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" (scheduled at 2026-05-23 18:30:00+05:30)
+2026-05-23 18:30:00,019 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" executed successfully
