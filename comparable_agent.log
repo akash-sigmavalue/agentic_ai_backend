@@ -17645,3 +17645,27 @@ ORDER BY
 2026-05-25 13:52:47,553 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Godrej Eden Estate Phase 1 & 2' | reason=beyond_15km_radius | detail={"distance_km": 24.9}
 2026-05-25 13:52:47,554 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Godrej Eden Estate Phase 3' | reason=beyond_15km_radius | detail={"distance_km": 24.9}
 2026-05-25 13:52:47,554 | INFO | comparable_agent | [Agent Done] Final comparables: 4 | Total tokens: 2822
+2026-05-25 19:06:58,533 | INFO | comparable_agent | [Agent Start] project='vk skyvilla' type='villa' category='Villa' search_term='villa or plot' location='handewadi'
+2026-05-25 19:06:58,539 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-25 19:07:08,357 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2330
+2026-05-25 19:07:08,359 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-25 19:07:08,359 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-25 19:07:08,365 | INFO | comparable_agent | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-25 19:07:08,367 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Plot', 'Villa'}
+2026-05-25 19:07:08,369 | INFO | comparable_agent | [Geocode] Starting for 8 comparables
+2026-05-25 19:07:09,287 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-25 19:07:10,421 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Rose' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-25 19:07:11,467 | INFO | comparable_agent | [Geocode] OK 'VK Sky Villa Orchard' -> (18.4598911, 73.9298062) | Certainty: Sure
+2026-05-25 19:07:12,578 | INFO | comparable_agent | [Geocode] OK 'Taksh Villas' -> (18.4578981, 73.95122719999999) | Certainty: Sure
+2026-05-25 19:07:13,617 | INFO | comparable_agent | [Geocode] OK 'Shelar Realty Villas' -> (18.4268311, 73.9161879) | Certainty: Sure
+2026-05-25 19:07:14,679 | INFO | comparable_agent | [Geocode] OK 'Sairung Foliage Park' -> (18.5941927, 73.7215746) | Certainty: Sure
+2026-05-25 19:07:16,089 | INFO | comparable_agent | [Geocode] OK 'Mahalaxmi 16 Hill Winds' -> (18.4263125, 73.9170625) | Certainty: Sure
+2026-05-25 19:07:17,137 | INFO | comparable_agent | [Geocode] OK 'Majestique Rhythm County' -> (18.4632369, 73.9345172) | Certainty: Not Sure
+2026-05-25 19:07:17,338 | INFO | comparable_agent | [Distance] 8 comparables with valid coordinates
+2026-05-25 19:07:17,339 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk skyvilla", "comp_name": "vk sky villa", "distance_km": 0.0}
+2026-05-25 19:07:17,339 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Rose' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk skyvilla", "comp_name": "vk sky villa rose", "distance_km": 0.0}
+2026-05-25 19:07:17,339 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='VK Sky Villa Orchard' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "vk skyvilla", "comp_name": "vk sky villa orchard", "distance_km": 0.0}
+2026-05-25 19:07:17,340 | INFO | comparable_agent | [Subject Filter] 5 comparables remain after removing subject project
+2026-05-25 19:07:17,340 | INFO | comparable_agent | [URL Filter] 5 comparables after URL cleanup
+2026-05-25 19:07:17,340 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Sairung Foliage Park' | reason=beyond_15km_radius | detail={"distance_km": 26.55}
+2026-05-25 19:07:17,340 | INFO | comparable_agent | [Agent Done] Final comparables: 4 | Total tokens: 2330

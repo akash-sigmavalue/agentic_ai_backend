@@ -16,10 +16,6 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 # ── Logging setup ─────────────────────────────────────────────────────────
-# NOTE: logging.basicConfig() is a no-op when uvicorn has already attached
-# handlers to the root logger (which happens before any module is imported).
-# We configure the named logger directly with its own handlers so that logs
-# always appear in the uvicorn terminal regardless of startup order.
 _LOG_FMT = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger("comparable_agent")
 if not logger.handlers:
@@ -32,7 +28,7 @@ if not logger.handlers:
     _fh.setLevel(logging.INFO)
     _fh.setFormatter(_LOG_FMT)
     logger.addHandler(_fh)
-    logger.propagate = False  # prevent double-printing via uvicorn root logger
+    logger.propagate = False
 
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
@@ -93,7 +89,6 @@ PROPERTY_TYPE_EXCLUSIONS = {
 VALID_PROPERTY_TYPES = set(PROPERTY_TYPE_ALIASES.keys())
 
 # ── Project Category Mapping ───────────────────────────────────────────────
-# Maps internal property_type key → default project_category label
 PROJECT_CATEGORY_DEFAULT = {
     "apartment":         "Residential",
     "villa":             "Villa",
@@ -103,7 +98,6 @@ PROJECT_CATEGORY_DEFAULT = {
     "mixed_use":         "Residential + Commercial",
 }
 
-# Normalize whatever the LLM returns for project_category
 CATEGORY_NORMALIZE = {
     "residential":              "Residential",
     "commercial":               "Commercial",
@@ -119,11 +113,6 @@ CATEGORY_NORMALIZE = {
 
 # ── Drop logger ───────────────────────────────────────────────────────────
 def log_drop(stage: str, project_name: str, reason: str, extra: dict = None):
-    """
-    Centralized drop logger.
-    Every time a comparable is dropped, call this.
-    Logs to file + console so you can track patterns over time.
-    """
     msg = f"[DROP] stage={stage} | project='{project_name}' | reason={reason}"
     if extra:
         msg += f" | detail={json.dumps(extra)}"
@@ -142,17 +131,11 @@ def normalize_property_type(raw: str) -> str | None:
 
 
 def normalize_project_category(raw: str, fallback_ptype: str = "") -> str:
-    """
-    Normalize the LLM-returned project_category to a clean standard label.
-    Falls back to the default for the property type if raw is empty/unknown.
-    """
     if raw:
         cleaned = raw.strip().lower()
         if cleaned in CATEGORY_NORMALIZE:
             return CATEGORY_NORMALIZE[cleaned]
-        # Return title-cased version as best effort
         return raw.strip().title()
-    # Fallback: derive from property_type
     return PROJECT_CATEGORY_DEFAULT.get(fallback_ptype, "Unknown")
 
 
@@ -181,7 +164,6 @@ def build_prompt(subject: dict) -> tuple[str, str]:
     exclusions   = PROPERTY_TYPE_EXCLUSIONS.get(ptype, [])
     exclusion_str = ", ".join(exclusions)
 
-    # Subject's own category label for reference
     subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
 
     system_prompt = f"""
@@ -268,6 +250,7 @@ Remember:
 - Do NOT include: {exclusion_str}
 - Geographic proximity is key
 - Fill "project_category" for EVERY comparable using the exact labels defined
+- Fill "location_certainty" for EVERY comparable using the exact rules defined — this is MANDATORY
 - Return only genuinely similar {search_term} projects
 """
     return system_prompt, user_prompt
@@ -292,7 +275,7 @@ def fetch_comparables(subject: dict) -> tuple[list, dict]:
             "completion_tokens": getattr(response.usage, "output_tokens", 0),
             "total_tokens":      getattr(response.usage, "total_tokens", 0),
             "model":             model_name,
-            "tool_calls":        3  # web_search_preview
+            "tool_calls":        3
         }
         logger.info(f"[LLM Fetch] Received {len(comps)} raw comparables | tokens={usage['total_tokens']}")
 
@@ -307,13 +290,6 @@ def fetch_comparables(subject: dict) -> tuple[list, dict]:
 
 
 def parse_json_safely(raw: str) -> list:
-    """
-    Robust JSON array extraction.
-    1. Tries to find text inside ```json ... ``` blocks first.
-    2. Cleans common LLM errors like trailing commas before parsing.
-    3. Falls back to finding the first '[' followed by '{'.
-    4. Uses a secondary fallback to extract individual {objects} if array parse fails.
-    """
     if not raw:
         return []
 
@@ -375,10 +351,6 @@ def parse_json_safely(raw: str) -> list:
 
 # ── Hard Filter ───────────────────────────────────────────────────────────
 def hard_filter_by_type(comps: list, required_type: str) -> list:
-    """
-    Layer 1 defense — programmatic type check.
-    Allows certain cross-type matches (e.g., Plot vs Villa).
-    """
     valid = []
 
     ALLOW_CROSS = {
@@ -415,12 +387,6 @@ def hard_filter_by_type(comps: list, required_type: str) -> list:
 
 # ── Normalize project_category on all comparables ─────────────────────────
 def stamp_project_category(comps: list) -> list:
-    """
-    Normalize the 'project_category' field returned by the LLM.
-    If the LLM didn't return one (or returned garbage), fall back to
-    the default derived from property_type.
-    Logs a warning whenever the fallback is used.
-    """
     for c in comps:
         raw_cat   = c.get("project_category", "")
         ptype_key = c.get("property_type", "")
@@ -440,6 +406,65 @@ def stamp_project_category(comps: list) -> list:
         c["project_category"] = normalized
 
     return comps
+
+
+# ── Location certainty resolver ───────────────────────────────────────────
+def is_specific_location(location: str) -> bool:
+    if not location:
+        return False
+
+    loc = location.lower().strip()
+    broad_terms = {
+        "india", "pune", "mumbai", "delhi", "bangalore", "bengaluru",
+        "hyderabad", "chennai", "kolkata", "ahmedabad", "gurgaon",
+        "gurugram", "noida", "north delhi", "south delhi", "rishikesh"
+    }
+    if loc in broad_terms:
+        return False
+
+    # A comma, road/sector/locality marker, or multi-token address usually
+    # means the result is narrower than a city-level guess.
+    specific_markers = [
+        ",", "road", "rd", "sector", "phase", "street", "nagar",
+        "wadi", "pur", "gaon", "village", "layout", "colony"
+    ]
+    return any(marker in loc for marker in specific_markers) or len(loc.split()) >= 2
+
+
+def resolve_location_certainty(comp: dict) -> dict:
+    llm_certainty = comp.get("location_certainty")
+    comp["llm_location_certainty"] = llm_certainty
+
+    has_project = bool((comp.get("project_name") or "").strip())
+    has_coords = comp.get("map_search_lat") is not None and comp.get("map_search_lng") is not None
+    has_distance = isinstance(comp.get("distance_from_subject_km"), (int, float))
+    specific_location = is_specific_location(comp.get("location", ""))
+
+    if llm_certainty == "Sure":
+        comp["location_certainty"] = "Sure"
+        comp["location_certainty_reason"] = "LLM found project and location together on source page."
+    elif has_project and has_coords and has_distance and specific_location:
+        comp["location_certainty"] = "Sure"
+        comp["location_certainty_reason"] = (
+            "Upgraded after backend geocoding: project has valid coordinates, "
+            "a calculated subject distance, and a specific location."
+        )
+    else:
+        comp["location_certainty"] = "Not Sure"
+        missing = []
+        if not has_project:
+            missing.append("project name")
+        if not has_coords:
+            missing.append("coordinates")
+        if not has_distance:
+            missing.append("distance")
+        if not specific_location:
+            missing.append("specific location")
+        comp["location_certainty_reason"] = (
+            "Could not verify " + ", ".join(missing) if missing else "LLM marked location as uncertain."
+        )
+
+    return comp
 
 
 # ── Scoring ───────────────────────────────────────────────────────────────
@@ -465,7 +490,6 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     all_comps   = []
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
-    # Derive subject's own category label
     subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
 
     logger.info(
@@ -481,7 +505,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             "subject_category": subject_category,
         })
 
-    # ── Step 1: Multi-pass LLM fetch ──────────────────────────────────────
+    # ── Step 1: LLM fetch ─────────────────────────────────────────────────
     for i in range(1):
         logger.info(f"[LLM Fetch] Pass {i + 1}/1")
         comps, usage = fetch_comparables(subject)
@@ -500,7 +524,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         if run_logger:
             run_logger.save_step("comparable_agent", f"pass_{i+1}_raw", comps)
 
-    logger.info(f"[Multi-pass] Total raw comparables: {len(all_comps)}")
+    logger.info(f"[LLM Fetch] Total raw comparables: {len(all_comps)}")
 
     # ── Step 2: Deduplicate ───────────────────────────────────────────────
     seen, deduped = set(), []
@@ -520,11 +544,10 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     if run_logger:
         run_logger.save_step("comparable_agent", "deduplicated", deduped)
 
-    # ── Step 3: Hard filter (Layer 1) ─────────────────────────────────────
+    # ── Step 3: Hard filter (type check) ──────────────────────────────────
     type_filtered = hard_filter_by_type(deduped, ptype)
 
     # ── Step 3b: Normalize project_category ───────────────────────────────
-    # LLM fills this during web search; we just clean/normalize here.
     type_filtered = stamp_project_category(type_filtered)
 
     logger.info(
@@ -535,7 +558,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     if run_logger:
         run_logger.save_step("comparable_agent", "after_category_stamp", type_filtered)
 
-    # ── Step 5: Geocode ───────────────────────────────────────────────────
+    # ── Step 4: Geocode ───────────────────────────────────────────────────
     logger.info(f"[Geocode] Starting for {len(type_filtered)} comparables")
     for c in type_filtered:
         try:
@@ -543,15 +566,20 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                 location_name=c.get("location"),
                 country=c.get("country"),
                 project_name=c.get("project_name"),
-                stage="Comparable Geocoding (S3)"
+                stage="Comparable Geocoding (S4)"
             )
             c["map_search_lat"] = res.get("lat")
             c["map_search_lng"] = res.get("lng")
             c["geocode_source"] = res.get("source")
 
-            # Initialize certainty if missing
+            # ── location_certainty is fully owned by the LLM ──────────────
+            # No fallback is set here. If the LLM did not return this field,
+            # it will be None and logged as a warning.
             if "location_certainty" not in c:
-                c["location_certainty"] = "Not Sure"
+                logger.warning(
+                    f"[Certainty] LLM did not return location_certainty "
+                    f"for '{c.get('project_name')}' — left as None"
+                )
 
             if not c["map_search_lat"] or not c["map_search_lng"]:
                 log_drop(
@@ -563,13 +591,12 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                         "country":  c.get("country", ""),
                     }
                 )
-            
 
             if c["map_search_lat"] and c["map_search_lng"]:
                 logger.info(
                     f"[Geocode] OK '{c['project_name']}' -> "
                     f"({c['map_search_lat']}, {c['map_search_lng']}) | "
-                    f"Certainty: {c['location_certainty']}"
+                    f"LLM Certainty: {c.get('location_certainty', 'None (LLM omitted)')}"
                 )
 
         except Exception as e:
@@ -583,7 +610,7 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             )
         time.sleep(0.2)
 
-    # ── Step 6: Distance calculation ──────────────────────────────────────
+    # ── Step 5: Distance calculation ──────────────────────────────────────
     clean = []
     for c in type_filtered:
         lat = c.get("map_search_lat")
@@ -600,11 +627,12 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         c["distance_from_subject_km"] = calculate_distance(
             subject["lat"], subject["lng"], lat, lng
         )
+        resolve_location_certainty(c)
         clean.append(c)
 
     logger.info(f"[Distance] {len(clean)} comparables with valid coordinates")
 
-    # ── Step 6b: Remove Subject Project ───────────────────────────────────
+    # ── Step 6: Remove Subject Project ────────────────────────────────────
     filtered_no_subject = []
     subj_name = (subject.get("project_name") or "").lower().strip()
     subj_lat = subject.get("lat")
@@ -626,25 +654,21 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         c_lat = c.get("map_search_lat")
         c_lng = c.get("map_search_lng")
 
-        # 1. Coordinate check (closeness/exact match)
         coords_match = False
         if subj_lat is not None and subj_lng is not None and c_lat is not None and c_lng is not None:
             try:
                 lat_diff = abs(float(subj_lat) - float(c_lat))
                 lng_diff = abs(float(subj_lng) - float(c_lng))
-                # 1e-4 is approx 11 meters, very close (same tower/complex)
                 if lat_diff < 1e-4 and lng_diff < 1e-4:
                     coords_match = True
             except (ValueError, TypeError):
                 pass
 
-        # 2. Name check
         name_match = False
         if subj_name_clean and c_name_clean:
             if subj_name_clean == c_name_clean or subj_name_clean in c_name_clean or c_name_clean in subj_name_clean:
                 name_match = True
 
-        # Drop if it is the subject project itself (name AND lat-long are the same, or exact zero distance match)
         is_subject = False
         if name_match and coords_match:
             is_subject = True
@@ -713,6 +737,6 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     return {
         "comparables":        nearby,
         "count":              len(nearby),
-        "subject_category":   subject_category,   # ← NEW: subject's category label
+        "subject_category":   subject_category,
         "_token_usage":       total_usage,
     }
