@@ -422,8 +422,6 @@ def is_specific_location(location: str) -> bool:
     if loc in broad_terms:
         return False
 
-    # A comma, road/sector/locality marker, or multi-token address usually
-    # means the result is narrower than a city-level guess.
     specific_markers = [
         ",", "road", "rd", "sector", "phase", "street", "nagar",
         "wadi", "pur", "gaon", "village", "layout", "colony"
@@ -435,9 +433,9 @@ def resolve_location_certainty(comp: dict) -> dict:
     llm_certainty = comp.get("location_certainty")
     comp["llm_location_certainty"] = llm_certainty
 
-    has_project = bool((comp.get("project_name") or "").strip())
-    has_coords = comp.get("map_search_lat") is not None and comp.get("map_search_lng") is not None
-    has_distance = isinstance(comp.get("distance_from_subject_km"), (int, float))
+    has_project      = bool((comp.get("project_name") or "").strip())
+    has_coords       = comp.get("map_search_lat") is not None and comp.get("map_search_lng") is not None
+    has_distance     = isinstance(comp.get("distance_from_subject_km"), (int, float))
     specific_location = is_specific_location(comp.get("location", ""))
 
     if llm_certainty == "Sure":
@@ -467,7 +465,407 @@ def resolve_location_certainty(comp: dict) -> dict:
     return comp
 
 
-# ── Scoring ───────────────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
+# ── Confidence Scoring Agent ──────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
+
+_CONFIDENCE_MODEL    = "gpt-4o"
+_CONFIDENCE_TOKENS   = 4096
+_CONFIDENCE_BATCH    = 5       # Reduced from 10 — each comp now triggers web searches, smaller batches = better quality
+_CONFIDENCE_RETRIES  = 2
+_CONFIDENCE_DELAY    = 3
+
+
+def _build_confidence_prompt(subject: dict, batch: list[dict]) -> tuple[str, str]:
+    """Build system + user prompt for a confidence-scoring batch."""
+
+    system_prompt = """
+You are a senior real estate valuation analyst with deep expertise in comparable property analysis.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+YOUR TASK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Given a SUBJECT PROPERTY and a list of COMPARABLE PROPERTIES, assign a CONFIDENCE SCORE
+(0–100) to each comparable.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY: RESEARCH BEFORE SCORING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You MUST use the web_search_preview tool to research EACH comparable before scoring it.
+Do NOT guess or rely on your training knowledge alone.
+
+For EACH comparable, search for and find:
+  1. Developer / builder name and their reputation tier
+       → Is it a national Tier-1 brand (DLF, Godrej, Prestige, Lodha, Sobha, Brigade,
+         Tata Housing, Mahindra Lifespaces, Puravankara, etc.)?
+       → A well-known regional brand?
+       → A local builder?
+       → Unknown / unverified?
+
+  2. Project market segment
+       → Luxury (price > ₹1.5 Cr / $200K typical unit)?
+       → Premium / Upper-mid?
+       → Mid-segment?
+       → Affordable (< ₹50L)?
+
+  3. Amenities & lifestyle offering
+       → Clubhouse, pool, gym, concierge, smart home, etc.?
+       → Basic amenities only?
+       → No amenity info found?
+
+  4. Locality quality relative to subject property
+       → Same street / gated colony?
+       → Same suburb / micro-market?
+       → Same district / zone?
+       → Same city only?
+       → Different city altogether?
+
+SEARCH STRATEGY PER COMPARABLE:
+  - Search: "<project_name> <location> developer segment amenities"
+  - Search: "<project_name> <location> price review"
+  - Use source_url if provided — fetch and read it
+  - If searches return no useful results, mark that factor explicitly as "No info found"
+
+DO NOT assign scores based on guesswork. If you cannot find data for a factor,
+use the "No info" default score defined below.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SCORING FACTORS TO CONSIDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+After researching each comparable via web search, evaluate it holistically
+as a senior valuation analyst would. Consider:
+
+- How close is it to the subject property, and is it in the same micro-market?
+- How does the locality / neighbourhood compare to the subject's area?
+- Who is the developer — are they credible and well-known in this market?
+- Does the property type and category genuinely match the subject?
+- Are the amenities and market segment (luxury / mid / affordable) aligned?
+- Is possession status aligned (both ready or both under construction)?
+- How certain are we about this comparable's actual location?
+
+Use your expert judgment to assign a single confidence score (0–100).
+Do NOT mechanically map values to ranges. Think holistically — a
+Tier-1 developer 4 km away in the same micro-market may outscore an
+unknown builder 0.5 km away. Context matters.
+
+SCORING APPROACH
+━━━━━━━━━━━━━━━━
+After researching each comparable, assign a holistic confidence score (0–100)
+based on your expert judgment as a senior valuation analyst.
+
+Consider all factors together — a nearby property from an unknown builder in a
+different segment should score lower than a slightly farther Tier-1 project in
+the same micro-market. Use your domain expertise to weigh what matters most
+for THIS subject property in THIS location.
+
+Do NOT mechanically apply fixed weights. Think like a valuer who must justify
+the comparable selection to a client.
+
+Round final score to nearest integer.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONFIDENCE TIERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+80–100 → "High"    |  60–79 → "Medium"
+40–59  → "Low"     |   0–39 → "Very Low"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Return ONLY a strict JSON array. No preamble. Start with `[`, end with `]`.
+
+Each object MUST have exactly these keys:
+{
+  "project_name":          "<exact name from input>",
+  "confidence_score":      <integer 0–100>,
+  "confidence_tier":       "<High | Medium | Low | Very Low>",
+  "confidence_reasoning":  "<3–5 sentences. Be specific: mention actual distances, developer name found, segment researched, amenities discovered, what searches returned.>",
+  "research_summary": {
+    "developer_found":   "<developer name or 'Not found'>",
+    "segment_found":     "<Luxury / Premium / Mid / Affordable / Not found>",
+    "amenities_found":   "<brief list or 'Not found'>",
+    "locality_quality":  "<Same street / Same suburb / Same district / Same city / Different city>"
+  },
+  "factor_breakdown": {
+    "distance_micro_market": <0–100>,
+    "location_quality":      <0–100>,
+    "brand_credibility":     <0–100>,
+    "category_type_match":   <0–100>,
+    "amenities_segment":     <0–100>,
+    "possession_alignment":  <0–100>,
+    "location_certainty":    <0–100>
+  }
+}
+"""
+
+    # Pass full comparable data — the LLM will search for what it needs
+    full_comps = [
+        {
+            "project_name":             c.get("project_name"),
+            "location":                 c.get("location"),
+            "country":                  c.get("country"),
+            "property_type":            c.get("property_type"),
+            "project_category":         c.get("project_category"),
+            "age_years":                c.get("age_years"),
+            "possession_status":        c.get("possession_status"),
+            "distance_from_subject_km": c.get("distance_from_subject_km"),
+            "location_certainty":       c.get("location_certainty"),
+            "source_url":               c.get("source_url"),   # ← included so LLM can fetch it
+            "reason":                   c.get("reason"),
+        }
+        for c in batch
+    ]
+
+    user_prompt = f"""
+SUBJECT PROPERTY:
+{json.dumps({
+    "project_name":      subject.get("project_name"),
+    "location":          subject.get("location_name"),
+    "country":           subject.get("country"),
+    "property_type":     subject.get("property_type"),
+    "possession_status": subject.get("possession_status", "Unknown"),
+    "lat":               subject.get("lat"),
+    "lng":               subject.get("lng"),
+}, indent=2)}
+
+COMPARABLES TO SCORE ({len(full_comps)} properties):
+{json.dumps(full_comps, indent=2)}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For EACH comparable above:
+  1. Search the web using web_search_preview to find developer, segment, amenities, and locality quality.
+  2. Apply the 7-factor weighted formula using both researched data and provided data.
+  3. Return one JSON object per comparable.
+
+Search queries to use per comparable (adapt as needed):
+  → "<project_name> <location> developer builder"
+  → "<project_name> <location> price amenities review"
+
+Return a JSON array with exactly {len(full_comps)} objects, one per comparable.
+"""
+    return system_prompt, user_prompt
+
+
+def _parse_confidence_json(raw: str) -> list[dict]:
+    """Robust JSON parser — mirrors parse_json_safely pattern."""
+    if not raw:
+        return []
+
+    def clean(s: str) -> str:
+        s = s.strip()
+        s = re.sub(r',\s*([\]\}])', r'\1', s)
+        return s
+
+    # 1. Markdown block
+    for block in re.findall(r"```json\s*(.*?)\s*```", raw, re.DOTALL):
+        try:
+            data = json.loads(clean(block))
+            if isinstance(data, list):
+                return data
+        except:
+            continue
+
+    # 2. First `[{` ... `]`
+    m = re.search(r"\[\s*\{", raw)
+    if m:
+        depth = 0
+        for i in range(m.start(), len(raw)):
+            if raw[i] == "[":
+                depth += 1
+            elif raw[i] == "]":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        data = json.loads(clean(raw[m.start(): i + 1]))
+                        return data if isinstance(data, list) else []
+                    except:
+                        pass
+
+    # 3. Individual object fallback
+    objects = []
+    for obj_str in re.findall(r"\{[^{}]+\}", raw, re.DOTALL):
+        try:
+            obj = json.loads(clean(obj_str))
+            if "project_name" in obj and "confidence_score" in obj:
+                objects.append(obj)
+        except:
+            continue
+    if objects:
+        logger.info(f"[Confidence JSON] Fallback extracted {len(objects)} objects")
+    return objects
+
+
+def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) -> list[dict]:
+    """
+    Send one batch to gpt-4o WITH web_search_preview enabled.
+    The LLM will research each comparable before scoring.
+    """
+    system_prompt, user_prompt = _build_confidence_prompt(subject, batch)
+
+    for attempt in range(1, _CONFIDENCE_RETRIES + 1):
+        try:
+            logger.info(
+                f"[Confidence Batch {batch_num}] "
+                f"Attempt {attempt}/{_CONFIDENCE_RETRIES} | "
+                f"{len(batch)} comparables | web_search_preview ENABLED"
+            )
+
+            # ── KEY CHANGE: use responses.create with web_search_preview ──
+            response = _client.responses.create(
+                model=_CONFIDENCE_MODEL,
+                instructions=system_prompt,
+                input=user_prompt,
+                tools=[{"type": "web_search_preview"}],
+            )
+
+            raw    = response.output_text.strip()
+            scored = _parse_confidence_json(raw)
+
+            # Log token usage for this batch
+            usage = {
+                "input_tokens":  getattr(response.usage, "input_tokens", 0),
+                "output_tokens": getattr(response.usage, "output_tokens", 0),
+                "total_tokens":  getattr(response.usage, "total_tokens", 0),
+            }
+            logger.info(
+                f"[Confidence Batch {batch_num}] "
+                f"Scored {len(scored)}/{len(batch)} comparables | "
+                f"tokens={usage['total_tokens']}"
+            )
+
+            if not scored:
+                logger.warning(
+                    f"[Confidence Batch {batch_num}] Zero results parsed. "
+                    f"Snippet: {raw[:200]}"
+                )
+                if attempt < _CONFIDENCE_RETRIES:
+                    time.sleep(_CONFIDENCE_DELAY)
+                    continue
+
+            return scored
+
+        except Exception as e:
+            logger.error(f"[Confidence Batch {batch_num}] Attempt {attempt} failed: {e}")
+            if attempt < _CONFIDENCE_RETRIES:
+                time.sleep(_CONFIDENCE_DELAY)
+
+    return []
+
+
+def _merge_confidence_scores(comparables: list[dict], scored: list[dict]) -> list[dict]:
+    """Merge LLM scores back onto originals by project_name. Defaults for misses."""
+    score_map = {
+        (s.get("project_name") or "").lower().strip(): s
+        for s in scored
+    }
+
+    for c in comparables:
+        key  = (c.get("project_name") or "").lower().strip()
+        data = score_map.get(key)
+
+        if data:
+            c["confidence_score"]     = data.get("confidence_score", 0)
+            c["confidence_tier"]      = data.get("confidence_tier", "Unknown")
+            c["confidence_reasoning"] = data.get("confidence_reasoning", "")
+            c["factor_breakdown"]     = data.get("factor_breakdown", {})
+            c["research_summary"]     = data.get("research_summary", {})  # ← new field
+        else:
+            logger.warning(
+                f"[Confidence Merge] No score returned for '{c.get('project_name')}' "
+                f"— assigning default"
+            )
+            c["confidence_score"]     = 50
+            c["confidence_tier"]      = "Low"
+            c["confidence_reasoning"] = (
+                "Confidence score could not be computed by LLM for this comparable. "
+                "Assigned default score of 50. Manual review recommended."
+            )
+            c["factor_breakdown"]  = {}
+            c["research_summary"]  = {}
+
+    return comparables
+
+
+def run_confidence_scoring(
+    subject: dict,
+    comparables: list[dict],
+    metrics=None,
+    run_logger=None,
+) -> list[dict]:
+    """
+    LLM-powered confidence scoring with web_search_preview.
+
+    The LLM researches each comparable (developer, segment, amenities, locality)
+    via live web search before scoring. This gives accurate, grounded scores
+    instead of hallucinated guesses.
+
+    Enriches each comparable with:
+      - confidence_score       (int 0–100)
+      - confidence_tier        (High / Medium / Low / Very Low)
+      - confidence_reasoning   (LLM explanation citing researched facts)
+      - factor_breakdown       (dict of 7 per-dimension scores)
+      - research_summary       (what the LLM found: developer, segment, amenities, locality)
+
+    Returns comparables sorted by confidence_score descending.
+    """
+    if not comparables:
+        logger.warning("[Confidence Scoring] No comparables to score.")
+        return []
+
+    logger.info(
+        f"[Confidence Scoring] Starting | "
+        f"{len(comparables)} comparables | "
+        f"subject='{subject.get('project_name')}' | "
+        f"web_search_preview=ENABLED | "
+        f"batch_size={_CONFIDENCE_BATCH}"
+    )
+
+    batches = [
+        comparables[i: i + _CONFIDENCE_BATCH]
+        for i in range(0, len(comparables), _CONFIDENCE_BATCH)
+    ]
+    logger.info(
+        f"[Confidence Scoring] {len(batches)} batch(es) of up to {_CONFIDENCE_BATCH}"
+    )
+
+    all_scored: list[dict] = []
+    for idx, batch in enumerate(batches, start=1):
+        scored = _score_confidence_batch(subject, batch, batch_num=idx)
+        all_scored.extend(scored)
+
+        if metrics:
+            # Each batch triggers multiple web searches inside the LLM call
+            # Estimate: ~2–3 searches per comparable
+            estimated_searches = len(batch) * 2
+            for _ in range(estimated_searches):
+                metrics.add_tool_call("web_search_preview", cost=0.017)
+
+        time.sleep(1.0)  # slightly longer pause — web search calls need breathing room
+
+    logger.info(
+        f"[Confidence Scoring] LLM scored {len(all_scored)}/{len(comparables)} comparables"
+    )
+
+    merged = _merge_confidence_scores(comparables, all_scored)
+    merged.sort(key=lambda x: x.get("confidence_score", 0), reverse=True)
+
+    tiers = {"High": 0, "Medium": 0, "Low": 0, "Very Low": 0, "Unknown": 0}
+    for c in merged:
+        tier = c.get("confidence_tier", "Unknown")
+        tiers[tier] = tiers.get(tier, 0) + 1
+    logger.info(f"[Confidence Scoring] Done. Tier distribution: {tiers}")
+
+    if run_logger:
+        run_logger.save_step("confidence_scoring_agent", "scored_comparables", merged)
+
+    return merged
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# ── Scoring (legacy — kept for fallback reference) ────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
 def score_comp(comp: dict, subject: dict) -> float:
     score = 0.0
     d = comp.get("distance_from_subject_km")
@@ -572,9 +970,6 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
             c["map_search_lng"] = res.get("lng")
             c["geocode_source"] = res.get("source")
 
-            # ── location_certainty is fully owned by the LLM ──────────────
-            # No fallback is set here. If the LLM did not return this field,
-            # it will be None and logged as a warning.
             if "location_certainty" not in c:
                 logger.warning(
                     f"[Certainty] LLM did not return location_certainty "
@@ -635,13 +1030,14 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     # ── Step 6: Remove Subject Project ────────────────────────────────────
     filtered_no_subject = []
     subj_name = (subject.get("project_name") or "").lower().strip()
-    subj_lat = subject.get("lat")
-    subj_lng = subject.get("lng")
+    subj_lat  = subject.get("lat")
+    subj_lng  = subject.get("lng")
 
     def clean_name(s: str) -> str:
         s = s.lower().strip()
         s = re.sub(r'[^a-z0-9]', '', s)
-        for suffix in ["society", "apartment", "apartments", "condo", "condominium", "residency", "villas", "heights", "project"]:
+        for suffix in ["society", "apartment", "apartments", "condo", "condominium",
+                        "residency", "villas", "heights", "project"]:
             if s.endswith(suffix):
                 s = s[:-len(suffix)]
         return s
@@ -649,25 +1045,26 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
     subj_name_clean = clean_name(subj_name)
 
     for c in clean:
-        c_name = (c.get("project_name") or "").lower().strip()
+        c_name       = (c.get("project_name") or "").lower().strip()
         c_name_clean = clean_name(c_name)
-        c_lat = c.get("map_search_lat")
-        c_lng = c.get("map_search_lng")
+        c_lat        = c.get("map_search_lat")
+        c_lng        = c.get("map_search_lng")
 
         coords_match = False
         if subj_lat is not None and subj_lng is not None and c_lat is not None and c_lng is not None:
             try:
-                lat_diff = abs(float(subj_lat) - float(c_lat))
-                lng_diff = abs(float(subj_lng) - float(c_lng))
-                if lat_diff < 1e-4 and lng_diff < 1e-4:
+                if abs(float(subj_lat) - float(c_lat)) < 1e-4 and abs(float(subj_lng) - float(c_lng)) < 1e-4:
                     coords_match = True
             except (ValueError, TypeError):
                 pass
 
-        name_match = False
-        if subj_name_clean and c_name_clean:
-            if subj_name_clean == c_name_clean or subj_name_clean in c_name_clean or c_name_clean in subj_name_clean:
-                name_match = True
+        name_match = bool(
+            subj_name_clean and c_name_clean and (
+                subj_name_clean == c_name_clean
+                or subj_name_clean in c_name_clean
+                or c_name_clean in subj_name_clean
+            )
+        )
 
         is_subject = False
         if name_match and coords_match:
@@ -684,8 +1081,8 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
                 reason=f"is_subject_property ({reason})",
                 extra={
                     "subject_name": subj_name,
-                    "comp_name": c_name,
-                    "distance_km": c.get("distance_from_subject_km")
+                    "comp_name":    c_name,
+                    "distance_km":  c.get("distance_from_subject_km"),
                 }
             )
         else:
@@ -710,8 +1107,30 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
 
     logger.info(f"[URL Filter] {len(url_clean)} comparables after URL cleanup")
 
-    # ── Step 8: Rank + 15km filter ────────────────────────────────────────
-    ranked = sorted(url_clean, key=lambda x: score_comp(x, subject), reverse=True)
+    # ── Step 7b: LLM Confidence Scoring (with web_search_preview) ─────────
+    logger.info(
+        "[Confidence] Running LLM confidence scoring with web_search_preview — "
+        "LLM will research each comparable before scoring..."
+    )
+    url_clean = run_confidence_scoring(
+        subject=subject,
+        comparables=url_clean,
+        metrics=metrics,
+        run_logger=run_logger,
+    )
+
+    if run_logger:
+        run_logger.save_step("comparable_agent", "after_confidence_scoring", url_clean)
+
+    # ── Step 8: Rank by confidence_score + 15km filter ───────────────────
+    ranked = sorted(
+        url_clean,
+        key=lambda x: (
+            x.get("confidence_score", 0),
+            -x.get("distance_from_subject_km", 999),
+        ),
+        reverse=True,
+    )
 
     nearby = []
     for c in ranked:
@@ -735,8 +1154,8 @@ def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None,
         run_logger.save_step("comparable_agent", "final_comps", nearby)
 
     return {
-        "comparables":        nearby,
-        "count":              len(nearby),
-        "subject_category":   subject_category,
-        "_token_usage":       total_usage,
+        "comparables":      nearby,
+        "count":            len(nearby),
+        "subject_category": subject_category,
+        "_token_usage":     total_usage,
     }
