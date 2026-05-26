@@ -17843,3 +17843,37 @@ ORDER BY
 2026-05-26 10:43:46,357 | INFO | comparable_agent | [Confidence Scoring] LLM scored 7/7
 2026-05-26 10:43:46,358 | INFO | comparable_agent | [Confidence Scoring] Done. Tiers: {'High': 3, 'Medium': 4, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
 2026-05-26 10:43:46,371 | INFO | comparable_agent | [Agent Done] Final: 7 comparables (7 web, 0 db) | Tokens: 2183
+2026-05-26 10:56:48,921 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-26 10:56:48,932 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-26 10:57:00,035 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2468
+2026-05-26 10:57:00,037 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-26 10:57:00,037 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-26 10:57:00,047 | INFO | comparable_agent | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-26 10:57:00,047 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-26 10:57:00,049 | INFO | comparable_agent | [Geocode] Starting for 8 comparables
+2026-05-26 10:57:01,010 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-26 10:57:02,127 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-26 10:57:03,495 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-26 10:57:04,574 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-26 10:57:05,602 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | LLM Certainty: Sure
+2026-05-26 10:57:06,679 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-26 10:57:07,867 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-26 10:57:08,877 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-26 10:57:09,078 | INFO | comparable_agent | [Distance] 8 comparables with valid coordinates
+2026-05-26 10:57:09,079 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-26 10:57:09,079 | INFO | comparable_agent | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-26 10:57:09,079 | INFO | comparable_agent | [URL Filter] 7 comparables after URL cleanup
+2026-05-26 10:57:09,079 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research each comparable before scoring...
+2026-05-26 10:57:09,080 | INFO | comparable_agent | [Confidence Scoring] Starting | 7 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-26 10:57:09,080 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-26 10:57:09,080 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-26 10:57:14,576 | INFO | comparable_agent | [Confidence Batch 1] Scored 1/5 comparables | tokens=2866
+2026-05-26 10:57:15,577 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 2 comparables | web_search_preview ENABLED
+2026-05-26 10:57:20,952 | INFO | comparable_agent | [Confidence Batch 2] Scored 2/2 comparables | tokens=2586
+2026-05-26 10:57:21,953 | INFO | comparable_agent | [Confidence Scoring] LLM scored 3/7 comparables
+2026-05-26 10:57:21,954 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Mantra Mesmer' — assigning default
+2026-05-26 10:57:21,954 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'ARP Valora Towers' — assigning default
+2026-05-26 10:57:21,954 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Choice QUE 914' — assigning default
+2026-05-26 10:57:21,954 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Bansall Amara' — assigning default
+2026-05-26 10:57:21,955 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 3, 'Medium': 0, 'Low': 4, 'Very Low': 0, 'Unknown': 0}
+2026-05-26 10:57:21,966 | INFO | comparable_agent | [Agent Done] Final comparables: 7 | Total tokens: 2468
