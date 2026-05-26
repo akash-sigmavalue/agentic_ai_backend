@@ -3,6 +3,7 @@ import json
 import os
 from typing import List
 import opendataloader_pdf
+import pdfplumber
 
 import fitz
 from fastapi import HTTPException
@@ -68,12 +69,7 @@ def extract_images_from_pdf(file_path):
     return image_docs
 
 
-def extract_tables_from_pdf(file_path: str, filename: str) -> List[Document]:
-    try:
-        import pdfplumber
-    except ImportError:
-        return []
-        
+def extract_tables_from_pdf(file_path: str, filename: str) -> List[Document]:   
     table_docs = []
     with pdfplumber.open(file_path) as pdf:
         for page_index, page in enumerate(pdf.pages):

@@ -3,7 +3,7 @@ import re
 import tiktoken
 
 
-def count_tokens(text: str, model: str = "text-embedding-3-small") -> int:
+def count_tokens(text: str, model: str = "text-embedding-3-large") -> int:
     try:
         encoding = tiktoken.encoding_for_model(model)
     except KeyError:

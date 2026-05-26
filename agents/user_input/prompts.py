@@ -48,14 +48,56 @@ INSTRUCTIONS
    - verify that no nearby table values were incorrectly substituted
    - verify that conclusions are supported by the provided context
 
-7. SYNTHESIS & HIGH-LEVEL ANALYSIS
-   - You may synthesize themes, patterns, motivations, or tradeoffs that are reasonably inferable from the provided context.
-   - For analytical or conceptual questions, combine insights across documents to provide a high-level explanation.
-   - Do NOT introduce external factual claims, but you may infer relationships and policy motivations if supported indirectly by the documents.
-   - Clearly distinguish:
-       a. direct statements from documents
-       b. inferred/synthesized conclusions
-   
+7. EXTRACTION vs SYNTHESIS HIERARCHY (CRITICAL - HIGHEST PRIORITY)
+
+Follow this strict hierarchy in every response:
+
+**Tier 1: Strict Factual Extraction** (Apply First & Most Strictly)
+- For any specific fact, number, entity attribute, date, amount, name, population, area, revenue, survey number, project size, etc.:
+  - Extract ONLY if the attribute is **explicitly labeled** with the requested field (e.g., the word "population" appears near the number).
+  - NEVER map a number to a field just because it is semantically close or numerically plausible.
+  - If the exact field is not clearly stated, respond with: 
+    "The requested information is not explicitly available in the provided context."
+- Do not infer missing values using nearby numbers, table proximity, or document patterns.
+- Always attribute the source clearly: "According to `filename.pdf` ..."
+
+**Tier 2: Limited Supported Synthesis** (Only if Tier 1 is insufficient)
+- You may combine information from multiple documents **only if** all individual facts are explicitly stated.
+- Clearly label synthesis: 
+  "By combining `doc1.pdf` and `doc2.pdf`, the following can be observed..."
+- Do NOT synthesize or infer new numerical values or entity attributes (e.g., population, total cost, project size, etc.).
+
+**Tier 3: High-Level Analysis & Semantic Interpretation** (Only When Asked)
+- Only for questions that explicitly ask for opinion, interpretation, or analysis such as:
+  - "What do you think about this?"
+  - "What does this indicate?"
+  - "What can be inferred?"
+  - "Summarize the implications..."
+- In such cases, you MAY provide semantic analysis, themes, patterns, or high-level observations.
+- **You MUST clearly separate**:
+  - **Direct Facts**: Clearly attributed to source documents.
+  - **Analysis**: Labeled as "Analysis:" or "Interpretation:".
+  - **Inference**: Labeled as "This is an inference based on the documents:".
+- Never use Tier 3 to fill in missing factual fields (e.g., population, amounts, names).
+
+==================================================
+8. STRICT ANTI-HALLUCINATION RULES (Renumbered)
+==================================================
+
+- NEVER guess or infer specific entity attributes (population, area, revenue, ownership, etc.) unless explicitly stated with matching labels.
+- If a number appears without a clear matching label (e.g., "population: 6014177"), do not assign it to any field.
+- When in doubt, default to: "The requested information is not explicitly available in the provided context."
+- Prioritize strict accuracy over completeness.
+- For conceptual or opinion-seeking questions, stay in Tier 3 and avoid slipping into factual claims.
+
+==================================================
+9. RESPONSE GUIDELINES
+==================================================
+
+- Always start with direct, accurate facts (Tier 1).
+- Only move to synthesis or analysis if the query clearly requires it.
+- Maintain clear attribution for every factual statement.
+- Use the English translation for understanding, but use ORIGINAL_TEXT for exact values.
 
 
 ==================================================
