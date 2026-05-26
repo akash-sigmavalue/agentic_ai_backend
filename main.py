@@ -49,7 +49,7 @@ from database.db import engine as connector_engine
 from database.connector.schema_migration import ensure_additive_schema
 
 #portfolio related imports
-from api.routes.portfolio import dashboard, health, portfolio_flat, records, sections, uploads
+from api.routes.portfolio import chat, dashboard, health, portfolio_flat, records, sections, uploads
 from database.portfolio.db import init_db as init_portfolio_db
 
 if sys.platform == "win32":
@@ -111,6 +111,7 @@ def _include_routes(app: FastAPI) -> None:
     app.include_router(uploads.router, prefix="/portfolio")
     app.include_router(dashboard.router, prefix="/portfolio")
     app.include_router(portfolio_flat.router, prefix="/portfolio")
+    app.include_router(chat.router, prefix="/portfolio")
 
 def _build_workflow_router() -> APIRouter:
     router = APIRouter(prefix="/v1", tags=["workflow"])

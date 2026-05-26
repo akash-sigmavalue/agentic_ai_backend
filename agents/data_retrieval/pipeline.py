@@ -8,6 +8,7 @@ from openai import OpenAI
 
 from utils.data_retrieval.metrics import AgentMetrics
 from agents.data_retrieval_project.pipeline import ProjectDomainAgent
+from agents.data_retrieval_portfolio.pipeline import PortfolioDomainAgent
 from utils.data_retrieval.session_store import SessionStore
 from agents.data_retrieval_transaction.pipeline import TransactionDomainAgent
 
@@ -27,10 +28,11 @@ class UniversalRealEstateAgent:
         self.sessions = SessionStore()
         self.transaction_agent = TransactionDomainAgent(self.client)
         self.project_agent = ProjectDomainAgent(self.client)
+        self.portfolio_agent = PortfolioDomainAgent(self.client)
 
     def _normalize_domain(self, selected_domain: str | None) -> str | None:
         domain = (selected_domain or "").strip().lower()
-        if domain in {"transaction", "project"}:
+        if domain in {"transaction", "project", "portfolio"}:
             return domain
         return None
 
@@ -39,6 +41,8 @@ class UniversalRealEstateAgent:
             return self.transaction_agent
         if selected_domain == "project":
             return self.project_agent
+        if selected_domain == "portfolio":
+            return self.portfolio_agent
         return None
 
     def _emit_stage_tokens(self, metrics: AgentMetrics, stage_name: str, usage):
