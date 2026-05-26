@@ -434,6 +434,7 @@ def data_cleaning_pipeline(
                 "source":                          "Internal DB",
                 "project_name":                    t.get("project_name"),
                 "net_carpet_area_sq_m":            t.get("net_carpet_area_sq_m"),
+                "transaction_date":                t.get("transaction_date"),
             })
         df_db = pd.DataFrame(db_rows)
         if not df_merged.empty:

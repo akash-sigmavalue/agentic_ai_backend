@@ -424,6 +424,7 @@ def fetch_db_transactions(
             "floor_number":       t.get("floor_number"),
             "location_name":      t.get("location_name"),
             "country_name":       country,
+            "transaction_date":   t.get("transaction_date") or t.get("date"),
             # Derived columns (deterministic)
             "currency":           currency,
             "area_sqft":          area_sqft,
