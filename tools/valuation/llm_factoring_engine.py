@@ -5,7 +5,7 @@ LLM Factorial Analysis Engine
 Step 5 of the PropVal valuation pipeline.
 
 Takes the factorial_data produced by compute_factorial_table() and passes it
-to GPT-4o with rich semantic context (road interpretation, CBD zone labels,
+to GPT-4o-mini with rich semantic context (road interpretation, CBD zone labels,
 density descriptions, amenity category meanings) and the EXACT radius used to
 sample each geospatial factor — so the model understands the geographic scope
 of every data point.
@@ -88,24 +88,24 @@ ROAD_CONTEXT: Dict[str, Dict] = {
 
 DENSITY_CONTEXT: Dict[str, str] = {
     "Very High Density": (
-        "BCR > 50% — Dense urban core. Very high land cost, minimal open space, strong "
+        "BCR > 40% — Dense urban core. Very high land cost, minimal open space, strong "
         "commercial footfall. Premium for office and retail; potential congestion discount "
         "for large-format or family residential."
     ),
     "High Density": (
-        "BCR 35–50% — Established urban neighbourhood with good infrastructure, moderate "
+        "BCR >25% — Established urban neighbourhood with good infrastructure, moderate "
         "green cover, and active street life. Positive for most property types."
     ),
     "Medium Density": (
-        "BCR 20–35% — Suburban / semi-urban area with balanced development, reasonable "
+        "BCR >12% — Suburban / semi-urban area with balanced development, reasonable "
         "amenity access, and some open space. Neutral baseline for residential."
     ),
     "Low Density": (
-        "BCR 8–20% — Emerging or low-rise suburban zone. Lower infrastructure intensity; "
+        "BCR >5% — Emerging or low-rise suburban zone. Lower infrastructure intensity; "
         "positive for plotted development and gated communities."
     ),
     "Very Low / Rural": (
-        "BCR < 8% — Peri-urban fringe or rural. Significant land-value upside but limited "
+        "BCR >2% — Peri-urban fringe or rural. Significant land-value upside but limited "
         "current amenity and infrastructure. High discount for ready-to-move residential."
     ),
 }
@@ -458,337 +458,231 @@ def build_factoring_payload(
 # ── System Prompt ─────────────────────────────────────────────────────────────
 
 _SYSTEM_PROMPT = """
-You are an expert real estate valuation analyst. You follow a strict ReAct reasoning
-framework (Thought → Action → Observation → Critique → Revise) at every stage.
+You are an expert real estate valuation analyst. Your task is to factor each
+COMPARABLE project's market rate toward the SUBJECT property using 4 geospatial
+factors, then derive the subject's final rate using a confidence-weighted blend.
 
 ═══════════════════════════════════════════════════════════════
-FACTOR ADJUSTMENT FRAMEWORK (4 FACTORS) — ReAct REASONING MODE
+PHASE 1 — FACTOR EACH COMPARABLE'S RATE
 ═══════════════════════════════════════════════════════════════
 
-FACTORS IN SCOPE:
-  1. NEIGHBORHOOD AMENITY
-  2. ROAD TYPE
-  3. BUILTUP DENSITY
-  4. CBD SCORE
+For EACH comparable, compare it against the subject on 4 factors:
+  1. ROAD TYPE         (max ±5% impact)
+  2. AMENITY           (max ±5% impact)
+  3. BUILTUP DENSITY   (max ±5% impact)
+  4. CBD               (max ±5% impact)
 
-GUIDING PHILOSOPHY:
-  This framework is principles-based and reasoning-driven.
-  You must not mechanically look up scores or apply fixed formulas.
-  Instead, follow the ReAct loop — Thought, Action, Observation,
-  Critique, Revise — at every stage.
+RULES:
+  - Each factor adjustment is capped at ±5%.
+  - Total net adjustment across all 4 factors for one comparable: capped at ±20%.
+  - Direction: if the subject is BETTER than the comparable on a factor, apply a
+    POSITIVE adjustment (the comparable rate is adjusted UP toward subject's level).
+    If the subject is WORSE, apply a NEGATIVE adjustment (comparable adjusted DOWN).
+  - Factored Rate = Comparable_Avg_Rate × (1 + total_net_adj / 100)
+  - Be conservative. If difference is negligible, set adjustment to 0.
+  - Reason explicitly for every adjustment. Don't apply mechanical formulas.
 
-  Scores and adjustments should reflect genuine market impact.
-  If your reasoning feels forced or a conclusion seems off,
-  pause, critique, and revise before moving forward.
+FACTOR SCORING GUIDANCE:
 
-═══════════════════════════════════════════════════════════════
-REACT LOOP STRUCTURE
-═══════════════════════════════════════════════════════════════
+  ROAD TYPE (categories A < B < C < D):
+    Compare subject vs comparable road category. One grade difference ≈ 2–4%.
+    For residential: road matters less. For retail/commercial: road matters more.
 
-At each stage explicitly produce:
+  AMENITY:
+    Compare quality and breadth of nearby amenities.
+    Shared catchment areas (projects within 1 km) often have similar amenities —
+    reduce or eliminate adjustment in that case.
 
-  THOUGHT     → What am I trying to determine here? What do I know,
-                and what is uncertain or missing?
-  ACTION      → What reasoning step, comparison, or inference am I
-                performing to move toward a conclusion?
-  OBSERVATION → What did I find or conclude from that action?
-  CRITIQUE    → Does this conclusion feel right? Am I double-counting,
-                over-adjusting, or filling gaps with assumptions?
-  REVISE      → Correct if critique flagged an issue. If conclusion
-                holds, explicitly confirm and move on.
+  BUILTUP DENSITY:
+    Compare congestion_score / density_class.
+    For apartment/commercial: higher density = better (positive if subject denser).
+    For villa/plot: lower density = better (invert).
+    If both projects are in the same density band, adjustment should be small.
 
-Apply this loop at THREE stages:
-  STAGE 1 — Factor Scoring     (per factor, per project)
-  STAGE 2 — Adjustment Calc    (per factor, then aggregate)
-  STAGE 3 — Final Reflection   (whole output sense-check)
-
-═══════════════════════════════════════════════════════════════
-SECTION A: ADJUSTMENT BOUNDARIES
-═══════════════════════════════════════════════════════════════
-
-FACTOR WEIGHT GUIDANCE BY PROPERTY TYPE:
-
-  NEIGHBORHOOD AMENITY  → Low weight for all types.
-  ROAD TYPE             → High weight for retail/commercial_office.
-                          Moderate for plot. Lower for apartment/villa.
-  BUILTUP DENSITY       → Moderate across all types.
-                          apartment/commercial_office: higher density = better.
-                          villa/plot: lower density = better (invert reasoning).
-  CBD SCORE             → Highest weight overall, especially commercial/retail.
-
-AGGREGATE PRINCIPLE:
-  - Proportional to magnitude of difference.
-  - Conservative when evidence is weak.
-  - Avoid compounding same-direction adjustments without clear justification.
-  - When in doubt, adjust less.
-  - CRITICAL GUARDRAIL 1: If the subject project itself has sufficient direct listings data (Subject listing count >= 10 in the CONFIDENCE EVALUATION INPUTS), the total cumulative net percentage adjustment / Correction Factor MUST NOT exceed ±10% under any circumstance.
-  - CRITICAL GUARDRAIL 2: Under any other circumstance, the total cumulative overall net percentage adjustment / Correction Factor MUST NOT exceed ±20% under any circumstance.
+  CBD:
+    Compare nearest CBD distance. Closer = premium.
+    > 5 km difference in CBD proximity = meaningful adjustment (up to ±4%).
+    < 2 km difference = minimal adjustment.
 
 ═══════════════════════════════════════════════════════════════
-SECTION B: FACTOR SCORING — STAGE 1 ReAct LOOP
+PHASE 2 — WEIGHTED BLENDING (w1 × subject_rate + w2 × factored_comp_avg)
 ═══════════════════════════════════════════════════════════════
 
-Score scale: 1 (worst) to 10 (best). Never assign without completing loop.
+After factoring all comparables, compute factored_comp_avg = simple average of
+all factored comparable rates.
 
-B1. NEIGHBORHOOD AMENITY
-  - Consider breadth, quality, relevance of nearby amenities.
-  - Weight quality over raw count.
-  - Expect scores to cluster (shared catchment). Diverge only if clearly justified.
+Then compute the final subject rate as:
+  final_rate = w1 × subject_own_rate + w2 × factored_comp_avg
+  where w1 + w2 = 1.0
 
-B2. ROAD TYPE (OSM Category based)
-  - Category A → Local/internal roads  (lowest accessibility)
-  - Category B → District roads        (moderate accessibility)
-  - Category C → State highway/arterial(good accessibility)
-  - Category D → National highway      (highest accessibility)
-  - Do NOT mechanically map category to score. Reason what road access means
-    for THAT property type. Highway = strong positive for retail; may be neutral
-    or slightly negative for villa.
+WEIGHT DETERMINATION RULES (data-driven, dynamic calculation):
 
-B3. BUILTUP DENSITY
-  - This is NOT a simple floor-space ratio. It measures how intensely developed
-    the surrounding micro-market is: concentration of buildings, active projects,
-    population activity, road fabric, and overall urban texture within the sample radius.
-  - PRIMARY signal: congestion_score (0–10). Higher = denser, more active micro-market.
-  - SUPPORTING signals: BCR%, used-area ratio, open space ratio, detected buildings.
-  - Scoring direction depends on property type:
-      apartment / commercial / office: higher intensity → higher score (demand + footfall).
-      villa / plot / low-rise: lower intensity → higher score (space, quiet, exclusivity).
-  - Congestion score interpretation:
-      0–3  → Sparse / emerging micro-market (low urban activity)
-      4–5  → Balanced suburban / semi-urban area
-      6–7  → Active urban neighbourhood with strong infrastructure
-      8–10 → Dense saturated core (high footfall, minimal open space)
-  - If congestion_score is missing, use density_class label and BCR as proxies and flag uncertainty.
+  You must dynamically compute w1 (subject weight) and w2 (comparable weight, where w2 = 1.0 - w1) using the following scoring logic:
 
-B4. CBD SCORE
-  - Proximity + connectivity to nearest CBD, IT park, employment hub.
-  - Closer + better connected = higher score.
-  - 1–2 = very distant, poor connectivity. 9–10 = immediate proximity, excellent access.
+  1. Establish Base Weight (from Subject Listing Count):
+     - High Sample (≥ 10 listings):      Base w1 = 0.85
+     - Moderate Sample (5–9 listings):    Base w1 = 0.75
+     - Low Sample (2–4 listings):         Base w1 = 0.65
+     - Minimal/Fallback (0–1 listings or micromarket-derived): Hard w1 = 0.50 (No CI modifiers apply)
 
-═══════════════════════════════════════════════════════════════
-SECTION C: ADJUSTMENT CALCULATION — STAGE 2 ReAct LOOP
-═══════════════════════════════════════════════════════════════
+  2. Apply Confidence Interval (CI) Modifier (width as % of avg rate):
+     - Narrow CI (width < 15% of average): Add +0.05 to +0.10 (rewards low variance/high consensus)
+     - Moderate CI (width 15% to 25% of average): No modification (+0.00)
+     - Wide CI (width > 25% of average): Subtract -0.05 to -0.10 (penalizes high variance/noise)
 
-STEP 1 — Market baseline: assess central tendency of comparable scores per factor.
-STEP 2 — Identify gaps: compare subject vs baseline. Classify: negligible/moderate/significant.
-STEP 3 — Direction & magnitude: assign adjustment per factor using weight guidance.
-STEP 4 — Proximity dampening: if all comps within ~1km, reduce NEIGHBORHOOD AMENITY & BUILTUP DENSITY weight.
-STEP 5 — Aggregate sense-check: sum adjustments, verify proportionality, scale back if inflated.
-STEP 6 — Derive rate: derived_rate = BASE_RATE × (1 + total_adj / 100)
+  3. Enforce Boundaries:
+     - Upper Cap: w1 cannot exceed 0.90 (at least 10% weight always goes to market comparables).
+     - Lower Floor: w1 cannot fall below 0.50 for properties with ≥ 2 listings.
+     - Sum Constraint: w1 + w2 must equal exactly 1.0 (strictly verify that w1 + w2 = 1.0 before final calculation).
 
-═══════════════════════════════════════════════════════════════
-SECTION D: FINAL REFLECTION — STAGE 3 ReAct LOOP
-═══════════════════════════════════════════════════════════════
-
-Run one holistic ReAct pass on entire output. Check for:
-  - Internal inconsistencies
-  - Contradicting adjustments
-  - Implausible derived rate
-  - Thin reasoning or data gaps
-
-Flag residual uncertainties. Confirm final derived rate.
+  You MUST show your step-by-step reasoning in the output:
+  - Show the base w1 selected.
+  - Show the CI width percentage and the resulting modifier.
+  - Show the final computed w1 (after applying modifier and boundaries) and w2.
 
 ═══════════════════════════════════════════════════════════════
 OUTPUT FORMAT
 ═══════════════════════════════════════════════════════════════
 
-Structure your response EXACTLY as follows:
+First produce a narrative reasoning section, then a JSON block.
 
-## STAGE 1: FACTOR SCORING
+Narrative sections:
+## PHASE 1: COMPARABLE FACTORING
+### [Comparable Name]
+- Road Adj: X% — [reason]
+- Amenity Adj: X% — [reason]
+- Builtup Density Adj: X% — [reason]
+- CBD Adj: X% — [reason]
+- Total Net Adj: X% (capped at ±20%)
+- Factored Rate: [avg_rate] × (1 + X%) = Y
+(repeat for each comparable)
 
-### [Project Name] — [Factor Name]
-THOUGHT: ...
-ACTION: ...
-OBSERVATION: ...
-CRITIQUE: ...
-REVISE: ...
-FINAL SCORE: X/10
+## PHASE 2: WEIGHT DETERMINATION
+- Subject listing count: N
+- CI width: X (= upper - lower)
+- CI width as % of avg rate: Y%
+- Chosen weights: w1=X, w2=Y
+- Reasoning: ...
 
-(repeat for every factor × every project)
+## PHASE 3: FINAL RATE DERIVATION
+- Subject own rate: X
+- Factored comp avg: Y
+- Final rate = w1×X + w2×Y = Z
 
----
-
-## STAGE 2: ADJUSTMENT CALCULATION
-
-### STEP 1 — Market Baseline
-THOUGHT: ...
-ACTION: ...
-OBSERVATION: ...
-CRITIQUE: ...
-REVISE: ...
-
-### STEP 2 — Gap Identification
-(same loop)
-
-### STEP 3 — Direction & Magnitude
-(same loop — state proposed adjustment per factor)
-
-### STEP 4 — Proximity Dampening
-(same loop)
-
-### STEP 5 — Aggregate Sense-Check
-(same loop — state total adjustment %)
-
-### STEP 6 — Derived Rate
-MARKET RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
-CALCULATION MIDPOINT: [CURRENCY]X/[UNIT]
-TOTAL ADJUSTMENT: X%
-DERIVED RATE: [CURRENCY]X/[UNIT]
-DERIVED RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
-
----
-
-## STAGE 3: FINAL REFLECTION
-
-THOUGHT: ...
-ACTION: ...
-OBSERVATION: ...
-CRITIQUE: ...
-REVISE: ...
-
-## FINAL ANSWER
-DERIVED RATE: [CURRENCY]X/[UNIT]
-DERIVED RATE RANGE: [CURRENCY]X - [CURRENCY]Y/[UNIT]
-CONFIDENCE: High / Medium / Low
-KEY DRIVERS: [top 2 factors that drove the adjustment]
-UNCERTAINTIES: [what was inferred vs evidenced — MUST state which confidence rule(s) triggered]
+## PHASE 4: CONFIDENCE ASSESSMENT
+- Confidence Level: [HIGH | MEDIUM | LOW]
+- Triggers / Rules Applied: [Explain exactly which rules/triggers from the CONFIDENCE RULES section matched or why they didn't]
+- Reasoning: [Brief explanation of the data coverage, sample count, and consistency that supports this confidence level]
 
 ═══════════════════════════════════════════════════════════════
-CONFIDENCE SCORING RULES (MANDATORY — evaluate before assigning)
+CONFIDENCE RULES
 ═══════════════════════════════════════════════════════════════
 
-You will be provided with a "CONFIDENCE EVALUATION INPUTS" section in the
-user prompt. Use those exact numbers to evaluate the rules below.
-You MUST state in the UNCERTAINTIES field which specific rule(s) triggered
-your confidence level.
+HIGH: Subject ≥ 5 listings, ≥ 3 comps with listing data, total listings ≥ 20,
+      all 4 factors evidenced, net adj within ±10%, no micromarket source.
+MEDIUM: HIGH not met but no LOW trigger applies.
+LOW (any one triggers): Subject 0 listings, only 1 comp, 3+ factors missing,
+      adj > ±15%, total listings < 5.
 
-──────────────────────────────────────────────────────────────
-HIGH — ALL of the following must be true:
-──────────────────────────────────────────────────────────────
-  ✓ Subject has 5 or more direct listings (rate_source = listing, not micromarket)
-  ✓ 3 or more comparable projects with actual listing data (not micromarket-derived)
-  ✓ Total valid listings across subject + all comparables combined ≥ 20
-  ✓ All 4 factors (road, CBD, density, amenity) have real evidence for subject
-      (no missing congestion_score, no missing CBD data, no unknown road type)
-  ✓ Total net adjustment is within ±10%
-  ✓ No project (subject or comparable) is micromarket-derived
+═══════════════════════════════════════════════════════════════
+CRITICAL JSON REQUIREMENT — comparable_factoring_table
+═══════════════════════════════════════════════════════════════
 
-──────────────────────────────────────────────────────────────
-MEDIUM — HIGH criteria not met, but NONE of the LOW triggers apply:
-──────────────────────────────────────────────────────────────
-  • Subject has 1–2 direct listings
-  • OR subject is micromarket-derived but has strong comp listing support (≥ 5 comp listings)
-  • OR only 2 comparable projects with listing data
-  • OR 1–2 factors are inferred or partially missing
-  • OR total net adjustment is between ±10% and ±15%
+The `comparable_factoring_table` array in the JSON output MUST contain BOTH:
+  1. The SUBJECT property as the FIRST entry (role = "SUBJECT")
+  2. ALL comparable projects after it (role = "COMPARABLE")
 
-──────────────────────────────────────────────────────────────
-LOW — ANY single one of these triggers LOW immediately:
-──────────────────────────────────────────────────────────────
-  ✗ Subject has ZERO direct listings (subject rate_source = micromarket)
-  ✗ Only 1 comparable project total
-  ✗ 3 or more factors are missing or heavily inferred for the subject
-  ✗ Total net adjustment exceeds ±15%
-  ✗ Fewer than 5 total valid listings across subject + all comparables combined
+For the subject entry:
+  - role            : "SUBJECT"
+  - avg_rate        : subject's own avg rate (the base rate, from inputs)
+  - road_type       : subject's road category (A/B/C/D)
+  - amenity_summary : FULL comma-separated amenity list for subject.
+                      Include ALL amenity types present in the geospatial evidence.
+                      Format: "Metro:N, School:N, Garden:N, Hospital:N, Mall:N, ..."
+                      Do NOT truncate or abbreviate. List every type with count > 0.
+  - builtup_density_score : subject's congestion_score (0–10) or null
+  - cbd_nearest_km  : subject's nearest CBD distance in km or null
+  - cbd_name        : name of the nearest CBD/employment hub (e.g. "Bandra Kurla Complex",
+                      "Whitefield IT Park", "Nariman Point"). Use the actual name from the
+                      geospatial evidence. If unknown, set to null.
+  - factor_road     : null
+  - factor_amenity  : null
+  - factor_density  : null
+  - factor_cbd      : null
+  - total_factor    : null
+  - factored_rate   : null
+  - factor_reasoning: "Subject property — reference baseline, no adjustment applied."
 
-### CRITICAL JSON REQUIREMENT:
-In the JSON block's `factor_breakdown` section, you MUST include the Subject
-Property as the first entry in each factor's `projects` list.
-For the Subject Property:
-- Set `role` to "SUBJECT"
-- Set `adjustment` to 0
-- Set `value` and `interpretation` to reflect its actual data.
-  * For `neighborhood_amenity`: `value` = amenity count (e.g. "12 amenities").
-  * For `road_type`: `value` = category (e.g. "Category D").
-  * For `builtup_density`: `value` = congestion score or density class (e.g. "Score: 7.5").
-  * For `cbd_score`: `value` = distance to nearest CBD hub (e.g. "3.2 km").
+For EACH comparable entry:
+  - amenity_summary : FULL comma-separated list of ALL amenity types with count > 0.
+                      Do NOT shorten — include Metro, School, Garden, Hospital, Mall,
+                      Restaurant, Police Station, IT Park, etc. if present.
+  - cbd_nearest_km  : distance to nearest CBD in km
+  - cbd_name        : name of the nearest CBD/employment hub for this comparable.
+
+NEVER omit the subject from comparable_factoring_table.
+NEVER truncate or abbreviate amenity_summary — list every type.
 """
+
+
+
+
 
 
 # ── Output Schema ─────────────────────────────────────────────────────────────
 
 output_schema = {
-    "methodology": "Global Benchmark (Simple Average)",
+    "methodology": "Comparable Factoring + Confidence-Weighted Blend",
     "property_type": "<string>",
     "currency": "<string>",
     "area_unit": "<string>",
     "area_type": "<string>",
     "total_listing_count": "<int>",
-    "factor_table": [
+    "comparable_factoring_table": [
         {
             "project_name": "<string>",
             "role": "SUBJECT | COMPARABLE",
-            "listing_count": "<int>",
+            "road_type": "<string — e.g. A/B/C/D>",
+            "amenity_summary": "<string — ALL amenity types listed, e.g. Metro:2, School:3, Garden:1, Hospital:2, Mall:1, Restaurant:4>",
+            "builtup_density_score": "<number | null — congestion_score 0-10>",
+            "cbd_nearest_km": "<number | null — distance to nearest CBD/employment hub in km>",
+            "cbd_name": "<string | null — name of the nearest CBD or major employment hub, e.g. 'Bandra Kurla Complex' or 'Whitefield IT Park'>",
             "avg_rate": "<number | null>",
-            "distance_km": "<number | null>",
-            "rate_derived_from": "<string — mixed | internal_db | listing>",
-            "scores": {
-                "road_type": "<float 1-10 | null>",
-                "cbd_score": "<float 1-10 | null>",
-                "builtup_density": "<float 1-10 | null>",
-                "neighborhood_amenity": "<float 1-10 | null>"
-            }
+            "factor_road": "<float — e.g. 0.03 means +3%> | null for subject",
+            "factor_amenity": "<float> | null for subject",
+            "factor_density": "<float> | null for subject",
+            "factor_cbd": "<float> | null for subject",
+            "total_factor": "<float — sum of all 4, capped ±0.20> | null for subject",
+            "factored_rate": "<number — avg_rate * (1 + total_factor)> | null for subject",
+            "factor_reasoning": "<string — MUST start with percentage factors for all 4 attributes like 'Road: +X%, Amenity: +Y%, Density: +Z%, CBD: +W% | ' followed by a brief narrative justification>"
         }
     ],
-    "valuation_details": {
-        "base_rate": "<number>",
-        "base_rate_range": {"low": "<number>", "high": "<number>"},
-        "attribute_weights": {
-            "neighborhood_amenity": "<float>",
-            "road_type": "<float>",
-            "builtup_density": "<float>",
-            "cbd_score": "<float>"
-        },
-        "net_impacts": {
-            "neighborhood_amenity": "<float>",
-            "road_type": "<float>",
-            "builtup_density": "<float>",
-            "cbd_score": "<float>"
-        },
-        "total_net_adjustment": "<float>",
-        "derived_rate": "<number>",
-        "derived_rate_range": {"low": "<number>", "high": "<number>"},
-        "factor_breakdown": {
-            "neighborhood_amenity": {
-                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
-                "subject_vs_avg": "<string>",
-                "net_impact": "<float>"
-            },
-            "road_type": {
-                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
-                "subject_vs_avg": "<string>",
-                "net_impact": "<float>"
-            },
-            "builtup_density": {
-                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
-                "subject_vs_avg": "<string>",
-                "net_impact": "<float>"
-            },
-            "cbd_score": {
-                "projects": [{"name": "<string>", "role": "SUBJECT | COMPARABLE", "distance_km": "<number | null>", "value": "<any>", "interpretation": "<string>", "adjustment": "<float>"}],
-                "subject_vs_avg": "<string>",
-                "net_impact": "<float>"
-            }
-        }
+    "blending": {
+        "subject_own_rate": "<number>",
+        "subject_ci_lower": "<number>",
+        "subject_ci_upper": "<number>",
+        "subject_ci_width": "<number>",
+        "subject_ci_width_pct": "<float — ci_width / avg_rate * 100>",
+        "subject_listing_count": "<int>",
+        "factored_comp_avg": "<number — simple avg of all factored comparable rates>",
+        "w1": "<float — weight for subject_own_rate, 0 to 1>",
+        "w2": "<float — weight for factored_comp_avg, 0 to 1, w1+w2=1>",
+        "weight_reasoning": "<string — explain why these weights were chosen>",
+        "final_rate_formula": "w1 * subject_own_rate + w2 * factored_comp_avg",
+        "final_rate": "<number>"
     },
     "subject_final_rate": "<number>",
     "subject_rate_range": {"low": "<number>", "high": "<number>"},
     "confidence": "High | Medium | Low",
-    "confidence_triggers": "<string — list each specific rule that determined the confidence level>",
+    "confidence_triggers": "<string>",
     "reasoning_audit": {
-        "stage_1_scoring_thought": "<string>",
-        "stage_2_adjustment_thought": "<string>",
-        "final_reflection": "<string>",
+        "phase_1_factoring_summary": "<string>",
+        "phase_2_weight_reasoning": "<string>",
+        "phase_3_final_reflection": "<string>",
         "key_drivers": "<string>",
         "uncertainties": "<string>"
     },
-    "reconciliation_note": "<string>",
-    "project_reports": [
-        {
-            "project_name": "<string>",
-            "report_markdown": "<string>"
-        }
-    ]
+    "reconciliation_note": "<string>"
 }
 
 
@@ -802,7 +696,7 @@ def build_user_prompt(
 ) -> str:
     lines = ["# VALUATION REQUEST\n"]
 
-    # ── Confidence Evaluation Inputs (explicit numbers for rule evaluation) ──
+    # ── Confidence & Weight Inputs ─────────────────────────────────────────
     subject_listing_count  = subject_data.get("listing_count", 0)
     subject_rate_source    = subject_data.get("rate_derived_from", "listing")
     comp_listing_total     = sum(c.get("listing_count", 0) for c in comparables_data)
@@ -812,67 +706,65 @@ def build_user_prompt(
     )
     total_listings_combined = subject_listing_count + comp_listing_total
 
-    lines.append("## CONFIDENCE EVALUATION INPUTS")
+    lines.append("## CONFIDENCE & WEIGHT INPUTS")
     lines.append(f"- Subject listing count              : {subject_listing_count}")
-    lines.append(f"- Subject rate source                : {subject_rate_source}  (listing = direct data; micromarket = inferred from area average)")
+    lines.append(f"- Subject rate source                : {subject_rate_source}")
     lines.append(f"- Total comparable projects          : {n_comps}")
     lines.append(f"- Total listings across comps        : {comp_listing_total}")
     lines.append(f"- Total listings combined (subj+comp): {total_listings_combined}")
     lines.append(f"- Micromarket-derived comp projects  : {micromarket_comp_count}")
     lines.append("")
 
-    # ── Subject ──────────────────────────────────────────────────────────────
+    # ── Subject ───────────────────────────────────────────────────────────
     lines.append("## SUBJECT PROPERTY")
     lines.append(f"- Name                : {subject_data['name']}")
     lines.append(f"- Property Type       : {subject_data['property_type']}")
-    lines.append(f"- Rate Derived From: {subject_data.get('rate_derived_from', 'listing')}")
+    lines.append(f"- Rate Derived From   : {subject_rate_source}")
     lines.append(f"- Listing Count       : {subject_listing_count}")
-    lines.append(f"- Rate Source         : {subject_rate_source}")
-    lines.append(
-        f"- Market Rate Range   : {currency}{subject_data['rate_range']['low']:,} - "
-        f"{currency}{subject_data['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
-    )
-    lines.append(f"- Calculation Midpoint: {currency}{subject_data['calculation_rate']:,}/{area_unit}")
+    rate_range = subject_data.get("rate_range", {})
+    ci_lower = rate_range.get("low", 0)
+    ci_upper = rate_range.get("high", 0)
+    avg_rate = subject_data.get("calculation_rate", 0)
+    ci_width = ci_upper - ci_lower
+    ci_width_pct = round((ci_width / avg_rate * 100), 1) if avg_rate else 0
+    lines.append(f"- Avg Rate            : {currency}{avg_rate:,}/{area_unit}")
+    lines.append(f"- 90% CI Range        : {currency}{ci_lower:,} — {currency}{ci_upper:,}/{area_unit}")
+    lines.append(f"- CI Width            : {ci_width:,} ({ci_width_pct}% of avg) — USED FOR w1/w2 DETERMINATION")
     if subject_data.get("map_report_factors"):
-        lines.append("- Below-Map Report Factor Evidence:")
+        lines.append("- Geospatial Factor Evidence:")
         lines.append("```json")
         lines.append(subject_data["map_report_factors"])
         lines.append("```")
     lines.append("")
 
-    # ── Comparables ──────────────────────────────────────────────────────────
+    # ── Comparables ───────────────────────────────────────────────────────
     lines.append("## COMPARABLE PROPERTIES")
     for i, comp in enumerate(comparables_data, 1):
         lines.append(f"\n### Comparable {i}: {comp['name']}")
-        lines.append(f"- Property Type       : {comp['property_type']}")
-        lines.append(f"- Rate Derived From: {comp.get('rate_derived_from', 'listing')}")
+        lines.append(f"- Rate Derived From   : {comp.get('rate_derived_from', 'listing')}")
         lines.append(f"- Listing Count       : {comp.get('listing_count', 0)}")
-        lines.append(f"- Rate Source         : {comp.get('rate_derived_from', 'listing')}")
+        comp_range = comp.get("rate_range", {})
         lines.append(
-            f"- Market Rate Range   : {currency}{comp['rate_range']['low']:,} - "
-            f"{currency}{comp['rate_range']['high']:,}/{area_unit} (90% confidence interval)"
+            f"- 90% CI Range        : {currency}{comp_range.get('low', 0):,} — "
+            f"{currency}{comp_range.get('high', 0):,}/{area_unit}"
         )
-        lines.append(f"- Calculation Midpoint: {currency}{comp['calculation_rate']:,}/{area_unit}")
+        lines.append(f"- Avg Rate            : {currency}{comp.get('calculation_rate', 0):,}/{area_unit}")
         lines.append(f"- Distance to Subject : {comp.get('distance_to_subject', 'Unknown')}")
         if comp.get("map_report_factors"):
-            lines.append("- Below-Map Report Factor Evidence:")
+            lines.append("- Geospatial Factor Evidence:")
             lines.append("```json")
             lines.append(comp["map_report_factors"])
             lines.append("```")
 
     lines.append("\n---")
     lines.append(
-        "Now run the full ReAct reasoning loop (Stage 1 → Stage 2 → Stage 3) "
-        "and derive the final rate for the subject property. Use the market rate "
-        "ranges as valuation evidence, and use the calculation midpoint only where "
-        "a single number is required by the formula or JSON schema. "
-        f"All monetary values are in {currency} and area is in {area_unit}. "
-        "The Below-Map Report Factor Evidence JSON is the sole source of truth "
-        "for all location factors: road_type, neighborhood_amenity, builtup_density, and cbd_score. "
-        "Use the CONFIDENCE EVALUATION INPUTS section to evaluate the confidence rules "
-        "defined in the system prompt and assign the correct confidence level. "
-        "You MUST populate the `confidence_triggers` field in the JSON output explaining "
-        "which specific rules were met or triggered."
+        "TASK: Execute PHASE 1 (factor each comparable's avg_rate toward subject using "
+        "road/amenity/builtup_density/cbd — max ±5% each factor, max ±20% total per comparable), "
+        "PHASE 2 (determine w1/w2 from subject listing count and CI width as shown in weight table), "
+        "PHASE 3 (final_rate = w1 × subject_own_rate + w2 × factored_comp_avg). "
+        f"Currency: {currency}. Area unit: {area_unit}. "
+        "Use the Geospatial Factor Evidence JSON as sole source of truth for all 4 location factors. "
+        "Populate the confidence_triggers field explaining which rules determined confidence level."
     )
 
     return "\n".join(lines)
@@ -966,7 +858,7 @@ def enforce_adjustment_cap(result: Dict[str, Any], subject_listing_count: int) -
 
 # ── LLM Call ─────────────────────────────────────────────────────────────────
 
-def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Dict[str, Any]:
+def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o-mini") -> Dict[str, Any]:
     subject_proj      = next(p for p in payload["projects"] if p["is_subject"])
     comparables_projs = [p for p in payload["projects"] if not p["is_subject"]]
 
@@ -1007,15 +899,7 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
 
     print("\n" + "=" * 100, flush=True)
     print("[LLM Factoring] PROMPT SENT TO LLM FOR RATE DERIVATION", flush=True)
-    print("=" * 100, flush=True)
-    print(f"Model: {model}", flush=True)
-    print(f"Projects: 1 subject + {len(comparables_projs)} comparables", flush=True)
-    print("-" * 100, flush=True)
-    print("SYSTEM MESSAGE:", flush=True)
-    print(_SYSTEM_PROMPT, flush=True)
-    print("-" * 100, flush=True)
-    print("USER MESSAGE:", flush=True)
-    print(user_prompt, flush=True)
+    print(f"Model: {model} | Projects: 1 subject + {len(comparables_projs)} comparables", flush=True)
     print("=" * 100 + "\n", flush=True)
 
     try:
@@ -1039,22 +923,36 @@ def llm_factorial_analysis(payload: Dict[str, Any], model: str = "gpt-4o") -> Di
                 result = json.loads(content)
                 result["raw_markdown_report"] = "Expert report generated."
             except Exception:
-                print(f"Failed to parse LLM response: {content}")
+                logger.error(f"[LLM Factoring] Failed to parse response.")
                 return {"error": "Failed to parse expert report."}
 
         result["_token_usage"] = {
-            "model":              model,
-            "prompt_tokens":      usage.prompt_tokens,
-            "completion_tokens":  usage.completion_tokens,
-            "total_tokens":       usage.total_tokens,
+            "model":             model,
+            "prompt_tokens":     usage.prompt_tokens,
+            "completion_tokens": usage.completion_tokens,
+            "total_tokens":      usage.total_tokens,
         }
 
-        # Apply guardrail capping for subject project having >=10 listings
-        subject_listing_count = expert_subject.get("listing_count", 0)
-        result = enforce_adjustment_cap(result, subject_listing_count)
+        # ── Normalise final rate from new blending schema ─────────────────
+        blending = result.get("blending") or {}
+        if blending.get("final_rate"):
+            result["subject_final_rate"] = round(float(blending["final_rate"]))
+        elif result.get("subject_final_rate") is None:
+            # Fallback: compute from blending fields if present
+            w1 = float(blending.get("w1") or 0)
+            w2 = float(blending.get("w2") or 0)
+            s_rate = float(blending.get("subject_own_rate") or 0)
+            c_avg  = float(blending.get("factored_comp_avg") or 0)
+            if w1 + w2 > 0 and (s_rate or c_avg):
+                result["subject_final_rate"] = round(w1 * s_rate + w2 * c_avg)
 
-        if "subject_final_rate" in result and "derived_rate" in result.get("valuation_details", {}):
-            result["subject_final_rate"] = result["valuation_details"]["derived_rate"]
+        # Ensure subject_rate_range is populated
+        if not result.get("subject_rate_range"):
+            final = result.get("subject_final_rate", 0)
+            result["subject_rate_range"] = {
+                "low":  round(final * 0.95),
+                "high": round(final * 1.05),
+            }
 
         return result
 
@@ -1073,7 +971,7 @@ def run_llm_factoring(
     subject: Dict[str, Any],
     comparables: List[Dict[str, Any]],
     radii: Optional[Dict[str, Any]] = None,
-    model: str = "gpt-4o",
+    model: str = "gpt-4o-mini",
 ) -> Dict[str, Any]:
     """
     Full pipeline: build payload → call LLM → return structured factoring result.
