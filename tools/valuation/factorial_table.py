@@ -136,7 +136,27 @@ def compute_factorial_table(
         valid["rate"] = pd.to_numeric(valid["plot_derived_rate_per_sqft"], errors="coerce")
         valid = valid[valid["rate"].notna() & (valid["rate"] > 0)].copy()
     else:
-        valid["rate"] = valid[price_col] / valid[area_col]
+        is_subject_villa = property_type.strip().lower() == "villa"
+        
+        def calculate_built_up_rate(row):
+            cat = str(row.get("property_category", "")).strip().lower()
+            if not cat or cat == "nan":
+                cat = str(row.get("project_category", "")).strip().lower()
+            if not cat or cat == "nan":
+                cat = str(row.get("property_type", "")).strip().lower()
+                
+            is_plot = cat in ["plot", "residential land", "land"]
+            if is_subject_villa and is_plot:
+                val = row.get("plot_derived_rate_per_sqft")
+                try:
+                    return float(val) if pd.notna(val) else np.nan
+                except (ValueError, TypeError):
+                    return np.nan
+            else:
+                return row[price_col] / row[area_col]
+
+        valid["rate"] = valid.apply(calculate_built_up_rate, axis=1)
+        valid = valid[valid["rate"].notna() & (valid["rate"] > 0)].copy()
 
     # Ensure source column exists in valid dataframe
     if "source" not in valid.columns:

@@ -219,8 +219,9 @@ def _cleaning_stream_generator(req: CleaningRequest):
             on_progress=on_progress,
         )
 
-        # Calculate plot/land rates only when downstream valuation needs land rate.
-        if rate_basis == "plot_land":
+        # Calculate plot/land rates if downstream valuation needs land rate, OR if subject is a villa
+        is_villa_subject = req.property_type.strip().lower() == "villa"
+        if rate_basis == "plot_land" or is_villa_subject:
             location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
             country = req.subject.get("country") or "India"
             result = calculate_plot_rates(
@@ -230,6 +231,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
                 country=country,
                 property_type=req.property_type,
                 on_progress=on_progress,
+                rate_basis=rate_basis,
             )
 
         for event in progress_events:
@@ -248,7 +250,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
             "final_super_builtup_area",
             "stat_flag",
         ]
-        if rate_basis == "plot_land":
+        if rate_basis == "plot_land" or is_villa_subject:
             columns.extend(
                 [
                     "plot_derived_rate_per_sqft",
@@ -316,8 +318,9 @@ def _recalculate_stream_generator(req: RecalculatePlotRatesRequest):
     )
     
     try:
-        if rate_basis != "plot_land":
-            yield _sse("error", "Plot-rate recalculation is only valid when rate_basis is plot_land.")
+        is_villa_subject = req.property_type.strip().lower() == "villa"
+        if rate_basis != "plot_land" and not is_villa_subject:
+            yield _sse("error", "Plot-rate recalculation is only valid when rate_basis is plot_land or subject is villa.")
             yield _sse("recalculate_done", "Recalculation skipped.")
             return
 
@@ -330,7 +333,8 @@ def _recalculate_stream_generator(req: RecalculatePlotRatesRequest):
             on_progress=None,
             overrides=overrides_dict,
             fsi_override=req.fsi_override,
-            cc_override=req.cc_override
+            cc_override=req.cc_override,
+            rate_basis=rate_basis,
         )
         yield _sse("recalculate_results", {"listings": result["cleaned_listings"], "rate_basis": rate_basis})
     except Exception as exc:

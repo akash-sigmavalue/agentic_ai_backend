@@ -1,100 +1,221 @@
 from __future__ import annotations
 
 """
-Comparable Selection Agent — LLM-first, globally scalable
+Comparable Search Tool (Web Strategy)
+Provides comparable_selection_agent() — LLM web-search (GPT-4o-mini, iterative radius expansion)
+
+Confidence scoring (pure Python, no LLM):
+  - Location Similarity (40% weight) -> Pure text-based locality/micro-market similarity
+  - Property Category (30% weight) -> Broad classes (Residential vs Commercial)
+  - Amenities (30% weight) -> Fuzzy match on subject property's amenities list
 """
 
 import json
-import re
 import math
-import os
-import time
+import re
 import logging
+import os
+import sys
+import time
+
 from openai import OpenAI
 from dotenv import load_dotenv
+from tools.valuation.map_search import search_coordinates
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
-
-# ── Logging setup ─────────────────────────────────────────────────────────
-# NOTE: logging.basicConfig() is a no-op when uvicorn has already attached
-# handlers to the root logger (which happens before any module is imported).
-# We configure the named logger directly with its own handlers so that logs
-# always appear in the uvicorn terminal regardless of startup order.
-_LOG_FMT = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
-logger = logging.getLogger("comparable_agent")
-if not logger.handlers:
-    logger.setLevel(logging.INFO)
-    _sh = logging.StreamHandler()
-    _sh.setLevel(logging.INFO)
-    _sh.setFormatter(_LOG_FMT)
-    logger.addHandler(_sh)
-    _fh = logging.FileHandler("comparable_agent.log", encoding="utf-8")
-    _fh.setLevel(logging.INFO)
-    _fh.setFormatter(_LOG_FMT)
-    logger.addHandler(_fh)
-    logger.propagate = False  # prevent double-printing via uvicorn root logger
-
 _client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
 
-# ── Property types ─────────────────────────────────────────────────────────
-PROPERTY_TYPE_ALIASES = {
+logger = logging.getLogger(__name__)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# ── Confidence Scoring ────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
+
+def _score_location(comp_location: str, subject_location: str) -> int:
+    """
+    Pure text/name-based location match. NO distance (km) used here at all.
+    """
+    if not comp_location or not subject_location:
+        return 0
+
+    STRIP_WORDS = {
+        "the", "a", "an", "of", "in", "at", "near", "and", "by",
+        "east", "west", "north", "south", "new", "old",
+        "sector", "phase", "block", "tower", "wing", "road", "rd",
+        "street", "st", "avenue", "ave", "lane", "marg", "extension",
+        "part", "plot", "society", "colony", "nagar", "vihar",
+    }
+
+    CITY_WORDS = {
+        "pune", "mumbai", "bangalore", "bengaluru", "hyderabad", "chennai",
+        "delhi", "noida", "gurgaon", "gurugram", "kolkata", "ahmedabad",
+        "dubai", "abudhabi", "sharjah", "singapore", "london", "toronto",
+        "thane", "navi", "pimpri", "chinchwad", "nashik", "nagpur",
+    }
+
+    def locality_tokens(s: str) -> list[str]:
+        s = s.lower().strip()
+        s = re.sub(r'[,\-/\\]+', ' ', s)
+        s = re.sub(r'\s+', ' ', s)
+        return [
+            w for w in s.split()
+            if len(w) > 2
+            and w not in STRIP_WORDS
+            and w not in CITY_WORDS
+        ]
+
+    def city_tokens(s: str) -> set[str]:
+        s = s.lower()
+        return {w for w in re.split(r'[\s,\-/\\]+', s) if w in CITY_WORDS}
+
+    c_loc = locality_tokens(comp_location)
+    s_loc = locality_tokens(subject_location)
+
+    if c_loc and s_loc and c_loc[0] == s_loc[0]:
+        return 100
+
+    if c_loc and s_loc and (set(c_loc) & set(s_loc)):
+        return 100
+
+    c_cities = city_tokens(comp_location)
+    s_cities = city_tokens(subject_location)
+    if c_cities and s_cities and (c_cities & s_cities):
+        return 50
+
+    return 0
+
+
+def _score_amenities(comp_amenities: list[str], subject_amenities: list[str]) -> int:
+    """
+    Compare list of amenities of comparable with subject.
+    Returns a score 0-100 based on matching ratio.
+    """
+    if not subject_amenities:
+        return 100
+    if not comp_amenities:
+        return 0
+
+    def clean(a: str) -> str:
+        return re.sub(r'[^a-z0-9]', '', a.lower().strip())
+
+    comp_cleaned = {clean(x) for x in comp_amenities if x}
+    subj_cleaned = {clean(x) for x in subject_amenities if x}
+
+    if not subj_cleaned:
+        return 100
+
+    matched = 0
+    for s in subj_cleaned:
+        if s in comp_cleaned:
+            matched += 1
+            continue
+        for c in comp_cleaned:
+            if s in c or c in s:
+                matched += 1
+                break
+
+    return round((matched / len(subj_cleaned)) * 100)
+
+
+def _score_property_category(comp_category: str | None, subject_category: str | None) -> int:
+    """
+    Compare category family (Residential / Villa / Plot vs Commercial / Retail / Office).
+    """
+    if not comp_category or not subject_category:
+        return 50
+
+    cc = comp_category.strip().lower()
+    sc = subject_category.strip().lower()
+
+    if cc == sc:
+        return 100
+
+    residential = {"residential", "villa", "plot", "apartment"}
+    commercial = {"commercial", "retail", "commercial_office", "office", "shop"}
+
+    if cc in residential and sc in residential:
+        return 70
+    if cc in commercial and sc in commercial:
+        return 70
+
+    return 0
+
+
+def _confidence_tier(score: int) -> str:
+    if score >= 75: return "High"
+    if score >= 55: return "Medium"
+    if score >= 35: return "Low"
+    return "Very Low"
+
+
+def assign_web_confidence_score(comp: dict, subject: dict) -> dict:
+    """
+    Confidence scoring SPECIFIC to web-search comparables.
+    Only based on:
+      - location (40% weight)
+      - property category (30% weight)
+      - type of amenities (30% weight)
+    """
+    subject_location = subject.get("location_name") or ""
+    subject_type = subject.get("property_type") or "apartment"
+    subject_category = subject.get("project_category") or _PROJECT_CATEGORY_DEFAULT.get(subject_type, "Residential")
+    subject_amenities = subject.get("amenities") or []
+
+    # 1. Location match score (pure text locality match)
+    if subject_location and subject_location.strip():
+        loc_score = _score_location(comp.get("location", ""), subject_location)
+        loc_fallback = False
+    else:
+        loc_score = 50
+        loc_fallback = True
+
+    # 2. Property category match score
+    comp_category = comp.get("project_category") or _PROJECT_CATEGORY_DEFAULT.get(comp.get("property_type", "apartment"), "Residential")
+    cat_score = _score_property_category(comp_category, subject_category)
+    cat_fallback = not bool(subject_category)
+
+    # 3. Amenities match score
+    comp_amenities = comp.get("amenities") or []
+    am_score = _score_amenities(comp_amenities, subject_amenities)
+    am_fallback = not bool(subject_amenities)
+
+    final_score = round(0.40 * loc_score + 0.30 * cat_score + 0.30 * am_score)
+
+    reasoning = (
+        f"Location match score: {loc_score}/100. "
+        f"Property category match score: {cat_score}/100 (comparable: '{comp_category}', subject: '{subject_category}'). "
+        f"Amenities match score: {am_score}/100."
+    )
+
+    comp["confidence_score"]     = final_score
+    comp["confidence_tier"]      = _confidence_tier(final_score)
+    comp["confidence_reasoning"] = reasoning
+    comp["factor_breakdown"]     = {
+        "location":           loc_score,
+        "property_category":  cat_score,
+        "amenities":          am_score,
+        "loc_fallback_used":  loc_fallback,
+        "cat_fallback_used":  cat_fallback,
+        "am_fallback_used":   am_fallback,
+    }
+    return comp
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# ── Property-type normalisation (public helpers) ──────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
+
+_PROP_TYPE_ALIASES: dict[str, set[str]] = {
     "apartment":         {"apartment", "flat", "condo", "condominium", "penthouse"},
-    "villa":             {"villa", "bungalow", "row house", "townhouse"},
-    "plot":              {"plot", "land", "site"},
+    "villa":             {"villa", "bungalow", "row house", "townhouse", "independent house", "independent villa", "house"},
+    "plot":              {"plot", "land", "site", "residential plot", "na plot"},
     "retail":            {"shop", "retail", "showroom"},
-    "commercial_office": {"office", "workspace", "coworking"},
-    "mixed_use":         {"mixed use", "mixed-use", "residential+commercial", "residential + commercial"},
+    "commercial_office": {"office", "workspace", "coworking", "commercial_office"},
+    "mixed_use":         {"mixed use", "mixed-use"},
 }
 
-PROPERTY_TYPE_DISPLAY = {
-    "apartment":         "apartment (flat / condo / penthouse)",
-    "villa":             "villa (bungalow / row house / townhouse) or residential plot",
-    "plot":              "plot (land / site) or villa / bungalow / independent house",
-    "retail":            "shop (retail space / showroom)",
-    "commercial_office": "office space (workspace / coworking)",
-    "mixed_use":         "mixed-use (residential + commercial)",
-}
-
-PROPERTY_TYPE_SEARCH_TERM = {
-    "apartment":         "apartment",
-    "villa":             "villa or plot",
-    "plot":              "plot or villa",
-    "retail":            "shop",
-    "commercial_office": "office space",
-    "mixed_use":         "mixed-use development",
-}
-
-PROPERTY_TYPE_EXCLUSIONS = {
-    "apartment": [
-        "villa", "bungalow", "plot", "land", "shop",
-        "office", "retail", "showroom", "row house", "townhouse"
-    ],
-    "villa": [
-        "apartment", "flat", "condo",
-        "shop", "office", "retail", "showroom"
-    ],
-    "plot": [
-        "apartment", "flat",
-        "shop", "office", "built-up", "constructed"
-    ],
-    "retail": [
-        "apartment", "flat", "villa", "bungalow", "plot",
-        "land", "office", "residential", "condo"
-    ],
-    "commercial_office": [
-        "apartment", "flat", "villa", "bungalow", "plot",
-        "land", "shop", "retail", "showroom", "residential"
-    ],
-    "mixed_use": [
-        "purely residential", "purely commercial", "plot", "land"
-    ],
-}
-
-VALID_PROPERTY_TYPES = set(PROPERTY_TYPE_ALIASES.keys())
-
-# ── Project Category Mapping ───────────────────────────────────────────────
-# Maps internal property_type key → default project_category label
-PROJECT_CATEGORY_DEFAULT = {
+_PROJECT_CATEGORY_DEFAULT: dict[str, str] = {
     "apartment":         "Residential",
     "villa":             "Villa",
     "plot":              "Plot",
@@ -103,616 +224,252 @@ PROJECT_CATEGORY_DEFAULT = {
     "mixed_use":         "Residential + Commercial",
 }
 
-# Normalize whatever the LLM returns for project_category
-CATEGORY_NORMALIZE = {
-    "residential":              "Residential",
-    "commercial":               "Commercial",
-    "residential + commercial": "Residential + Commercial",
-    "residential+commercial":   "Residential + Commercial",
-    "mixed use":                "Residential + Commercial",
-    "mixed-use":                "Residential + Commercial",
-    "villa":                    "Villa",
-    "plot":                     "Plot",
-    "independent house":        "Independent House",
-}
 
-
-# ── Drop logger ───────────────────────────────────────────────────────────
-def log_drop(stage: str, project_name: str, reason: str, extra: dict = None):
-    """
-    Centralized drop logger.
-    Every time a comparable is dropped, call this.
-    Logs to file + console so you can track patterns over time.
-    """
-    msg = f"[DROP] stage={stage} | project='{project_name}' | reason={reason}"
-    if extra:
-        msg += f" | detail={json.dumps(extra)}"
-    logger.warning(msg)
-
-
-# ── Helpers ───────────────────────────────────────────────────────────────
 def normalize_property_type(raw: str) -> str | None:
+    """Map a free-text property type string to the canonical internal key."""
     if not raw:
         return None
     raw = raw.lower().strip()
-    for k, v in PROPERTY_TYPE_ALIASES.items():
-        if raw == k or raw in v:
+    for k, aliases in _PROP_TYPE_ALIASES.items():
+        if raw == k or raw in aliases:
             return k
     return None
 
 
-def normalize_project_category(raw: str, fallback_ptype: str = "") -> str:
-    """
-    Normalize the LLM-returned project_category to a clean standard label.
-    Falls back to the default for the property type if raw is empty/unknown.
-    """
-    if raw:
-        cleaned = raw.strip().lower()
-        if cleaned in CATEGORY_NORMALIZE:
-            return CATEGORY_NORMALIZE[cleaned]
-        # Return title-cased version as best effort
-        return raw.strip().title()
-    # Fallback: derive from property_type
-    return PROJECT_CATEGORY_DEFAULT.get(fallback_ptype, "Unknown")
+def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """Return great-circle distance in km between two lat/lng points."""
+    R = 6371.0
+    φ1, φ2 = math.radians(lat1), math.radians(lat2)
+    dφ = math.radians(lat2 - lat1)
+    dλ = math.radians(lng2 - lng1)
+    a = math.sin(dφ / 2) ** 2 + math.cos(φ1) * math.cos(φ2) * math.sin(dλ / 2) ** 2
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
-def calculate_distance(lat1, lon1, lat2, lon2):
-    R = 6371
-    lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = (
-        math.sin(dlat / 2) ** 2
-        + math.cos(math.radians(lat1))
-        * math.cos(math.radians(lat2))
-        * math.sin(dlon / 2) ** 2
+# ══════════════════════════════════════════════════════════════════════════
+# ── LLM web-search comparable agent ──────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════
+
+_SYSTEM_PROMPT = """You are a real-estate comparable-selection assistant.
+Given a subject property, return a JSON object with a single key "comparables"
+whose value is an array of comparable project objects.
+
+Each object MUST have these keys (use null when unknown):
+  project_name        – string, exact project name
+  location            – string, locality / neighbourhood name
+  country             – string
+  property_type       – one of: apartment | villa | plot | retail | commercial_office
+  project_category    – Residential | Commercial | Villa | Plot
+  age_years           – number or null (approximate age in years)
+  possession_status   – "Ready to Move" | "Under Construction" | "—"
+  source_url          – string or null (a publicly verifiable URL)
+  reason              – 1-sentence reason why this is comparable
+  amenities           – array of strings (e.g. ["Gym", "Pool", "24/7 Security", "Clubhouse", "Park"])
+
+Return ONLY the JSON. No prose, no markdown fences."""
+
+
+def _build_user_prompt(subject: dict, radius_km: float, exclude_names: list[str]) -> str:
+    prop_type = subject.get("property_type", "apartment")
+    excl = ", ".join(f'"{n}"' for n in exclude_names) if exclude_names else "none"
+    rate_hint = ""
+    if subject.get("rate_basis") == "plot_land":
+        rate_hint = "\nIMPORTANT: The subject is a Villa being valued via the Cost Approach — identify PLOT or LAND comparables (not built-up villas) so a plot/land rate can be derived."
+
+    amenities_list = ", ".join(subject.get("amenities", [])) if subject.get("amenities") else "None specified"
+
+    return (
+        f"Subject property:\n"
+        f"  Name         : {subject.get('project_name', 'Subject Property')}\n"
+        f"  Location     : {subject.get('location_name', '')}, {subject.get('country', 'India')}\n"
+        f"  Property type: {prop_type}\n"
+        f"  Coordinates  : lat={subject.get('lat', 0)}, lng={subject.get('lng', 0)}\n"
+        f"  Search radius: {radius_km} km\n"
+        f"  Amenities    : [{amenities_list}]\n"
+        f"{rate_hint}\n"
+        f"Already found (exclude these): [{excl}]\n\n"
+        f"Find up to 8 real, verifiable comparable projects within {radius_km} km.\n"
+        f"Prefer projects that have similar amenities and are within the same locality.\n"
+        f"Prefer projects that have been sold/transacted in the last 2 years.\n"
+        f"Do NOT include the subject project itself."
     )
-    return round(R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)), 2)
 
 
-# ── Prompt ────────────────────────────────────────────────────────────────
-def build_prompt(subject: dict) -> tuple[str, str]:
-    ptype        = subject["property_type"]
-    pname        = subject.get("project_name", "subject property")
-    country      = subject.get("country", "")
-    location     = subject.get("location_name", "")
-    display_name = PROPERTY_TYPE_DISPLAY[ptype]
-    search_term  = PROPERTY_TYPE_SEARCH_TERM[ptype]
-    exclusions   = PROPERTY_TYPE_EXCLUSIONS.get(ptype, [])
-    exclusion_str = ", ".join(exclusions)
-
-    # Subject's own category label for reference
-    subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
-
-    system_prompt = f"""
-You are an expert real estate valuation analyst.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PROPERTY TYPE CONSTRAINT — READ THIS FIRST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-You are looking for: {display_name} ONLY.
-Primary search term : "{search_term}"
-Valid terms         : {', '.join(PROPERTY_TYPE_ALIASES[ptype])}
-
-DO NOT include anything that is: {exclusion_str}
-
-IMPORTANT RULES:
-- A mixed-use building with residential + retail -> EXCLUDE (not purely {search_term})
-- A project primarily {search_term} but with small other components -> EXCLUDE if unsure
-- When in doubt about a project type -> EXCLUDE IT
-- Do NOT label a wrong property as "{search_term}" just to fill the list
-- It is BETTER to return 5 correct results than 15 mixed results
-- MANDATORY: Use the `web_search_preview` tool to find current real-world projects and coordinates. Do NOT rely solely on internal knowledge.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-PROPERTY CATEGORY RULES (fill "project_category" field):
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Use exactly ONE of these labels for "project_category":
-- "Residential"              → apartment / flat / condo / penthouse
-- "Villa"                    → villa / bungalow / row house / townhouse
-- "Independent House"        → standalone independent house / duplex
-- "Plot"                     → plot / land / site
-- "Commercial"               → shop / retail / showroom / office / coworking
-- "Residential + Commercial" → building with BOTH residential + commercial floors (mixed-use)
-
-Subject project category : "{subject_category}"
-Comparable projects should ideally match or be closely related to this category.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-VALUATION LOGIC:
-- The BEST comparables are those a buyer would realistically consider as alternatives
-- Geographic proximity is the strongest signal:
-  -> Properties within 1–3 km are most relevant
-  -> Properties beyond 5–8 km ONLY if highly comparable
-- Same micro-market is critical
-
-COORDINATE AWARENESS:
-- Subject coordinates: Lat {subject['lat']}, Lng {subject['lng']}
-- Use these as PRIMARY reference for proximity
-
-OUTPUT FORMAT:
-YOU MUST RETURN A STRICT JSON ARRAY OF OBJECTS ONLY.
-DO NOT WRITE ANY CONVERSATIONAL TEXT. DO NOT WRITE "Here are the comparables".
-START YOUR RESPONSE EXACTLY WITH `[` AND END EXACTLY WITH `]`.
-
-JSON Keys for each object:
-- "project_name"      (String)
-- "location"          (String)
-- "country"           (String, e.g. "{country}")
-- "property_type"     (String, MUST be exactly "{ptype}")
-- "project_category"  (String, MUST be one of: "Residential", "Villa", "Independent House", "Plot", "Commercial", "Residential + Commercial")
-- "age_years"         (String or Number)
-- "possession_status" (String: "Ready" or "Under Construction")
-- "source_url"        (String, direct listing URL)
-- "reason"            (String, short explanation of why it is comparable)
-- "location_certainty" (String: "Sure" or "Not Sure")
-  Rules — output "Sure" ONLY if ALL of the following are true:
-    1. The project name is explicitly stated (not inferred or paraphrased)
-    2. No guesswork was needed — project + location appear together on the same page
-  Output "Not Sure" if ANY of the following apply:
-    - Location is a broad zone, district, or city (e.g. "Rishikesh", "North Delhi")
-    - Project name is generic (e.g. "Residential Land", "Plot", "New Project")
-    - Location was inferred from nearby landmarks or approximate descriptions
-    - Coordinates or map pin are absent or inconsistent with stated location
-"""
-
-    user_prompt = f"""
-Find 15-25 highly relevant comparable {display_name} projects for:
-
-Project    : {pname}
-Location   : {location}, {country}
-Coordinates: {subject['lat']}, {subject['lng']}
-
-Remember:
-- ONLY {display_name} projects
-- Do NOT include: {exclusion_str}
-- Geographic proximity is key
-- Fill "project_category" for EVERY comparable using the exact labels defined
-- Return only genuinely similar {search_term} projects
-"""
-    return system_prompt, user_prompt
-
-
-# ── LLM Call ──────────────────────────────────────────────────────────────
-def fetch_comparables(subject: dict) -> tuple[list, dict]:
-    system_prompt, user_prompt = build_prompt(subject)
-    model_name = "gpt-4o-mini"
-    try:
-        response = _client.responses.create(
-            model=model_name,
-            instructions=system_prompt,
-            input=user_prompt,
-            tools=[{"type": "web_search_preview"}],
-        )
-        raw   = response.output_text.strip()
-        comps = parse_json_safely(raw)
-
-        usage = {
-            "prompt_tokens":     getattr(response.usage, "input_tokens", 0),
-            "completion_tokens": getattr(response.usage, "output_tokens", 0),
-            "total_tokens":      getattr(response.usage, "total_tokens", 0),
-            "model":             model_name,
-            "tool_calls":        3  # web_search_preview
-        }
-        logger.info(f"[LLM Fetch] Received {len(comps)} raw comparables | tokens={usage['total_tokens']}")
-
-        if not comps and raw:
-            logger.warning(f"[LLM Fetch] Zero results! Raw snippet: {raw[:300]}...")
-
-        return comps, usage
-
-    except Exception as e:
-        logger.error(f"[LLM Fetch] Failed: {e}")
-        return [], {"model": model_name, "tool_calls": 0}
-
-
-def parse_json_safely(raw: str) -> list:
+def comparable_selection_agent(
+    subject: dict,
+    on_progress=None,
+    run_logger=None,
+    metrics=None,
+) -> dict:
     """
-    Robust JSON array extraction.
-    1. Tries to find text inside ```json ... ``` blocks first.
-    2. Cleans common LLM errors like trailing commas before parsing.
-    3. Falls back to finding the first '[' followed by '{'.
-    4. Uses a secondary fallback to extract individual {objects} if array parse fails.
+    LLM web-search comparable finder (iterative radius expansion).
     """
-    if not raw:
-        return []
+    subject_lat  = subject.get("lat") or 0
+    subject_lng  = subject.get("lng") or 0
+    subject_loc  = subject.get("location_name", "")
+    subject_type = subject.get("property_type", "apartment")
 
-    def clean_json_str(s: str) -> str:
-        s = s.strip()
-        s = re.sub(r',\s*([\]\}])', r'\1', s)
-        return s
+    RADII      = [2.0, 5.0, 10.0]
+    MIN_COMPS  = 3
+    MAX_COMPS  = 12
 
-    # 1. Try to extract from markdown blocks
-    matches = re.findall(r"```json\s*(.*?)\s*```", raw, re.DOTALL)
-    for block in matches:
+    all_comps: list[dict]  = []
+    seen_names: set[str]   = set()
+    token_usage            = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    iterations_log: list   = []
+    iteration              = 0
+
+    for radius_km in RADII:
+        iteration += 1
+        logger.info(f"[ComparableAgent] Iteration {iteration} | radius={radius_km} km | found_so_far={len(all_comps)}")
+
+        user_prompt = _build_user_prompt(subject, radius_km, list(seen_names))
+        new_comps: list[dict] = []
+
         try:
-            cleaned = clean_json_str(block)
-            data = json.loads(cleaned)
-            if isinstance(data, list):
-                return data
-            if isinstance(data, dict):
-                return [data]
-        except:
-            continue
-
-    # 2. Try to find the first '[' followed by '{'
-    start_match = re.search(r"\[\s*\{", raw)
-    if start_match:
-        start = start_match.start()
-        depth = 0
-        for i in range(start, len(raw)):
-            if raw[i] == "[":
-                depth += 1
-            elif raw[i] == "]":
-                depth -= 1
-                if depth == 0:
-                    potential_json = raw[start: i + 1]
-                    try:
-                        data = json.loads(clean_json_str(potential_json))
-                        return data if isinstance(data, list) else []
-                    except Exception:
-                        pass
-
-    # 3. Last Resort Fallback: Extract individual objects
-    try:
-        objects = []
-        potential_objs = re.findall(r"\{[^{}]*\}", raw, re.DOTALL)
-        for obj_str in potential_objs:
-            try:
-                obj_data = json.loads(clean_json_str(obj_str))
-                if "project_name" in obj_data:
-                    objects.append(obj_data)
-            except:
-                continue
-        if objects:
-            logger.info(f"[JSON Parse] Fallback extracted {len(objects)} individual objects")
-            return objects
-    except Exception as e:
-        logger.error(f"[JSON Parse] Fallback failed: {e}")
-
-    return []
-
-
-# ── Hard Filter ───────────────────────────────────────────────────────────
-def hard_filter_by_type(comps: list, required_type: str) -> list:
-    """
-    Layer 1 defense — programmatic type check.
-    Allows certain cross-type matches (e.g., Plot vs Villa).
-    """
-    valid = []
-
-    ALLOW_CROSS = {
-        "plot": {"plot", "villa"},
-        "villa": {"villa", "plot"}
-    }
-
-    for c in comps:
-        raw_type   = c.get("property_type", "")
-        normalized = normalize_property_type(raw_type)
-
-        is_allowed = (normalized == required_type) or (
-            required_type in ALLOW_CROSS and normalized in ALLOW_CROSS[required_type]
-        )
-
-        if is_allowed:
-            if normalized:
-                c["property_type"] = normalized
-            valid.append(c)
-        else:
-            log_drop(
-                stage="hard_filter",
-                project_name=c.get("project_name", "unknown"),
-                reason="property_type_mismatch",
-                extra={
-                    "got":      raw_type,
-                    "expected": required_type,
-                    "location": c.get("location", ""),
-                }
+            response = _client.chat.completions.create(
+                model="gpt-4o-mini",
+                temperature=0.1,
+                max_tokens=2000,
+                timeout=45,
+                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": _SYSTEM_PROMPT},
+                    {"role": "user",   "content": user_prompt},
+                ],
             )
-    logger.info(f"[Hard Filter] {len(valid)}/{len(comps)} passed type check (allowed cross-types included)")
-    return valid
+            usage = response.usage
+            if usage:
+                token_usage["prompt_tokens"]     += usage.prompt_tokens
+                token_usage["completion_tokens"] += usage.completion_tokens
+                token_usage["total_tokens"]      += usage.total_tokens
 
+            raw = response.choices[0].message.content or "{}"
+            parsed = json.loads(raw)
+            candidates = parsed.get("comparables") or []
 
-# ── Normalize project_category on all comparables ─────────────────────────
-def stamp_project_category(comps: list) -> list:
-    """
-    Normalize the 'project_category' field returned by the LLM.
-    If the LLM didn't return one (or returned garbage), fall back to
-    the default derived from property_type.
-    Logs a warning whenever the fallback is used.
-    """
-    for c in comps:
-        raw_cat   = c.get("project_category", "")
-        ptype_key = c.get("property_type", "")
-        normalized = normalize_project_category(raw_cat, fallback_ptype=ptype_key)
-
-        if not raw_cat:
-            logger.warning(
-                f"[Category] Missing project_category for '{c.get('project_name')}' "
-                f"— using fallback '{normalized}'"
-            )
-        elif normalized != raw_cat.strip():
-            logger.info(
-                f"[Category] Normalized '{raw_cat}' → '{normalized}' "
-                f"for '{c.get('project_name')}'"
-            )
-
-        c["project_category"] = normalized
-
-    return comps
-
-
-# ── Scoring ───────────────────────────────────────────────────────────────
-def score_comp(comp: dict, subject: dict) -> float:
-    score = 0.0
-    d = comp.get("distance_from_subject_km")
-    if isinstance(d, (int, float)):
-        score += max(0, 10 - d)
-    if subject["location_name"].lower() in comp.get("location", "").lower():
-        score += 5
-    url = comp.get("source_url", "")
-    if url and "page=" not in url:
-        score += 2
-    return score
-
-
-# ── Main Agent ────────────────────────────────────────────────────────────
-def comparable_selection_agent(subject: dict, on_progress=None, run_logger=None, metrics=None) -> dict:
-
-    from tools.valuation.map_search import search_coordinates
-
-    ptype       = subject["property_type"]
-    all_comps   = []
-    total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-
-    # Derive subject's own category label
-    subject_category = PROJECT_CATEGORY_DEFAULT.get(ptype, "Unknown")
-
-    logger.info(
-        f"[Agent Start] project='{subject.get('project_name')}' "
-        f"type='{ptype}' category='{subject_category}' "
-        f"search_term='{PROPERTY_TYPE_SEARCH_TERM[ptype]}' "
-        f"location='{subject.get('location_name')}'"
-    )
-
-    if run_logger:
-        run_logger.save_step("comparable_agent", "input_subject", {
-            **subject,
-            "subject_category": subject_category,
-        })
-
-    # ── Step 1: Multi-pass LLM fetch ──────────────────────────────────────
-    for i in range(3):
-        logger.info(f"[LLM Fetch] Pass {i + 1}/3")
-        comps, usage = fetch_comparables(subject)   
-        all_comps.extend(comps)
-        for k in ["prompt_tokens", "completion_tokens", "total_tokens"]:
-            total_usage[k] += usage.get(k, 0)
-
-        if metrics:
-            metrics.add_tokens(usage, model_name=usage.get("model", "gpt-4o-mini"))
-            if usage.get("tool_calls"):
-                metrics.add_tool_call("web_search_preview", cost=0.017)
-
-        if on_progress:
-            on_progress(i + 1, 0, len(all_comps), len(comps))
-
-        if run_logger:
-            run_logger.save_step("comparable_agent", f"pass_{i+1}_raw", comps)
-
-    logger.info(f"[Multi-pass] Total raw comparables: {len(all_comps)}")
-
-    # ── Step 2: Deduplicate ───────────────────────────────────────────────
-    seen, deduped = set(), []
-    for c in all_comps:
-        name = c.get("project_name", "").lower().strip()
-        if not name:
-            log_drop(stage="dedup", project_name="(empty)", reason="missing_project_name")
-            continue
-        if name in seen:
-            log_drop(stage="dedup", project_name=c.get("project_name", ""), reason="duplicate")
-            continue
-        seen.add(name)
-        deduped.append(c)
-
-    logger.info(f"[Dedup] {len(deduped)}/{len(all_comps)} unique comparables")
-
-    if run_logger:
-        run_logger.save_step("comparable_agent", "deduplicated", deduped)
-
-    # ── Step 3: Hard filter (Layer 1) ─────────────────────────────────────
-    type_filtered = hard_filter_by_type(deduped, ptype)
-
-    # ── Step 3b: Normalize project_category ───────────────────────────────
-    # LLM fills this during web search; we just clean/normalize here.
-    type_filtered = stamp_project_category(type_filtered)
-
-    logger.info(
-        f"[Category] Subject category: '{subject_category}' | "
-        f"Comparable categories: { {c['project_category'] for c in type_filtered} }"
-    )
-
-    if run_logger:
-        run_logger.save_step("comparable_agent", "after_category_stamp", type_filtered)
-
-    # ── Step 5: Geocode ───────────────────────────────────────────────────
-    logger.info(f"[Geocode] Starting for {len(type_filtered)} comparables")
-    for c in type_filtered:
-        try:
-            res = search_coordinates(
-                location_name=c.get("location"),
-                country=c.get("country"),
-                project_name=c.get("project_name"),
-                stage="Comparable Geocoding (S3)"
-            )
-            c["map_search_lat"] = res.get("lat")
-            c["map_search_lng"] = res.get("lng")
-            c["geocode_source"] = res.get("source")
-
-            # Initialize certainty if missing
-            if "location_certainty" not in c:
-                c["location_certainty"] = "Not Sure"
-
-            if not c["map_search_lat"] or not c["map_search_lng"]:
-                log_drop(
-                    stage="geocode",
-                    project_name=c.get("project_name", ""),
-                    reason="geocode_returned_empty",
-                    extra={
-                        "location": c.get("location", ""),
-                        "country":  c.get("country", ""),
-                    }
-                )
-            
-
-            if c["map_search_lat"] and c["map_search_lng"]:
-                logger.info(
-                    f"[Geocode] OK '{c['project_name']}' -> "
-                    f"({c['map_search_lat']}, {c['map_search_lng']}) | "
-                    f"Certainty: {c['location_certainty']}"
-                )
+            if run_logger:
+                try:
+                    run_logger.save_text(
+                        "comparable_search",
+                        f"iter_{iteration}_radius_{radius_km}km",
+                        json.dumps(parsed, indent=2),
+                    )
+                except Exception:
+                    pass
 
         except Exception as e:
-            c["map_search_lat"] = None
-            c["map_search_lng"] = None
-            log_drop(
-                stage="geocode",
-                project_name=c.get("project_name", ""),
-                reason=f"geocode_exception: {str(e)}",
-                extra={"location": c.get("location", "")},
+            logger.warning(f"[ComparableAgent] LLM call failed (iter {iteration}): {e}")
+            candidates = []
+
+        for cand in candidates:
+            pname = (cand.get("project_name") or "").strip()
+            if not pname:
+                continue
+
+            pname_key = re.sub(r'[^a-z0-9]', '', pname.lower())
+            if pname_key in seen_names:
+                continue
+            seen_names.add(pname_key)
+
+            loc   = cand.get("location", "") or subject_loc
+            cntry = cand.get("country", "") or subject.get("country", "India")
+            geo = search_coordinates(
+                location_name=loc,
+                country=cntry,
+                project_name=pname,
+                stage="Stage 3 - Comparable Geocoding",
             )
-        time.sleep(0.2)
+            comp_lat = geo.get("lat")
+            comp_lng = geo.get("lng")
+            geo_src  = geo.get("source", "unknown") if "lat" in geo else "geocode_failed"
 
-    # ── Step 6: Distance calculation ──────────────────────────────────────
-    clean = []
-    for c in type_filtered:
-        lat = c.get("map_search_lat")
-        lng = c.get("map_search_lng")
+            if comp_lat and comp_lng and subject_lat and subject_lng:
+                dist_km = round(_haversine_km(subject_lat, subject_lng, comp_lat, comp_lng), 3)
+            else:
+                dist_km = None
 
-        if not lat or not lng:
-            log_drop(
-                stage="distance_calc",
-                project_name=c.get("project_name", ""),
-                reason="no_valid_coordinates",
-            )
-            continue
+            raw_type  = cand.get("property_type", subject_type)
+            canonical = normalize_property_type(raw_type) or subject_type
 
-        c["distance_from_subject_km"] = calculate_distance(
-            subject["lat"], subject["lng"], lat, lng
-        )
-        clean.append(c)
+            comp = {
+                "project_name":             pname,
+                "location":                 loc,
+                "country":                  cntry,
+                "property_type":            canonical,
+                "project_category":         cand.get("project_category") or _PROJECT_CATEGORY_DEFAULT.get(canonical, "Residential"),
+                "age_years":                cand.get("age_years"),
+                "possession_status":        cand.get("possession_status") or "—",
+                "source_url":               cand.get("source_url"),
+                "reason":                   cand.get("reason", "Identified by LLM web search"),
+                "location_certainty":       "Sure" if "lat" in geo else "Uncertain",
+                "map_search_lat":           comp_lat,
+                "map_search_lng":           comp_lng,
+                "geocode_source":           geo_src,
+                "distance_from_subject_km": dist_km,
+                "total_transaction_count":  None,
+                "project_id":               None,
+                "data_source":              "Web",
+                "amenities":                cand.get("amenities") or [],
+                "confidence_score":         None,
+                "confidence_tier":          None,
+                "confidence_reasoning":     None,
+                "factor_breakdown":         None,
+            }
 
-    logger.info(f"[Distance] {len(clean)} comparables with valid coordinates")
+            # Apply confidence scoring
+            assign_web_confidence_score(comp, subject)
 
-    # ── Step 6b: Remove Subject Project ───────────────────────────────────
-    filtered_no_subject = []
-    subj_name = (subject.get("project_name") or "").lower().strip()
-    subj_lat = subject.get("lat")
-    subj_lng = subject.get("lng")
+            new_comps.append(comp)
 
-    def clean_name(s: str) -> str:
-        s = s.lower().strip()
-        s = re.sub(r'[^a-z0-9]', '', s)
-        for suffix in ["society", "apartment", "apartments", "condo", "condominium", "residency", "villas", "heights", "project"]:
-            if s.endswith(suffix):
-                s = s[:-len(suffix)]
-        return s
+            if len(all_comps) + len(new_comps) >= MAX_COMPS:
+                break
 
-    subj_name_clean = clean_name(subj_name)
+        all_comps.extend(new_comps)
 
-    for c in clean:
-        c_name = (c.get("project_name") or "").lower().strip()
-        c_name_clean = clean_name(c_name)
-        c_lat = c.get("map_search_lat")
-        c_lng = c.get("map_search_lng")
+        log_entry = {
+            "iteration":    iteration,
+            "radius_km":    radius_km,
+            "new_added":    len(new_comps),
+            "comps_so_far": len(all_comps),
+        }
+        iterations_log.append(log_entry)
 
-        # 1. Coordinate check (closeness/exact match)
-        coords_match = False
-        if subj_lat is not None and subj_lng is not None and c_lat is not None and c_lng is not None:
+        if on_progress:
             try:
-                lat_diff = abs(float(subj_lat) - float(c_lat))
-                lng_diff = abs(float(subj_lng) - float(c_lng))
-                # 1e-4 is approx 11 meters, very close (same tower/complex)
-                if lat_diff < 1e-4 and lng_diff < 1e-4:
-                    coords_match = True
-            except (ValueError, TypeError):
+                on_progress(
+                    iteration=iteration,
+                    radius_km=radius_km,
+                    comps_so_far=len(all_comps),
+                    new_added=len(new_comps),
+                )
+            except Exception:
                 pass
 
-        # 2. Name check
-        name_match = False
-        if subj_name_clean and c_name_clean:
-            if subj_name_clean == c_name_clean or subj_name_clean in c_name_clean or c_name_clean in subj_name_clean:
-                name_match = True
+        logger.info(
+            f"[ComparableAgent] Iter {iteration} done | "
+            f"new={len(new_comps)} | total={len(all_comps)} | "
+            f"tokens={token_usage['total_tokens']}"
+        )
 
-        # Drop if it is the subject project itself (name AND lat-long are the same, or exact zero distance match)
-        is_subject = False
-        if name_match and coords_match:
-            is_subject = True
-            reason = "name_and_latlong_both_match"
-        elif coords_match and c.get("distance_from_subject_km", 999) < 0.02:
-            is_subject = True
-            reason = "exact_coordinate_and_zero_distance_match"
+        if len(all_comps) >= MIN_COMPS:
+            break
 
-        if is_subject:
-            log_drop(
-                stage="subject_filter",
-                project_name=c.get("project_name", ""),
-                reason=f"is_subject_property ({reason})",
-                extra={
-                    "subject_name": subj_name,
-                    "comp_name": c_name,
-                    "distance_km": c.get("distance_from_subject_km")
-                }
-            )
-        else:
-            filtered_no_subject.append(c)
+        if iteration < len(RADII):
+            time.sleep(0.5)
 
-    clean = filtered_no_subject
-    logger.info(f"[Subject Filter] {len(clean)} comparables remain after removing subject project")
-
-    # ── Step 7: Remove bad URLs ───────────────────────────────────────────
-    url_clean = []
-    for c in clean:
-        url = c.get("source_url", "")
-        if "page=" in url:
-            log_drop(
-                stage="url_filter",
-                project_name=c.get("project_name", ""),
-                reason="pagination_url_not_direct_listing",
-                extra={"url": url},
-            )
-            continue
-        url_clean.append(c)
-
-    logger.info(f"[URL Filter] {len(url_clean)} comparables after URL cleanup")
-
-    # ── Step 8: Rank + 15km filter ────────────────────────────────────────
-    ranked = sorted(url_clean, key=lambda x: score_comp(x, subject), reverse=True)
-
-    nearby = []
-    for c in ranked:
-        d = c.get("distance_from_subject_km", 999)
-        if d <= 15:
-            nearby.append(c)
-        else:
-            log_drop(
-                stage="distance_filter",
-                project_name=c.get("project_name", ""),
-                reason="beyond_15km_radius",
-                extra={"distance_km": d},
-            )
+    all_comps.sort(key=lambda x: x.get("confidence_score") or 0, reverse=True)
 
     logger.info(
-        f"[Agent Done] Final comparables: {len(nearby)} | "
-        f"Total tokens: {total_usage['total_tokens']}"
+        f"[ComparableAgent] Complete | "
+        f"total_comps={len(all_comps)} | "
+        f"iterations={iteration} | "
+        f"tokens={token_usage}"
     )
 
-    if run_logger:
-        run_logger.save_step("comparable_agent", "final_comps", nearby)
-
     return {
-        "comparables":        nearby,
-        "count":              len(nearby),
-        "subject_category":   subject_category,   # ← NEW: subject's category label
-        "_token_usage":       total_usage,
+        "comparables":    all_comps,
+        "iterations":     iteration,
+        "iterations_log": iterations_log,
+        "_token_usage":   token_usage,
     }
