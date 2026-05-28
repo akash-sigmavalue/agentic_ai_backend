@@ -56,15 +56,22 @@ class AgentMetrics:
         self.tool_usage[tool_name]["cost_usd"] += cost
 
     def snapshot(self) -> dict:
-        # GPT-4o-mini pricing: $0.15/1M input, $0.60/1M output (approx)
-        # We'll use a more general calculation or per-model if we wanted to be super precise.
-        # But for now, let's keep the global cost but add tool costs.
-        base_cost = (
-            (self.prompt_tokens / 1_000_000) * 0.15
-            + (self.completion_tokens / 1_000_000) * 0.60
-        )
+        # Calculate model cost dynamically based on model rates
+        total_model_cost = 0.0
+        for model_name, usage in self.model_usage.items():
+            p = usage.get("prompt", 0)
+            c = usage.get("completion", 0)
+            model_lower = model_name.lower()
+            if "gpt-4o" in model_lower and "mini" not in model_lower:
+                # GPT-4o pricing: $5.00/1M input, $15.00/1M output
+                model_cost = (p / 1_000_000) * 5.00 + (c / 1_000_000) * 15.00
+            else:
+                # Default to GPT-4o-mini: $0.15/1M input, $0.60/1M output
+                model_cost = (p / 1_000_000) * 0.15 + (c / 1_000_000) * 0.60
+            total_model_cost += model_cost
+
         tool_cost = sum(t["cost_usd"] for t in self.tool_usage.values())
-        total_cost = base_cost + tool_cost
+        total_cost = total_model_cost + tool_cost
 
         return {
             "total_tokens": self.total_tokens,

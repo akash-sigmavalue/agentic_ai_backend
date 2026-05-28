@@ -18616,70 +18616,266 @@ ORDER BY
 2026-05-27 18:00:37,121 | INFO | comparable_agent | [Confidence Scoring] LLM scored 10/10 comparables
 2026-05-27 18:00:37,121 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 10, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
 2026-05-27 18:00:37,136 | INFO | comparable_agent | [Agent Done] Final comparables: 10 | Total tokens: 7328
-2026-05-27 18:16:37,304 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
-2026-05-27 18:16:37,306 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
-2026-05-27 18:16:50,954 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2634
-2026-05-27 18:16:50,956 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
-2026-05-27 18:16:50,956 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
-2026-05-27 18:16:50,958 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
-2026-05-27 18:16:50,959 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
-2026-05-27 18:16:50,960 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
-2026-05-27 18:16:51,763 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
-2026-05-27 18:16:52,882 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
-2026-05-27 18:16:53,981 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
-2026-05-27 18:16:55,016 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
-2026-05-27 18:16:56,413 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
-2026-05-27 18:16:57,390 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | LLM Certainty: Sure
-2026-05-27 18:16:58,404 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
-2026-05-27 18:16:59,417 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
-2026-05-27 18:17:00,427 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
-2026-05-27 18:17:01,177 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
-2026-05-27 18:17:01,378 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
-2026-05-27 18:17:01,379 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
-2026-05-27 18:17:01,380 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
-2026-05-27 18:17:01,380 | INFO | comparable_agent | [Subject Filter] 8 comparables remain after removing subject project
-2026-05-27 18:17:01,381 | INFO | comparable_agent | [URL Filter] 8 comparables after URL cleanup
-2026-05-27 18:17:01,381 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
-2026-05-27 18:17:01,382 | INFO | comparable_agent | [Confidence Scoring] Starting | 8 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
-2026-05-27 18:17:01,383 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
-2026-05-27 18:17:01,383 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
-2026-05-27 18:17:08,886 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3352
-2026-05-27 18:17:09,887 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 3 comparables | web_search_preview ENABLED
-2026-05-27 18:17:15,967 | INFO | comparable_agent | [Confidence Batch 2] Scored 3/3 comparables | tokens=2677
-2026-05-27 18:17:16,968 | INFO | comparable_agent | [Confidence Scoring] LLM scored 8/8 comparables
-2026-05-27 18:17:16,968 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 8, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
-2026-05-27 18:17:16,976 | INFO | comparable_agent | [Agent Done] Final comparables: 8 | Total tokens: 2634
-2026-05-28 11:47:43,124 | INFO | comparable_agent | [Agent Start] project='La Tilia 2' type='villa' category='Villa' search_term='villa or plot' location='Villanova, Dubailand'
-2026-05-28 11:47:43,127 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
-2026-05-28 11:47:58,915 | INFO | comparable_agent | [JSON Parse] Fallback extracted 11 individual objects
-2026-05-28 11:47:58,915 | INFO | comparable_agent | [LLM Fetch] Received 11 raw comparables | tokens=2845
-2026-05-28 11:47:58,916 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 11
-2026-05-28 11:47:58,917 | INFO | comparable_agent | [Dedup] 11/11 unique comparables
-2026-05-28 11:47:58,923 | INFO | comparable_agent | [Hard Filter] 11/11 passed type check (allowed cross-types included)
-2026-05-28 11:47:58,924 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
-2026-05-28 11:47:58,928 | INFO | comparable_agent | [Geocode] Starting for 11 comparables
-2026-05-28 11:48:00,103 | INFO | comparable_agent | [Geocode] OK 'La Tilia' -> (25.07009, 55.341671) | LLM Certainty: Sure
-2026-05-28 11:48:01,789 | INFO | comparable_agent | [Geocode] OK 'La Quinta Phase 2' -> (25.0759463, 55.3531876) | LLM Certainty: Sure
-2026-05-28 11:48:03,471 | INFO | comparable_agent | [Geocode] OK 'La Quinta Phase 1' -> (25.0759463, 55.3531876) | LLM Certainty: Sure
-2026-05-28 11:48:04,831 | INFO | comparable_agent | [Geocode] OK 'La Violeta' -> (25.0753402, 55.3491369) | LLM Certainty: Sure
-2026-05-28 11:48:06,054 | INFO | comparable_agent | [Geocode] OK 'La Rosa' -> (25.0762816, 55.3573015) | LLM Certainty: Sure
-2026-05-28 11:48:07,245 | INFO | comparable_agent | [Geocode] OK 'La Palma' -> (25.0768488, 55.3567695) | LLM Certainty: Sure
-2026-05-28 11:48:08,478 | INFO | comparable_agent | [Geocode] OK 'La Fontana' -> (25.063758, 55.23591279999999) | LLM Certainty: Sure
-2026-05-28 11:48:09,777 | INFO | comparable_agent | [Geocode] OK 'La Palma Villas' -> (25.0759463, 55.3531876) | LLM Certainty: Sure
-2026-05-28 11:48:11,149 | INFO | comparable_agent | [Geocode] OK 'La Rosa Villas' -> (25.0762816, 55.3573015) | LLM Certainty: Sure
-2026-05-28 11:48:12,349 | INFO | comparable_agent | [Geocode] OK 'La Fontana Villas' -> (25.063758, 55.23591279999999) | LLM Certainty: Sure
-2026-05-28 11:48:13,308 | INFO | comparable_agent | [Geocode] OK 'La Quinta Villas' -> (25.0701932, 55.3510942) | LLM Certainty: Sure
-2026-05-28 11:48:13,509 | INFO | comparable_agent | [Distance] 11 comparables with valid coordinates
-2026-05-28 11:48:13,510 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='La Tilia' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "la tilia 2", "comp_name": "la tilia", "distance_km": 0.0}
-2026-05-28 11:48:13,511 | INFO | comparable_agent | [Subject Filter] 10 comparables remain after removing subject project
-2026-05-28 11:48:13,512 | INFO | comparable_agent | [URL Filter] 10 comparables after URL cleanup
-2026-05-28 11:48:13,512 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
-2026-05-28 11:48:13,513 | INFO | comparable_agent | [Confidence Scoring] Starting | 10 comparables | subject='La Tilia 2' | web_search_preview=ENABLED | batch_size=5
-2026-05-28 11:48:13,514 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
-2026-05-28 11:48:13,514 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
-2026-05-28 11:48:22,162 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3277
-2026-05-28 11:48:23,164 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
-2026-05-28 11:48:40,532 | INFO | comparable_agent | [Confidence Batch 2] Scored 5/5 comparables | tokens=3194
-2026-05-28 11:48:41,533 | INFO | comparable_agent | [Confidence Scoring] LLM scored 10/10 comparables
-2026-05-28 11:48:41,533 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 9, 'Medium': 0, 'Low': 0, 'Very Low': 1, 'Unknown': 0}
-2026-05-28 11:48:41,547 | INFO | comparable_agent | [Agent Done] Final comparables: 10 | Total tokens: 2845
+2026-05-28 11:48:38,654 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 11:48:38,655 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 11:49:06,731 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2420
+2026-05-28 11:49:06,732 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-28 11:49:06,732 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-28 11:49:06,733 | INFO | comparable_agent | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-28 11:49:06,733 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 11:49:06,734 | INFO | comparable_agent | [Geocode] Starting for 8 comparables
+2026-05-28 11:49:07,414 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 11:49:08,201 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 11:49:09,501 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 11:49:10,306 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 11:49:11,482 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | LLM Certainty: Sure
+2026-05-28 11:49:12,260 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 11:49:13,333 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 11:49:14,166 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 11:49:14,367 | INFO | comparable_agent | [Distance] 8 comparables with valid coordinates
+2026-05-28 11:49:14,367 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-28 11:49:14,367 | INFO | comparable_agent | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-28 11:49:14,368 | INFO | comparable_agent | [URL Filter] 7 comparables after URL cleanup
+2026-05-28 11:49:14,368 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 11:49:14,368 | INFO | comparable_agent | [Confidence Scoring] Starting | 7 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 11:49:14,368 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 11:49:14,369 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 11:49:20,246 | INFO | comparable_agent | [Confidence Batch 1] Scored 1/5 comparables | tokens=2647
+2026-05-28 11:49:21,250 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 2 comparables | web_search_preview ENABLED
+2026-05-28 11:49:27,134 | INFO | comparable_agent | [Confidence Batch 2] Scored 2/2 comparables | tokens=2245
+2026-05-28 11:49:28,134 | INFO | comparable_agent | [Confidence Scoring] LLM scored 3/7 comparables
+2026-05-28 11:49:28,134 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Mantra Mesmer' — assigning default
+2026-05-28 11:49:28,134 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'ARP Valora Towers A' — assigning default
+2026-05-28 11:49:28,134 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Choice QUE 914' — assigning default
+2026-05-28 11:49:28,134 | WARNING | comparable_agent | [Confidence Merge] No score returned for 'Bansall Amara' — assigning default
+2026-05-28 11:49:28,134 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 3, 'Medium': 0, 'Low': 4, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 11:49:28,136 | INFO | comparable_agent | [Agent Done] Final comparables: 7 | Total tokens: 2420
+2026-05-28 12:03:56,583 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 12:03:56,585 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 12:04:07,406 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2649
+2026-05-28 12:04:07,408 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
+2026-05-28 12:04:07,408 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-28 12:04:07,409 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-28 12:04:07,409 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 12:04:07,410 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-28 12:04:08,331 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 12:04:09,380 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 12:04:10,233 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 12:04:11,044 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 12:04:12,161 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 12:04:12,958 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 12:04:13,729 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 12:04:14,733 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 12:04:15,833 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
+2026-05-28 12:04:16,637 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 12:04:16,837 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-28 12:04:16,837 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-28 12:04:16,837 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-28 12:04:16,838 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-28 12:04:16,838 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 12:04:16,839 | INFO | comparable_agent | [Confidence Scoring] Starting | 9 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 12:04:16,839 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 12:04:16,839 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 12:04:29,383 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3319
+2026-05-28 12:04:30,384 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 4 comparables | web_search_preview ENABLED
+2026-05-28 12:04:57,268 | INFO | comparable_agent | [Confidence Batch 2] Scored 4/4 comparables | tokens=3110
+2026-05-28 12:04:58,270 | INFO | comparable_agent | [Confidence Scoring] LLM scored 9/9 comparables
+2026-05-28 12:04:58,270 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 9, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 12:04:58,272 | INFO | comparable_agent | [Agent Done] Final comparables: 9 | Total tokens: 2649
+2026-05-28 15:42:31,386 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 15:42:31,387 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 15:42:44,014 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2662
+2026-05-28 15:42:44,015 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
+2026-05-28 15:42:44,015 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-28 15:42:44,016 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-28 15:42:44,016 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 15:42:44,017 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-28 15:42:44,570 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 15:42:45,629 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 15:42:46,669 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 15:42:47,775 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 15:42:48,503 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 15:42:49,574 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 15:42:50,616 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 15:42:51,653 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 15:42:52,732 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
+2026-05-28 15:42:53,437 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 15:42:53,638 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-28 15:42:53,638 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-28 15:42:53,638 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-28 15:42:53,639 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-28 15:42:53,639 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 15:42:53,639 | INFO | comparable_agent | [Confidence Scoring] Starting | 9 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 15:42:53,639 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 15:42:53,639 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 15:43:11,356 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3292
+2026-05-28 15:43:12,357 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 4 comparables | web_search_preview ENABLED
+2026-05-28 15:43:26,226 | INFO | comparable_agent | [Confidence Batch 2] Scored 4/4 comparables | tokens=3085
+2026-05-28 15:43:27,226 | INFO | comparable_agent | [Confidence Scoring] LLM scored 9/9 comparables
+2026-05-28 15:43:27,226 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 9, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 15:43:27,228 | INFO | comparable_agent | [Agent Done] Final comparables: 9 | Total tokens: 2662
+2026-05-28 15:49:00,476 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 15:49:00,476 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 15:49:14,353 | INFO | comparable_agent | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-28 15:49:14,353 | INFO | comparable_agent | [LLM Fetch] Received 11 raw comparables | tokens=2861
+2026-05-28 15:49:14,355 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 11
+2026-05-28 15:49:14,355 | INFO | comparable_agent | [Dedup] 11/11 unique comparables
+2026-05-28 15:49:14,355 | INFO | comparable_agent | [Hard Filter] 11/11 passed type check (allowed cross-types included)
+2026-05-28 15:49:14,355 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 15:49:14,356 | INFO | comparable_agent | [Geocode] Starting for 11 comparables
+2026-05-28 15:49:14,988 | INFO | comparable_agent | [Geocode] OK 'K City' -> (18.5322725, 73.9438613) | LLM Certainty: Sure
+2026-05-28 15:49:16,139 | INFO | comparable_agent | [Geocode] OK 'Shubh Sky Point' -> (18.5387829, 73.9474613) | LLM Certainty: Sure
+2026-05-28 15:49:17,133 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 15:49:17,928 | INFO | comparable_agent | [Geocode] OK 'Pinnacle' -> (18.536657, 73.9474903) | LLM Certainty: Sure
+2026-05-28 15:49:18,707 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 15:49:19,479 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 15:49:20,298 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 15:49:21,354 | INFO | comparable_agent | [Geocode] OK 'Godrej Aqua Vista' -> (18.5386875, 73.9458125) | LLM Certainty: Sure
+2026-05-28 15:49:22,094 | INFO | comparable_agent | [Geocode] OK 'Esbee Azura' -> (18.5335699, 73.94936600000001) | LLM Certainty: Sure
+2026-05-28 15:49:23,144 | INFO | comparable_agent | [Geocode] OK 'Excellaa Tremont' -> (18.5310615, 73.939436) | LLM Certainty: Sure
+2026-05-28 15:49:24,239 | INFO | comparable_agent | [Geocode] OK 'Unique K City Phase 3' -> (18.5303074, 73.9434277) | LLM Certainty: Sure
+2026-05-28 15:49:24,440 | INFO | comparable_agent | [Distance] 11 comparables with valid coordinates
+2026-05-28 15:49:24,441 | INFO | comparable_agent | [Subject Filter] 11 comparables remain after removing subject project
+2026-05-28 15:49:24,441 | INFO | comparable_agent | [URL Filter] 11 comparables after URL cleanup
+2026-05-28 15:49:24,441 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 15:49:24,441 | INFO | comparable_agent | [Confidence Scoring] Starting | 11 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 15:49:24,441 | INFO | comparable_agent | [Confidence Scoring] 3 batch(es) of up to 5
+2026-05-28 15:49:24,442 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 15:49:37,616 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3313
+2026-05-28 15:49:38,617 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 15:49:54,259 | INFO | comparable_agent | [Confidence Batch 2] Scored 5/5 comparables | tokens=3340
+2026-05-28 15:49:55,261 | INFO | comparable_agent | [Confidence Batch 3] Attempt 1/2 | 1 comparables | web_search_preview ENABLED
+2026-05-28 15:50:13,335 | INFO | comparable_agent | [Confidence Batch 3] Scored 1/1 comparables | tokens=1890
+2026-05-28 15:50:14,336 | INFO | comparable_agent | [Confidence Scoring] LLM scored 11/11 comparables
+2026-05-28 15:50:14,336 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 11, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 15:50:14,339 | INFO | comparable_agent | [Agent Done] Final comparables: 11 | Total tokens: 2861
+2026-05-28 16:05:07,331 | INFO | comparable_agent | [JSON Parse] Fallback extracted 11 individual objects
+2026-05-28 16:05:07,331 | INFO | comparable_agent | [LLM Fetch] Received 11 raw comparables | tokens=2836
+2026-05-28 16:17:19,353 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 16:17:19,354 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 16:17:29,622 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2423
+2026-05-28 16:17:29,624 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-28 16:17:29,625 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-28 16:17:29,625 | INFO | comparable_agent | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-28 16:17:29,626 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 16:17:29,626 | INFO | comparable_agent | [Geocode] Starting for 8 comparables
+2026-05-28 16:17:30,264 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 16:17:31,406 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 16:17:32,186 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 16:17:33,002 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 16:17:33,861 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | LLM Certainty: Sure
+2026-05-28 16:17:34,865 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 16:17:35,595 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 16:17:36,358 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [Distance] 8 comparables with valid coordinates
+2026-05-28 16:17:36,559 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-28 16:17:36,559 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [Subject Filter] 6 comparables remain after removing subject project
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [URL Filter] 6 comparables after URL cleanup
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [Confidence Scoring] Starting | 6 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 16:17:36,559 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 16:17:36,560 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 16:18:13,688 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3438
+2026-05-28 16:18:14,689 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 1 comparables | web_search_preview ENABLED
+2026-05-28 16:18:26,368 | INFO | comparable_agent | [Confidence Batch 2] Scored 1/1 comparables | tokens=1922
+2026-05-28 16:18:27,369 | INFO | comparable_agent | [Confidence Scoring] LLM scored 6/6 comparables
+2026-05-28 16:18:27,369 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 6, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 16:18:27,370 | INFO | comparable_agent | [Agent Done] Final comparables: 6 | Total tokens: 2423
+2026-05-28 16:28:55,973 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 16:28:55,975 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 16:29:11,599 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2669
+2026-05-28 16:29:11,600 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
+2026-05-28 16:29:11,600 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-28 16:29:11,601 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-28 16:29:11,601 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 16:29:11,601 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-28 16:29:12,545 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 16:29:13,564 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 16:29:14,304 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 16:29:15,076 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 16:29:15,930 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 16:29:17,007 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 16:29:17,832 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 16:29:18,832 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 16:29:19,641 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
+2026-05-28 16:29:20,368 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 16:29:20,568 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-28 16:29:20,568 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-28 16:29:20,568 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-28 16:29:20,568 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-28 16:29:20,568 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 16:29:20,568 | INFO | comparable_agent | [Confidence Scoring] Starting | 9 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 16:29:20,570 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 16:29:20,570 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 16:29:26,768 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3277
+2026-05-28 16:29:27,770 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 4 comparables | web_search_preview ENABLED
+2026-05-28 16:29:34,301 | INFO | comparable_agent | [Confidence Batch 2] Scored 4/4 comparables | tokens=3074
+2026-05-28 16:29:35,302 | INFO | comparable_agent | [Confidence Scoring] LLM scored 9/9 comparables
+2026-05-28 16:29:35,302 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 9, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 16:29:35,303 | INFO | comparable_agent | [Agent Done] Final comparables: 9 | Total tokens: 2669
+2026-05-28 16:56:23,253 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 16:56:23,254 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 16:56:34,929 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2738
+2026-05-28 16:56:34,930 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
+2026-05-28 16:56:34,931 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-28 16:56:34,931 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-28 16:56:34,931 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 16:56:34,933 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-28 16:56:35,537 | INFO | comparable_agent | [Geocode] OK 'Godrej Keshav Nagar' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 16:56:36,261 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 16:56:37,319 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 16:56:38,447 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers A' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 16:56:39,327 | INFO | comparable_agent | [Geocode] OK 'Choice QUE 914' -> (18.5381992, 73.94785180000001) | LLM Certainty: Sure
+2026-05-28 16:56:40,053 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5404599, 73.9481639) | LLM Certainty: Sure
+2026-05-28 16:56:41,061 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 16:56:41,886 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 16:56:42,883 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 16:56:43,609 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
+2026-05-28 16:56:43,810 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-28 16:56:43,810 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Keshav Nagar' | reason=is_subject_property (exact_coordinate_and_zero_distance_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej keshav nagar", "distance_km": 0.0}
+2026-05-28 16:56:43,810 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-28 16:56:43,811 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-28 16:56:43,811 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 16:56:43,811 | INFO | comparable_agent | [Confidence Scoring] Starting | 9 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 16:56:43,811 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 16:56:43,812 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 16:56:52,530 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3544
+2026-05-28 16:56:53,531 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 4 comparables | web_search_preview ENABLED
+2026-05-28 16:57:04,081 | INFO | comparable_agent | [Confidence Batch 2] Scored 4/4 comparables | tokens=3001
+2026-05-28 16:57:05,083 | INFO | comparable_agent | [Confidence Scoring] LLM scored 9/9 comparables
+2026-05-28 16:57:05,083 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 9, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 16:57:05,086 | INFO | comparable_agent | [Agent Done] Final comparables: 9 | Total tokens: 2738
+2026-05-28 17:09:20,738 | INFO | comparable_agent | [Agent Start] project='Godrej Infinity' type='apartment' category='Residential' search_term='apartment' location='Keshav Nagar, Pune'
+2026-05-28 17:09:20,740 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 17:09:37,203 | INFO | comparable_agent | [LLM Fetch] Received 10 raw comparables | tokens=2798
+2026-05-28 17:09:37,204 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 10
+2026-05-28 17:09:37,204 | INFO | comparable_agent | [Dedup] 10/10 unique comparables
+2026-05-28 17:09:37,205 | INFO | comparable_agent | [Hard Filter] 10/10 passed type check (allowed cross-types included)
+2026-05-28 17:09:37,205 | INFO | comparable_agent | [Category] Subject category: 'Residential' | Comparable categories: {'Residential'}
+2026-05-28 17:09:37,206 | INFO | comparable_agent | [Geocode] Starting for 10 comparables
+2026-05-28 17:09:37,773 | INFO | comparable_agent | [Geocode] OK 'Maestro Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 17:09:38,545 | INFO | comparable_agent | [Geocode] OK 'ARV Richvue' -> (18.5411875, 73.94531250000001) | LLM Certainty: Sure
+2026-05-28 17:09:39,297 | INFO | comparable_agent | [Geocode] OK 'Mantra Mesmer' -> (18.5400346, 73.9497464) | LLM Certainty: Sure
+2026-05-28 17:09:40,314 | INFO | comparable_agent | [Geocode] OK 'Vertical Oriana' -> (18.5358988, 73.9449831) | LLM Certainty: Sure
+2026-05-28 17:09:41,142 | INFO | comparable_agent | [Geocode] OK 'ARP Valora Towers' -> (18.536181, 73.95212) | LLM Certainty: Sure
+2026-05-28 17:09:42,178 | INFO | comparable_agent | [Geocode] OK 'Bansall Amara' -> (18.5961255, 73.7523101) | LLM Certainty: Not Sure
+2026-05-28 17:09:42,962 | INFO | comparable_agent | [Geocode] OK 'Choice Goodwill Verve' -> (18.530217, 73.9453771) | LLM Certainty: Sure
+2026-05-28 17:09:43,981 | INFO | comparable_agent | [Geocode] OK 'Codename Light' -> (18.5347397, 73.9491948) | LLM Certainty: Sure
+2026-05-28 17:09:44,754 | INFO | comparable_agent | [Geocode] OK 'Unique Legacy Majestic' -> (18.5315366, 73.9454338) | LLM Certainty: Sure
+2026-05-28 17:09:45,204 | INFO | comparable_agent | [Geocode] OK 'Godrej Infinity' -> (18.5395129, 73.94636849999999) | LLM Certainty: Sure
+2026-05-28 17:09:45,406 | INFO | comparable_agent | [Distance] 10 comparables with valid coordinates
+2026-05-28 17:09:45,406 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Godrej Infinity' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "godrej infinity", "comp_name": "godrej infinity", "distance_km": 0.0}
+2026-05-28 17:09:45,406 | INFO | comparable_agent | [Subject Filter] 9 comparables remain after removing subject project
+2026-05-28 17:09:45,406 | INFO | comparable_agent | [URL Filter] 9 comparables after URL cleanup
+2026-05-28 17:09:45,407 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 17:09:45,407 | INFO | comparable_agent | [Confidence Scoring] Starting | 9 comparables | subject='Godrej Infinity' | web_search_preview=ENABLED | batch_size=5
+2026-05-28 17:09:45,407 | INFO | comparable_agent | [Confidence Scoring] 2 batch(es) of up to 5
+2026-05-28 17:09:45,407 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 5 comparables | web_search_preview ENABLED
+2026-05-28 17:09:51,390 | INFO | comparable_agent | [Confidence Batch 1] Scored 5/5 comparables | tokens=3317
+2026-05-28 17:09:52,391 | INFO | comparable_agent | [Confidence Batch 2] Attempt 1/2 | 4 comparables | web_search_preview ENABLED
+2026-05-28 17:09:58,834 | INFO | comparable_agent | [Confidence Batch 2] Scored 4/4 comparables | tokens=2877
+2026-05-28 17:09:59,835 | INFO | comparable_agent | [Confidence Scoring] LLM scored 9/9 comparables
+2026-05-28 17:09:59,835 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 8, 'Medium': 0, 'Low': 1, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 17:09:59,838 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Bansall Amara' | reason=beyond_15km_radius | detail={"distance_km": 21.4}
+2026-05-28 17:09:59,838 | INFO | comparable_agent | [Agent Done] Final comparables: 8 | Total tokens: 2798

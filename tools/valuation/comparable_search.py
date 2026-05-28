@@ -659,7 +659,7 @@ def _parse_confidence_json(raw: str) -> list[dict]:
     return objects
 
 
-def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) -> list[dict]:
+def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int, metrics=None) -> list[dict]:
     """
     Send one batch to gpt-4o-mini WITHOUT web_search_preview.
     The LLM will score using pre-extracted amenities and location matches.
@@ -684,8 +684,8 @@ def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) ->
             scored = _parse_confidence_json(raw)
 
             usage = {
-                "input_tokens":  getattr(response.usage, "input_tokens", 0),
-                "output_tokens": getattr(response.usage, "output_tokens", 0),
+                "prompt_tokens":  getattr(response.usage, "input_tokens", 0),
+                "completion_tokens": getattr(response.usage, "output_tokens", 0),
                 "total_tokens":  getattr(response.usage, "total_tokens", 0),
             }
             logger.info(
@@ -693,6 +693,9 @@ def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) ->
                 f"Scored {len(scored)}/{len(batch)} comparables | "
                 f"tokens={usage['total_tokens']}"
             )
+
+            if metrics:
+                metrics.add_tokens(usage, model_name=_CONFIDENCE_MODEL)
 
             if not scored:
                 logger.warning(
@@ -792,7 +795,7 @@ def run_confidence_scoring(
 
     all_scored: list[dict] = []
     for idx, batch in enumerate(batches, start=1):
-        scored = _score_confidence_batch(subject, batch, batch_num=idx)
+        scored = _score_confidence_batch(subject, batch, batch_num=idx, metrics=metrics)
         all_scored.extend(scored)
 
         time.sleep(0.2)
