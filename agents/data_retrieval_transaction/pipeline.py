@@ -18,7 +18,7 @@ class TransactionDomainAgent:
         self.intent_extractor = IntentExtractor(client, model="gpt-4o-mini")
         
         # Use gpt-5.1 for the core ReAct loop (high reasoning)
-        self.query_builder = TransactionQueryBuilder(client=client, model="gpt-5.1")
+        self.query_builder = TransactionQueryBuilder(client=client, model="gpt-4o-mini")
         
         self.executor = ExecutionEngine(self.query_builder)
         self.query_builder.db_executor = self._db_executor

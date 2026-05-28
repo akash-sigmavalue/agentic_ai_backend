@@ -184,7 +184,7 @@ IMPORTANT RULES:
 - When in doubt about a project type -> EXCLUDE IT
 - Do NOT label a wrong property as "{search_term}" just to fill the list
 - It is BETTER to return 5 correct results than 15 mixed results
-- MANDATORY: Use the `web_search_preview` tool to find current real-world projects and coordinates. Do NOT rely solely on internal knowledge.
+- MANDATORY: Use the `web_search_preview` tool to find current real-world projects, coordinates, amenities, and details. Do NOT rely solely on internal knowledge.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PROPERTY CATEGORY RULES (fill "project_category" field):
@@ -236,6 +236,9 @@ JSON Keys for each object:
     - Project name is generic (e.g. "Residential Land", "Plot", "New Project")
     - Location was inferred from nearby landmarks or approximate descriptions
     - Coordinates or map pin are absent or inconsistent with stated location
+- "amenities"          (String, brief list of major amenities offered by the comparable project, e.g., "Clubhouse, Pool, Gym, 24/7 Security" or "None / Not found")
+- "location_match"     (String, comparison of comparable micro-market/street relative to subject: "Same street" / "Same suburb" / "Same district" / "Same city" / "Different city" / "Not found")
+- "amenities_match"    (String, comparison of comparable's amenities to typical expected standard for this type/location: "Exact" / "Close" / "Partial" / "None" / "Not found")
 """
 
     user_prompt = f"""
@@ -469,9 +472,9 @@ def resolve_location_certainty(comp: dict) -> dict:
 # ── Confidence Scoring Agent ──────────────────────────────────────────────
 # ══════════════════════════════════════════════════════════════════════════
 
-_CONFIDENCE_MODEL    = "gpt-4o"
+_CONFIDENCE_MODEL    = "gpt-4o-mini"
 _CONFIDENCE_TOKENS   = 4096
-_CONFIDENCE_BATCH    = 5       # Reduced from 10 — each comp now triggers web searches, smaller batches = better quality
+_CONFIDENCE_BATCH    = 10      # Increased from 5 — no search tools needed, highly efficient batching
 _CONFIDENCE_RETRIES  = 2
 _CONFIDENCE_DELAY    = 3
 
@@ -493,38 +496,11 @@ Given a SUBJECT PROPERTY and a list of COMPARABLE PROPERTIES, assign a CONFIDENC
   3. AMENITIES             — how closely the amenity profile matches the subject
 
 These are the ONLY three factors. Do NOT factor in developer brand, pricing, possession
-status, or any other attribute.
+status, or any other attribute. Do NOT make any external tool calls. You must perform
+purely analytical scoring using the pre-extracted fields provided for each property.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MANDATORY: RESEARCH BEFORE SCORING
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-You MUST use the web_search_preview tool to research EACH comparable before scoring it.
-Focus your searches only on:
-
-  1. LOCATION — confirm the comparable's exact street / suburb / micro-market and compare
-     it to the subject's location. Is it the same street? Same suburb? Same district?
-       → Same street / gated colony   = very high match
-       → Same suburb / micro-market   = high match
-       → Same district / zone         = moderate match
-       → Same city only               = low match
-       → Different city               = no match
-
-  2. AMENITIES — find what amenities the comparable offers (clubhouse, pool, gym,
-     concierge, smart home, security, parking, green space, etc.) and compare to
-     the subject property's typical offering for its type and location.
-       → Full premium amenities (pool + gym + clubhouse + more) = very high match
-       → Standard amenities (gym + parking + basic common areas) = moderate match
-       → Minimal / no amenities                                  = low match
-       → No amenity info found                                   = neutral (score 50)
-
-SEARCH STRATEGY PER COMPARABLE:
-  - Search: "<project_name> <location> amenities facilities"
-  - Search: "<project_name> <location> location map address"
-  - Use source_url if provided — fetch and read it
-  - If a search returns no useful results, mark that factor as "Not found" and use neutral score
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SCORING WEIGHTS
+SCORING WEIGHTS & CRITERIA
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Final score = weighted average of the three factors:
 
@@ -532,11 +508,25 @@ Final score = weighted average of the three factors:
   Property category     → 30% weight
   Amenities             → 20% weight
 
-PROPERTY CATEGORY scoring guide:
-  - Exact match (e.g. both "Residential")                  → 100
-  - Closely related (e.g. "Villa" vs "Independent House")  → 70
-  - Same broad class (e.g. both commercial subtypes)       → 50
-  - Different class entirely                               → 0
+1. LOCATION SIMILARITY scoring guide:
+   Grade based on the provided `location_match` string and `distance_from_subject_km`:
+     - "Same street"                     → 95–100
+     - "Same suburb" / "Same micro-market" → 80–94 (adjust down slightly if distance > 3km)
+     - "Same district" / "Same zone"     → 60–79 (adjust down if distance > 5km)
+     - "Same city only"                  → 40–59 (adjust down if distance > 10km)
+     - "Different city" / "Not found"    → 0–39
+
+2. PROPERTY CATEGORY scoring guide:
+   - Exact match (e.g. both "Residential")                  → 100
+   - Closely related (e.g. "Villa" vs "Independent House")  → 70
+   - Same broad class (e.g. both commercial subtypes)       → 50
+   - Different class entirely                               → 0
+
+3. AMENITIES scoring guide:
+   Grade based on the provided `amenities` and `amenities_match` values relative to subject:
+     - "Exact" / "Close" match (many common premium features) → 80–100
+     - "Partial" match (some shared features, standard gym/parking) → 50–79
+     - "None" / "Minimal" / "Not found"                     → 0–49
 
 Round final score to nearest integer.
 
@@ -560,7 +550,7 @@ Each object MUST have exactly these keys:
   "research_summary": {
     "location_match":    "<Same street / Same suburb / Same district / Same city / Different city / Not found>",
     "category_match":    "<Exact / Close / Partial / None>",
-    "amenities_found":   "<brief list or 'Not found'>"
+    "amenities_found":   "<brief list of amenities or 'Not found'>"
   },
   "factor_breakdown": {
     "location_similarity": <0–100>,
@@ -583,6 +573,9 @@ Each object MUST have exactly these keys:
             "location_certainty":       c.get("location_certainty"),
             "source_url":               c.get("source_url"),
             "reason":                   c.get("reason"),
+            "amenities":                c.get("amenities", "None / Not found"),
+            "location_match":           c.get("location_match", "Not found"),
+            "amenities_match":          c.get("amenities_match", "Not found"),
         }
         for c in batch
     ]
@@ -607,16 +600,12 @@ COMPARABLES TO SCORE ({len(full_comps)} properties):
 INSTRUCTIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 For EACH comparable above:
-  1. Search the web using web_search_preview to confirm location and find amenity details.
-  2. Score each of the three factors independently (location, category, amenities).
-  3. Compute final score = (location × 0.5) + (category × 0.3) + (amenities × 0.2).
+  1. Review the provided pre-extracted `amenities`, `location_match`, `amenities_match`, and `distance_from_subject_km`.
+  2. Score each of the three factors independently (location similarity, category, amenities) according to the guides.
+  3. Compute final score = (location similarity × 0.5) + (category × 0.3) + (amenities × 0.2).
   4. Return one JSON object per comparable.
 
-Search queries to use per comparable (adapt as needed):
-  → "<project_name> <location> amenities facilities"
-  → "<project_name> <location> address location"
-
-Return a JSON array with exactly {len(full_comps)} objects, one per comparable.
+Do NOT make any search tool calls. Return a JSON array with exactly {len(full_comps)} objects, one per comparable.
 """
     return system_prompt, user_prompt
 
@@ -672,8 +661,8 @@ def _parse_confidence_json(raw: str) -> list[dict]:
 
 def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) -> list[dict]:
     """
-    Send one batch to gpt-4o WITH web_search_preview enabled.
-    The LLM will research each comparable before scoring.
+    Send one batch to gpt-4o-mini WITHOUT web_search_preview.
+    The LLM will score using pre-extracted amenities and location matches.
     """
     system_prompt, user_prompt = _build_confidence_prompt(subject, batch)
 
@@ -682,14 +671,13 @@ def _score_confidence_batch(subject: dict, batch: list[dict], batch_num: int) ->
             logger.info(
                 f"[Confidence Batch {batch_num}] "
                 f"Attempt {attempt}/{_CONFIDENCE_RETRIES} | "
-                f"{len(batch)} comparables | web_search_preview ENABLED"
+                f"{len(batch)} comparables | web_search_preview DISABLED (pre-extracted info)"
             )
 
             response = _client.responses.create(
                 model=_CONFIDENCE_MODEL,
                 instructions=system_prompt,
                 input=user_prompt,
-                tools=[{"type": "web_search_preview"}],
             )
 
             raw    = response.output_text.strip()
@@ -766,7 +754,7 @@ def run_confidence_scoring(
     run_logger=None,
 ) -> list[dict]:
     """
-    LLM-powered confidence scoring with web_search_preview.
+    LLM-powered confidence scoring using pre-extracted info (tool-free, fast, cheap).
 
     Scores each comparable on three factors only:
       - Location similarity  (50% weight)
@@ -790,7 +778,7 @@ def run_confidence_scoring(
         f"[Confidence Scoring] Starting | "
         f"{len(comparables)} comparables | "
         f"subject='{subject.get('project_name')}' | "
-        f"web_search_preview=ENABLED | "
+        f"web_search_preview=DISABLED (pre-extracted info used) | "
         f"batch_size={_CONFIDENCE_BATCH}"
     )
 
@@ -807,12 +795,7 @@ def run_confidence_scoring(
         scored = _score_confidence_batch(subject, batch, batch_num=idx)
         all_scored.extend(scored)
 
-        if metrics:
-            estimated_searches = len(batch) * 2
-            for _ in range(estimated_searches):
-                metrics.add_tool_call("web_search_preview", cost=0.017)
-
-        time.sleep(1.0)
+        time.sleep(0.2)
 
     logger.info(
         f"[Confidence Scoring] LLM scored {len(all_scored)}/{len(comparables)} comparables"
