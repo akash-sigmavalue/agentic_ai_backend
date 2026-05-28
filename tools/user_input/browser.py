@@ -4,6 +4,8 @@ import os
 from typing import List
 import opendataloader_pdf
 import pdfplumber
+import concurrent.futures
+from langchain_community.document_loaders import PyPDFLoader
 
 import fitz
 from fastapi import HTTPException
@@ -14,6 +16,7 @@ from core.user_input.config import OCR_AVAILABLE, POPPLER_PATH, convert_from_pat
 from database.user_input_runtime import runtime
 from utils.user_input.helpers import is_table_like
 from langchain_openai import ChatOpenAI
+# pyrefly: ignore [missing-import]
 from langchain_core.messages import HumanMessage
 from core.user_input.config import OPENAI_API_KEY
 
@@ -171,6 +174,21 @@ def load_pdf_with_opendataloader(file_path: str) -> List[Document]:
     return docs
 
 
+def is_scanned_or_empty_pdf(file_path: str, text_docs: List[Document]) -> bool:
+    extracted_text = "\n".join(doc.page_content or "" for doc in text_docs).strip()
+    if not extracted_text:
+        return True
+
+    try:
+        with fitz.open(file_path) as pdf:
+            for page in pdf:
+                if page.get_text("text").strip():
+                    return False
+        return True
+    except Exception:
+        return False
+
+
 def load_documents(file_path: str, filename: str) -> List[Document]:
     extension = os.path.splitext(filename)[1].lower()
 
@@ -252,18 +270,32 @@ def load_documents(file_path: str, filename: str) -> List[Document]:
         all_docs = []
         
         try:
-            from langchain_community.document_loaders import PyPDFLoader
             loader = PyPDFLoader(file_path)
             text_docs = loader.load()
-            for doc in text_docs:
-                page = doc.metadata.get("page")
-                if isinstance(page, int):
-                    doc.metadata["page"] = page + 1
-                doc.metadata["content_type"] = "text"
-            all_docs.extend(text_docs)
+
+            if is_scanned_or_empty_pdf(file_path, text_docs):
+                print("PDF appears scanned or empty, falling back to OCR...")
+                ocr_docs = load_pdf_with_ocr(file_path)
+                for doc in ocr_docs:
+                    doc.metadata["source"] = filename
+                    doc.metadata["content_type"] = "text"
+                all_docs.extend(ocr_docs)
+            else:
+                for doc in text_docs:
+                    page = doc.metadata.get("page")
+                    if isinstance(page, int):
+                        doc.metadata["page"] = page + 1
+                    doc.metadata["content_type"] = "text"
+                all_docs.extend(text_docs)
             runtime.loader_type = "hybrid_multi_modal"
         except Exception as exc:
             print(f"PyPDFLoader text extraction failed: {exc}")
+            print("PDF text extraction failed, falling back to OCR...")
+            ocr_docs = load_pdf_with_ocr(file_path)
+            for doc in ocr_docs:
+                doc.metadata["source"] = filename
+                doc.metadata["content_type"] = "text"
+            all_docs.extend(ocr_docs)
 
         try:
             table_docs = extract_tables_from_pdf(file_path, filename)

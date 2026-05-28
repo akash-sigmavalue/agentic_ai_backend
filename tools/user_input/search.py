@@ -6,7 +6,7 @@ import numpy as np
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from core.user_input.config import (
     HYBRID_CANDIDATE_K,
@@ -27,6 +27,7 @@ class ChunkingConfig:
     PRIMARY_CHUNK_SIZE = 1300
     PRIMARY_CHUNK_OVERLAP = 250
     SECTION_PATTERN = r"(?=\n(?:\d{1,3}\.\d+(?:\.\d+){0,5}\b|CHAPTER|SECTION|\d+\.\d+\*|\d+\.\d+\#))"
+    UNIVERSAL_SECTION_PATTERN = r"(?=\n(?:[IVXLCDM]{1,5}\.\s+|[A-Z]\.\s+|(?:ARTICLE|PART)\s+[A-Z0-9]+|[A-Z][A-Z\s]{2,80}(?:\n|$)))"
     PAGE_MARKER_PATTERN = r"\[\[PAGE_BREAK:(\d+)\]\]"
     
     DOMAIN_KEYWORDS = {
@@ -168,7 +169,7 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
             if marker_pages:
                 active_page = marker_pages[-1]
 
-            if len(section_text) < 40:
+            if len(section_text) < 30:
                 continue
 
             section_match = re.match(r"(\d{1,3}(?:\.\d+){0,5})\b", section_text)
@@ -215,6 +216,80 @@ def improved_hierarchical_split(documents: List[Document], config: Optional[Chun
     return structured_chunks
 
 
+def universal_structural_split(documents: List[Document], config: ChunkingConfig) -> List[Document]:
+    """Fallback chunking strategy if the primary chunking yields no or too few chunks."""
+    fallback_chunks = []
+
+    for doc in documents:
+        if doc.metadata.get("type") == "image":
+            fallback_chunks.append(doc)
+            continue
+
+        text = doc.page_content
+        page = doc.metadata.get("page")
+        
+        # 1. Try splitting by UNIVERSAL_SECTION_PATTERN
+        raw_sections = re.split(config.UNIVERSAL_SECTION_PATTERN, text)
+        
+        # If still only 1 chunk, try splitting by paragraph \n\n
+        if len(raw_sections) <= 1:
+            # We enforce a chunk size limit by grouping paragraphs
+            paragraphs = re.split(r"\n{2,}", text)
+            current_chunk_text = ""
+            for p in paragraphs:
+                p = p.strip()
+                if not p:
+                    continue
+                if len(current_chunk_text) + len(p) > config.PRIMARY_CHUNK_SIZE and current_chunk_text:
+                    fallback_chunks.append(Document(
+                        page_content=current_chunk_text.strip(),
+                        metadata={**doc.metadata, "chunk_type": "paragraph_fallback"}
+                    ))
+                    current_chunk_text = p
+                else:
+                    if current_chunk_text:
+                        current_chunk_text += "\n\n" + p
+                    else:
+                        current_chunk_text = p
+            
+            if current_chunk_text:
+                fallback_chunks.append(Document(
+                    page_content=current_chunk_text.strip(),
+                    metadata={**doc.metadata, "chunk_type": "paragraph_fallback"}
+                ))
+        else:
+            # Universal pattern matched
+            for section_text in raw_sections:
+                section_text = section_text.strip()
+                if len(section_text) < 30:
+                    continue
+                
+                # Keep page marker handling if it exists
+                marker_pages = [int(p) for p in re.findall(config.PAGE_MARKER_PATTERN, section_text)]
+                section_pages = [page] if page else []
+                section_pages.extend(marker_pages)
+                
+                section_text = re.sub(config.PAGE_MARKER_PATTERN, "", section_text).strip()
+                
+                lines = section_text.split("\n")
+                title = lines[0][:150].strip() if lines else ""
+                
+                chunk_doc = Document(
+                    page_content=section_text,
+                    metadata={
+                        **doc.metadata,
+                        "title": title,
+                        "chunk_type": "universal_section",
+                        "is_table": is_table_like(section_text),
+                        "has_notes": bool(re.search(r"\*|\#|\(\d+\)", section_text[:400])),
+                        "page": min(section_pages) if section_pages else page,
+                    }
+                )
+                fallback_chunks.append(chunk_doc)
+                
+    return fallback_chunks
+
+
 def hybrid_chunking(documents: List[Document], config: Optional[ChunkingConfig] = None) -> List[Document]:
     if config is None:
         config = ChunkingConfig()
@@ -223,6 +298,12 @@ def hybrid_chunking(documents: List[Document], config: Optional[ChunkingConfig] 
 
     # Get structural sections only
     final_chunks = improved_hierarchical_split(documents, config)
+
+    # Check if primary chunking failed (0 text chunks, or 1 massive text chunk)
+    text_chunks_only = [c for c in final_chunks if c.metadata.get("type") != "image"]
+    if not text_chunks_only or (len(text_chunks_only) == 1 and len(text_chunks_only[0].page_content) > config.PRIMARY_CHUNK_SIZE * 2):
+        # Fall back to universal strategy
+        final_chunks = universal_structural_split(documents, config)
 
     # RECURSIVE CHUNKING IS NOW COMMENTED OUT AS REQUESTED
     # text_splitter = RecursiveCharacterTextSplitter(
@@ -507,7 +588,11 @@ def rerank_documents(
         ):
             score -= 0.25
 
+        if is_toc_like(content):
+            score -= 1.0
+
         doc.metadata["rerank_score"] = max(0.0, score)
+        doc.metadata["confidence_score"] = round(doc.metadata["rerank_score"], 2)
 
     # Sort and return
     return sorted(docs, key=lambda x: x.metadata.get("rerank_score", 0), reverse=True)[:max_docs]

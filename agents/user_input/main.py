@@ -126,6 +126,7 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
             "chunk_type": str(metadata.get("chunk_type", "")),
             "relevance_score": float(metadata.get("hybrid_score", 0)),
             "rerank_score": float(metadata.get("rerank_score", 0)),
+            "confidence_score": float(metadata.get("confidence_score", 0)),
         }
 
         if doc_type == "image":
@@ -154,6 +155,7 @@ def build_context_blocks(compressed_docs: List) -> List[Dict]:
                     "image_mime": meta.get("image_mime", "image/png"),
                     "relevance_score": float(meta.get("hybrid_score", 0)),
                     "rerank_score": 0,
+                    "confidence_score": 0,
                     "section": "",
                     "title": "",
                     "chunk_type": "image",
