@@ -116,6 +116,18 @@ def _is_range(s: str) -> bool:
     if not s: return False
     return bool(re.search(r"[\d]\s*[-–]\s*[\d]", str(s)))
 
+def normalize_area_type(val: Any) -> str:
+    if pd.isna(val) or not val:
+        return "unknown"
+    val_str = str(val).strip().lower()
+    if "carpet" in val_str:
+        return "carpet"
+    if "super" in val_str or "sbua" in val_str:
+        return "super_built_up"
+    if "built" in val_str or "builtup" in val_str:
+        return "built_up"
+    return "unknown"
+
 def pre_process_normalisation(listings: List[Dict]) -> List[Dict]:
     """Applies fast Python parsing before LLM."""
     for row in listings:
@@ -441,6 +453,10 @@ def data_cleaning_pipeline(
             df_merged = pd.concat([df_merged, df_db], ignore_index=True)
         else:
             df_merged = df_db
+
+    # Normalize area type to canonical lowercase strings ("carpet", "built_up", "super_built_up", "unknown")
+    if not df_merged.empty and "cleaned_area_type" in df_merged.columns:
+        df_merged["cleaned_area_type"] = df_merged["cleaned_area_type"].apply(normalize_area_type)
 
     # 4. Apply Area Conversion
     if on_progress: 
