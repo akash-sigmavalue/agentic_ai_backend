@@ -235,6 +235,7 @@ class CostExecutionAgent:
         # ── Inform frontend that cost-specific inputs will be needed after rate ─
         # Determine which inputs are needed based on property type
         uds_required = False
+        currency = subject.get("currency") or subject.get("currency_symbol") or "₹"
 
         yield sse_callback(
             "cost_inputs_required",
@@ -247,7 +248,7 @@ class CostExecutionAgent:
                 "property_type": property_type,
                 "rate_basis": "plot_land",
                 "uds_required": uds_required,
-                "inputs": _build_cost_input_schema(property_type),
+                "inputs": _build_cost_input_schema(property_type, currency=currency),
             },
         )
 
@@ -268,20 +269,22 @@ class CostExecutionAgent:
         construction_rate_per_sqft: float,
         age_of_property: float,
         total_life_of_building: float = DEFAULT_BUILDING_LIFE,
+        currency: str = "₹",
     ) -> dict:
         """
         Apply the traditional Land + Depreciated Structure Cost Approach formula
         and return a structured result dict.
 
         Args:
-            derived_plot_rate_per_sqft: Market-derived plot (land) rate (₹/sqft)
+            derived_plot_rate_per_sqft: Market-derived plot (land) rate ({currency}/sqft)
             plot_area_sqft:             Plot area of the villa in sqft (from Stage 1)
             builtup_area_sqft:          Built-up area of the villa structure in sqft (from Stage 1)
             property_type:              One of apartment | villa | retail | commercial_office
-            construction_rate_per_sqft: Current construction cost per sqft (₹/sqft)
+            construction_rate_per_sqft: Current construction cost per sqft ({currency}/sqft)
             age_of_property:            Completed age of the building in years (from Stage 1)
             total_life_of_building:     Expected total economic life of building in years
                                         — sourced from CPWD schedules, bank panel rates, etc.
+            currency:                   The dynamic currency symbol to use for display.
 
         Returns:
             dict with all intermediate values + final traditional cost approach value
@@ -349,24 +352,24 @@ class CostExecutionAgent:
             },
             "formula_audit": {
                 "step_1": (
-                    f"Land Value = {derived_plot_rate_per_sqft} ₹/sqft × "
-                    f"{plot_area_sqft} sqft (Plot Area) = ₹{round(land_value, 2)}"
+                    f"Land Value = {derived_plot_rate_per_sqft} {currency}/sqft × "
+                    f"{plot_area_sqft} sqft (Plot Area) = {currency}{round(land_value, 2)}"
                 ),
                 "step_2": (
-                    f"Replacement Construction Cost = {construction_rate_per_sqft} ₹/sqft × "
-                    f"{builtup_area_sqft} sqft (Built-up Area) = ₹{round(construction_cost, 2)}"
+                    f"Replacement Construction Cost = {construction_rate_per_sqft} {currency}/sqft × "
+                    f"{builtup_area_sqft} sqft (Built-up Area) = {currency}{round(construction_cost, 2)}"
                 ),
                 "step_3": (
                     f"Depreciation = {age_of_property} yrs / {total_life_of_building} yrs "
                     f"= {round(depreciation_rate * 100, 2)}%"
                 ),
                 "step_4": (
-                    f"Depreciated Building Value = ₹{round(construction_cost, 2)} × "
-                    f"(100% − {round(depreciation_rate * 100, 2)}%) = ₹{round(depreciated_building, 2)}"
+                    f"Depreciated Building Value = {currency}{round(construction_cost, 2)} × "
+                    f"(100% − {round(depreciation_rate * 100, 2)}%) = {currency}{round(depreciated_building, 2)}"
                 ),
                 "step_5": (
-                    f"Cost Value = ₹{round(land_value, 2)} (Land) + ₹{round(depreciated_building, 2)} (Building) "
-                    f"= ₹{round(cost_value, 2)}"
+                    f"Cost Value = {currency}{round(land_value, 2)} (Land) + {currency}{round(depreciated_building, 2)} (Building) "
+                    f"= {currency}{round(cost_value, 2)}"
                 ),
             },
         }
@@ -375,7 +378,7 @@ class CostExecutionAgent:
 # ──────────────────────────────────────────────────────────────────────────────
 # HELPER — build the input schema emitted in cost_inputs_required SSE event
 # ──────────────────────────────────────────────────────────────────────────────
-def _build_cost_input_schema(property_type: str) -> list[dict]:
+def _build_cost_input_schema(property_type: str, currency: str = "₹") -> list[dict]:
     """
     Return a list of rich UI input descriptors for the cost-specific fields.
     The frontend renders these as form inputs after rate derivation.
@@ -388,13 +391,13 @@ def _build_cost_input_schema(property_type: str) -> list[dict]:
             "field": "construction_rate_per_sqft",
             "label": "Construction Rate",
             "type": "number",
-            "unit": "₹ / sqft",
+            "unit": f"{currency} / sqft",
             "required": True,
             "placeholder": "e.g. 2500",
             "help": (
-                "Current construction cost per sqft for this property type. "
-                "Applies to the subject villa's built-up area. "
-                "Refer to CPWD schedules, bank panel rates, or PWD circulars for guidance."
+                f"Current construction cost per sqft for this property type. "
+                f"Applies to the subject villa's built-up area. "
+                f"Refer to CPWD schedules, bank panel rates, or PWD circulars for guidance."
             ),
             "default": None,
         },

@@ -604,6 +604,10 @@ class CostCalculationRequest(BaseModel):
         default=60,
         description="Expected total economic life of the building in years (default 60)",
     )
+    currency: str = Field(
+        default="₹",
+        description="Currency symbol to use for display and explanation (e.g. ₹, $, AED, Rs.)",
+    )
 
 
 def _cost_calculation_stream_generator(req: CostCalculationRequest):
@@ -613,6 +617,7 @@ def _cost_calculation_stream_generator(req: CostCalculationRequest):
             "message": "Applying Traditional Cost Approach formula...",
             "property_type": req.property_type,
             "derived_plot_rate_per_sqft": req.derived_plot_rate_per_sqft,
+            "currency": req.currency,
         },
     )
 
@@ -630,6 +635,7 @@ def _cost_calculation_stream_generator(req: CostCalculationRequest):
             construction_rate_per_sqft=req.construction_rate_per_sqft,
             age_of_property=req.age_of_property,
             total_life_of_building=req.total_life_of_building,
+            currency=req.currency,
         )
 
         if not result.get("success"):

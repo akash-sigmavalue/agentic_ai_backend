@@ -657,21 +657,40 @@ def search_urls_for_projects_batch(
         lng = p.get("lng")
         is_general = p.get("is_general_search", False)
 
-        if is_general:
-            # User requested specific "buy plot" query for general plot search
-            if per_project_type == "plot":
-                query = f"buy plot in {loc}, {country}"
-            else:
-                query = f"buy {search_term} in {loc}, {country}"
-        elif lat and lng and lat != 0 and lng != 0:
-            query = f"buy {search_term} in {pname}, {loc}, {country}, coordinates: {lat}, {lng}"
+        if per_project_type == "villa":
+            sub_terms = ["villa", "plot"]
+            queries = []
+            for st in sub_terms:
+                if is_general:
+                    queries.append(f"buy {st} in {loc}, {country}")
+                elif lat and lng and lat != 0 and lng != 0:
+                    queries.append(f"buy {st} in {pname}, {loc}, {country}, coordinates: {lat}, {lng}")
+                else:
+                    queries.append(f"buy {st} in {pname}, {loc}, {country}")
         else:
-            query = f"buy {search_term} in {pname}, {loc}, {country}"
+            if is_general:
+                # User requested specific "buy plot" query for general plot search
+                if per_project_type == "plot":
+                    query = f"buy plot in {loc}, {country}"
+                else:
+                    query = f"buy {search_term} in {loc}, {country}"
+            elif lat and lng and lat != 0 and lng != 0:
+                query = f"buy {search_term} in {pname}, {loc}, {country}, coordinates: {lat}, {lng}"
+            else:
+                query = f"buy {search_term} in {pname}, {loc}, {country}"
+            queries = [query]
 
-        logger.info(f"[URL Search] Query: '{query}'")
+        all_urls = []
+        for query in queries:
+            logger.info(f"[URL Search] Query: '{query}'")
+            urls = search_web_with_fallback(query, num_results=num_results)
+            for u in urls:
+                if u not in all_urls:
+                    all_urls.append(u)
+            if len(queries) > 1:
+                time.sleep(0.5)
 
-        urls = search_web_with_fallback(query, num_results=num_results)
-        valid_urls = sorted(urls, key=score_url, reverse=True)
+        valid_urls = sorted(all_urls, key=score_url, reverse=True)
         final_map[pname] = valid_urls
         logger.info(f"[URL Search] Result: '{pname}' -> {len(valid_urls)} URLs.")
         time.sleep(1)
