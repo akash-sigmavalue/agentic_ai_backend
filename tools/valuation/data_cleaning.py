@@ -352,7 +352,7 @@ def data_cleaning_pipeline(
     # Only send non-duplicates to LLM to save tokens
     unique_listings = [l for l in listings if not l.get("is_duplicate")]
     
-    if not unique_listings:
+    if not unique_listings and not db_transactions:
         return {"cleaned_listings": [], "review_listings": [], "dropped_listings": listings, "audit_stats": {}}
 
     # 2. Batch LLM Processing (Project-Wise)
