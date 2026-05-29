@@ -8,7 +8,7 @@ from openai import AsyncOpenAI
 from .config import Settings
 from .models import SupportedModel
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) 
 
 BEDROCK_CHAT_MODELS = frozenset({"deepseek.v3.2", "moonshotai.kimi-k2.5"})
 
