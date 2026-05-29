@@ -18991,3 +18991,123 @@ ORDER BY
 2026-05-28 18:53:14,307 | INFO | comparable_agent | [Confidence Scoring] LLM scored 6/6 comparables
 2026-05-28 18:53:14,307 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 1, 'Medium': 5, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
 2026-05-28 18:53:14,322 | INFO | comparable_agent | [Agent Done] Final comparables: 6 | Total tokens: 2998
+2026-05-28 19:17:28,521 | INFO | comparable_agent | [Agent Start] project='Al Mass Villas' type='villa' category='Villa' search_term='villa or plot' location='Dubai Marina'
+2026-05-28 19:17:28,524 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 19:17:42,045 | INFO | comparable_agent | [JSON Parse] Fallback extracted 9 individual objects
+2026-05-28 19:17:42,046 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2990
+2026-05-28 19:17:42,050 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 9
+2026-05-28 19:17:42,050 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-28 19:17:42,063 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-28 19:17:42,064 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa'}
+2026-05-28 19:17:42,067 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-28 19:17:43,972 | INFO | comparable_agent | [Geocode] OK 'Al Mass Villas' -> (25.0862111, 55.1488405) | LLM Certainty: Sure
+2026-05-28 19:17:45,508 | INFO | comparable_agent | [Geocode] OK 'Dubai Marina Moon Tower' -> (25.0782913, 55.1410286) | LLM Certainty: Sure
+2026-05-28 19:17:47,382 | INFO | comparable_agent | [Geocode] OK 'Al Mesk Villas' -> (25.0843649, 55.1491517) | LLM Certainty: Sure
+2026-05-28 19:17:48,887 | INFO | comparable_agent | [Geocode] OK 'Park Island Villas' -> (25.0820057, 55.1420559) | LLM Certainty: Sure
+2026-05-28 19:17:50,323 | INFO | comparable_agent | [Geocode] OK 'Al Sahab Villas' -> (25.0756746, 55.135822) | LLM Certainty: Sure
+2026-05-28 19:17:51,790 | INFO | comparable_agent | [Geocode] OK 'La Residencia Del Mar' -> (25.0717716, 55.13093319999999) | LLM Certainty: Sure
+2026-05-28 19:17:53,393 | INFO | comparable_agent | [Geocode] OK 'Al Anbar Villas' -> (25.0841061, 55.1483156) | LLM Certainty: Sure
+2026-05-28 19:17:55,236 | INFO | comparable_agent | [Geocode] OK 'Emaar 6 Towers' -> (25.0758937, 55.1354063) | LLM Certainty: Sure
+2026-05-28 19:17:56,843 | INFO | comparable_agent | [Geocode] OK 'Marina Quays Villas' -> (25.0768173, 55.1366647) | LLM Certainty: Sure
+2026-05-28 19:17:57,044 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-28 19:17:57,045 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Al Mass Villas' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "al mass villas", "comp_name": "al mass villas", "distance_km": 0.0}
+2026-05-28 19:17:57,045 | INFO | comparable_agent | [Subject Filter] 8 comparables remain after removing subject project
+2026-05-28 19:17:57,046 | INFO | comparable_agent | [URL Filter] 8 comparables after URL cleanup
+2026-05-28 19:17:57,046 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 19:17:57,047 | INFO | comparable_agent | [Confidence Scoring] Starting | 8 comparables | subject='Al Mass Villas' | web_search_preview=DISABLED (pre-extracted info used) | batch_size=10
+2026-05-28 19:17:57,047 | INFO | comparable_agent | [Confidence Scoring] 1 batch(es) of up to 10
+2026-05-28 19:17:57,048 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 8 comparables | web_search_preview DISABLED (pre-extracted info)
+2026-05-28 19:18:21,086 | INFO | comparable_agent | [Confidence Batch 1] Scored 8/8 comparables | tokens=3762
+2026-05-28 19:18:21,287 | INFO | comparable_agent | [Confidence Scoring] LLM scored 8/8 comparables
+2026-05-28 19:18:21,288 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 8, 'Medium': 0, 'Low': 0, 'Very Low': 0, 'Unknown': 0}
+2026-05-28 19:18:21,307 | INFO | comparable_agent | [Agent Done] Final comparables: 8 | Total tokens: 2990
+2026-05-28 19:48:47,207 | INFO | comparable_agent | [Agent Start] project='Al Mass Villas' type='villa' category='Villa' search_term='villa or plot' location='Dubai Marina'
+2026-05-28 19:48:47,209 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-28 19:48:59,305 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2817
+2026-05-28 19:48:59,307 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-28 19:48:59,308 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-28 19:48:59,318 | WARNING | comparable_agent | [DROP] stage=hard_filter | project='Emaar Marina Shores' | reason=property_type_mismatch | detail={"got": "apartment", "expected": "villa", "location": "Dubai Marina"}
+2026-05-28 19:48:59,319 | WARNING | comparable_agent | [DROP] stage=hard_filter | project='Kempinski Marina Residences' | reason=property_type_mismatch | detail={"got": "apartment", "expected": "villa", "location": "Dubai Marina"}
+2026-05-28 19:48:59,319 | INFO | comparable_agent | [Hard Filter] 6/8 passed type check (allowed cross-types included)
+2026-05-28 19:48:59,319 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Plot', 'Villa'}
+2026-05-28 19:48:59,321 | INFO | comparable_agent | [Geocode] Starting for 6 comparables
+2026-05-28 19:49:00,274 | INFO | comparable_agent | [Geocode] OK 'Al Anbar Villas' -> (25.0841061, 55.1483156) | LLM Certainty: Sure
+2026-05-28 19:49:01,666 | INFO | comparable_agent | [Geocode] OK 'Ary Marina View' -> (25.0715746, 55.1344363) | LLM Certainty: Sure
+2026-05-28 19:49:03,065 | INFO | comparable_agent | [Geocode] OK 'Miami House Collection' -> (25.0218868, 55.1392973) | LLM Certainty: Sure
+2026-05-28 19:49:04,510 | INFO | comparable_agent | [Geocode] OK 'Serro The Heights' -> (24.9609141, 55.2488103) | LLM Certainty: Not Sure
+2026-05-28 19:49:05,790 | INFO | comparable_agent | [Geocode] OK 'La Mer South Villa Plots' -> (25.2359409, 55.2576644) | LLM Certainty: Sure
+2026-05-28 19:49:07,173 | INFO | comparable_agent | [Geocode] OK 'Villa Marina' -> (25.0756746, 55.135822) | LLM Certainty: Sure
+2026-05-28 19:49:07,374 | INFO | comparable_agent | [Distance] 6 comparables with valid coordinates
+2026-05-28 19:49:07,374 | INFO | comparable_agent | [Subject Filter] 6 comparables remain after removing subject project
+2026-05-28 19:49:07,375 | INFO | comparable_agent | [URL Filter] 6 comparables after URL cleanup
+2026-05-28 19:49:07,375 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-28 19:49:07,375 | INFO | comparable_agent | [Confidence Scoring] Starting | 6 comparables | subject='Al Mass Villas' | web_search_preview=DISABLED (pre-extracted info used) | batch_size=10
+2026-05-28 19:49:07,376 | INFO | comparable_agent | [Confidence Scoring] 1 batch(es) of up to 10
+2026-05-28 19:49:07,376 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 6 comparables | web_search_preview DISABLED (pre-extracted info)
+2026-05-28 19:49:32,333 | INFO | comparable_agent | [Confidence Batch 1] Scored 6/6 comparables | tokens=3296
+2026-05-28 19:49:32,533 | INFO | comparable_agent | [Confidence Scoring] LLM scored 6/6 comparables
+2026-05-28 19:49:32,534 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 3, 'Medium': 1, 'Low': 1, 'Very Low': 1, 'Unknown': 0}
+2026-05-28 19:49:32,546 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Serro The Heights' | reason=beyond_15km_radius | detail={"distance_km": 17.19}
+2026-05-28 19:49:32,546 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='La Mer South Villa Plots' | reason=beyond_15km_radius | detail={"distance_km": 19.93}
+2026-05-28 19:49:32,547 | INFO | comparable_agent | [Agent Done] Final comparables: 4 | Total tokens: 2817
+2026-05-29 10:14:05,665 | INFO | comparable_agent | [Agent Start] project='Terva Homes' type='villa' category='Villa' search_term='villa or plot' location='Dubai Industrial City'
+2026-05-29 10:14:05,668 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-29 10:14:18,530 | INFO | comparable_agent | [JSON Parse] Fallback extracted 9 individual objects
+2026-05-29 10:14:18,530 | INFO | comparable_agent | [LLM Fetch] Received 9 raw comparables | tokens=2987
+2026-05-29 10:14:18,532 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 9
+2026-05-29 10:14:18,532 | INFO | comparable_agent | [Dedup] 9/9 unique comparables
+2026-05-29 10:14:18,537 | INFO | comparable_agent | [Hard Filter] 9/9 passed type check (allowed cross-types included)
+2026-05-29 10:14:18,538 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa', 'Plot'}
+2026-05-29 10:14:18,540 | INFO | comparable_agent | [Geocode] Starting for 9 comparables
+2026-05-29 10:14:19,510 | INFO | comparable_agent | [Geocode] OK 'Terva Homes' -> (24.890727, 55.0742393) | LLM Certainty: Sure
+2026-05-29 10:14:20,774 | INFO | comparable_agent | [Geocode] OK 'Residential G+5 Developer Plot' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:14:22,473 | INFO | comparable_agent | [Geocode] OK 'Saih Shuaib Plots' -> (24.8935064, 55.06912759999999) | LLM Certainty: Sure
+2026-05-29 10:14:23,944 | INFO | comparable_agent | [Geocode] OK 'G+6 Residential Plot Near Al Maktoum Airport' -> (24.9392775, 55.2175642) | LLM Certainty: Sure
+2026-05-29 10:14:25,948 | INFO | comparable_agent | [Geocode] OK 'G+1 Townhouse Plot Near Al Maktoum Airport' -> (24.8859505, 55.1588019) | LLM Certainty: Sure
+2026-05-29 10:14:27,396 | INFO | comparable_agent | [Geocode] OK 'G+6 Land Residential Plot' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:14:28,720 | INFO | comparable_agent | [Geocode] OK 'Villa Complex Project' -> (24.8871278, 55.0697003) | LLM Certainty: Sure
+2026-05-29 10:14:30,301 | INFO | comparable_agent | [Geocode] OK 'Tilal Binghatti Dunes Villas' -> (25.1251, 55.43623299999999) | LLM Certainty: Not Sure
+2026-05-29 10:14:31,785 | INFO | comparable_agent | [Geocode] OK 'Residential Plot for Sale in Dubai Industrial City' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:14:31,986 | INFO | comparable_agent | [Distance] 9 comparables with valid coordinates
+2026-05-29 10:14:31,987 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Terva Homes' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "terva homes", "comp_name": "terva homes", "distance_km": 0.0}
+2026-05-29 10:14:31,987 | INFO | comparable_agent | [Subject Filter] 8 comparables remain after removing subject project
+2026-05-29 10:14:31,988 | INFO | comparable_agent | [URL Filter] 8 comparables after URL cleanup
+2026-05-29 10:14:31,988 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-29 10:14:31,988 | INFO | comparable_agent | [Confidence Scoring] Starting | 8 comparables | subject='Terva Homes' | web_search_preview=DISABLED (pre-extracted info used) | batch_size=10
+2026-05-29 10:14:31,988 | INFO | comparable_agent | [Confidence Scoring] 1 batch(es) of up to 10
+2026-05-29 10:14:31,989 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 8 comparables | web_search_preview DISABLED (pre-extracted info)
+2026-05-29 10:14:58,741 | INFO | comparable_agent | [Confidence Batch 1] Scored 8/8 comparables | tokens=3955
+2026-05-29 10:14:58,942 | INFO | comparable_agent | [Confidence Scoring] LLM scored 8/8 comparables
+2026-05-29 10:14:58,942 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 1, 'Medium': 1, 'Low': 1, 'Very Low': 5, 'Unknown': 0}
+2026-05-29 10:14:58,954 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Tilal Binghatti Dunes Villas' | reason=beyond_15km_radius | detail={"distance_km": 44.83}
+2026-05-29 10:14:58,955 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='G+6 Residential Plot Near Al Maktoum Airport' | reason=beyond_15km_radius | detail={"distance_km": 15.43}
+2026-05-29 10:14:58,955 | INFO | comparable_agent | [Agent Done] Final comparables: 6 | Total tokens: 2987
+2026-05-29 10:36:22,748 | INFO | comparable_agent | [Agent Start] project='Terva Homes' type='villa' category='Villa' search_term='villa or plot' location='Dubai Industrial City'
+2026-05-29 10:36:22,750 | INFO | comparable_agent | [LLM Fetch] Pass 1/1
+2026-05-29 10:36:36,319 | INFO | comparable_agent | [LLM Fetch] Received 8 raw comparables | tokens=2758
+2026-05-29 10:36:36,321 | INFO | comparable_agent | [LLM Fetch] Total raw comparables: 8
+2026-05-29 10:36:36,321 | INFO | comparable_agent | [Dedup] 8/8 unique comparables
+2026-05-29 10:36:36,331 | INFO | comparable_agent | [Hard Filter] 8/8 passed type check (allowed cross-types included)
+2026-05-29 10:36:36,331 | INFO | comparable_agent | [Category] Subject category: 'Villa' | Comparable categories: {'Villa', 'Plot'}
+2026-05-29 10:36:36,333 | INFO | comparable_agent | [Geocode] Starting for 8 comparables
+2026-05-29 10:36:37,551 | INFO | comparable_agent | [Geocode] OK 'Terva Homes' -> (24.890727, 55.0742393) | LLM Certainty: Sure
+2026-05-29 10:36:38,661 | INFO | comparable_agent | [Geocode] OK 'Residential G+5 Developer Plot' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:36:39,763 | INFO | comparable_agent | [Geocode] OK 'Saih Shuaib Plots' -> (24.8935064, 55.06912759999999) | LLM Certainty: Sure
+2026-05-29 10:36:41,288 | INFO | comparable_agent | [Geocode] OK 'Villa Complex Project' -> (24.8566252, 55.1462027) | LLM Certainty: Sure
+2026-05-29 10:36:42,391 | INFO | comparable_agent | [Geocode] OK 'Villa/ Townhouse Plot' -> (24.8871278, 55.0697003) | LLM Certainty: Sure
+2026-05-29 10:36:43,433 | INFO | comparable_agent | [Geocode] OK 'Residential Plot for Sale' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:36:44,829 | INFO | comparable_agent | [Geocode] OK 'Residential Plot in Dubai Industrial City' -> (24.8449335, 55.0690393) | LLM Certainty: Sure
+2026-05-29 10:36:46,044 | INFO | comparable_agent | [Geocode] OK 'Tilal Binghatti Dunes Villas' -> (25.1226089, 55.43871249999999) | LLM Certainty: Not Sure
+2026-05-29 10:36:46,244 | INFO | comparable_agent | [Distance] 8 comparables with valid coordinates
+2026-05-29 10:36:46,245 | WARNING | comparable_agent | [DROP] stage=subject_filter | project='Terva Homes' | reason=is_subject_property (name_and_latlong_both_match) | detail={"subject_name": "terva homes", "comp_name": "terva homes", "distance_km": 0.0}
+2026-05-29 10:36:46,245 | INFO | comparable_agent | [Subject Filter] 7 comparables remain after removing subject project
+2026-05-29 10:36:46,245 | INFO | comparable_agent | [URL Filter] 7 comparables after URL cleanup
+2026-05-29 10:36:46,245 | INFO | comparable_agent | [Confidence] Running LLM confidence scoring with web_search_preview — LLM will research location and amenities before scoring...
+2026-05-29 10:36:46,246 | INFO | comparable_agent | [Confidence Scoring] Starting | 7 comparables | subject='Terva Homes' | web_search_preview=DISABLED (pre-extracted info used) | batch_size=10
+2026-05-29 10:36:46,246 | INFO | comparable_agent | [Confidence Scoring] 1 batch(es) of up to 10
+2026-05-29 10:36:46,247 | INFO | comparable_agent | [Confidence Batch 1] Attempt 1/2 | 7 comparables | web_search_preview DISABLED (pre-extracted info)
+2026-05-29 10:37:07,978 | INFO | comparable_agent | [Confidence Batch 1] Scored 7/7 comparables | tokens=3469
+2026-05-29 10:37:08,178 | INFO | comparable_agent | [Confidence Scoring] LLM scored 7/7 comparables
+2026-05-29 10:37:08,179 | INFO | comparable_agent | [Confidence Scoring] Done. Tier distribution: {'High': 1, 'Medium': 2, 'Low': 3, 'Very Low': 1, 'Unknown': 0}
+2026-05-29 10:37:08,190 | WARNING | comparable_agent | [DROP] stage=distance_filter | project='Tilal Binghatti Dunes Villas' | reason=beyond_15km_radius | detail={"distance_km": 44.88}
+2026-05-29 10:37:08,191 | INFO | comparable_agent | [Agent Done] Final comparables: 6 | Total tokens: 2758
