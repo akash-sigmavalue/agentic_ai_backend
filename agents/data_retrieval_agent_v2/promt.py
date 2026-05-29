@@ -604,9 +604,8 @@ For each metric define:
 
 - formula required: true | false
 - formula in plain text
-- While making formula - take note of units & dimensions of metrics & attributes
 
-
+While making formula - take note of units & dimensions of metrics & attributes
 
 7. After formula identification, identify relevant columns from Transaction Schema.
 
