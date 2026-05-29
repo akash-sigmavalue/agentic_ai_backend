@@ -959,7 +959,7 @@ JSON OUTPUT SCHEMA
 
 {
   "stage": "Stage 3 - SQL Build",
-  "sql_build_status": "ready | blocked ",
+  "sql_build_status": "ready | blocked",
 
   "metric_relationship": "combined | individual",
 
@@ -1079,6 +1079,11 @@ SQL Review may receive SQL from either:
 2. Stage 3.4 SQL_Fix during a ReAct loop.
 
 
+If sql_review_status = "approved" or "needs_fix" 
+- next_stage = "Stage 3.2 SQL Probe"
+
+If sql_review_status = "needs_fix" 
+- return errors_found and fix_instructions
 
 
 In both cases, review the SQL using the same SQL review rules.
@@ -1110,7 +1115,7 @@ OUTPUT JSON:
 
 {{
     "stage": "Stage 3.1  - SQL Review",
-    "sql_review_status": "approved | blocked",
+    "sql_review_status": "approved",
     "metric_relationship": "combined | individual",
     "review_checks": {
         "sql_build_status_ready": true,
@@ -1136,7 +1141,6 @@ OUTPUT JSON:
     },
     "errors_found": [],
     "fix_instructions": [],
-    "blocking_reason": "",
     "react_loop": {
         "iteration": {react_iteration},
         "max_iterations": {max_iterations},
@@ -1146,6 +1150,12 @@ OUTPUT JSON:
         
     }
 }}
+
+Output rule
+If sql_review_status = "approved", "needs_fix"
+- next_stage = "Stage 3.2 SQL Probe"
+- loop_status = "continue"
+
 """
 
 
@@ -1818,8 +1828,8 @@ Important output limit:
 
 INPUTS
 
-SQL REVIEW OUTPUT:
-{sql_review_output}
+SQL PROBE OUTPUT ROWS ONLY:
+{sql_probe_output}
 
 Return exactly one JSON object with this structure:
 
@@ -1840,8 +1850,7 @@ Return exactly one JSON object with this structure:
 
 Field rules:
 1. raw_output:
-- Copy the successful output rows from SQL Probe.
-- Prefer table_output when available, otherwise use sample_output.
+- Copy the rows from SQL PROBE OUTPUT ROWS ONLY.
 - Include maximum 5 rows only.
 
 2. layman_output:
