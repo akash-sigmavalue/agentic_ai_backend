@@ -54,7 +54,6 @@ OUTPUT FORMAT  (strict JSON — no markdown, no preamble)
   "metrics": "",
   "entities": "",
    "expected output""  
-   
 }}
 """
 
@@ -307,6 +306,7 @@ REVIEW CHECKLIST  (in priority order)
     If the question is about projects or locations, the SELECT must include the
     relevant name plus latitude and longitude:
     project_name + project_latitude + project_longitude for projects;
+    
     location_name + location_latitude + location_longitude for locations.
     In aggregate queries these non-aggregated columns must also be in GROUP BY.
 
@@ -397,7 +397,7 @@ Use both intent.stage1_output and intent.stage2_algorithm when checking whether
 the result satisfies the request.
 
 =============================================================
-VERDICT OPTIONS
+CT OPTIONS
 =============================================================
   "good"        → Non-empty. ALL expected entities present in rows. Correct granularity.
   "empty"       → 0 rows returned.
@@ -409,7 +409,7 @@ VERDICT OPTIONS
 For comparison queries: check that ALL entities from intent.entities.locations
 appear in the result rows. 
 - If multiple locations are found: verdict = "good".
-- If ONLY ONE location is found but it IS one of the requested ones: verdict = "good" (with a note in reason that the other was not found).
+- If ONLY ONE lVERDIocation is found but it IS one of the requested ones: verdict = "good" (with a note in reason that the other was not found).
 - If ZERO requested locations are found: verdict = "empty" or "irrelevant".
 - Do NOT use "wrong_gran" if only one row is found because the other data simply isn't in the database.
 

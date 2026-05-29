@@ -19,7 +19,7 @@ transactions:
   sub_registrar_office_name: SRO office name
   document_number: Registration document number
   transaction_type: Type of transaction
-  agreement_price: Deal/agreement value
+  agreement_price: Deal/agreement/property value
   guideline_value: Government determined value
   property_description: Property details text
   transaction_date: Date of transaction

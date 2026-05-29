@@ -400,3 +400,1021 @@ WHERE
 2026-05-22 22:32:20,584 | INFO | [iter=1] OBSERVE — rows=1  error=none
 2026-05-22 22:32:23,674 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
 2026-05-22 22:32:23,676 | INFO | [iter=1] DONE — verdict=GOOD
+2026-05-23 12:14:53,395 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 12:14:53,396 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 12:14:53,396 | INFO | Scheduler started
+2026-05-23 12:25:56,434 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 12:25:56,434 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 12:25:56,434 | INFO | Scheduler started
+2026-05-23 12:33:54,457 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 12:33:54,458 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 12:33:54,458 | INFO | Scheduler started
+2026-05-23 12:41:57,046 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:41:57,054 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 12:42:10,349 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:11,402 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:12,584 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:12,585 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 12:43:13,667 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:41,995 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 12:43:44,161 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:44,162 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 12:43:48,879 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:43:48,880 | INFO | [iter=0] REVIEW rejected  confidence=95  missing=[]  reason=All required entities from intent and stage2_algorithm (location Baner, property_type residential→Flat, transaction_category sale→Sale, year 2024) are present in the WHERE clause. However, the location entity filter is expanded via OR conditions on sub_locality and micro_market, which are not specified as entity filters. To adhere strictly to the stage2_algorithm.entity_filters and space_filters and avoid including transactions outside the Baner locality entity, the location condition should be restricted to location_name ILIKE '%Baner%' only. Other aspects (trend grouping, metrics, semantic_resolved_filters usage, and required columns) are correct.
+2026-05-23 12:43:48,880 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:43:48,881 | INFO | [iter=0] EXECUTE — SELECT
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(SUM(agreement_price)::numeric, 2) AS "residential sale transactions",
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND location_name ILIKE '%Baner%'
+GROUP BY
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  year ASC,
+  quarter ASC;
+2026-05-23 12:44:22,742 | INFO | [iter=0] OBSERVE — rows=5  error=none
+2026-05-23 12:44:25,545 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:25,548 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=[]  suspect=quarter
+2026-05-23 12:44:48,770 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:48,770 | INFO | [iter=0] REWRITE — action=fix_groupby  missing_fix=[]  new_col=None
+2026-05-23 12:44:48,771 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 12:44:48,771 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 12:44:51,940 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:44:51,941 | INFO | [iter=1] REVIEW rejected  confidence=95  missing=[]  reason=All required entities and semantic_resolved_filters are present in the WHERE clause (location_name ~ Baner, property_type IN ('Flat'), transaction_category IN ('Sale'), year = 2024), so entity completeness passes. However, the analysis_type is 'trend' with group_by [year, quarter], so the query must group by both year and quarter and order by time (year, quarter) ascending. The provided SQL only groups and orders by year. The suggested fix adds quarter to SELECT, GROUP BY, and ORDER BY to align with the Stage 1/Stage 2 trend specification while preserving all entity filters and metric logic.
+2026-05-23 12:44:51,941 | INFO | [iter=1] REVIEW — applying reviewer's corrected SQL
+2026-05-23 12:44:51,942 | INFO | [iter=1] EXECUTE — SELECT
+  year,
+  quarter,
+  ROUND(SUM(agreement_price)::numeric, 2) AS "residential sale transactions",
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND location_name ILIKE '%Baner%'
+GROUP BY
+  year,
+  quarter
+ORDER BY
+  year ASC,
+  quarter ASC;
+2026-05-23 12:45:20,925 | INFO | [iter=1] OBSERVE — rows=4  error=none
+2026-05-23 12:45:23,485 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 12:45:23,486 | INFO | [iter=1] DONE — verdict=GOOD
+2026-05-23 13:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:00:00 IST)" (scheduled at 2026-05-23 13:00:00+05:30)
+2026-05-23 13:00:00,023 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:30:00 IST)" executed successfully
+2026-05-23 13:00:14,608 | INFO | Scheduler has been shut down
+2026-05-23 13:00:55,230 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 13:00:55,231 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 13:00:55,231 | INFO | Scheduler started
+2026-05-23 13:08:03,730 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:08:03,746 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:11:02,731 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:11:02,743 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:12:20,421 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:12:20,424 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:13:26,791 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:13:26,803 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:13:48,587 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:13:48,588 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:15:12,944 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:15:12,950 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:17:34,533 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:17:34,534 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:18:21,554 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:18:21,558 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:18:37,762 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:18:37,768 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:20:31,946 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:20:31,953 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:20:44,184 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:20:53,396 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:20:53,401 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:21:09,983 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:47,320 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:48,070 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:48,070 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 13:21:49,389 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:51,166 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:52,339 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:52,341 | WARNING | Probe failed: (psycopg2.errors.UndefinedColumn) column "village_name" does not exist
+LINE 6:   COUNT(*) FILTER (WHERE village_name ILIKE '%Baner%') AS in...
+                                 ^
+
+[SQL: SELECT 
+  'Baner' AS entity,
+  COUNT(*) FILTER (WHERE location_name ILIKE '%%Baner%%') AS in_location_name,
+  COUNT(*) FILTER (WHERE sub_locality ILIKE '%%Baner%%') AS in_sub_locality,
+  COUNT(*) FILTER (WHERE micro_market ILIKE '%%Baner%%') AS in_micro_market,
+  COUNT(*) FILTER (WHERE village_name ILIKE '%%Baner%%') AS in_village_name
+FROM transactions
+WHERE (
+  location_name ILIKE '%%Baner%%' OR
+  sub_locality ILIKE '%%Baner%%' OR
+  micro_market ILIKE '%%Baner%%' OR
+  village_name ILIKE '%%Baner%%'
+)
+LIMIT 30]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-05-23 13:21:52,341 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 13:21:53,905 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:53,906 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 13:21:57,777 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:21:57,778 | INFO | [iter=0] EXECUTE — SELECT
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(AVG(agreement_price)::numeric, 2) AS rate_trend,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  (location_name ILIKE '%Baner%' OR sub_locality ILIKE '%Baner%' OR micro_market ILIKE '%Baner%')
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+GROUP BY
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  year ASC,
+  quarter ASC
+2026-05-23 13:22:15,605 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:22:16,417 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:22:16,418 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 13:22:17,556 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:22:31,814 | INFO | [iter=0] OBSERVE — rows=5  error=none
+2026-05-23 13:22:34,084 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:22:34,085 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 13:22:55,061 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 13:22:57,924 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:22:57,925 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 13:23:02,530 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:23:02,537 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=[]  reason=All required entities and filters from intent.entities, semantic_resolved_filters, and stage2_algorithm.entity_filters are present in the WHERE clause, fulfilling entity completeness. However, the analysis_type is rate_trend, which per guidelines requires a rate metric using both agreement_price and net_carpet_area_sq_m with a proper rate_per_sq_ft formula, NULLIF protection on the denominator, and ROUND. The provided SQL only aggregates SUM(agreement_price), so it does not implement the required rate_trend metric. The suggested fix updates the SELECT to compute rate_per_sq_ft using both agreement_price and net_carpet_area_sq_m while preserving the time-based grouping and ordering.
+2026-05-23 13:23:02,537 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 13:23:02,537 | INFO | [iter=0] EXECUTE — SELECT
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(
+    SUM(agreement_price) / NULLIF(SUM(net_carpet_area_sq_m) * 10.764, 0),
+    2
+  ) AS rate_per_sq_ft,
+  SUM(agreement_price) AS total_agreement_price,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+  AND (
+    location_name ILIKE '%Baner%'
+    OR sub_locality ILIKE '%Baner%'
+    OR micro_market ILIKE '%Baner%'
+  )
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND year = 2024
+GROUP BY
+  year,
+  quarter,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  year ASC,
+  quarter ASC;
+2026-05-23 13:23:36,450 | INFO | [iter=0] OBSERVE — rows=5  error=none
+2026-05-23 13:23:39,235 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:23:39,236 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 13:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 13:30:00 IST)" (scheduled at 2026-05-23 13:30:00+05:30)
+2026-05-23 13:30:00,026 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:00:00 IST)" executed successfully
+2026-05-23 13:41:27,422 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:41:27,423 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:41:59,143 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:41:59,145 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:43:21,213 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:43:21,220 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 13:43:42,662 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:44:46,806 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:44:47,819 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:44:47,820 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 13:44:49,355 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:44:51,206 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:45:21,919 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 13:45:25,371 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:45:25,372 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 13:45:31,970 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:45:31,974 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=['A concrete, separate OR-branch for each locality entity; `locations` is not a real resolved locality list and thus does not satisfy the entity completeness requirement for location_name.']  reason=All semantic_resolved_filters (property_type='Flat', transaction_category='Sale') and Stage 2 entity_filters (city_name='Pune', property_type, transaction_category, year=2024) are correctly used, and metric formulas follow the Stage 2 design with proper NULLIF and ROUND. However, under the strict entity completeness rule, the locality entity list is effectively a single generic token 'locations' rather than concrete locality names, and the checklist requires one OR-branch per location entity. Because this cannot be satisfied literally with an unresolved placeholder, the query must be rejected. The suggested SQL mainly cleans redundancy but cannot fully repair the conceptual issue without real locality values; entity completeness remains structurally acknowledged but not resolvable beyond the given generic value.
+2026-05-23 13:45:31,974 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 13:45:31,975 | INFO | [iter=0] EXECUTE — SELECT
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(AVG(agreement_price / NULLIF(net_carpet_area_sq_m * 10.7639, 0))::numeric, 2) AS highest_price_per_sq_ft,
+  SUM(agreement_price) AS highest_total_sales_value,
+  COUNT(*) AS highest_transaction_count
+FROM transactions
+WHERE
+  -- locality-level intent is generic 'locations', so we keep the broad locality filter pattern
+  (location_name ILIKE '%locations%' OR sub_locality ILIKE '%locations%' OR micro_market ILIKE '%locations%')
+  AND city_name ILIKE '%Pune%'
+  AND property_type IN ('Flat')
+  AND transaction_category IN ('Sale')
+  AND year = 2024
+  AND agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+GROUP BY
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  highest_price_per_sq_ft DESC,
+  highest_total_sales_value DESC,
+  highest_transaction_count DESC
+LIMIT 5;
+2026-05-23 13:46:01,326 | INFO | [iter=0] OBSERVE — rows=0  error=none
+2026-05-23 13:46:05,140 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:46:05,141 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.EMPTY  missing=[]  suspect=location_name
+2026-05-23 13:46:08,984 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:46:08,985 | INFO | [iter=0] REWRITE — action=relax_filter  missing_fix=[]  new_col=location_name
+2026-05-23 13:46:08,985 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 13:46:08,985 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 13:46:12,419 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:46:12,420 | INFO | [iter=1] EXECUTE — SELECT
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(AVG(agreement_price / NULLIF(net_carpet_area_sq_m * 10.7639, 0))::numeric, 2) AS highest_price_per_sq_ft,
+  SUM(agreement_price) AS highest_total_sales_value,
+  COUNT(*) AS highest_transaction_count
+FROM transactions
+WHERE
+  city_name ILIKE '%Pune%'
+  AND property_type IN ('Flat')
+  AND transaction_category IN ('Sale')
+  AND year = 2024
+  AND agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+GROUP BY
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  highest_price_per_sq_ft DESC,
+  highest_total_sales_value DESC,
+  highest_transaction_count DESC
+LIMIT 5;
+2026-05-23 13:46:47,451 | INFO | [iter=1] OBSERVE — rows=5  error=none
+2026-05-23 13:46:50,757 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 13:46:50,758 | INFO | [iter=1] DONE — verdict=GOOD
+2026-05-23 14:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:30:00 IST)" (scheduled at 2026-05-23 14:00:00+05:30)
+2026-05-23 14:00:00,030 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 14:30:00 IST)" executed successfully
+2026-05-23 14:30:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:00:00 IST)" (scheduled at 2026-05-23 14:30:00+05:30)
+2026-05-23 14:30:00,087 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:00:00 IST)" executed successfully
+2026-05-23 15:00:00,028 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:30:00 IST)" (scheduled at 2026-05-23 15:00:00+05:30)
+2026-05-23 15:00:00,032 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 15:30:00 IST)" executed successfully
+2026-05-23 15:30:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:00:00 IST)" (scheduled at 2026-05-23 15:30:00+05:30)
+2026-05-23 15:30:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:00:00 IST)" executed successfully
+2026-05-23 16:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" (scheduled at 2026-05-23 16:00:00+05:30)
+2026-05-23 16:00:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" executed successfully
+2026-05-23 16:30:00,092 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 16:30:00 IST)" (scheduled at 2026-05-23 16:30:00+05:30)
+2026-05-23 16:30:00,097 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:00:00 IST)" executed successfully
+2026-05-23 16:44:58,997 | INFO | Scheduler has been shut down
+2026-05-23 16:46:40,186 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 16:46:40,186 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 16:46:40,186 | INFO | Scheduler started
+2026-05-23 16:46:52,648 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:46:52,659 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 16:47:09,481 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:12,272 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:13,459 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:13,460 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 16:48:14,809 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:49,422 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 16:48:51,831 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:51,832 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 16:48:57,454 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:48:57,457 | INFO | [iter=0] REVIEW rejected  confidence=94  missing=[]  reason=To satisfy entity completeness against the new Stage 1 output and Stage 2 algorithm, all entity_filters (city_name='Pune', transaction_category='sale'→'Sale', property_type='residential'→'Flat', year=2024) and semantic_resolved_filters must appear in the WHERE clause. The original SQL includes them but adds an extra composite OR filter across city_name, location_name, sub_locality, and micro_market ILIKE '%Pune%', which is not prescribed by the entity_filters and is redundant given the explicit city_name filter. Removing the unsupported sub_locality/micro_market/location_name conditions and keeping only the city_name ILIKE '%Pune%' plus the exact IN filters for transaction_category and property_type aligns the SQL with the entity filters and semantic_resolved_filters while preserving the required metrics, grouping, ordering, and limit for top 5 locations in Pune for residential sale transactions in 2024.
+2026-05-23 16:48:57,457 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 16:48:57,457 | INFO | [iter=0] EXECUTE — SELECT
+  location_name,
+  location_latitude,
+  location_longitude,
+  ROUND(SUM(agreement_price) / NULLIF(SUM(net_carpet_area_sq_m * 10.7639), 0)::numeric, 2) AS highest_price_per_sq_ft,
+  SUM(agreement_price) AS highest_total_sales_value,
+  COUNT(*) AS highest_transaction_count,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  city_name ILIKE '%Pune%'
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND year = 2024
+  AND agreement_price >= 1
+  AND net_carpet_area_sq_m >= 1
+GROUP BY
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  highest_price_per_sq_ft DESC,
+  highest_total_sales_value DESC,
+  highest_transaction_count DESC
+LIMIT 5;
+2026-05-23 16:49:30,694 | INFO | [iter=0] OBSERVE — rows=5  error=none
+2026-05-23 16:49:32,945 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 16:49:32,946 | INFO | [iter=0] DONE — verdict=GOOD
+2026-05-23 17:00:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:00:00 IST)" (scheduled at 2026-05-23 17:00:00+05:30)
+2026-05-23 17:00:00,027 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 17:30:00 IST)" executed successfully
+2026-05-23 17:30:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" (scheduled at 2026-05-23 17:30:00+05:30)
+2026-05-23 17:30:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:00:00 IST)" executed successfully
+2026-05-23 17:38:15,070 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:38:15,083 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 17:38:35,856 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:39:39,577 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:39:40,446 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:39:40,447 | INFO | Semantic category filters resolved: {'property_type': ['Flat'], 'transaction_category': ['Sale']}
+2026-05-23 17:39:41,612 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:12,598 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 17:40:14,557 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:14,558 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 17:40:18,474 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:18,475 | INFO | [iter=0] EXECUTE — SELECT
+  year,
+  ROUND(AVG(agreement_price)::numeric, 2) AS rate,
+  COUNT(*) AS transaction_count,
+  location_name,
+  location_latitude,
+  location_longitude
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND (
+    location_name ILIKE '%Baner%'
+    OR sub_locality ILIKE '%Baner%'
+    OR micro_market ILIKE '%Baner%'
+  )
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND year = 2024
+GROUP BY
+  year,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  year ASC
+2026-05-23 17:40:48,555 | INFO | [iter=0] OBSERVE — rows=2  error=none
+2026-05-23 17:40:51,204 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:51,205 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=[]  suspect=location_latitude
+2026-05-23 17:40:53,741 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:53,745 | INFO | [iter=0] REWRITE — action=fix_groupby  missing_fix=[]  new_col=None
+2026-05-23 17:40:53,745 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 17:40:53,745 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 17:40:57,582 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:40:57,583 | INFO | [iter=1] REVIEW rejected  confidence=95  missing=[]  reason=All required entity filters from intent.entities, semantic_resolved_filters, and stage2_algorithm.entity_filters are represented: Baner via ILIKE on location_name/sub_locality/micro_market, property_type via IN('Flat') from semantic_resolved_filters, transaction_category via IN('Sale'), and year = 2024. Text filters (except semantic_resolved INs) use ILIKE as required. However, the analysis_type is rate_trend, which requires a time-based trend, typically grouping by year and quarter and ordering chronologically. The provided SQL only returns a single aggregate for 2024 without any time buckets, so it does not satisfy the trend requirement. The suggested fix adds year and quarter to SELECT, GROUP BY, and appropriate ORDER BY to produce a proper trend while preserving all entity filters and metric definition.
+2026-05-23 17:40:57,583 | INFO | [iter=1] REVIEW — applying reviewer's corrected SQL
+2026-05-23 17:40:57,583 | INFO | [iter=1] EXECUTE — SELECT
+  year,
+  quarter,
+  ROUND(AVG(agreement_price)::numeric, 2) AS rate,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND (
+    location_name ILIKE '%Baner%'
+    OR sub_locality ILIKE '%Baner%'
+    OR micro_market ILIKE '%Baner%'
+  )
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND year = 2024
+GROUP BY
+  year,
+  quarter
+ORDER BY
+  year ASC,
+  quarter ASC;
+2026-05-23 17:41:26,537 | INFO | [iter=1] OBSERVE — rows=4  error=none
+2026-05-23 17:41:29,501 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:41:29,502 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=[]  suspect=quarter
+2026-05-23 17:41:33,029 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:41:33,031 | INFO | [iter=1] REWRITE — action=fix_groupby  missing_fix=[]  new_col=None
+2026-05-23 17:41:33,031 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-23 17:41:33,031 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-23 17:41:36,569 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:41:36,570 | INFO | [iter=2] EXECUTE — SELECT
+  ROUND(AVG(agreement_price)::numeric, 2) AS rate,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  agreement_price >= 1
+  AND (
+    location_name ILIKE '%Baner%'
+    OR sub_locality ILIKE '%Baner%'
+    OR micro_market ILIKE '%Baner%'
+  )
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND year = 2024;
+2026-05-23 17:42:08,757 | INFO | [iter=2] OBSERVE — rows=1  error=none
+2026-05-23 17:42:10,961 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 17:42:10,962 | INFO | [iter=2] DONE — verdict=GOOD
+2026-05-23 18:00:00,011 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" (scheduled at 2026-05-23 18:00:00+05:30)
+2026-05-23 18:00:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" executed successfully
+2026-05-23 18:25:42,762 | INFO | Scheduler has been shut down
+2026-05-23 18:26:09,723 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:26:09,724 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:26:09,724 | INFO | Scheduler started
+2026-05-23 18:26:49,415 | INFO | Scheduler has been shut down
+2026-05-23 18:27:00,436 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:27:00,436 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:27:00,436 | INFO | Scheduler started
+2026-05-23 18:27:01,525 | INFO | Scheduler has been shut down
+2026-05-23 18:27:12,462 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:27:12,462 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:27:12,463 | INFO | Scheduler started
+2026-05-23 18:27:13,568 | INFO | Scheduler has been shut down
+2026-05-23 18:27:24,765 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:27:24,766 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:27:24,766 | INFO | Scheduler started
+2026-05-23 18:27:26,081 | INFO | Scheduler has been shut down
+2026-05-23 18:27:36,936 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:27:36,936 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:27:36,937 | INFO | Scheduler started
+2026-05-23 18:27:38,350 | INFO | Scheduler has been shut down
+2026-05-23 18:27:49,853 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:27:49,853 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:27:49,853 | INFO | Scheduler started
+2026-05-23 18:27:56,710 | INFO | Scheduler has been shut down
+2026-05-23 18:28:09,233 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:28:09,233 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:28:09,233 | INFO | Scheduler started
+2026-05-23 18:28:10,217 | INFO | Scheduler has been shut down
+2026-05-23 18:28:23,703 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:28:23,703 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:28:23,703 | INFO | Scheduler started
+2026-05-23 18:28:24,366 | INFO | Scheduler has been shut down
+2026-05-23 18:28:39,315 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:28:39,316 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:28:39,316 | INFO | Scheduler started
+2026-05-23 18:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 18:30:00 IST)" (scheduled at 2026-05-23 18:30:00+05:30)
+2026-05-23 18:30:00,025 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" executed successfully
+2026-05-23 18:35:10,722 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:35:10,728 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 18:35:50,212 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:35:50,215 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 18:36:09,352 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:12,034 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:13,008 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:13,008 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-23 18:37:14,508 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:16,415 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:47,130 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:37:48,605 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:48,606 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:37:54,017 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:54,019 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=['micro_market filter as per entity_filters/space_filters', "transaction_category = 'Residential Sale' from stage2_algorithm.entity_filters", "property_type = 'Residential' from stage2_algorithm.entity_filters"]  reason=The query partially follows the semantic_resolved_filters but does not satisfy entity completeness relative to the Stage 2 entity_filters and space_filters: micro_market is not constrained in WHERE, and the specific filters transaction_category='Residential Sale' and property_type='Residential' from stage2_algorithm.entity_filters are missing. According to the instructions, every item in intent.semantic_resolved_filters and stage2_algorithm.entity_filters (unless explicitly grouping-only/output-only) must appear in the WHERE clause. Therefore the query must be rejected and corrected to include all these filters, as well as a non-null guard for micro_market.
+2026-05-23 18:37:54,019 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:37:54,019 | INFO | [iter=0] EXECUTE — SELECT
+  micro_market,
+  ROUND(SUM(agreement_price)::numeric, 2) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  -- semantic_resolved_filters: exact DB values
+  transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  -- stage2_algorithm entity filters
+  AND transaction_category = 'Residential Sale'
+  AND property_type = 'Residential'
+  AND year = 2024
+  AND micro_market IS NOT NULL
+GROUP BY
+  micro_market
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:37:54,028 | INFO | [iter=0] OBSERVE — rows=0  error=none
+2026-05-23 18:37:56,961 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:37:56,962 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['micromarket (no micro_market values returned due to over‑restrictive filters)']  suspect=transaction_category
+2026-05-23 18:38:00,803 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:00,805 | INFO | [iter=0] REWRITE — action=relax_filter  missing_fix=['micromarket (no micro_market values returned due to over‑restrictive filters)']  new_col=None
+2026-05-23 18:38:00,805 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 18:38:00,805 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 18:38:07,182 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:07,189 | INFO | [iter=1] REVIEW rejected  confidence=95  missing=['Explicit filter/use of the micromarket entity per entity_filters (currently only IS NOT NULL, which is weaker than a specified filter value)', 'Consistent use of semantic_resolved_filters-only values without conflicting ILIKE predicates on the same columns']  reason=Entity completeness, per the hierarchy, requires that all specified entity filters and semantic_resolved_filters be reflected in the WHERE clause, but stage2 entity filters that conflict with semantic_resolved_filters should not be enforced literally when they would eliminate data (e.g., using ILIKE '%Residential Sale%' on a column whose resolved value is 'Sale'). The current SQL includes both IN and ILIKE for the same columns with incompatible values, creating a high risk of 0 results and violating the spirit of using semantic_resolved_filters as exact DB values. The suggested fix keeps the semantic_resolved_filters (Sale, Flat), applies the year filter and a non-null micromarket constraint, and groups by micro_market to satisfy the micromarket entity requirement, while removing the conflicting ILIKE predicates. This addresses entity completeness with respect to the new Stage 1 and Stage 2 outputs as far as they are mutually consistent, and avoids contradictory filters.
+2026-05-23 18:38:07,189 | INFO | [iter=1] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:38:07,189 | INFO | [iter=1] EXECUTE — SELECT
+  micro_market,
+  ROUND(SUM(agreement_price)::numeric, 2) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  -- semantic_resolved_filters: exact DB values
+  transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  -- stage2_algorithm entity filters applied where they do not conflict with resolved values
+  AND year = 2024
+  AND micro_market IS NOT NULL
+GROUP BY
+  micro_market
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:38:38,866 | INFO | [iter=1] OBSERVE — rows=1  error=none
+2026-05-23 18:38:41,917 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:41,917 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.WRONG_GRANULARITY  missing=['distinct micromarket names (micro_market)']  suspect=micro_market
+2026-05-23 18:38:45,385 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:45,387 | INFO | [iter=1] REWRITE — action=replace_column  missing_fix=['distinct micromarket names (represented via sub_locality as a fallback micromarket proxy)']  new_col=sub_locality
+2026-05-23 18:38:45,387 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-23 18:38:45,387 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-23 18:38:51,301 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:51,302 | INFO | [iter=2] REVIEW rejected  confidence=92  missing=['micro_market (no reference in SQL)', "transaction_category IN ('Residential Sale') from stage2 entity_filters", "property_type IN ('Residential') from stage2 entity_filters"]  reason=Entity completeness fails because the Stage 2 algorithm and space_filters require the micro_market column and specific entity filters on transaction_category='Residential Sale' and property_type='Residential', but the SQL instead groups on sub_locality and omits the Stage 2 entity filter values. Semantic_resolved_filters are applied, but Stage 2 filters must also be present unless purely grouping/output related, which they are not. Additionally, since the question is about micromarkets (a location-level entity), the result should include latitude and longitude. The suggested SQL aligns with Stage 2 requirements and includes the needed spatial columns, though it may be stricter due to overlapping filters.
+2026-05-23 18:38:51,302 | INFO | [iter=2] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:38:51,302 | INFO | [iter=2] EXECUTE — SELECT
+  micro_market,
+  location_latitude,
+  location_longitude,
+  ROUND(SUM(agreement_price)::numeric, 2) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  -- semantic_resolved_filters: exact DB values
+  transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  -- stage2_algorithm entity filters (must also be present)
+  AND transaction_category IN ('Residential Sale')
+  AND property_type IN ('Residential')
+  AND year = 2024
+  AND micro_market IS NOT NULL
+  AND TRIM(micro_market) <> ''
+GROUP BY
+  micro_market,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:38:51,305 | INFO | [iter=2] OBSERVE — rows=0  error=none
+2026-05-23 18:38:53,940 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:53,941 | INFO | [iter=2] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['micromarkets (no micro_market values returned)']  suspect=transaction_category AND property_type (conflicting filters combined via AND across different value sets)
+2026-05-23 18:38:57,658 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:38:57,659 | INFO | [iter=2] REWRITE — action=relax_filter  missing_fix=['micromarkets (ensure non-null, non-empty micro_market and group by it)']  new_col=transaction_category, property_type
+2026-05-23 18:38:57,659 | INFO | [iter=3] REWRITE — applying reflected SQL
+2026-05-23 18:38:57,659 | INFO | [iter=3] REVIEW — pre-execution gate
+2026-05-23 18:39:02,691 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:39:02,692 | INFO | [iter=3] REVIEW rejected  confidence=96  missing=["transaction_category = 'Residential Sale' (from stage2_algorithm.entity_filters)", "property_type = 'Residential' (from stage2_algorithm.entity_filters)", 'explicit micro_market entity filter as per stage2_algorithm.entity_filters (currently only data-quality checks present)']  reason=The query is structurally sound for metrics, grouping, and ordering, but fails the entity completeness rule: all stage2_algorithm.entity_filters (transaction_category='Residential Sale', property_type='Residential', year=2024, micro_market) must appear in the WHERE. The current SQL only uses semantic_resolved_filters values ('Sale', 'Flat') and omits the stage2 entity_filter values, and only applies micro_market as a data-quality check, not as an explicit entity filter. The suggested SQL includes both the semantic_resolved filters (exact IN) and the stage2 filters (ILIKE) to satisfy the completeness requirement while preserving the resolved DB values.
+2026-05-23 18:39:02,692 | INFO | [iter=3] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:39:02,692 | INFO | [iter=3] EXECUTE — SELECT
+  micro_market,
+  location_latitude,
+  location_longitude,
+  ROUND(SUM(agreement_price)::numeric, 2) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  -- semantic_resolved_filters exact DB values
+  transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  -- also honor stage2_algorithm.entity_filters values explicitly for completeness
+  AND transaction_category ILIKE 'Residential Sale'
+  AND property_type ILIKE 'Residential'
+  AND year = 2024
+  -- space/entity filter for micromarkets plus data quality
+  AND micro_market IS NOT NULL
+  AND TRIM(micro_market) <> ''
+GROUP BY
+  micro_market,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:39:31,371 | INFO | [iter=3] OBSERVE — rows=0  error=none
+2026-05-23 18:39:35,362 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:39:35,362 | INFO | [iter=3] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['micro_market (no micromarkets returned because result set is empty)']  suspect=transaction_category, property_type
+2026-05-23 18:39:39,446 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:39:39,453 | INFO | [iter=3] REWRITE — action=relax_filter  missing_fix=['micro_market (ensure micromarket grouping and non-empty values so distinct micromarkets can be returned)']  new_col=transaction_category, property_type
+2026-05-23 18:39:39,453 | INFO | [iter=4] REWRITE — applying reflected SQL
+2026-05-23 18:39:39,453 | INFO | [iter=4] REVIEW — pre-execution gate
+2026-05-23 18:39:42,979 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:39:42,980 | INFO | [iter=4] EXECUTE — SELECT
+  micro_market,
+  location_latitude,
+  location_longitude,
+  ROUND(SUM(agreement_price)::numeric, 2) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  -- semantic_resolved_filters exact DB values (must be preserved)
+  transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  -- reflect Stage 2 intent using non-conflicting ILIKE filters
+  AND transaction_category ILIKE '%Sale%'
+  AND property_type ILIKE '%residential%'
+  AND year = 2024
+  -- space/entity filter for micromarkets plus data quality
+  AND micro_market IS NOT NULL
+  AND TRIM(micro_market) <> ''
+GROUP BY
+  micro_market,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:40:14,521 | INFO | [iter=4] OBSERVE — rows=0  error=none
+2026-05-23 18:40:17,889 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:40:17,890 | WARNING | Max iterations (5) reached without a satisfactory result
+2026-05-23 18:41:38,258 | INFO | Scheduler has been shut down
+2026-05-23 18:41:51,043 | INFO | Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-05-23 18:41:51,044 | INFO | Added job "_renew_gmail_watch_job" to job store "default"
+2026-05-23 18:41:51,044 | INFO | Scheduler started
+2026-05-23 18:47:52,262 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:47:52,276 | INFO | Stage 1 extracted: analysis_type=None locations=[] metrics=[]
+2026-05-23 18:48:12,490 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:14,254 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:14,967 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:14,968 | INFO | Semantic category filters resolved: {'transaction_category': ['Sale'], 'property_type': ['Flat']}
+2026-05-23 18:49:16,840 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:46,024 | INFO | [iter=0] BUILD — generating SQL from intent
+2026-05-23 18:49:47,877 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:47,878 | INFO | [iter=0] REVIEW — pre-execution gate
+2026-05-23 18:49:52,600 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:49:52,601 | INFO | [iter=0] REVIEW rejected  confidence=96  missing=[]  reason=The intent has a single location entity 'Pune', and Stage 2 entity_filters explicitly require a WHERE filter on location_name='Pune' along with year=2024, transaction_category='sale', and property_type='residential'. The provided SQL broadens the location constraint into three OR branches (location_name, sub_locality, micro_market) using ILIKE, which makes the count of OR branches (3) differ from the count of location entities (1) and introduces an extra sub_locality filter not specified in entities.space_filters or entity_filters. To satisfy entity completeness and adhere to Stage 2, the query must filter only on location_name='Pune' (plus the exact semantic filters Sale and Flat), with no additional OR location conditions.
+2026-05-23 18:49:52,601 | INFO | [iter=0] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:49:52,601 | INFO | [iter=0] EXECUTE — SELECT
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude,
+  SUM(agreement_price) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  location_name = 'Pune'
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+GROUP BY
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:50:21,667 | INFO | [iter=0] OBSERVE — rows=0  error=none
+2026-05-23 18:50:24,430 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:50:24,431 | INFO | [iter=0] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['Pune micromarkets (no micro_market rows returned for the specified filters)']  suspect=property_type
+2026-05-23 18:50:27,795 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:50:27,796 | INFO | [iter=0] REWRITE — action=relax_filter  missing_fix=['Pune micromarkets (no micro_market rows returned for the specified filters)']  new_col=property_type
+2026-05-23 18:50:27,797 | INFO | [iter=1] REWRITE — applying reflected SQL
+2026-05-23 18:50:27,797 | INFO | [iter=1] REVIEW — pre-execution gate
+2026-05-23 18:50:30,548 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:50:30,549 | INFO | [iter=1] EXECUTE — SELECT
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude,
+  SUM(agreement_price) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  (location_name ILIKE '%Pune%')
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND (
+    property_type IN ('Flat')
+    OR property_type ILIKE '%residential%'
+  )
+  AND agreement_price >= 1
+GROUP BY
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:51:03,642 | INFO | [iter=1] OBSERVE — rows=0  error=none
+2026-05-23 18:51:06,710 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:06,711 | INFO | [iter=1] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['any micromarket in Pune for residential sale transactions in 2024']  suspect=property_type
+2026-05-23 18:51:10,442 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:10,443 | INFO | [iter=1] REWRITE — action=relax_filter  missing_fix=['any micromarket in Pune for residential sale transactions in 2024']  new_col=property_type
+2026-05-23 18:51:10,443 | INFO | [iter=2] REWRITE — applying reflected SQL
+2026-05-23 18:51:10,443 | INFO | [iter=2] REVIEW — pre-execution gate
+2026-05-23 18:51:15,922 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:15,923 | INFO | [iter=2] REVIEW rejected  confidence=92  missing=["micro_market ILIKE '%Pune%' (or equivalent filter on micro_market = 'Pune')", "property_type IN ('Flat')"]  reason=The query mostly matches the Stage 2 structured_steps_output but fails the highest-priority entity completeness rules. All non-empty entities.space_filters values and semantic_resolved_filters must appear in the WHERE clause, and every stage2_algorithm.entity_filters item (except grouping/output directives) must be applied. The provided SQL includes location_name, year, and transaction_category filters but omits the required micro_market='Pune' (from space_filters.micro_market and grouping-by micromarket intent) and property_type filter using the semantic-resolved value 'Flat'. Adding micro_market and property_type filters, while keeping transaction_category as IN ('Sale'), resolves the entity completeness violations and aligns with the intent and Stage 2 algorithm.
+2026-05-23 18:51:15,923 | INFO | [iter=2] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:51:15,923 | INFO | [iter=2] EXECUTE — SELECT
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude,
+  SUM(agreement_price) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  location_name ILIKE '%Pune%'
+  AND micro_market ILIKE '%Pune%'
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+GROUP BY
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:51:45,106 | INFO | [iter=2] OBSERVE — rows=0  error=none
+2026-05-23 18:51:48,483 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:48,483 | INFO | [iter=2] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['Pune micromarkets for 2024 residential/sale transactions']  suspect=micro_market
+2026-05-23 18:51:52,289 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:52,290 | INFO | [iter=2] REWRITE — action=broaden_with_or  missing_fix=['Pune micromarkets for 2024 residential/sale transactions']  new_col=micro_market
+2026-05-23 18:51:52,290 | INFO | [iter=3] REWRITE — applying reflected SQL
+2026-05-23 18:51:52,290 | INFO | [iter=3] REVIEW — pre-execution gate
+2026-05-23 18:51:59,032 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:51:59,033 | INFO | [iter=3] REVIEW rejected  confidence=92  missing=['Pune (micro_market filter missing)', "Exact location_name filter per Stage2 (location_name = 'Pune')"]  reason=All Stage 2 entity_filters and entities.space_filters must appear in the WHERE clause. The intent specifies Pune as the location and also sets micro_market='Pune' and location_name='Pune' in space_filters, and Stage 2 includes a location_name filter. The provided SQL only partially aligns, omitting any micro_market filter and broadening the location filter via city_name OR location_name. The corrected query adds the missing micro_market condition and constrains the location filter to location_name (via ILIKE as required for text filters) while preserving semantic_resolved_filters for transaction_category and property_type. Other aspects—metrics, grouping, ordering, and inclusion of location_name with lat/long—are already correct.
+2026-05-23 18:51:59,033 | INFO | [iter=3] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:51:59,034 | INFO | [iter=3] EXECUTE — SELECT
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude,
+  SUM(agreement_price) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  location_name ILIKE '%Pune%'
+  AND micro_market ILIKE '%Pune%'
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+GROUP BY
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:52:27,815 | INFO | [iter=3] OBSERVE — rows=0  error=none
+2026-05-23 18:52:30,777 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:52:30,778 | INFO | [iter=3] REFLECT — verdict=ObserveVerdict.EMPTY  missing=['Pune micromarkets (no micromarket rows returned)']  suspect=micro_market
+2026-05-23 18:52:33,994 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:52:33,995 | INFO | [iter=3] REWRITE — action=relax_filter  missing_fix=['Pune micromarkets (no micromarket rows returned)']  new_col=None
+2026-05-23 18:52:33,995 | INFO | [iter=4] REWRITE — applying reflected SQL
+2026-05-23 18:52:33,995 | INFO | [iter=4] REVIEW — pre-execution gate
+2026-05-23 18:52:37,836 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:52:37,837 | INFO | [iter=4] REVIEW rejected  confidence=96  missing=["micro_market = 'Pune'"]  reason=Entity completeness requires that all entity_filters and non-empty space_filters from intent/stage2 appear in the WHERE clause. The intent specifies both location_name='Pune' and micro_market='Pune' (via entities.space_filters and stage2.entity_filters). The provided SQL only filters by location_name and omits any micro_market constraint, so it fails the entity completeness check. Adding a micro_market filter (ILIKE for text) while retaining the existing semantic_resolved_filters (transaction_category='Sale', property_type='Flat') corrects the issue.
+2026-05-23 18:52:37,837 | INFO | [iter=4] REVIEW — applying reviewer's corrected SQL
+2026-05-23 18:52:37,837 | INFO | [iter=4] EXECUTE — SELECT
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude,
+  SUM(agreement_price) AS total_sales_value,
+  ROUND(AVG(guideline_value)::numeric, 2) AS property_value,
+  COUNT(*) AS transaction_count
+FROM transactions
+WHERE
+  location_name ILIKE '%Pune%'
+  AND micro_market ILIKE '%Pune%'
+  AND year = 2024
+  AND transaction_category IN ('Sale')
+  AND property_type IN ('Flat')
+  AND agreement_price >= 1
+GROUP BY
+  micro_market,
+  location_name,
+  location_latitude,
+  location_longitude
+ORDER BY
+  total_sales_value DESC
+LIMIT 5;
+2026-05-23 18:53:07,669 | INFO | [iter=4] OBSERVE — rows=0  error=none
+2026-05-23 18:53:11,201 | INFO | HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-23 18:53:11,202 | WARNING | Max iterations (5) reached without a satisfactory result
+2026-05-23 19:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:00:00 IST)" (scheduled at 2026-05-23 19:00:00+05:30)
+2026-05-23 19:00:00,027 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 19:30:00 IST)" executed successfully
+2026-05-23 19:30:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 20:00:00 IST)" (scheduled at 2026-05-23 19:30:00+05:30)
+2026-05-23 19:30:00,024 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 20:00:00 IST)" executed successfully
+2026-05-23 20:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 20:30:00 IST)" (scheduled at 2026-05-23 20:00:00+05:30)
+2026-05-23 20:00:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 20:30:00 IST)" executed successfully
+2026-05-23 20:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 21:00:00 IST)" (scheduled at 2026-05-23 20:30:00+05:30)
+2026-05-23 20:30:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 21:00:00 IST)" executed successfully
+2026-05-23 21:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 21:30:00 IST)" (scheduled at 2026-05-23 21:00:00+05:30)
+2026-05-23 21:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 21:30:00 IST)" executed successfully
+2026-05-23 21:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 22:00:00 IST)" (scheduled at 2026-05-23 21:30:00+05:30)
+2026-05-23 21:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 22:00:00 IST)" executed successfully
+2026-05-23 22:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 22:30:00 IST)" (scheduled at 2026-05-23 22:00:00+05:30)
+2026-05-23 22:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 22:30:00 IST)" executed successfully
+2026-05-23 22:30:00,000 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 23:00:00 IST)" (scheduled at 2026-05-23 22:30:00+05:30)
+2026-05-23 22:30:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 23:00:00 IST)" executed successfully
+2026-05-23 23:00:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 23:30:00 IST)" (scheduled at 2026-05-23 23:00:00+05:30)
+2026-05-23 23:00:00,011 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-23 23:30:00 IST)" executed successfully
+2026-05-23 23:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 00:00:00 IST)" (scheduled at 2026-05-23 23:30:00+05:30)
+2026-05-23 23:30:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 00:00:00 IST)" executed successfully
+2026-05-24 00:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 00:30:00 IST)" (scheduled at 2026-05-24 00:00:00+05:30)
+2026-05-24 00:00:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 00:30:00 IST)" executed successfully
+2026-05-24 00:30:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 01:00:00 IST)" (scheduled at 2026-05-24 00:30:00+05:30)
+2026-05-24 00:30:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 01:00:00 IST)" executed successfully
+2026-05-24 01:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 01:30:00 IST)" (scheduled at 2026-05-24 01:00:00+05:30)
+2026-05-24 01:00:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 01:30:00 IST)" executed successfully
+2026-05-24 01:30:00,013 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 02:00:00 IST)" (scheduled at 2026-05-24 01:30:00+05:30)
+2026-05-24 01:30:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 02:00:00 IST)" executed successfully
+2026-05-24 02:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 02:30:00 IST)" (scheduled at 2026-05-24 02:00:00+05:30)
+2026-05-24 02:00:00,018 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 02:30:00 IST)" executed successfully
+2026-05-24 02:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 03:00:00 IST)" (scheduled at 2026-05-24 02:30:00+05:30)
+2026-05-24 02:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 03:00:00 IST)" executed successfully
+2026-05-24 03:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 03:30:00 IST)" (scheduled at 2026-05-24 03:00:00+05:30)
+2026-05-24 03:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 03:30:00 IST)" executed successfully
+2026-05-24 03:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 04:00:00 IST)" (scheduled at 2026-05-24 03:30:00+05:30)
+2026-05-24 03:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 04:00:00 IST)" executed successfully
+2026-05-24 04:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 04:30:00 IST)" (scheduled at 2026-05-24 04:00:00+05:30)
+2026-05-24 04:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 04:30:00 IST)" executed successfully
+2026-05-24 04:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 05:00:00 IST)" (scheduled at 2026-05-24 04:30:00+05:30)
+2026-05-24 04:30:00,018 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 05:00:00 IST)" executed successfully
+2026-05-24 05:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 05:30:00 IST)" (scheduled at 2026-05-24 05:00:00+05:30)
+2026-05-24 05:00:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 05:30:00 IST)" executed successfully
+2026-05-24 05:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 06:00:00 IST)" (scheduled at 2026-05-24 05:30:00+05:30)
+2026-05-24 05:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 06:00:00 IST)" executed successfully
+2026-05-24 06:00:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 06:30:00 IST)" (scheduled at 2026-05-24 06:00:00+05:30)
+2026-05-24 06:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 06:30:00 IST)" executed successfully
+2026-05-24 06:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 07:00:00 IST)" (scheduled at 2026-05-24 06:30:00+05:30)
+2026-05-24 06:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 07:00:00 IST)" executed successfully
+2026-05-24 07:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 07:30:00 IST)" (scheduled at 2026-05-24 07:00:00+05:30)
+2026-05-24 07:00:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 07:30:00 IST)" executed successfully
+2026-05-24 07:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 08:00:00 IST)" (scheduled at 2026-05-24 07:30:00+05:30)
+2026-05-24 07:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 08:00:00 IST)" executed successfully
+2026-05-24 08:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 08:30:00 IST)" (scheduled at 2026-05-24 08:00:00+05:30)
+2026-05-24 08:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 08:30:00 IST)" executed successfully
+2026-05-24 08:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 09:00:00 IST)" (scheduled at 2026-05-24 08:30:00+05:30)
+2026-05-24 08:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 09:00:00 IST)" executed successfully
+2026-05-24 09:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 09:30:00 IST)" (scheduled at 2026-05-24 09:00:00+05:30)
+2026-05-24 09:00:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 09:30:00 IST)" executed successfully
+2026-05-24 09:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 10:00:00 IST)" (scheduled at 2026-05-24 09:30:00+05:30)
+2026-05-24 09:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 10:00:00 IST)" executed successfully
+2026-05-24 10:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 10:30:00 IST)" (scheduled at 2026-05-24 10:00:00+05:30)
+2026-05-24 10:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 10:30:00 IST)" executed successfully
+2026-05-24 10:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 11:00:00 IST)" (scheduled at 2026-05-24 10:30:00+05:30)
+2026-05-24 10:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 11:00:00 IST)" executed successfully
+2026-05-24 11:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 11:30:00 IST)" (scheduled at 2026-05-24 11:00:00+05:30)
+2026-05-24 11:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 11:30:00 IST)" executed successfully
+2026-05-24 11:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 12:00:00 IST)" (scheduled at 2026-05-24 11:30:00+05:30)
+2026-05-24 11:30:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 12:00:00 IST)" executed successfully
+2026-05-24 12:00:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 12:30:00 IST)" (scheduled at 2026-05-24 12:00:00+05:30)
+2026-05-24 12:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 12:30:00 IST)" executed successfully
+2026-05-24 12:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 13:00:00 IST)" (scheduled at 2026-05-24 12:30:00+05:30)
+2026-05-24 12:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 13:00:00 IST)" executed successfully
+2026-05-24 13:00:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 13:30:00 IST)" (scheduled at 2026-05-24 13:00:00+05:30)
+2026-05-24 13:00:00,011 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 13:30:00 IST)" executed successfully
+2026-05-24 13:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 14:00:00 IST)" (scheduled at 2026-05-24 13:30:00+05:30)
+2026-05-24 13:30:00,016 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 14:00:00 IST)" executed successfully
+2026-05-24 14:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 14:30:00 IST)" (scheduled at 2026-05-24 14:00:00+05:30)
+2026-05-24 14:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 14:30:00 IST)" executed successfully
+2026-05-24 14:30:00,000 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 15:00:00 IST)" (scheduled at 2026-05-24 14:30:00+05:30)
+2026-05-24 14:30:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 15:00:00 IST)" executed successfully
+2026-05-24 15:00:00,017 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 15:30:00 IST)" (scheduled at 2026-05-24 15:00:00+05:30)
+2026-05-24 15:00:00,021 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 15:30:00 IST)" executed successfully
+2026-05-24 15:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 16:00:00 IST)" (scheduled at 2026-05-24 15:30:00+05:30)
+2026-05-24 15:30:00,018 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 16:00:00 IST)" executed successfully
+2026-05-24 16:00:00,007 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 16:30:00 IST)" (scheduled at 2026-05-24 16:00:00+05:30)
+2026-05-24 16:00:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 16:30:00 IST)" executed successfully
+2026-05-24 16:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 17:00:00 IST)" (scheduled at 2026-05-24 16:30:00+05:30)
+2026-05-24 16:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 17:00:00 IST)" executed successfully
+2026-05-24 17:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 17:30:00 IST)" (scheduled at 2026-05-24 17:00:00+05:30)
+2026-05-24 17:00:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 17:30:00 IST)" executed successfully
+2026-05-24 17:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 18:00:00 IST)" (scheduled at 2026-05-24 17:30:00+05:30)
+2026-05-24 17:30:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 18:00:00 IST)" executed successfully
+2026-05-24 18:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 18:30:00 IST)" (scheduled at 2026-05-24 18:00:00+05:30)
+2026-05-24 18:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 18:30:00 IST)" executed successfully
+2026-05-24 18:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 19:00:00 IST)" (scheduled at 2026-05-24 18:30:00+05:30)
+2026-05-24 18:30:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 19:00:00 IST)" executed successfully
+2026-05-24 19:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 19:30:00 IST)" (scheduled at 2026-05-24 19:00:00+05:30)
+2026-05-24 19:00:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 19:30:00 IST)" executed successfully
+2026-05-24 19:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 20:00:00 IST)" (scheduled at 2026-05-24 19:30:00+05:30)
+2026-05-24 19:30:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 20:00:00 IST)" executed successfully
+2026-05-24 20:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 20:30:00 IST)" (scheduled at 2026-05-24 20:00:00+05:30)
+2026-05-24 20:00:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 20:30:00 IST)" executed successfully
+2026-05-24 20:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 21:00:00 IST)" (scheduled at 2026-05-24 20:30:00+05:30)
+2026-05-24 20:30:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 21:00:00 IST)" executed successfully
+2026-05-24 21:00:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 21:30:00 IST)" (scheduled at 2026-05-24 21:00:00+05:30)
+2026-05-24 21:00:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 21:30:00 IST)" executed successfully
+2026-05-24 21:30:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 22:00:00 IST)" (scheduled at 2026-05-24 21:30:00+05:30)
+2026-05-24 21:30:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 22:00:00 IST)" executed successfully
+2026-05-24 22:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 22:30:00 IST)" (scheduled at 2026-05-24 22:00:00+05:30)
+2026-05-24 22:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 22:30:00 IST)" executed successfully
+2026-05-24 22:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 23:00:00 IST)" (scheduled at 2026-05-24 22:30:00+05:30)
+2026-05-24 22:30:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 23:00:00 IST)" executed successfully
+2026-05-24 23:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 23:30:00 IST)" (scheduled at 2026-05-24 23:00:00+05:30)
+2026-05-24 23:00:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-24 23:30:00 IST)" executed successfully
+2026-05-24 23:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 00:00:00 IST)" (scheduled at 2026-05-24 23:30:00+05:30)
+2026-05-24 23:30:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 00:00:00 IST)" executed successfully
+2026-05-25 00:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 00:30:00 IST)" (scheduled at 2026-05-25 00:00:00+05:30)
+2026-05-25 00:00:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 00:30:00 IST)" executed successfully
+2026-05-25 00:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 01:00:00 IST)" (scheduled at 2026-05-25 00:30:00+05:30)
+2026-05-25 00:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 01:00:00 IST)" executed successfully
+2026-05-25 01:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 01:30:00 IST)" (scheduled at 2026-05-25 01:00:00+05:30)
+2026-05-25 01:00:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 01:30:00 IST)" executed successfully
+2026-05-25 01:30:00,015 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 02:00:00 IST)" (scheduled at 2026-05-25 01:30:00+05:30)
+2026-05-25 01:30:00,019 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 02:00:00 IST)" executed successfully
+2026-05-25 02:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 02:30:00 IST)" (scheduled at 2026-05-25 02:00:00+05:30)
+2026-05-25 02:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 02:30:00 IST)" executed successfully
+2026-05-25 02:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 03:00:00 IST)" (scheduled at 2026-05-25 02:30:00+05:30)
+2026-05-25 02:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 03:00:00 IST)" executed successfully
+2026-05-25 03:00:00,011 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 03:30:00 IST)" (scheduled at 2026-05-25 03:00:00+05:30)
+2026-05-25 03:00:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 03:30:00 IST)" executed successfully
+2026-05-25 03:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 04:00:00 IST)" (scheduled at 2026-05-25 03:30:00+05:30)
+2026-05-25 03:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 04:00:00 IST)" executed successfully
+2026-05-25 04:00:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 04:30:00 IST)" (scheduled at 2026-05-25 04:00:00+05:30)
+2026-05-25 04:00:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 04:30:00 IST)" executed successfully
+2026-05-25 04:30:00,011 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 05:00:00 IST)" (scheduled at 2026-05-25 04:30:00+05:30)
+2026-05-25 04:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 05:00:00 IST)" executed successfully
+2026-05-25 05:00:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 05:30:00 IST)" (scheduled at 2026-05-25 05:00:00+05:30)
+2026-05-25 05:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 05:30:00 IST)" executed successfully
+2026-05-25 05:30:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 06:00:00 IST)" (scheduled at 2026-05-25 05:30:00+05:30)
+2026-05-25 05:30:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 06:00:00 IST)" executed successfully
+2026-05-25 06:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 06:30:00 IST)" (scheduled at 2026-05-25 06:00:00+05:30)
+2026-05-25 06:00:00,004 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 06:30:00 IST)" executed successfully
+2026-05-25 06:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 07:00:00 IST)" (scheduled at 2026-05-25 06:30:00+05:30)
+2026-05-25 06:30:00,006 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 07:00:00 IST)" executed successfully
+2026-05-25 07:00:00,008 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 07:30:00 IST)" (scheduled at 2026-05-25 07:00:00+05:30)
+2026-05-25 07:00:00,011 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 07:30:00 IST)" executed successfully
+2026-05-25 07:30:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 08:00:00 IST)" (scheduled at 2026-05-25 07:30:00+05:30)
+2026-05-25 07:30:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 08:00:00 IST)" executed successfully
+2026-05-25 08:00:00,004 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 08:30:00 IST)" (scheduled at 2026-05-25 08:00:00+05:30)
+2026-05-25 08:00:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 08:30:00 IST)" executed successfully
+2026-05-25 08:30:00,010 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 09:00:00 IST)" (scheduled at 2026-05-25 08:30:00+05:30)
+2026-05-25 08:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 09:00:00 IST)" executed successfully
+2026-05-25 09:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 09:30:00 IST)" (scheduled at 2026-05-25 09:00:00+05:30)
+2026-05-25 09:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 09:30:00 IST)" executed successfully
+2026-05-25 09:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 10:00:00 IST)" (scheduled at 2026-05-25 09:30:00+05:30)
+2026-05-25 09:30:00,007 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 10:00:00 IST)" executed successfully
+2026-05-25 10:00:00,006 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 10:30:00 IST)" (scheduled at 2026-05-25 10:00:00+05:30)
+2026-05-25 10:00:00,010 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 10:30:00 IST)" executed successfully
+2026-05-25 10:30:00,012 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 11:00:00 IST)" (scheduled at 2026-05-25 10:30:00+05:30)
+2026-05-25 10:30:00,015 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 11:00:00 IST)" executed successfully
+2026-05-25 11:00:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 11:30:00 IST)" (scheduled at 2026-05-25 11:00:00+05:30)
+2026-05-25 11:00:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 11:30:00 IST)" executed successfully
+2026-05-25 11:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:00:00 IST)" (scheduled at 2026-05-25 11:30:00+05:30)
+2026-05-25 11:30:00,013 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:00:00 IST)" executed successfully
+2026-05-25 12:00:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:30:00 IST)" (scheduled at 2026-05-25 12:00:00+05:30)
+2026-05-25 12:00:00,005 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 12:30:00 IST)" executed successfully
+2026-05-25 12:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:00:00 IST)" (scheduled at 2026-05-25 12:30:00+05:30)
+2026-05-25 12:30:00,014 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:00:00 IST)" executed successfully
+2026-05-25 13:00:00,005 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:30:00 IST)" (scheduled at 2026-05-25 13:00:00+05:30)
+2026-05-25 13:00:00,022 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 13:30:00 IST)" executed successfully
+2026-05-25 13:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 14:00:00 IST)" (scheduled at 2026-05-25 13:30:00+05:30)
+2026-05-25 13:30:00,008 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 14:00:00 IST)" executed successfully
+2026-05-25 14:00:00,014 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 14:30:00 IST)" (scheduled at 2026-05-25 14:00:00+05:30)
+2026-05-25 14:00:00,089 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 14:30:00 IST)" executed successfully
+2026-05-25 14:30:00,002 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 15:00:00 IST)" (scheduled at 2026-05-25 14:30:00+05:30)
+2026-05-25 14:30:00,087 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 15:00:00 IST)" executed successfully
+2026-05-25 15:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 15:30:00 IST)" (scheduled at 2026-05-25 15:00:00+05:30)
+2026-05-25 15:00:00,048 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 15:30:00 IST)" executed successfully
+2026-05-25 15:30:00,003 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 16:00:00 IST)" (scheduled at 2026-05-25 15:30:00+05:30)
+2026-05-25 15:30:00,012 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 16:00:00 IST)" executed successfully
+2026-05-25 16:00:00,001 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 16:30:00 IST)" (scheduled at 2026-05-25 16:00:00+05:30)
+2026-05-25 16:00:00,017 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 16:30:00 IST)" executed successfully
+2026-05-25 16:30:00,009 | INFO | Running job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 17:00:00 IST)" (scheduled at 2026-05-25 16:30:00+05:30)
+2026-05-25 16:30:00,037 | INFO | Job "_renew_gmail_watch_job (trigger: cron[minute='*/30'], next run at: 2026-05-25 17:00:00 IST)" executed successfully
