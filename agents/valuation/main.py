@@ -81,10 +81,11 @@ class PropertyValuationAgent:
 
 
 
-    def execute_stream(self, question: str):
+    def execute_stream(self, question: str, comparable_source: str = "web"):
         """Main streaming generator — yields SSE events for every stage."""
         metrics = AgentMetrics()
         state = create_state(question)
+        state["comparable_source"] = comparable_source
         yield _sse("start", f"Processing valuation request: {question}")
 
         # ══════════════════════════════════════════════════════════════════════
@@ -94,6 +95,21 @@ class PropertyValuationAgent:
             yield _sse("stage", "Stage 1: Profiling property and strategy...")
             entities = self.intent_extractor.extract(question)
             entities["_original_query"] = question
+
+            # Check if coordinates were extracted directly from user manual input in query
+            coords = entities.get("coordinates")
+            has_valid_coords = coords and coords.get("lat") is not None and coords.get("lng") is not None and coords.get("lat") != 0 and coords.get("lng") != 0
+            if has_valid_coords and entities.get("coordinates_confirmed"):
+                log_msg = (
+                    f"\n=== [COORDINATES RESOLUTION] ===\n"
+                    f"  Stage: Subject Property Profiling (S1)\n"
+                    f"  Target: Project='{entities.get('project_name') or 'N/A'}', Location='{entities.get('location_name')}', Country='{entities.get('country')}'\n"
+                    f"  Source: Extracted directly from user query (User manual input)\n"
+                    f"  Result: Lat={coords['lat']}, Lng={coords['lng']}\n"
+                    f"================================="
+                )
+                print(log_msg)
+                logging.getLogger("map_search").info(log_msg.replace("\n", " | "))
             metrics.tools_called += 1
 
             token_event = self._emit_tokens(metrics, "stage1_profiling", self.intent_extractor.last_usage, model_name=self.intent_extractor.last_model)
@@ -221,12 +237,13 @@ class PropertyValuationAgent:
         # ══════════════════════════════════════════════════════════════════════
         try:
             pt_lower = (entities.get("property_type") or "").strip().lower()
-            if pt_lower == "plot" and approach == "cost":
-                yield _sse("stage", "Cost Approach is locked for Plot properties. Switching to Market Approach.")
+            if approach == "cost" and pt_lower != "villa":
+                yield _sse("stage", f"Cost Approach is only applicable for Villa properties. Switching to Market Approach for '{pt_lower}'.")
                 approach = "market"
 
             if approach == "market":
-                yield from self.market_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger)
+                comp_source = state.get("comparable_source", "web")
+                yield from self.market_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger, comparable_source=comp_source)
                 
                 # NOTE: Stage 3 tokens are already added within comparable_selection_agent if metrics was passed.
                 # But we still emit the final usage here.
@@ -235,7 +252,8 @@ class PropertyValuationAgent:
                     yield token_event
 
             elif approach == "cost":
-                yield from self.cost_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger)
+                comp_source = state.get("comparable_source", "web")
+                yield from self.cost_executor.execute_workflow(state, metrics, _sse, run_logger=run_logger, comparable_source=comp_source)
                 
                 token_event = self._emit_tokens(metrics, "stage3_cost", self.cost_executor.last_usage)
                 if token_event:

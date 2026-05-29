@@ -24,6 +24,7 @@ import requests
 from pyproj import Transformer
 from shapely.geometry import LineString, Polygon, Point
 from shapely.validation import make_valid
+from tools.valuation.overpass_cache import get_cached_overpass_request, set_cached_overpass_request
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +35,7 @@ OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
 ]
-TIMEOUT = 90
+TIMEOUT = 15
 RETRY = 3
 USER_AGENT = "BuiltUpDensityTool/1.0"
 
@@ -151,6 +152,10 @@ out geom;
 
 
 def overpass_query(query: str) -> Dict:
+    cached = get_cached_overpass_request(query)
+    if cached is not None:
+        return cached
+
     headers = {"User-Agent": USER_AGENT}
     for _ in range(RETRY):
         for url in OVERPASS_ENDPOINTS:
@@ -162,7 +167,9 @@ def overpass_query(query: str) -> Dict:
                     time.sleep(2)
                     continue
                 r.raise_for_status()
-                return r.json()
+                res = r.json()
+                set_cached_overpass_request(query, res)
+                return res
             except Exception:
                 time.sleep(1)
     raise RuntimeError("Overpass API failed after all retries.")
@@ -379,25 +386,42 @@ def analyze_congestion(lat: float, lng: float, radius: float) -> Dict[str, Any]:
     # 6. Building type breakdown
     type_areas = compute_building_type_areas(buildings_with_type)
 
-    # 7. Congestion score  (z-score normalised around 30 % used ratio ± 25 %)
-    z = max(-2.0, min(2.0, (used_area_ratio - 0.30) / 0.25))
-    congestion_score = round(max(0.0, min(10.0, z * 5.0 + 5.0)), 1)
-    if congestion_score > 7:
-        level = "HIGH"
-    elif congestion_score > 4:
-        level = "MEDIUM"
-    else:
-        level = "LOW"
+    # 7. Congestion score  (direct linear scale: used_area_ratio × 10 → 0 to 10)
+    #    0%  used → score 0.0  (empty land)
+    #    100% used → score 10.0 (fully built up)
+    congestion_score = round(max(0.0, min(10.0, used_area_ratio * 10)), 1)
 
-    # 8. Density classification
-    bcr = total_building_area / total_area_m2 if total_area_m2 > 0 else 0.0
-    if bcr > 0.50:
+    # Congestion level — same 5-tier thresholds as BCR density classification
+    #    > 40% used → Very High  (dense slums, packed urban cores)
+    #    > 25% used → High       (inner-city residential/commercial)
+    #    > 12% used → Medium     (typical urban residential)
+    #    >  5% used → Low        (suburbs, planned townships)
+    #    ≤  5% used → Very Low   (outskirts, villages, rural)
+    if used_area_ratio > 0.40:
+        level = "Very High"
+    elif used_area_ratio > 0.25:
+        level = "High"
+    elif used_area_ratio > 0.12:
+        level = "Medium"
+    elif used_area_ratio > 0.05:
+        level = "Low"
+    else:
+        level = "Very Low"
+
+    # 8. Density classification (aligned with linear congestion scale & Indian urban context)
+    #    > 40% → Very High  (dense slums, packed commercial cores)
+    #    25–40% → High      (dense chawls, inner-city residential)
+    #    12–25% → Medium    (typical urban residential, South Mumbai)
+    #    5–12%  → Low       (suburbs, planned townships)
+    #    < 5%   → Very Low  (outskirts, villages, rural)
+    bcr = total_building_area / effective_land_area if effective_land_area > 0 else 0.0
+    if bcr > 0.40:
         density_class = "Very High Density"
-    elif bcr > 0.35:
+    elif bcr > 0.25:
         density_class = "High Density"
-    elif bcr > 0.20:
+    elif bcr > 0.12:
         density_class = "Medium Density"
-    elif bcr > 0.08:
+    elif bcr > 0.05:
         density_class = "Low Density"
     else:
         density_class = "Very Low / Rural"
@@ -490,7 +514,7 @@ def analyze_congestion(lat: float, lng: float, radius: float) -> Dict[str, Any]:
         "metrics": {
             "analysis_area_m2": round(total_area_m2, 2),
             "total_building_area_m2": round(total_building_area, 2),
-            "building_coverage_ratio": round(bcr, 4),
+            "building_coverage_ratio": round(bcr, 4),  # based on effective land area (excl. water)
             "density_class": density_class,
             "total_road_area_m2": round(total_road_area, 2),
             "road_area_coverage": round(total_road_area / total_area_m2, 4) if total_area_m2 else 0.0,

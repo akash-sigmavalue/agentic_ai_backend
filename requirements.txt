@@ -53,3 +53,4 @@ langchain-community
 PyMuPDF
 undetected-chromedriver
 opendataloader_pdf
+ddgs

@@ -118,10 +118,10 @@ COST_WORKFLOW = [
     {
         "step_number": 6,
         "step_id": "rate_derivation",
-        "title": "Subject Property Rate Derivation",
-        "objective": "Derive final per-sqft market rate for the subject property via weighted averaging",
+        "title": "Subject Plot/Land Rate Derivation",
+        "objective": "Derive final per-sqft plot/land rate for the subject villa for use in Cost Approach",
         "executor": "llm",
-        "expected_output": "Derived rate per sqft, total property price, confidence",
+        "expected_output": "Derived plot/land rate per sqft, confidence",
         "user_action_needed": False,
         "phase": 1,
     },
@@ -132,8 +132,8 @@ COST_WORKFLOW = [
         "title": "Cost Approach Inputs",
         "objective": (
             "Collect cost-specific inputs from the user: "
-            "net plot area, rate of plot per sqft, UDS (for flat/shop/office), "
-            "total building life (default 69 yrs), age of property."
+            "construction rate per sqft and total building life. "
+            "Subject plot area, built-up area, and age come from Stage 1 profiling."
         ),
         "executor": "user",
         "expected_output": "Validated cost input values",

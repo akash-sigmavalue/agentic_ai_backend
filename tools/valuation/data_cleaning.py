@@ -116,6 +116,18 @@ def _is_range(s: str) -> bool:
     if not s: return False
     return bool(re.search(r"[\d]\s*[-–]\s*[\d]", str(s)))
 
+def normalize_area_type(val: Any) -> str:
+    if pd.isna(val) or not val:
+        return "unknown"
+    val_str = str(val).strip().lower()
+    if "carpet" in val_str:
+        return "carpet"
+    if "super" in val_str or "sbua" in val_str:
+        return "super_built_up"
+    if "built" in val_str or "builtup" in val_str:
+        return "built_up"
+    return "unknown"
+
 def pre_process_normalisation(listings: List[Dict]) -> List[Dict]:
     """Applies fast Python parsing before LLM."""
     for row in listings:
@@ -317,6 +329,7 @@ def data_cleaning_pipeline(
     subject: Dict,
     comparables: List[Dict],
     property_type: str,
+    db_transactions: List[Dict] = None,
     on_progress=None
 ) -> Dict:
     metrics = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
@@ -339,7 +352,7 @@ def data_cleaning_pipeline(
     # Only send non-duplicates to LLM to save tokens
     unique_listings = [l for l in listings if not l.get("is_duplicate")]
     
-    if not unique_listings:
+    if not unique_listings and not db_transactions:
         return {"cleaned_listings": [], "review_listings": [], "dropped_listings": listings, "audit_stats": {}}
 
     # 2. Batch LLM Processing (Project-Wise)
@@ -402,6 +415,48 @@ def data_cleaning_pipeline(
         df_merged["cleaned_price_value"] = df_merged["cleaned_price_value"].fillna(df_merged.get("price_parsed_py", np.nan))
     if "cleaned_area_sqft" in df_merged.columns:
         df_merged["cleaned_area_sqft"] = df_merged["cleaned_area_sqft"].fillna(df_merged.get("area_parsed_py", np.nan))
+
+    # 3.5 Merge DB Transactions
+    if not df_merged.empty:
+        df_merged["source"] = "Web"
+    else:
+        df_merged["source"] = pd.Series(dtype='str')
+        
+    if db_transactions:
+        if on_progress:
+            on_progress("merge_db", f"Merging {len(db_transactions)} Internal DB transactions into pipeline...")
+        db_rows = []
+        for t in db_transactions:
+            db_rows.append({
+                "cleaned_match_project":           t.get("project_name"),
+                "cleaned_relevant_for_valuation":  True,
+                "cleaned_price_value":             t.get("agreement_price"),
+                "cleaned_area_sqft":               t.get("area_sqft"),
+                "cleaned_area_type":               t.get("area_type", "carpet"),
+                "cleaned_config":                  t.get("unit_configuration"),
+                "cleaned_possession_status":       None,
+                "cleaned_listing_type":            t.get("transaction_category"),
+                "cleaned_floor":                   t.get("floor_number"),
+                "cleaned_total_floors":            None,
+                "cleaned_currency":                t.get("currency"),
+                "price_per_sqft":                  t.get("price_per_sqft"),
+                "location":                        t.get("location_name"),
+                "country":                         t.get("country_name"),
+                "is_subject":                      t.get("is_subject", False),
+                "source":                          "Internal DB",
+                "project_name":                    t.get("project_name"),
+                "net_carpet_area_sq_m":            t.get("net_carpet_area_sq_m"),
+                "transaction_date":                t.get("transaction_date"),
+            })
+        df_db = pd.DataFrame(db_rows)
+        if not df_merged.empty:
+            df_merged = pd.concat([df_merged, df_db], ignore_index=True)
+        else:
+            df_merged = df_db
+
+    # Normalize area type to canonical lowercase strings ("carpet", "built_up", "super_built_up", "unknown")
+    if not df_merged.empty and "cleaned_area_type" in df_merged.columns:
+        df_merged["cleaned_area_type"] = df_merged["cleaned_area_type"].apply(normalize_area_type)
 
     # 4. Apply Area Conversion
     if on_progress: 

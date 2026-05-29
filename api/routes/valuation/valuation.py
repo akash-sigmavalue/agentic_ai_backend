@@ -15,6 +15,7 @@ from tools.valuation.data_cleaning import data_cleaning_pipeline
 from tools.valuation.plot_rate_pipeline import calculate_plot_rates
 from tools.valuation.factorial_table import compute_factorial_table
 from tools.valuation.listing_search import listing_pipeline
+from tools.valuation.db_transaction_search import fetch_db_transactions
 from tools.valuation.llm_factoring_engine import run_llm_factoring
 from utils.valuation.logging import RunLogger
 
@@ -29,10 +30,39 @@ def _sse(event_type: str, content: Any, **kwargs: Any) -> str:
     return f"data: {json.dumps(payload, default=str)}\n\n"
 
 
+def _resolve_rate_basis(
+    property_type: str | None,
+    subject: dict[str, Any] | None = None,
+    rate_basis: str | None = None,
+    approach: str | None = None,
+) -> str:
+    """Return the valuation rate basis used by downstream rate math."""
+    requested = (rate_basis or "").strip().lower()
+    if requested in {"plot_land", "built_up"}:
+        return requested
+
+    subject = subject or {}
+    ptype = (property_type or subject.get("property_type") or "").strip().lower()
+    subject_approach = (
+        approach
+        or subject.get("recommended_approach")
+        or subject.get("user_requested_approach")
+        or subject.get("approach")
+        or ""
+    )
+    subject_approach = str(subject_approach).strip().lower()
+
+    if ptype == "plot":
+        return "plot_land"
+    if ptype == "villa" and subject_approach == "cost":
+        return "plot_land"
+    return "built_up"
+
+
 @router.get("/ask_stream_valuation")
-async def ask_stream(question: str):
+async def ask_stream(question: str, comparable_source: str = "web"):
     return StreamingResponse(
-        valuation_agent.execute_stream(question),
+        valuation_agent.execute_stream(question, comparable_source=comparable_source),
         media_type="text/event-stream",
     )
 
@@ -96,12 +126,71 @@ async def listing_stream(req: ListingRequest):
     return StreamingResponse(_listing_stream_generator(req), media_type="text/event-stream")
 
 
+# ── Transaction stream (for Internal DB comparables) ──────────────────────────
+class TransactionRequest(BaseModel):
+    project_id: str                 # numeric ID or project name
+    property_type: str              # canonical: apartment | villa | plot | ...
+    project_name: str = ""          # display name (for progress messages)
+
+
+def _transaction_stream_generator(req: TransactionRequest):
+    yield _sse(
+        "transaction_start",
+        {
+            "message": f"Fetching transactions for '{req.project_name or req.project_id}' from Internal DB...",
+            "project_id": req.project_id,
+            "property_type": req.property_type,
+        },
+    )
+    try:
+        result = fetch_db_transactions(
+            project_id=req.project_id,
+            property_type=req.property_type,
+        )
+
+        if result["status"] == "success":
+            yield _sse(
+                "transaction_results",
+                {
+                    "transactions": result["transactions"],
+                    "total": len(result["transactions"]),
+                    "project_id": req.project_id,
+                    "project_name": req.project_name or req.project_id,
+                },
+            )
+        else:
+            yield _sse(
+                "transaction_no_results",
+                {
+                    "project_id": req.project_id,
+                    "project_name": req.project_name or req.project_id,
+                    "message": result.get("error", "No transactions found."),
+                },
+            )
+    except Exception as exc:
+        logger.exception("Transaction stream failed")
+        yield _sse("error", f"Transaction fetch failed: {exc}")
+
+    yield _sse("transaction_done", "Transaction fetch completed.")
+
+
+@router.post("/transaction_stream")
+async def transaction_stream(req: TransactionRequest):
+    return StreamingResponse(_transaction_stream_generator(req), media_type="text/event-stream")
+
+
 class CleaningRequest(BaseModel):
-    listings: list[dict[str, Any]]
+    listings: list[dict[str, Any]]          # web listings only
     subject: dict[str, Any]
     comparables: list[dict[str, Any]]
     property_type: str
     listing_type: str = "sale"
+    db_transactions: list[dict[str, Any]] = []  # raw DB transactions — skip cleaning
+    valuation_approach: str | None = None
+    rate_basis: str | None = Field(
+        default=None,
+        description="Rate basis for valuation math: plot_land or built_up",
+    )
 
 
 def _cleaning_stream_generator(req: CleaningRequest):
@@ -114,17 +203,25 @@ def _cleaning_stream_generator(req: CleaningRequest):
     try:
         project_name = req.subject.get("project_name") or "Cleaning_Request"
         run_logger = RunLogger(project_name)
+        rate_basis = _resolve_rate_basis(
+            req.property_type,
+            subject=req.subject,
+            rate_basis=req.rate_basis,
+            approach=req.valuation_approach,
+        )
 
         result = data_cleaning_pipeline(
             listings=req.listings,
             subject=req.subject,
             comparables=req.comparables,
             property_type=req.property_type,
+            db_transactions=req.db_transactions,
             on_progress=on_progress,
         )
 
-        # Calculate plot rates if the subject property is a plot or a villa
-        if req.property_type.strip().lower() in ("plot", "villa"):
+        # Calculate plot/land rates if downstream valuation needs land rate, OR if subject is a villa
+        is_villa_subject = req.property_type.strip().lower() == "villa"
+        if rate_basis == "plot_land" or is_villa_subject:
             location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
             country = req.subject.get("country") or "India"
             result = calculate_plot_rates(
@@ -134,6 +231,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
                 country=country,
                 property_type=req.property_type,
                 on_progress=on_progress,
+                rate_basis=rate_basis,
             )
 
         for event in progress_events:
@@ -152,8 +250,7 @@ def _cleaning_stream_generator(req: CleaningRequest):
             "final_super_builtup_area",
             "stat_flag",
         ]
-        # Include plot derived columns if the subject is a plot or a villa
-        if req.property_type.strip().lower() in ("plot", "villa"):
+        if rate_basis == "plot_land" or is_villa_subject:
             columns.extend(
                 [
                     "plot_derived_rate_per_sqft",
@@ -165,13 +262,22 @@ def _cleaning_stream_generator(req: CleaningRequest):
             )
 
         run_logger.save_step("data_cleaning", "results", result["audit_stats"])
+
+        cleaned_merged = result["cleaned_listings"]
+        web_count = sum(1 for row in cleaned_merged if row.get("source") == "Web")
+        db_count = sum(1 for row in cleaned_merged if row.get("source") == "Internal DB")
+
         yield _sse(
             "cleaning_results",
             {
-                "cleaned_listings": result["cleaned_listings"],
-                "review_listings": result["review_listings"],
-                "audit_stats": result["audit_stats"],
-                "columns": columns,
+                "cleaned_listings":  cleaned_merged,
+                "review_listings":   result["review_listings"],
+                "dropped_listings":  result["dropped_listings"],
+                "audit_stats":       result["audit_stats"],
+                "columns":           columns,
+                "web_count":         web_count,
+                "db_count":          db_count,
+                "rate_basis": rate_basis,
             },
         )
     except Exception as exc:
@@ -190,6 +296,8 @@ class RecalculatePlotRatesRequest(BaseModel):
     cleaned_listings: list[dict[str, Any]]
     subject: dict[str, Any]
     property_type: str
+    valuation_approach: str | None = None
+    rate_basis: str | None = None
     overrides: dict[str, dict[str, Any]] | None = None
     fsi_override: float | None = None
     cc_override: float | None = None
@@ -202,8 +310,20 @@ def _recalculate_stream_generator(req: RecalculatePlotRatesRequest):
     pipeline_output = {"cleaned_listings": req.cleaned_listings, "audit_stats": {}}
     location = req.subject.get("location_name") or req.subject.get("locality") or "Unknown"
     country = req.subject.get("country") or "India"
+    rate_basis = _resolve_rate_basis(
+        req.property_type,
+        subject=req.subject,
+        rate_basis=req.rate_basis,
+        approach=req.valuation_approach,
+    )
     
     try:
+        is_villa_subject = req.property_type.strip().lower() == "villa"
+        if rate_basis != "plot_land" and not is_villa_subject:
+            yield _sse("error", "Plot-rate recalculation is only valid when rate_basis is plot_land or subject is villa.")
+            yield _sse("recalculate_done", "Recalculation skipped.")
+            return
+
         result = calculate_plot_rates(
             pipeline_output=pipeline_output,
             subject=req.subject,
@@ -213,9 +333,10 @@ def _recalculate_stream_generator(req: RecalculatePlotRatesRequest):
             on_progress=None,
             overrides=overrides_dict,
             fsi_override=req.fsi_override,
-            cc_override=req.cc_override
+            cc_override=req.cc_override,
+            rate_basis=rate_basis,
         )
-        yield _sse("recalculate_results", {"listings": result["cleaned_listings"]})
+        yield _sse("recalculate_results", {"listings": result["cleaned_listings"], "rate_basis": rate_basis})
     except Exception as exc:
         logger.exception("Recalculate pipeline failed")
         yield _sse("error", f"Recalculate pipeline failed: {exc}")
@@ -235,6 +356,11 @@ class FactorialRequest(BaseModel):
     comparables: list[dict[str, Any]]
     currency: str = "INR"
     area_unit: str = "sqft"
+    valuation_approach: str | None = None
+    rate_basis: str | None = Field(
+        default=None,
+        description="Rate basis for valuation math: plot_land or built_up",
+    )
 
 
 def _factorial_stream_generator(req: FactorialRequest):
@@ -244,12 +370,19 @@ def _factorial_stream_generator(req: FactorialRequest):
     )
 
     try:
+        rate_basis = _resolve_rate_basis(
+            req.subject.get("property_type"),
+            subject=req.subject,
+            rate_basis=req.rate_basis,
+            approach=req.valuation_approach,
+        )
         result = compute_factorial_table(
             cleaned_listings=req.cleaned_listings,
             subject=req.subject,
             comparables=req.comparables,
             currency=req.currency,
             area_unit=req.area_unit,
+            rate_basis=rate_basis,
         )
         project_name = req.subject.get("project_name") or "Factorial_Request"
         RunLogger(project_name).save_step("factorial_table", "results", result)
@@ -289,8 +422,13 @@ def _factorial_analysis_stream_generator(req: FactorialAnalysisRequest):
     )
     try:
         property_type = req.subject.get("property_type", "")
-        if property_type and property_type.strip().lower() == "plot":
-            # Bypass LLM for plots and calculate the simple average of all cleaned listings
+        rate_basis = _resolve_rate_basis(
+            property_type,
+            subject=req.subject,
+            rate_basis=req.factorial_data.get("rate_basis"),
+        )
+        if rate_basis == "plot_land":
+            # Bypass LLM for plot-land rates and calculate the simple average of all cleaned listings.
             table = req.factorial_data.get("table", [])
             total_rate_sum = sum(row.get("avg_rate", 0) * row.get("listing_count", 0) for row in table if row.get("avg_rate") is not None)
             total_listings = sum(row.get("listing_count", 0) for row in table if row.get("avg_rate") is not None)
@@ -298,10 +436,13 @@ def _factorial_analysis_stream_generator(req: FactorialAnalysisRequest):
 
             currency = req.factorial_data.get("currency", "INR")
             area_unit = req.factorial_data.get("area_unit", "sqft")
+            derived_rate_key = "subject_final_plot_rate" if property_type.strip().lower() == "villa" else "subject_final_rate"
+            methodology = "Direct Average (Plot Land)"
 
             result = {
-                "methodology": "Direct Average (Plot)",
+                "methodology": methodology,
                 "property_type": property_type,
+                "rate_basis": rate_basis,
                 "currency": currency,
                 "area_unit": area_unit,
                 "area_type": req.factorial_data.get("area_type", "Built-up Area"),
@@ -323,16 +464,17 @@ def _factorial_analysis_stream_generator(req: FactorialAnalysisRequest):
                     }
                 },
                 "subject_final_rate": simple_avg,
+                derived_rate_key: simple_avg,
                 "subject_rate_range": {"low": simple_avg, "high": simple_avg},
                 "confidence": "High",
                 "reasoning_audit": {
-                    "stage_1_scoring_thought": "Bypassed LLM scoring for plot.",
+                    "stage_1_scoring_thought": "Bypassed LLM scoring for plot-land rate derivation.",
                     "stage_2_adjustment_thought": "Bypassed adjustments. Used simple average of all cleaned listings.",
                     "final_reflection": "Calculated the global average rate directly from the cleaning table without adjustments.",
                     "key_drivers": "Direct mathematical average",
                     "uncertainties": "None"
                 },
-                "reconciliation_note": "For plots, the final rate is calculated directly as the simple average of all rates found in the cleaning table, without any LLM-based amenity or infrastructure adjustments.",
+                "reconciliation_note": "For plot-land basis, the final rate is calculated directly as the simple average of plot-derived rates from the cleaning table, without LLM-based amenity or infrastructure adjustments.",
                 "project_reports": []
             }
         else:
@@ -417,28 +559,34 @@ class CostCalculationRequest(BaseModel):
     Payload sent by the frontend after the comparable pipeline has derived the
     subject property rate (subject_final_rate from LLM factoring).
 
-    Applicable only for: apartment, villa, retail, commercial_office
-    NOT applicable for:  plot
+    Applicable only for: villa
+    NOT applicable for:  plot, apartment, retail, commercial_office
 
-    Simplified replacement-cost approach — only 3 user inputs required:
-      - construction_rate_per_sqft  (from CPWD schedules / bank panel rates)
+    Traditional land + depreciated building approach — inputs required:
+      - derived_plot_rate_per_sqft
+      - plot_area_sqft
+      - builtup_area_sqft
+      - construction_rate_per_sqft
       - age_of_property
       - total_life_of_building      (optional, default = 60 yrs)
     """
 
     # ── Rate derivation output (from Phase 1 / LLM factoring) ─────────────────
-    derived_rate_per_sqft: float = Field(
-        ..., description="Market-derived rate per sqft for the subject property"
+    derived_plot_rate_per_sqft: float = Field(
+        ..., description="Market-derived plot (land) rate per sqft for the subject property"
     )
-    area_sqft: float = Field(
-        ...,
-        description=(
-            "Salable / carpet area for apartment / retail / commercial_office; "
-            "built-up area for villa — in sqft"
-        ),
+    plot_area_sqft: float = Field(
+        ..., description="Plot (land) area of the subject villa in sqft"
+    )
+    builtup_area_sqft: float = Field(
+        ..., description="Built-up area of the subject villa structure in sqft"
     )
     property_type: str = Field(
-        ..., description="Canonical property type: apartment | villa | retail | commercial_office"
+        ..., description="Canonical property type: villa"
+    )
+    rate_basis: str = Field(
+        default="plot_land",
+        description="Cost Approach must use plot_land as the derived rate basis",
     )
 
     # ── Cost-specific user inputs ─────────────────────────────────────────────
@@ -456,26 +604,38 @@ class CostCalculationRequest(BaseModel):
         default=60,
         description="Expected total economic life of the building in years (default 60)",
     )
+    currency: str = Field(
+        default="₹",
+        description="Currency symbol to use for display and explanation (e.g. ₹, $, AED, Rs.)",
+    )
 
 
 def _cost_calculation_stream_generator(req: CostCalculationRequest):
     yield _sse(
         "cost_calculation_start",
         {
-            "message": "Applying Cost Approach formula...",
+            "message": "Applying Traditional Cost Approach formula...",
             "property_type": req.property_type,
-            "derived_rate_per_sqft": req.derived_rate_per_sqft,
+            "derived_plot_rate_per_sqft": req.derived_plot_rate_per_sqft,
+            "currency": req.currency,
         },
     )
 
     try:
+        if req.rate_basis.strip().lower() != "plot_land":
+            yield _sse("error", "Cost Approach requires derived_plot_rate_per_sqft with rate_basis=plot_land.")
+            yield _sse("cost_calculation_done", "Cost Approach calculation skipped.")
+            return
+
         result = _cost_agent.calculate_cost_value(
-            derived_rate_per_sqft=req.derived_rate_per_sqft,
-            area_sqft=req.area_sqft,
+            derived_plot_rate_per_sqft=req.derived_plot_rate_per_sqft,
+            plot_area_sqft=req.plot_area_sqft,
+            builtup_area_sqft=req.builtup_area_sqft,
             property_type=req.property_type,
             construction_rate_per_sqft=req.construction_rate_per_sqft,
             age_of_property=req.age_of_property,
             total_life_of_building=req.total_life_of_building,
+            currency=req.currency,
         )
 
         if not result.get("success"):
