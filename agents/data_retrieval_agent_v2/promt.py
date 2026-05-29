@@ -604,7 +604,7 @@ For each metric define:
 
 - formula required: true | false
 - formula in plain text
-
+- While making formula - take note of units & dimensions of metrics & attributes
 
 
 
@@ -934,6 +934,8 @@ Do not create new logic beyond structured_steps unless required for SQL syntax c
 4. Use only columns present in Transaction Schema.
 Never invent table names or column names.
 
+While building SQL remember this 
+- id is the unique transaction-level identifier in the TRANSACTION_SCHEMA.
 
 =============================================================
 ALGORITHM_STATUS
