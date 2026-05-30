@@ -285,20 +285,10 @@ class SqlAgentWorkflow:
 
             if decision == "stop_success":
                 react_iterations.append(iteration_output)
-<<<<<<< Updated upstream
-=======
                 stage_4_input = {"rows": self._probe_raw_output_rows(latest_probe)}
-                self._emit_stage(stage_hook, "started", "stage_4")
->>>>>>> Stashed changes
                 latest_final = await self._agent.complete_json(
                     "stage_4",
-                    self._renderer.stage_4(
-                        user_query,
-                        stage_2_1,
-                        latest_review,
-                        latest_probe,
-                        latest_observe,
-                    ),
+                    self._renderer.stage_4(stage_4_input),
                 )
                 latest_final = self._normalize_stage_4_output(latest_final, latest_probe)
                 stages["stage_4"] = latest_final

@@ -3,6 +3,7 @@ TRANSACTION_QUERY_SCHEMA = """
 Use only the following tables, columns, and meanings.
 
 transactions:
+  id : Unique transaction identifier
   project_id: Unique project identifier
   internal_index_id: Internal system project ID
   project_name: Name of project

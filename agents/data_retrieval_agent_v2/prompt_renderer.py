@@ -7,7 +7,7 @@ from .schema import SPACE_SCHEMA, TRANSACTION_QUERY_SCHEMA
 from .semantic_defaults import DEFAULT_ATTRIBUTE_MASTER_TABLES, DEFAULT_DISTINCT_DATABASE_VALUES
 
 
-def _json(value: dict[str, Any]) -> str:
+def _json(value: Any) -> str:
     return json.dumps(value, indent=2, ensure_ascii=True)
 
 
@@ -204,21 +204,11 @@ class PromptRenderer:
 
     def stage_4(
         self,
-        user_query: str,
-        stage_2_1_output: dict[str, Any],
-        sql_review_output: dict[str, Any],
-        sql_probe_output: dict[str, Any],
-        sql_observe_output: dict[str, Any],
+        sql_probe_rows: dict[str, Any],
     ) -> str:
         return _fill(
             promt.stage_4,
             {
-                "user_query": user_query,
-                "final_algorithm_structure": _json(
-                    stage_2_1_output.get("final_algorithm_structure", {})
-                ),
-                "sql_review_output": _json(sql_review_output),
-                "sql_probe_output": _json(sql_probe_output),
-                "sql_observe_output": _json(sql_observe_output),
+                "sql_probe_output": _json(sql_probe_rows),
             },
         )
