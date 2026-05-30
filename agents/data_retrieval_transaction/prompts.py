@@ -256,9 +256,7 @@ If intent.entities.spatial_filters contains latitude and longitude:
   )
 - Add project_latitude IS NOT NULL and project_longitude IS NOT NULL.
 - Order radius lookup results by distance ASC unless the user asked otherwise.
-- If the user says "consider city space" with coordinates, interpret that as
-  a city-level spatial search area, not as a request for a city-name
-  clarification.
+
 
 =============================================================
 COLUMN SELECTION — SEMANTIC LEVEL MATCHING

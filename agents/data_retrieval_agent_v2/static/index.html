@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Real Estate SQL Agent</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <main class="layout">
+      <header class="hero">
+        <p class="eyebrow">Agentic SQL Pipeline</p>
+        <h1>Real Estate SQL Agent</h1>
+        <p class="subtitle">Ask a question, execute reviewed SQL, and inspect each ReAct iteration through final results.</p>
+      </header>
+
+      <section class="workspace">
+        <article class="panel interaction">
+          <div class="panel-heading">
+            <h2>Conversation</h2>
+            <button id="clearButton" class="link-button" type="button">Clear</button>
+          </div>
+
+          <div id="conversation" class="conversation" aria-live="polite">
+            <div class="bubble assistant">
+              Include metric, location, property type, transaction category, and period. Example:
+              total agreement value for residential sale in Pune in 2024.
+            </div>
+          </div>
+
+          <form id="queryForm" class="query-form">
+            <label for="modelSelect">Model</label>
+            <select id="modelSelect" name="model">
+              <option value="gpt-4o-mini">GPT-4o mini</option>
+              <option value="gpt-5.1">GPT-5.1</option>
+              <option value="deepseek.v3.2">AWS Bedrock - DeepSeek V3.2</option>
+              <option value="moonshotai.kimi-k2.5">AWS Bedrock - Kimi K2.5</option>
+            </select>
+            <label for="queryInput">Your complete query</label>
+            <textarea
+              id="queryInput"
+              name="query"
+              rows="4"
+              placeholder="Give total agreement value for residential sale in Pune in 2024"
+              required
+            ></textarea>
+            <p id="clarificationHint" class="hint hidden"></p>
+            <div id="clarificationAnswerPanel" class="clarification-answer hidden">
+              <label for="clarificationAnswer">Your clarification answer</label>
+              <textarea
+                id="clarificationAnswer"
+                rows="3"
+                placeholder="Add the requested detail, for example: Use total agreement value."
+              ></textarea>
+            </div>
+            <button id="submitButton" class="primary" type="submit">Run Pipeline</button>
+          </form>
+        </article>
+
+        <aside class="panel evidence">
+          <h2>Stage 2.1 Evidence</h2>
+          <p class="help">Provide approved database/master values for resolving entities and filters.</p>
+          <label for="evidenceInput">Semantic context JSON</label>
+          <textarea id="evidenceInput" rows="16" spellcheck="false"></textarea>
+          <p id="evidenceError" class="error hidden"></p>
+        </aside>
+      </section>
+
+      <section class="panel output">
+        <div class="panel-heading">
+          <h2>Stage Outputs</h2>
+          <div class="output-actions">
+            <button id="downloadReportButton" class="link-button hidden" type="button">
+              Download Word Report
+            </button>
+            <span id="statusBadge" class="badge idle">Waiting</span>
+          </div>
+        </div>
+        <p id="resultMessage" class="help">Completed stages will appear here as JSON.</p>
+        <div id="finalResult" class="final-result hidden"></div>
+        <div id="stageOutputs" class="stages"></div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

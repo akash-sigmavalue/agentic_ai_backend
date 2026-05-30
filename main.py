@@ -47,6 +47,7 @@ from sqlalchemy.orm import Session
 from agents.connector.services.gmail_pubsub import GmailPubSubService
 from agents.connector.super_agent import SuperAgent
 from agents.data_retrieval.pipeline import UniversalRealEstateAgent
+from agents.data_retrieval_agent_v2.streaming import DataRetrievalAgentV2StreamAdapter
 from api.routes.connector import connectors, debug, gmail_webhook, oauth
 from api.routes.geospatial import map_overlays, maps
 from api.routes.ui_creation import generation
@@ -81,6 +82,7 @@ configure_logging()
 logger = logging.getLogger(__name__)
 scheduler = BackgroundScheduler(timezone="UTC")
 data_retrieval_agent = UniversalRealEstateAgent()
+data_retrieval_agent_v2 = DataRetrievalAgentV2StreamAdapter()
 
 
 def create_app() -> FastAPI:
@@ -224,6 +226,22 @@ async def ask_stream_data_retrieval(
             question,
             selected_domain=selected_domain,
             session_id=session_id,
+        ),
+        media_type="text/event-stream",
+    )
+
+
+@app.get("/aks_stream_data_retrieval_agent_v2")
+async def aks_stream_data_retrieval_agent_v2(
+    question: str,
+    session_id: str | None = None,
+    model: str | None = None,
+):
+    return StreamingResponse(
+        data_retrieval_agent_v2.execute_stream(
+            question,
+            session_id=session_id,
+            model=model,
         ),
         media_type="text/event-stream",
     )
