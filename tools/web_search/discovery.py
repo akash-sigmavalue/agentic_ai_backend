@@ -78,6 +78,31 @@ PROPERTY_RATE_RESULT_TERMS = [
     "rate per",
 ]
 
+DEVELOPMENT_REGULATION_TERMS = [
+    "fsi", "far", "floor space index", "floor area ratio", "development control",
+    "development control regulation", "dcr", "dc rules", "dcp rules", "dcpr",
+    "udcpr", "building bye laws", "building bylaws", "building rules",
+    "land development", "land development rules", "land development regulations",
+    "layout rules", "subdivision rules", "plot development", "plot layout",
+    "zoning", "land use", "setback", "setbacks", "building height",
+    "permissible height", "premium fsi", "fungible fsi", "tdr", "tod",
+    "road width", "plot coverage", "municipal rules", "planning authority",
+    "development plan", "master plan", "town planning",
+]
+
+DEVELOPMENT_REGULATION_SOURCE_TERMS = [
+    "official", "government", "municipal", "municipality", "municipal corporation",
+    "planning authority", "urban development", "town planning", "gazette",
+    "notification", "circular", "development control", "dcr", "dcpr", "udcpr",
+    "building bye laws", "building bylaws", "land development", "layout",
+    "subdivision", "development plan", "master plan",
+]
+
+DEVELOPMENT_REGULATION_AVOID_TERMS = [
+    "calculator", "blog", "consultant", "builder", "real estate portal",
+    "property for sale", "flats for sale", "apartment for sale", "youtube",
+]
+
 PROJECT_LISTING_TERMS = [
     "new projects",
     "residential projects",
@@ -162,7 +187,9 @@ class RealEstateIntentDetector:
             'carpet area', 'super built-up area', 'possession date',
             'rera registered', 'approved project', 'circle rate', 'ready reckoner',
             'reckoner rate', 'ready rekoner', 'rekoner rate', 'guideline value',
-            'market value', 'property valuation', 'government valuation'
+            'market value', 'property valuation', 'government valuation',
+            'fsi', 'far', 'development control', 'dcr', 'dcpr', 'udcpr',
+            'zoning', 'setback', 'building height', 'land use'
         ],
         'location': [
             'pune', 'mumbai', 'bangalore', 'hyderabad', 'chennai',
@@ -179,6 +206,8 @@ class RealEstateIntentDetector:
         """Check if query is real estate related"""
         query_lower = query.lower()
         if any(term in query_lower for term in PROPERTY_RATE_TERMS):
+            return True
+        if any(term in query_lower for term in DEVELOPMENT_REGULATION_TERMS):
             return True
         if re.search(r"\bready\s+r(?:eckoner|ekoner|eckner|ekner|econer)\b", query_lower):
             return True
@@ -253,6 +282,22 @@ class SourceDiscovery:
         understanding.rewritten_queries = self._dedupe_queries(
             self._build_specific_search_queries(query, understanding) + understanding.rewritten_queries
         )
+
+        is_development_regulation_query = self._is_development_regulation_query(query)
+        if is_development_regulation_query:
+            understanding.intent = "development_regulation"
+            understanding.positive_terms = self._dedupe_queries(
+                understanding.positive_terms + [
+                    "official", "government", "municipal", "planning authority",
+                    "gazette", "notification", "development control", "building rules",
+                ]
+            )
+            understanding.avoid_terms = self._dedupe_queries(
+                understanding.avoid_terms + DEVELOPMENT_REGULATION_AVOID_TERMS
+            )
+            understanding.rewritten_queries = self._dedupe_queries(
+                self.generate_development_regulation_queries(query) + understanding.rewritten_queries
+            )
         
         # If real estate, add specialized project queries
         if understanding.is_real_estate:
@@ -281,7 +326,7 @@ class SourceDiscovery:
         is_news_query = any(kw in query.lower() for kw in ['news', 'latest', 'recent', 'today'])
         days_back = 7 if is_news_query else None
         
-        query_limit = 6 if self._is_property_rate_query(query) else 5
+        query_limit = 8 if is_development_regulation_query else (6 if self._is_property_rate_query(query) else 5)
         for i, search_query in enumerate(understanding.rewritten_queries[:query_limit]):
             if status_callback:
                 status_callback(f"Finding sources... (Step {i+1}/{query_limit})")
@@ -304,6 +349,11 @@ class SourceDiscovery:
                 # Rank result and add trust scoring
                 ranked_item = self._rank_result(result, understanding, search_query)
                 ranked_item['trust_score'] = self._calculate_source_trust(result.url)
+                if is_development_regulation_query:
+                    ranked_item['trust_score'] = max(
+                        ranked_item['trust_score'],
+                        self._development_regulation_source_trust(result.url, result.title, result.snippet),
+                    )
                 ranked_item['verification_status'] = self._check_verification(ranked_item)
                 candidates.append(ranked_item)
 
@@ -372,6 +422,7 @@ class SourceDiscovery:
         filtered_results = []
         is_re_query = detector.is_real_estate_query(query)
         is_rate_query = self._is_property_rate_query(query)
+        is_development_regulation_query = self._is_development_regulation_query(query)
 
         for result in results:
             url = result.get('url', '').lower()
@@ -388,9 +439,33 @@ class SourceDiscovery:
                     continue
                 if is_rate_query and not self._looks_like_property_rate_result(combined):
                     continue
+                if is_development_regulation_query and not self._looks_like_development_regulation_result(combined):
+                    continue
 
             filtered_results.append(result)
         return filtered_results
+
+    def generate_development_regulation_queries(self, query: str) -> List[str]:
+        """Generate official-source queries for FSI/DCR/zoning/building-rule questions."""
+        location = self._extract_development_regulation_location(query)
+        normalized = self._normalize_query(query)
+        queries = [
+            f"{normalized} official",
+            f"{normalized} government notification",
+            f"{normalized} municipal corporation",
+            f"{normalized} planning authority",
+            f"{normalized} gazette PDF",
+            f"development control regulations {location} FSI FAR land development official PDF",
+            f"land development rules layout subdivision plot development {location} municipal official",
+            f"building rules zoning setbacks height land use {location} municipal official",
+            f"town planning development plan {location} land development control regulation",
+        ]
+        if re.search(r"\bmaharashtra\b|\bpune\b|\bmumbai\b|\bthane\b|\bnashik\b|\bnagpur\b", normalized, re.I):
+            queries.extend([
+                f"Unified Development Control and Promotion Regulations {location} FSI official",
+                f"UDCPR {location} FSI premium TDR TOD road width official PDF",
+            ])
+        return self._dedupe_queries(queries)
 
     def generate_project_search_queries(self, query: str) -> List[str]:
         """Generate targeted real estate project or rate queries"""
@@ -528,7 +603,11 @@ class SourceDiscovery:
 
     def _check_verification(self, result: Dict) -> str:
         """Check if content can be verified"""
-        verification_indicators = ['official', 'government', 'rera', 'verified', 'certified', 'legal', 'gazette']
+        verification_indicators = [
+            'official', 'government', 'rera', 'verified', 'certified', 'legal',
+            'gazette', 'municipal corporation', 'planning authority',
+            'urban development', 'town planning', 'notification', 'circular',
+        ]
         combined = f"{result.get('title', '')} {result.get('snippet', '')} {result.get('url', '')}".lower()
         
         for indicator in verification_indicators:
@@ -548,12 +627,17 @@ class SourceDiscovery:
 
         if self._is_property_rate_query(query):
             return self._looks_like_property_rate_result(f"{combined} {url_lower}")
+
+        if self._is_development_regulation_query(query):
+            return self._looks_like_development_regulation_result(f"{combined} {url_lower}")
         
         real_estate_indicators = [
             'project', 'apartment', 'flat', 'villa', 'builder', 'developer',
             'possession', 'rera', 'launch', 'construction', 'site', 'tower',
             'units', 'sqft', 'price', 'register', 'brochure', 'floor plan',
-            'circle rate', 'ready reckoner', 'valuation', 'market value', 'guideline'
+            'circle rate', 'ready reckoner', 'valuation', 'market value', 'guideline',
+            'fsi', 'far', 'development control', 'dcr', 'dcpr', 'udcpr',
+            'zoning', 'setback', 'building height', 'land use'
         ]
         
         indicator_count = sum(1 for ind in real_estate_indicators if ind in combined)
@@ -568,6 +652,12 @@ class SourceDiscovery:
         if any(term in query_lower for term in PROPERTY_RATE_TERMS):
             return True
         return bool(re.search(r"\bready\s+r(?:eckoner|eckon|ecknor|ekoner|eckner|ekner|econer)\b", query_lower))
+
+    def _is_development_regulation_query(self, query: str) -> bool:
+        query_lower = query.lower()
+        if any(term in query_lower for term in DEVELOPMENT_REGULATION_TERMS):
+            return True
+        return bool(re.search(r"\b(?:fsi|far|dcr|dcpr|udcpr|tdr|tod)\b", query_lower))
 
     def _normalize_property_rate_query(self, query: str) -> str:
         query_lower = query.lower()
@@ -634,6 +724,29 @@ class SourceDiscovery:
         ]
         return " ".join(words[:3]).title()
 
+    def _extract_development_regulation_location(self, query: str) -> str:
+        query_lower = query.lower()
+        for location in sorted(KNOWN_REAL_ESTATE_LOCATIONS, key=len, reverse=True):
+            if re.search(rf"\b{re.escape(location)}\b", query_lower):
+                return location.title()
+
+        match = re.search(r"\b(?:for|in|at|of|near|around)\s+([a-z][a-z\s,.-]{2,80})", query_lower)
+        if match:
+            location = re.split(
+                r"\b(?:fsi|far|dcr|dcpr|udcpr|rules?|regulations?|zoning|setbacks?|height|land use|for|with|and)\b",
+                match.group(1),
+                maxsplit=1,
+            )[0]
+            words = [
+                word
+                for word in re.findall(r"[a-z]+", location)
+                if word not in STOP_WORDS
+            ]
+            if words:
+                return " ".join(words[:4]).title()
+
+        return "requested location"
+
     def _looks_like_property_rate_result(self, text: str) -> bool:
         text_lower = text.lower()
         if any(term in text_lower for term in PROPERTY_RATE_AVOID_TERMS):
@@ -649,6 +762,32 @@ class SourceDiscovery:
         return has_rate_signal and has_property_signal and not (
             has_listing_signal and "ready reckoner" not in text_lower and "valuation" not in text_lower
         )
+
+    def _looks_like_development_regulation_result(self, text: str) -> bool:
+        text_lower = text.lower()
+        if any(term in text_lower for term in DEVELOPMENT_REGULATION_AVOID_TERMS):
+            official_signal = any(term in text_lower for term in ["gov", "nic.in", "municipal", "authority", "gazette"])
+            if not official_signal:
+                return False
+        has_rule_signal = any(term in text_lower for term in DEVELOPMENT_REGULATION_TERMS)
+        has_source_signal = any(term in text_lower for term in DEVELOPMENT_REGULATION_SOURCE_TERMS)
+        return has_rule_signal or has_source_signal
+
+    def _development_regulation_source_trust(self, url: str, title: str = "", snippet: str = "") -> float:
+        domain = urlparse(url or "").netloc.replace("www.", "").lower()
+        combined = f"{title} {snippet} {url}".lower()
+        score = self._calculate_source_trust(url or "")
+
+        if domain.endswith((".gov.in", ".nic.in")) or ".gov." in domain:
+            score = max(score, 0.90)
+        if any(term in combined for term in ["municipal corporation", "planning authority", "urban development", "town planning"]):
+            score = max(score, 0.82)
+        if any(term in combined for term in ["gazette", "notification", "circular", "official", "pdf"]):
+            score = max(score, 0.78)
+        if any(term in combined for term in DEVELOPMENT_REGULATION_AVOID_TERMS):
+            score = min(score, 0.55)
+
+        return min(max(score, 0.25), 0.95)
 
     def _reset_token_usage(self):
         self.last_token_usage = {
@@ -874,6 +1013,8 @@ Return only JSON:
         return [word for word in re.findall(r"\w+", query) if word.lower() not in STOP_WORDS]
 
     def _detect_intent(self, query: str) -> str:
+        if self._is_development_regulation_query(query):
+            return "development_regulation"
         if any(kw in query.lower() for kw in ['latest', 'news', 'recent']): return "latest"
         return "research"
 

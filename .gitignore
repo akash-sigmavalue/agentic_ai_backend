@@ -25,4 +25,6 @@ __pycache__/
 
 # Databases
 *.sqlite3
-/data/web_documents
+
+# Locally downloaded documentation
+/data/web_documents/

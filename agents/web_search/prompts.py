@@ -107,12 +107,10 @@ class LightweightAnalyzer:
             # Get LLM answer
             if not self.client:
                 answer = self.build_source_based_answer(query, results)
-                if stream_callback:
-                    stream_callback(answer)
             elif stream_callback:
                 answer = self._get_llm_answer_with_confidence_stream(
                     prompt,
-                    stream_callback,
+                    lambda _chunk: None,
                     debug_llm_payloads=debug_llm_payloads,
                 )
             else:
@@ -120,13 +118,13 @@ class LightweightAnalyzer:
 
             if not str(answer or "").strip() or str(answer).startswith("Error generating answer:"):
                 answer = self.build_source_based_answer(query, results)
-                if stream_callback:
-                    stream_callback(answer)
 
             # Post-process only for launch/construction project discovery, not every listing query.
             if self._is_new_project_query(query, intent) and hasattr(self, "validate_real_estate_content"):
                 answer = self.validate_real_estate_content(answer, query)
 
+            answer = self._replace_generic_source_link_labels(answer, results)
+            answer = self._append_numbered_sources_to_uncited_lines(answer, results)
             answer = self._append_source_urls_to_cited_lines(answer, results)
 
             traceability_section = self.build_source_traceability_section(
@@ -135,8 +133,8 @@ class LightweightAnalyzer:
             )
             if traceability_section and "## Source Traceability" not in str(answer):
                 answer = f"{answer}\n\n{traceability_section}"
-                if stream_callback:
-                    stream_callback(f"\n\n{traceability_section}")
+            if stream_callback:
+                stream_callback(answer)
 
             return {
                 'answer': answer or "Failed to generate answer.",
@@ -149,6 +147,8 @@ class LightweightAnalyzer:
         except Exception as e:
             print(f"Error in generate_trusted_answer: {e}")
             fallback = self.build_source_based_answer(query, results)
+            fallback = self._replace_generic_source_link_labels(fallback, results)
+            fallback = self._append_numbered_sources_to_uncited_lines(fallback, results)
             fallback = self._append_source_urls_to_cited_lines(fallback, results)
             traceability_section = self.build_source_traceability_section(
                 results,
@@ -285,6 +285,125 @@ class LightweightAnalyzer:
 
         return "\n".join(lines).strip()
 
+    def _replace_generic_source_link_labels(self, text: str, results: List[Dict]) -> str:
+        """Replace generic source links with their numbered result citation."""
+        if not text or not results:
+            return text or ""
+
+        index_by_url = {
+            str(result.get("url")).rstrip("/"): index
+            for index, result in enumerate(results[:10], 1)
+            if result.get("url")
+        }
+        if not index_by_url:
+            return text
+
+        def replacement(match) -> str:
+            url = match.group("url")
+            index = index_by_url.get(url.rstrip("/"))
+            return f"[{index}]({url})" if index else match.group(0)
+
+        return re.sub(
+            r"\[(?:source(?:\s+url)?|url)\]\((?P<url>https?://[^\s)]+)\)",
+            replacement,
+            text,
+            flags=re.IGNORECASE,
+        )
+
+    def _append_numbered_sources_to_uncited_lines(self, answer: str, results: List[Dict]) -> str:
+        """Attach a numbered source link to uncited factual lines with matching evidence."""
+        if not answer or not results:
+            return answer or ""
+
+        source_texts = []
+        for index, result in enumerate(results[:10], 1):
+            url = result.get("url")
+            if not url:
+                continue
+            evidence = " ".join(
+                str(result.get(field) or "")
+                for field in ("title", "snippet", "content")
+            ).lower()
+            source_texts.append((index, url, evidence))
+
+        if not source_texts:
+            return answer
+
+        lines = []
+        in_code_block = False
+        skip_section = False
+        for raw_line in str(answer).splitlines():
+            line = raw_line.rstrip()
+            stripped = line.strip()
+            if stripped.startswith("```"):
+                in_code_block = not in_code_block
+                lines.append(line)
+                continue
+
+            heading_match = re.match(r"^#{1,6}\s+(.+?)\s*$", stripped)
+            if heading_match:
+                heading = heading_match.group(1).strip().lower()
+                skip_section = heading in {
+                    "reference urls",
+                    "source traceability",
+                    "top verified sources",
+                    "additional sources used",
+                    "crawled source urls",
+                    "document source urls",
+                    "extracted evidence lines",
+                }
+                lines.append(line)
+                continue
+
+            if (
+                in_code_block
+                or skip_section
+                or not stripped
+                or re.search(r"\[\d+\](?:\(|\b)", line)
+                or "http://" in line
+                or "https://" in line
+                or re.search(r"\bSource(?:s)?\s*:", line, re.IGNORECASE)
+                or re.match(r"^\s*\d+\.\s+\S.*:\s*$", line)
+                or re.match(r"^\s*\|?[-:| ]{3,}\|?\s*$", line)
+            ):
+                lines.append(line)
+                continue
+
+            best_source = self._best_matching_source_for_line(line, source_texts)
+            if best_source:
+                index, url = best_source
+                line = f"{line} [{index}]({url})"
+            lines.append(line)
+
+        return "\n".join(lines).strip()
+
+    def _best_matching_source_for_line(self, line: str, source_texts: List[tuple]) -> Optional[tuple]:
+        stop_words = {
+            "about", "after", "also", "been", "being", "from", "have", "into",
+            "only", "same", "such", "that", "their", "there", "these", "this",
+            "those", "used", "using", "were", "which", "with",
+        }
+        terms = {
+            term.lower()
+            for term in re.findall(r"[A-Za-z0-9]+", line)
+            if (len(term) > 2 or term.isdigit()) and term.lower() not in stop_words
+        }
+        if not terms:
+            return None
+
+        numbers = {term for term in terms if any(char.isdigit() for char in term)}
+        scored = []
+        for index, url, evidence in source_texts:
+            matched = {term for term in terms if term in evidence}
+            matched_numbers = numbers & matched
+            score = len(matched) + (len(matched_numbers) * 3)
+            scored.append((score, len(matched_numbers), len(matched), index, url))
+
+        score, number_matches, term_matches, index, url = max(scored)
+        if number_matches or term_matches >= 2:
+            return index, url
+        return None
+
     def _append_source_urls_to_line(self, line: str, source_urls: Dict[int, str]) -> str:
         if not line.strip() or "http://" in line or "https://" in line or re.search(r"\bSource(?:s)?:", line, re.I):
             return line
@@ -324,6 +443,11 @@ class LightweightAnalyzer:
                 url = source.get("url") or ""
                 trust = source.get("trust_score")
                 trust_text = f"{float(trust) * 100:.0f}%" if isinstance(trust, (int, float)) else "unknown"
+                # relevance = source.get("relevance_score")
+                # relevance_text = f"{float(relevance) * 100:.0f}%" if isinstance(relevance, (int, float)) else "unknown"
+                # lines.append(
+                #    f"{i}. [{title}]({url}) - trust score: {trust_text}; relevance score: {relevance_text}"
+                #)
                 lines.append(f"{i}. [{title}]({url}) - trust score: {trust_text}")
         else:
             lines.append("No source met the current verified-source indicator check.")
@@ -376,6 +500,7 @@ class LightweightAnalyzer:
                 "url": url,
                 "source": source_type,
                 "trust_score": result.get("trust_score", result.get("source_trust", 0.5)),
+                # "relevance_score": result.get("relevance_score"),
                 "verification_status": result.get("verification_status", "unverified"),
                 "reference_urls": result.get("reference_urls", []),
             }
@@ -521,6 +646,23 @@ class LightweightAnalyzer:
             and not self._is_new_project_query(query)
         )
 
+    def _is_location_specific_development_regulation_query(self, query: str, intent: str = None) -> bool:
+        query_lower = query.lower()
+        if intent == "development_regulation":
+            return True
+        regulatory_terms = [
+            "fsi", "far", "floor space index", "floor area ratio",
+            "development control", "dcr", "dcpr", "udcpr", "building rules",
+            "building bye laws", "building bylaws", "land development",
+            "land development rules", "land development regulations",
+            "layout rules", "subdivision rules", "plot development",
+            "plot layout", "zoning", "land use",
+            "setback", "setbacks", "building height", "premium fsi",
+            "fungible fsi", "tdr", "tod", "road width", "plot coverage",
+            "planning authority", "development plan", "master plan",
+        ]
+        return any(term in query_lower for term in regulatory_terms)
+
     def _infer_location_from_query(self, query: str) -> str:
         match = re.search(r"\b(?:in|at|near|around)\s+([A-Za-z][A-Za-z\s,.-]{2,80})", query)
         if match:
@@ -548,6 +690,55 @@ class LightweightAnalyzer:
 
         return sorted(enumerate(results or [], 1), key=score, reverse=True)[:limit]
 
+    def _source_excerpt_for_query(self, content: str, query: str, intent: str = None, limit: int = 5000) -> str:
+        """Prefer query-relevant chunks from long official pages/PDFs over only the first bytes."""
+        content = str(content or "").strip()
+        if len(content) <= limit:
+            return content
+
+        regulatory_terms = [
+            "fsi", "far", "floor space index", "floor area ratio", "development control",
+            "land development", "layout", "subdivision", "plot development", "zoning",
+            "land use", "setback", "height", "road width", "open space", "amenity",
+            "tdr", "tod", "premium", "municipal", "planning authority", "notification",
+            "gazette", "rule", "regulation", "permission", "approval",
+        ]
+        query_terms = [
+            term.lower()
+            for term in re.findall(r"[A-Za-z0-9]+", query or "")
+            if len(term) > 2
+        ]
+        terms = list(dict.fromkeys(query_terms + regulatory_terms))
+
+        raw_chunks = re.split(r"(?:\n\s*){1,}|(?<=[.;:])\s+(?=[A-Z0-9])", content)
+        chunks = []
+        for index, chunk in enumerate(raw_chunks):
+            text = re.sub(r"\s+", " ", chunk).strip()
+            if len(text) < 30:
+                continue
+            text_lower = text.lower()
+            hits = sum(1 for term in terms if term in text_lower)
+            has_number = bool(re.search(r"\d+(?:\.\d+)?\s*(?:%|m|meter|metre|sq\.?m|sqm|acre|hectare|ha|ft|feet)?", text_lower))
+            official_hit = any(term in text_lower for term in ["official", "government", "municipal", "authority", "gazette", "notification"])
+            score = (hits * 3) + (2 if has_number else 0) + (2 if official_hit else 0)
+            if score > 0:
+                chunks.append((score, index, text[:900]))
+
+        if not chunks:
+            return content[:limit]
+
+        chunks.sort(key=lambda item: (item[0], -item[1]), reverse=True)
+        selected = sorted(chunks[:12], key=lambda item: item[1])
+        excerpt_parts = []
+        total = 0
+        for _score, _index, text in selected:
+            if total + len(text) + 2 > limit:
+                break
+            excerpt_parts.append(text)
+            total += len(text) + 2
+
+        return "\n".join(excerpt_parts).strip() or content[:limit]
+
     def _build_accuracy_prompt(self, query: str, results: List[Dict], validation: Dict, intent: str = None) -> str:
         source_context = []
         source_priority_context = []
@@ -560,7 +751,8 @@ class LightweightAnalyzer:
                 f"[{i}] {r.get('title')}\nURL: {r.get('url')}\nTrust Score: {trust_score*100:.0f}%\nVerification Status: {r.get('verification_status', 'unverified')}\nSource Type: {r.get('source') or 'web'}"
             )
         for i, r in prioritized_sources:
-            content = r.get('content') or r.get('snippet') or "No content available."
+            raw_content = r.get('content') or r.get('snippet') or "No content available."
+            content = self._source_excerpt_for_query(raw_content, query, intent)
             source_type = r.get('source') or "web"
             document = r.get('document') or {}
             doc_line = f"\nDocument: {document.get('filename')} from {document.get('source_url')}" if document else ""
@@ -572,6 +764,73 @@ class LightweightAnalyzer:
                 exact_evidence_context.append(f"[{i}] {match.get('text')} | Exact Source URL: {r.get('url')}")
         validated_str = "\n".join([f"- {c['claim']} (Verified by {c['source_count']} sources)" for c in validation.get('validated_claims', [])])
         sources_str = "\n\n".join(source_context)
+
+        if self._is_location_specific_development_regulation_query(query, intent):
+            location = self._infer_location_from_query(query)
+
+            return f"""You are a municipal planning and development-regulation research assistant.
+
+User Query: {query}
+
+This query is about location-specific development rules such as land development rules, layout/subdivision rules, plot development rules, FSI/FAR, Development Control Regulations, zoning, setbacks, building height, land use, TDR, TOD, premium FSI, or road-width/plot-size dependent rules.
+
+CRITICAL JURISDICTION RULES:
+- Do not provide a generic FSI/FAR, zoning, setback, height, or land-use answer.
+- First identify the exact jurisdiction: country, state, district/city, municipal corporation or municipality, planning/development authority, district/taluka/village, ward/zone/sector if available.
+- If the user gives only a broad city/locality, explain that final applicability may differ by municipal corporation, planning authority, cantonment, MIDC/special planning area, PMRDA/MMRDA/metropolitan authority, heritage/coastal/airport/defense/forest/flood restrictions, zone, road width, plot size, and land use.
+- Prioritize official sources in this order: state urban development/town planning department, municipal corporation/planning authority, official DCR/DCPR/UDCPR/master plan/development plan, gazette notifications, amendments, GRs, and circulars.
+- Use secondary real-estate/blog/consultant sources only as non-authoritative clues, never as the basis for a final rule.
+- Check and report document name, effective date, notification/amendment date, issuing authority, and whether the rule appears current in the available sources.
+- For land development rules, separately cover layout/subdivision approval, minimum plot size, road width/internal road requirements, open space/amenity space, reservations, land-use/zoning, conversion/NA permission, access requirements, infrastructure/service rules, and special planning-area restrictions when source-backed.
+- For FSI/FAR, separately cover base FSI, premium/purchasable FSI, TDR, TOD, road-width dependency, land-use dependency, plot-size dependency, and special restrictions when source-backed.
+- If the official source context does not contain the exact jurisdiction or rule detail, say: "I cannot give the exact applicable rule from the available official sources without the missing jurisdiction/plot details."
+- Ask for missing plot-level inputs when needed: exact municipal authority, plot address/village/ward/zone, plot area, road width, land use, survey/CTS/plot number, redevelopment/new construction/special scheme.
+- Every factual statement must include a citation [n] and exact source URL beside the statement.
+- Choose evidence from VERIFIED SOURCE PRIORITY in order. If higher-trust sources do not contain the needed detail, say so before using lower-trust context.
+
+LOCATION FOCUS INFERRED FROM QUERY:
+{location}
+
+EXACT EVIDENCE MATCHES:
+{chr(10).join(exact_evidence_context) if exact_evidence_context else "No exact regulation-level evidence was extracted."}
+
+CROSS-SOURCE VALIDATION DATA:
+{validated_str or "No cross-source consensus found for specific regulatory values."}
+
+VERIFIED SOURCE PRIORITY (highest trust first; use this sequence when choosing evidence):
+{chr(10).join(source_priority_context) if source_priority_context else "No source priority metadata available."}
+
+SEARCH RESULTS CONTEXT:
+{"-"*20}
+{sources_str}
+{"-"*20}
+
+FORMAT:
+## Jurisdiction Check
+State exactly which jurisdiction/planning authority the sources support, and what is still missing.
+
+## Rule Document Used
+List official document/notification names, issuing authority, effective dates, amendment dates, and exact source URLs.
+
+## Applicable Rule Summary
+Use a table with columns: Topic, Source-backed rule/value, Applicability conditions, Missing details, Source URL.
+
+## Land Development Rule Components
+If relevant, separately cover layout/subdivision approval, minimum plot size, road width/internal roads, open space/amenity space, reservations, land-use/zoning, conversion/NA permission, access, infrastructure/service conditions, and special planning-area restrictions. Say "not verified in available official source context" where missing.
+
+## FSI/FAR Components
+If relevant, separately cover Base FSI, Premium/Purchasable FSI, TDR, TOD, road-width dependency, land-use dependency, plot-size dependency, and special restrictions. Say "not verified in available official source context" where missing.
+
+## Required Verification
+List the exact clarification questions or authority checks needed before relying on the answer for a plot.
+
+## Confidence Insight
+State whether the answer is High/Medium/Low confidence based only on official-source coverage and exact jurisdiction match.
+
+### Reference URLs
+Include clickable markdown links [Title](URL) for the first 10 provided sources.
+
+Answer:"""
 
         if self._is_existing_property_query(query):
             location = self._infer_location_from_query(query)

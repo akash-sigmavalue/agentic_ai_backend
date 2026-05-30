@@ -21,7 +21,7 @@ from database.web_search.cache import SearchCache
 from core.web_search.config import config
 from utils.web_search.validation import AccuracyValidator
 
-SEARCH_CACHE_VERSION = "source-discovery-v15-source-traceability"
+SEARCH_CACHE_VERSION = "source-discovery-v18-regulatory-document-excerpts"
 
 
 class DuckDuckGoSearchAgent:
@@ -581,6 +581,7 @@ class DuckDuckGoSearchAgent:
                 'url': url,
                 'source': source_type,
                 'trust_score': trust_score,
+                #'relevance_score': result.get('relevance_score'),
                 'verification_status': result.get('verification_status', 'unverified'),
                 'reference_urls': result.get('reference_urls') or self._reference_urls_for_result(result),
             }

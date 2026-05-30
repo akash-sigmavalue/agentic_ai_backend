@@ -203,6 +203,7 @@ class ResponseFormatter:
                 'url': url,
                 'source': source_type,
                 'trust_score': result.get('trust_score', result.get('source_trust')),
+                # 'relevance_score': result.get('relevance_score'),
                 'verification_status': result.get('verification_status', 'unverified'),
                 'reference_urls': result.get('reference_urls', []),
             }

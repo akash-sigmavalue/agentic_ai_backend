@@ -125,7 +125,7 @@ class DocumentDownloader:
                         "size": len(data),
                     },
                     "size": len(data),
-                    "content": text[: config.MAX_CONTENT_LENGTH],
+                    "content": text[: max(config.MAX_CONTENT_LENGTH, 50000)],
                     "content_type": filepath.suffix.lower().lstrip(".") or "document",
                 }
             except Exception as exc:
@@ -246,7 +246,13 @@ class DocumentDownloader:
             for term in query_terms:
                 if term in url_lower:
                     score += 10
-            if any(term in url_lower for term in ["official", "easr", "asr", "rate", "rates", "valuation", "reckoner", "circle", "guideline"]):
+            if any(term in url_lower for term in [
+                "official", "easr", "asr", "rate", "rates", "valuation", "reckoner",
+                "circle", "guideline", "fsi", "far", "dcr", "dcpr", "udcpr",
+                "development", "building", "zoning", "layout", "subdivision",
+                "master-plan", "masterplan", "development-plan", "town-planning",
+                "gazette", "notification",
+            ]):
                 score += 15
 
             scored_docs.append((score, -index, doc_url))
