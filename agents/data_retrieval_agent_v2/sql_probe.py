@@ -25,8 +25,8 @@ class SqlProbeService:
         re.IGNORECASE,
     )
     _ZERO_ROW_CANDIDATE_COLUMNS = {
-        "location_name": ("micro_market", "village_name"),
-        "micro_market": ("location_name", "village_name"),
+        "location_name": ("micro_market", "registered_document_village_name"),
+        "micro_market": ("location_name", "registered_document_village_name"),
         "village_name": ("location_name", "micro_market"),
         "property_type": ("property_type_raw", "project_type"),
         "project_type": ("property_type",),

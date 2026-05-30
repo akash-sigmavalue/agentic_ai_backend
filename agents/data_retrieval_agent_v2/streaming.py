@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 import uuid
 from typing import Any, AsyncIterator
 
+from .clarification_ui import build_sse_clarification_payload
+from .stage_catalog import STAGE_CATALOG, stage_display_label
+from .stage_presenter import present_pipeline_stage, present_stage_started
+from .stage_report import build_stage_report_payload
 from .config import get_settings
 from .llm import OpenAIJsonAgent
 from .models import GenerateSqlRequest, PipelineResponse
@@ -18,24 +23,7 @@ def _sse(event_type: str, content: Any, **kwargs: Any) -> str:
 
 
 def _stage_label(stage_name: str) -> str:
-    labels = {
-        "stage_1": "Stage 1 - Intent Parsing",
-        "stage_1_5": "Stage 1.5 - Metric Mapping",
-        "stage_1_6": "Stage 1.6 - Metric Validation",
-        "stage_2": "Stage 2 - Schema Planning",
-        "stage_2_1": "Stage 2.1 - Semantic Resolution",
-        "stage_3": "Stage 3 - SQL Build",
-        "stage_3_1": "Stage 3.1 - SQL Review",
-        "stage_3_2": "Stage 3.2 - SQL Probe",
-        "stage_3_3": "Stage 3.3 - SQL Observe",
-        "stage_3_4": "Stage 3.4 - SQL Fix",
-        "stage_4": "Stage 4 - Final Answer",
-    }
-    base_name = stage_name.split("_iteration_")[0]
-    suffix = ""
-    if "_iteration_" in stage_name:
-        suffix = f" (Iteration {stage_name.rsplit('_iteration_', 1)[1]})"
-    return f"{labels.get(base_name, stage_name.replace('_', '.'))}{suffix}"
+    return stage_display_label(stage_name)
 
 
 def _execution_outputs(probe_output: dict[str, Any] | None) -> list[dict[str, Any]]:
@@ -93,8 +81,28 @@ class DataRetrievalAgentV2StreamAdapter:
         effective_session_id = session_id or str(uuid.uuid4())
         yield _sse("session", {"session_id": effective_session_id})
         yield _sse("start", f"Processing with data retrieval agent v2: {question}")
+        yield _sse(
+            "pipeline_catalog",
+            {
+                "stages": [
+                    {
+                        "id": item["id"],
+                        "order": item["order"],
+                        "title": item["title"],
+                        "subtitle": item["subtitle"],
+                        "icon": item["icon"],
+                    }
+                    for item in STAGE_CATALOG
+                ],
+            },
+        )
 
-        try:
+        stage_events: asyncio.Queue[tuple[str, str, dict[str, Any] | None] | None] = asyncio.Queue()
+
+        def stage_hook(phase: str, stage_name: str, output: dict[str, Any] | None) -> None:
+            stage_events.put_nowait((phase, stage_name, output))
+
+        async def run_pipeline() -> PipelineResponse:
             settings = get_settings()
             request = GenerateSqlRequest(
                 query=question,
@@ -106,19 +114,49 @@ class DataRetrievalAgentV2StreamAdapter:
                 sql_probe=SqlProbeService(settings),
                 max_react_iterations=settings.react_max_iterations,
             )
-            response = await workflow.run(
+            return await workflow.run(
                 request.query,
                 request.include_intermediate_stages,
                 request.semantic_context.model_dump(),
+                stage_hook=stage_hook,
             )
+
+        pipeline_task = asyncio.create_task(run_pipeline())
+
+        try:
+            while True:
+                if pipeline_task.done() and stage_events.empty():
+                    break
+                try:
+                    event = await asyncio.wait_for(stage_events.get(), timeout=0.15)
+                except asyncio.TimeoutError:
+                    continue
+                if event is None:
+                    break
+                phase, stage_name, output = event
+                if phase == "started":
+                    payload = present_stage_started(stage_name)
+                else:
+                    payload = present_pipeline_stage(stage_name, output or {}, phase="completed")
+                yield _sse("pipeline_stage", payload)
+                yield _sse("stage", _stage_label(stage_name))
+                if phase == "completed" and output is not None:
+                    yield _sse(
+                        "debug_trace",
+                        {
+                            "step": stage_name,
+                            "phase": "completed",
+                            "summary": json.dumps(output, default=str),
+                        },
+                    )
+
+            response = await pipeline_task
         except Exception as exc:
+            if not pipeline_task.done():
+                pipeline_task.cancel()
             yield _sse("error", f"data_retrieval_agent_v2 failed: {exc}")
             yield _sse("done", "", metrics={"duration_seconds": round(time.perf_counter() - started, 2), "total_tokens": 0})
             return
-
-        for stage_name, output in (response.stages or {}).items():
-            yield _sse("stage", _stage_label(stage_name))
-            yield _sse("debug_trace", {"step": stage_name, "phase": "completed", "summary": json.dumps(output, default=str)})
 
         token_count = response.token_count or {}
         cumulative_tokens = 0
@@ -138,24 +176,15 @@ class DataRetrievalAgentV2StreamAdapter:
             )
 
         if response.pipeline_status == "needs_clarification":
-            question_text = response.clarification_question or "Please clarify the requested values."
-            yield _sse(
-                "clarification_required",
-                {
-                    "message": response.message,
-                    "questions": [question_text],
-                    "clarification_type": "v2_pipeline",
-                    "original_query": response.query,
-                    "stopped_at_stage": response.stopped_at_stage,
-                    "next_action": response.next_action,
-                },
-            )
+            yield _sse("clarification_required", build_sse_clarification_payload(response))
         else:
             for output in _execution_outputs(response.sql_probe_output):
                 result_set = _result_set(output)
                 if result_set:
                     yield _sse("result_set", result_set)
             yield _sse("report_chunk", f"{_final_markdown(response)}\n")
+            if response.pipeline_status in ("completed", "no_data"):
+                yield _sse("stage_report", build_stage_report_payload(response))
 
         total_tokens = token_count.get("total_tokens") or cumulative_tokens
         yield _sse(

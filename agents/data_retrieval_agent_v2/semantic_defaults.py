@@ -53,6 +53,8 @@ DEFAULT_DISTINCT_DATABASE_VALUES = {
         "Office",
         "Others",
         "Shop",
+        "Villa",
+        "Plot"
     ],
     "project_type": [
         "Agricultural",

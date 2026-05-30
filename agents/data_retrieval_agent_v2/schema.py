@@ -9,7 +9,7 @@ transactions:
   village_name_marathi: Village name in Marathi
   location_id: Location identifier
   location_name: Location of transaction
-  village_name: Village name in English
+  registered_document_village_name: Village name in English
   year: Transaction year
   quarter: Transaction quarter
   city_id: City identifier

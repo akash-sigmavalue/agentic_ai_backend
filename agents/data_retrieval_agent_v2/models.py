@@ -50,6 +50,7 @@ class PipelineResponse(BaseModel):
     message: str
     stopped_at_stage: str = ""
     clarification_question: str = ""
+    clarification_fields: list[dict[str, Any]] | None = None
     next_action: str = ""
     sql_build_output: dict[str, Any] | None = None
     sql_review_output: dict[str, Any] | None = None
